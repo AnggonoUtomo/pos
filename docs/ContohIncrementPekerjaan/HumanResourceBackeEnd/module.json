@@ -1,0 +1,13 @@
+{
+    "name": "HumanResource",
+    "namespace": "App\\Modules\\HumanResource\\HumanResource",
+    "version": "1.0.0",
+    "schema_version": 1,
+    "status": "enabled",
+    "domain": "HumanResource",
+    "path": "app/Modules/HumanResource/HumanResource",
+    "provider": "App\\Modules\\HumanResource\\HumanResource\\ServiceProvider",
+    "dependencies": [],
+    "permission_source": "permissions.php",
+    "config_source": "module.php"
+}
