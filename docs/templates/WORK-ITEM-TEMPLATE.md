@@ -37,6 +37,7 @@ Di luar scope:
 - [ ] Modul target sudah diinformasikan ke user.
 - [ ] Rencana increment sudah ditulis.
 - [ ] QA automated per increment sudah ditentukan.
+- [ ] Chrome DevTools MCP QA direncanakan jika menyentuh UI/browser.
 - [ ] Risiko schema/route/permission/FIFO/payment/tax/audit dipertimbangkan.
 - [ ] Status git dicek jika repository tersedia.
 
@@ -55,12 +56,14 @@ Di luar scope:
 ## Verifikasi
 
 - [ ] Command:
+- [ ] Chrome DevTools MCP:
 - [ ] Pemeriksaan manual:
 
 ## Checklist Sesudah Coding
 
 - [ ] Semua increment yang dikerjakan sudah diperbarui statusnya.
 - [ ] QA automated relevan sudah dijalankan.
+- [ ] Chrome DevTools MCP QA dijalankan untuk UI/browser atau dicatat `SKIPPED/BLOCKED`.
 - [ ] Bukti command dicatat.
 - [ ] Gap atau command yang belum bisa dijalankan dicatat.
 - [ ] Tidak ada perubahan di luar scope tanpa catatan.
@@ -81,4 +84,9 @@ Isi setelah verifikasi:
 Command:
 Hasil:
 Catatan:
+
+Chrome DevTools MCP:
+Status:
+Bukti:
+Fallback:
 ```

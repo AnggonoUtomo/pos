@@ -1,6 +1,6 @@
 ﻿# WI-0003: Scaffold Folder dan Loader Modul
 
-Status: Draf
+Status: Sedang Dikerjakan
 
 ## Tujuan
 
@@ -48,6 +48,7 @@ Di luar scope:
 | INC-01 | Struktur folder dan autoload module | - [ ] Struktur namespace disetujui | - [ ] Folder canonical tersedia<br>- [ ] Autoload berjalan | `composer dump-autoload` | Draf |
 | INC-02 | Loader route dan migration module | - [ ] Pola Laravel provider dibaca | - [ ] Route/migration module terload | `php artisan route:list`, `php artisan migrate:status` | Draf |
 | INC-03 | Dokumentasi convention module | - [ ] Struktur final dicek | - [ ] Panduan membuat module tersedia | `git diff --check` | Draf |
+| INC-04 | Generator modul minimal | - [x] Guardrail generator disepakati<br>- [x] Tidak membuat Domain/port/event spekulatif | - [x] `module:make` tersedia<br>- [x] `--dry-run`, `--with-routes`, `--with-tests`, dan overwrite guard berjalan | `php artisan test tests/Feature/Console/MakeModuleCommandTest.php` | Selesai |
 
 ## Kriteria Penerimaan
 
@@ -65,3 +66,42 @@ Di luar scope:
 - [ ] `php artisan route:list`
 - [ ] `php artisan migrate:status`
 - [ ] `php artisan test` jika tersedia
+
+## Catatan Implementasi
+
+- `php artisan module:make {Category} {Module}` ditambahkan sebagai generator minimal.
+- Generator membuat `ServiceProvider.php` dan hanya membuat route/test scaffold jika flag diminta.
+- Aplikasi melakukan auto-register provider module dari `Modules/*/*/ServiceProvider.php`.
+- Generator tidak membuat folder `Domain`, repository, port, event, adapter, atau migration secara otomatis.
+
+## Bukti
+
+```text
+Command: composer dump-autoload
+Hasil: PASS
+Catatan: optimized autoload generated.
+
+Command: php -l app\Console\Commands\MakeModuleCommand.php
+Hasil: PASS
+Catatan: No syntax errors detected.
+
+Command: php artisan test tests/Feature/Console/MakeModuleCommandTest.php
+Hasil: PASS
+Catatan: 3 tests, 13 assertions.
+
+Command: php artisan test
+Hasil: PASS
+Catatan: 29 tests, 76 assertions.
+
+Command: php artisan module:make Platform Identity --with-routes --with-tests --dry-run
+Hasil: PASS
+Catatan: Menampilkan rencana file tanpa membuat file.
+
+Command: php artisan route:list --except-vendor
+Hasil: PASS
+Catatan: 23 route baseline tampil.
+
+Command: php artisan migrate:status
+Hasil: BLOCKED
+Catatan: Migration table not found pada database lokal; migrate tidak dijalankan agar tidak mengubah state database tanpa instruksi eksplisit.
+```

@@ -12,6 +12,7 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Catat gap conformance pada work-item terkait; jangan menutup gap di luar scope tanpa persetujuan user.
 - Setiap work-item modul harus memiliki rencana increment dan checklist per increment sebelum coding dimulai.
 - QA automated wajib mengikuti `docs/QA-AUTOMATION.md`.
+- Untuk perubahan UI/browser, agent wajib mencoba Chrome DevTools MCP dengan urutan akses eksplisit dari `docs/QA-AUTOMATION.md`.
 
 ## Stack Dan Batas Arsitektur
 
@@ -61,11 +62,13 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Cek status git jika repository sudah tersedia.
 - Jangan membuat fitur di luar work-item.
 - Jika menyentuh integrasi lintas modul, baca `docs/MODULE-COMMUNICATION.md`.
+- Untuk modul baru, gunakan `php artisan module:make {Category} {Module}` dan awali dengan `--dry-run` jika struktur file belum pasti.
 
 ## Sesudah Coding
 
 - Jalankan test yang relevan.
 - Jalankan build/typecheck/lint jika tersedia.
+- Untuk UI/browser, jalankan QA via Chrome DevTools MCP atau catat alasan `SKIPPED/BLOCKED` beserta fallback.
 - Jalankan migration/status check jika schema berubah.
 - Verifikasi behavior utama secara manual jika UI atau transaksi berubah.
 - Catat hasil command di work-item atau implementation report.

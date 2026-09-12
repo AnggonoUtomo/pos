@@ -23,6 +23,7 @@ Dokumen ini adalah standar minimum sebelum pekerjaan dianggap selesai.
 - [ ] Pastikan kriteria penerimaan jelas.
 - [ ] Pastikan rencana verifikasi jelas.
 - [ ] Pastikan rencana QA automated mengacu ke `docs/QA-AUTOMATION.md`.
+- [ ] Jika UI/browser tersentuh, pastikan rencana Chrome DevTools MCP QA sudah disebut.
 - [ ] Pastikan modul target dan increment pengerjaan sudah disebut di work-item.
 - [ ] Cek status git jika repository sudah tersedia.
 - [ ] Identifikasi risiko schema, route, permission, FIFO, payment, tax, audit log.
@@ -35,6 +36,7 @@ Dokumen ini adalah standar minimum sebelum pekerjaan dianggap selesai.
 - [ ] Command verifikasi dijalankan dan hasilnya dicatat.
 - [ ] Checklist per increment pada work-item diperbarui.
 - [ ] QA automated relevan sudah PASS atau alasan gagal/belum bisa dijalankan dicatat.
+- [ ] Chrome DevTools MCP QA sudah PASS untuk perubahan UI/browser, atau status `SKIPPED/BLOCKED` dan fallback dicatat.
 - [ ] Build frontend dijalankan jika UI berubah.
 - [ ] Tidak ada transaksi posted yang bisa diedit bebas.
 - [ ] Tidak ada jalur stok minus.

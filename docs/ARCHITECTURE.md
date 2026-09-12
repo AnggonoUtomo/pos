@@ -48,6 +48,27 @@ Makna layer:
 
 Folder kosong tidak diwajibkan. Gunakan layer saat ada kebutuhan nyata.
 
+## Generator Modul
+
+Gunakan generator modul untuk menjaga struktur folder dan namespace konsisten:
+
+```bash
+php artisan module:make Platform Identity
+php artisan module:make Inventory Catalog --with-routes --with-tests
+php artisan module:make Sales POS --with-routes --with-tests --dry-run
+```
+
+Aturan generator:
+
+- Membuat modul pada `Modules/{Category}/{Module}`.
+- Membuat `ServiceProvider.php` sebagai composition root module.
+- Opsi `--with-routes` membuat `Presentation/Routes/web.php`.
+- Opsi `--with-tests` membuat test scaffold di `tests/Feature/Modules` dan `tests/Unit/Modules`.
+- Opsi `--dry-run` wajib dipakai jika ingin melihat rencana file tanpa menulis ke filesystem.
+- Opsi `--force` hanya dipakai jika memang ingin overwrite file generated.
+- Generator tidak membuat `Domain`, repository, port, event, adapter, atau migration tanpa kebutuhan nyata.
+- Provider module pada `Modules/*/*/ServiceProvider.php` diregister otomatis oleh aplikasi.
+
 ## Hexagon Per Modul
 
 Setiap modul diperlakukan sebagai hexagon kecil di dalam modular monolith:
