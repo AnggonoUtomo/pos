@@ -1,4 +1,4 @@
-﻿# WI-0005: Baseline Pengaturan Perusahaan dan Penomoran
+# WI-0005: Baseline Pengaturan Perusahaan dan Penomoran
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membuat company profile, setting pajak dasar, dan document numbering yang aman d
 
 - Category: Platform
 - Module: CompanySettings
-- Namespace/path: `Modules/Platform/CompanySettings`
+- Namespace/path: `app/Modules/Platform/CompanySettings`
 - Jenis pekerjaan: company profile, setting, dan penomoran dokumen
 
 ## Scope

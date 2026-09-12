@@ -1,4 +1,4 @@
-﻿# WI-0013: Laporan Operasional Fase 1
+# WI-0013: Laporan Operasional Fase 1
 
 Status: Draf
 
@@ -17,7 +17,7 @@ Membangun laporan operasional fase 1 untuk penjualan, pembelian, stok, laba, kas
 
 - Category: Reporting
 - Module: OperationalReports
-- Namespace/path: `Modules/Reporting/OperationalReports`
+- Namespace/path: `app/Modules/Reporting/OperationalReports`
 - Jenis pekerjaan: laporan operasional fase 1 berbasis transaksi posted
 
 ## Scope

@@ -34,7 +34,7 @@ class MakeModuleCommandTest extends TestCase
 
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString('DRY RUN', Artisan::output());
-        $this->assertFileDoesNotExist(base_path('Modules/Testing/SampleModule/ServiceProvider.php'));
+        $this->assertFileDoesNotExist(app_path('Modules/Testing/SampleModule/ServiceProvider.php'));
     }
 
     public function test_it_generates_a_minimal_module_scaffold_with_routes_and_tests(): void
@@ -47,14 +47,14 @@ class MakeModuleCommandTest extends TestCase
         ]);
 
         $this->assertSame(0, $exitCode);
-        $this->assertFileExists(base_path('Modules/Testing/SampleModule/ServiceProvider.php'));
-        $this->assertFileExists(base_path('Modules/Testing/SampleModule/Presentation/Routes/web.php'));
+        $this->assertFileExists(app_path('Modules/Testing/SampleModule/ServiceProvider.php'));
+        $this->assertFileExists(app_path('Modules/Testing/SampleModule/Presentation/Routes/web.php'));
         $this->assertFileExists(base_path('tests/Feature/Modules/Testing/SampleModule/SampleModuleScaffoldTest.php'));
         $this->assertFileExists(base_path('tests/Unit/Modules/Testing/SampleModule/.gitkeep'));
 
-        $serviceProvider = File::get(base_path('Modules/Testing/SampleModule/ServiceProvider.php'));
+        $serviceProvider = File::get(app_path('Modules/Testing/SampleModule/ServiceProvider.php'));
 
-        $this->assertStringContainsString('namespace Modules\\Testing\\SampleModule;', $serviceProvider);
+        $this->assertStringContainsString('namespace App\\Modules\\Testing\\SampleModule;', $serviceProvider);
         $this->assertStringContainsString("loadRoutesFrom(__DIR__.'/Presentation/Routes/web.php')", $serviceProvider);
         $this->assertStringNotContainsString('Domain', $serviceProvider);
     }
@@ -77,7 +77,7 @@ class MakeModuleCommandTest extends TestCase
 
     private function cleanupGeneratedFixtures(): void
     {
-        File::deleteDirectory(base_path('Modules/Testing'));
+        File::deleteDirectory(app_path('Modules/Testing'));
         File::deleteDirectory(base_path('tests/Feature/Modules/Testing'));
         File::deleteDirectory(base_path('tests/Unit/Modules/Testing'));
     }

@@ -1,4 +1,4 @@
-﻿# WI-0009: Posting Pembelian dan Hutang
+# WI-0009: Posting Pembelian dan Hutang
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membangun Purchase order/invoice posting yang menambah stok, membuat FIFO layer,
 
 - Category: Purchasing
 - Module: PurchaseOrders
-- Namespace/path: `Modules/Purchasing/PurchaseOrders`
+- Namespace/path: `app/Modules/Purchasing/PurchaseOrders`
 - Jenis pekerjaan: transaksi pembelian, penerimaan, FIFO masuk, hutang finance lite
 
 ## Scope

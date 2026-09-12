@@ -1,4 +1,4 @@
-﻿# WI-0007: Master Supplier Pelanggan dan Sales
+# WI-0007: Master Supplier Pelanggan dan Sales
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membuat master pihak eksternal: supplier, customer, customer level, dan sales.
 
 - Category: Sales
 - Module: Parties
-- Namespace/path: `Modules/Sales/Parties`
+- Namespace/path: `app/Modules/Sales/Parties`
 - Jenis pekerjaan: master customer, supplier, sales person, dan customer level
 
 ## Scope

@@ -1,4 +1,4 @@
-﻿# WI-0006: Katalog Multi Satuan dan Harga Level Pelanggan
+# WI-0006: Katalog Multi Satuan dan Harga Level Pelanggan
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membangun catalog foundation untuk item, satuan, konversi, barcode, customer lev
 
 - Category: Inventory
 - Module: Catalog
-- Namespace/path: `Modules/Inventory/Catalog`
+- Namespace/path: `app/Modules/Inventory/Catalog`
 - Jenis pekerjaan: master barang, multi satuan, barcode, dan harga level pelanggan
 
 ## Scope

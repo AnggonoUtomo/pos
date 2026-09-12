@@ -1,8 +1,8 @@
-﻿# Documentation Standard
+# Documentation Standard
 
 ## Bahasa
 
-- Dokumentasi proyek ditulis dalam Bahasa InSelesaisia.
+- Dokumentasi proyek ditulis dalam Bahasa Indonesia.
 - Istilah teknis umum boleh memakai bahasa Inggris.
 - Nama kode, enum, permission, route, class, dan method mengikuti konvensi teknis bahasa Inggris.
 
@@ -15,10 +15,11 @@ docs/PRD.md                       Product requirements
 docs/ARCHITECTURE.md              Arsitektur dan Boundary modul
 docs/MODULE-COMMUNICATION.md      Aturan komunikasi lintas modul
 docs/DEFINITION-OF-DONE.md        Checklist standar selesai
+docs/modules/                     Dokumentasi per module
 docs/adr/                         Catatan Keputusan Arsitektur
 docs/templates/                   Template dokumen
-docs/work-items/                       Work-item dan registry
-docs/tasks/                            Plan/todo teknis sebelum build
+docs/work-items/                  Work-item dan registry
+docs/tasks/                       Plan/todo teknis sebelum build
 ```
 
 ## ADR
@@ -40,6 +41,19 @@ docs/tasks/                            Plan/todo teknis sebelum build
 - Format nama: `WI-0001-short-Judul.md`.
 - Semua work-item dicatat di `docs/work-items/WORK-ITEM-REGISTRY.md`.
 - Work-item harus punya kriteria penerimaan dan verification checklist sebelum coding.
+
+## Dokumentasi Module
+
+Dokumentasi module disimpan di `docs/modules/{Category}/{Module}/`.
+
+Setiap module yang akan dikerjakan wajib memiliki:
+
+- `README.md`: identitas, tujuan, boundary, public boundary, data, permission, audit, operasi, dan verifikasi utama.
+- `specification.md`: scope, non-scope, contract, data, authorization, audit, dependency, acceptance criteria, dan risiko.
+- `plan.md`: urutan increment, dependency, acceptance, verification, batas berhenti, dan rollback.
+- `tasks.md`: checklist pekerjaan yang diisi sebelum dan sesudah coding.
+
+Work-item tetap menjadi unit eksekusi. Dokumen module menjadi konteks produk/arsitektur yang lebih tahan lama.
 
 ## Bukti
 

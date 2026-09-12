@@ -11,10 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        foreach (glob(base_path('Modules/*/*/ServiceProvider.php')) ?: [] as $providerPath) {
+        foreach (glob(app_path('Modules/*/*/ServiceProvider.php')) ?: [] as $providerPath) {
             $category = basename(dirname(dirname($providerPath)));
             $module = basename(dirname($providerPath));
-            $providerClass = "Modules\\{$category}\\{$module}\\ServiceProvider";
+            $providerClass = "App\\Modules\\{$category}\\{$module}\\ServiceProvider";
 
             if (class_exists($providerClass)) {
                 $this->app->register($providerClass);

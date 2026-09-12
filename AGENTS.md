@@ -1,10 +1,11 @@
-﻿# AGENTS.md
+# AGENTS.md
 
 Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspace `C:\laragon\www\pos`.
 
 ## Prinsip Utama
 
 - Jangan mulai coding sebelum membaca `docs/SPEC.md`, `docs/PRD.md`, `docs/ARCHITECTURE.md`, ADR terkait, dan work-item aktif.
+- Jika pekerjaan menyentuh module, baca juga dokumen terkait di `docs/modules/{Category}/{Module}/`.
 - Kerjakan hanya scope work-item yang disetujui.
 - Jangan mengubah keputusan domain besar tanpa ADR baru atau persetujuan eksplisit.
 - Jika dokumen dan kode bertentangan, hentikan asumsi dan laporkan konflik.
@@ -19,7 +20,7 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Laravel 12, Inertia React, MySQL.
 - shadcn/ui adalah default UI/UX aplikasi.
 - Modular monolith dengan DDD-lite dan hexagonal architecture.
-- Struktur modul: `Modules/{Category}/{Module}`.
+- Struktur modul: `app/Modules/{Category}/{Module}`.
 - Primary key tabel utama: ULID.
 - Naming database dan kode memakai English technical naming; dokumentasi dan UI label memakai Bahasa Indonesia.
 - Auth: Laravel starter kit.
@@ -45,13 +46,14 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 
 1. Pilih work-item dari `docs/work-items/WORK-ITEM-REGISTRY.md`.
 2. Baca dokumen rujukan work-item.
-3. Informasikan modul target yang akan dikerjakan.
-4. Isi checklist sebelum coding di file work-item.
-5. Pastikan rencana increment dan QA automated sudah tertulis.
-6. Implementasi per increment kecil dan terverifikasi.
-7. Jalankan checklist sesudah coding per increment.
-8. Catat command, hasil, dan bukti verifikasi.
-9. Update status increment dan status work-item.
+3. Baca atau buat dokumen module di `docs/modules/{Category}/{Module}/` bila pekerjaan menyentuh module.
+4. Informasikan modul target yang akan dikerjakan.
+5. Isi checklist sebelum coding di file work-item dan `tasks.md` module.
+6. Pastikan rencana increment dan QA automated sudah tertulis.
+7. Implementasi per increment kecil dan terverifikasi.
+8. Jalankan checklist sesudah coding per increment.
+9. Catat command, hasil, dan bukti verifikasi.
+10. Update status increment, status work-item, dan `tasks.md` module.
 
 ## Sebelum Coding
 

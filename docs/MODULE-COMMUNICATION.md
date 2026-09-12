@@ -1,4 +1,4 @@
-﻿# Komunikasi Lintas Modul
+# Komunikasi Lintas Modul
 
 Status: Draf
 
@@ -19,7 +19,7 @@ Dokumen ini menjelaskan cara modul berkomunikasi di dalam modular monolith POS. 
 Setiap modul yang dipakai modul lain dapat mengekspos folder berikut:
 
 ```text
-Modules/{Category}/{Module}/
+app/Modules/{Category}/{Module}/
   Application/
     Contracts/
     DTOs/
@@ -48,10 +48,10 @@ Contoh kasus:
 Contoh bentuk contract:
 
 ```php
-namespace Modules\Inventory\Inventory\Application\Contracts;
+namespace App\Modules\Inventory\Inventory\Application\Contracts;
 
-use Modules\Inventory\Inventory\Application\DTOs\ConsumeStockData;
-use Modules\Inventory\Inventory\Application\DTOs\ConsumedStockResult;
+use App\Modules\Inventory\Inventory\Application\DTOs\ConsumeStockData;
+use App\Modules\Inventory\Inventory\Application\DTOs\ConsumedStockResult;
 
 interface ConsumesStock
 {
@@ -74,7 +74,7 @@ DTO dipakai untuk menjaga boundary stabil dan mencegah bocornya internal model.
 Contoh:
 
 ```php
-namespace Modules\Inventory\Inventory\Application\DTOs;
+namespace App\Modules\Inventory\Inventory\Application\DTOs;
 
 final readonly class ConsumeStockData
 {
@@ -127,7 +127,7 @@ Integration event adalah event publik lintas modul. Ini adalah kontrak observabl
 Contoh:
 
 ```php
-namespace Modules\Commerce\Sales\Application\Events;
+namespace App\Modules\Commerce\Sales\Application\Events;
 
 final readonly class SalesInvoicePosted
 {

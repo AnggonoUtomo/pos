@@ -1,4 +1,4 @@
-﻿# Spesifikasi: POS Modular ERP-Lite
+# Spesifikasi: POS Modular ERP-Lite
 
 Status: Draf
 
@@ -42,29 +42,30 @@ php artisan test
 Gunakan folder modul bergaya Laravel dengan namespace kategori:
 
 ```text
-Modules/
-  Platform/
-    Identity/
-    Company/
+app/
+  Modules/
+    Platform/
+      Identity/
+      Company/
 
-  Commerce/
-    Catalog/
-    Parties/
-    Sales/
-    Purchasing/
-    Payments/
+    Commerce/
+      Catalog/
+      Parties/
+      Sales/
+      Purchasing/
+      Payments/
 
-  Inventory/
     Inventory/
+      Inventory/
 
-  Reporting/
-    Reports/
+    Reporting/
+      Reports/
 ```
 
 Konvensi penamaan:
 
 ```text
-PHP namespace: Modules\Commerce\Sales
+PHP namespace: App\Modules\Commerce\Sales
 Route name: commerce.sales.invoices.index
 Permission: commerce.sales.invoices.create
 Event: commerce.sales.invoice_posted

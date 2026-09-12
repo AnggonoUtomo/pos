@@ -1,4 +1,4 @@
-﻿# WI-0012: Transfer Gudang dan Stok Opname
+# WI-0012: Transfer Gudang dan Stok Opname
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membangun transfer antar gudang, item masuk/keluar, dan stok opname dasar.
 
 - Category: Inventory
 - Module: WarehouseOperations
-- Namespace/path: `Modules/Inventory/WarehouseOperations`
+- Namespace/path: `app/Modules/Inventory/WarehouseOperations`
 - Jenis pekerjaan: transfer gudang, stock opname, dan adjustment audited
 
 ## Scope

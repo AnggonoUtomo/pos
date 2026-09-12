@@ -1,4 +1,4 @@
-﻿# WI-0004: Baseline Identitas dan Akses
+# WI-0004: Baseline Identitas dan Akses
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Menyiapkan auth internal, Spatie Permission, public registration off, role/permi
 
 - Category: Platform
 - Module: Identity
-- Namespace/path: `Modules/Platform/Identity`
+- Namespace/path: `app/Modules/Platform/Identity`
 - Jenis pekerjaan: auth internal, role, permission, dan audit access
 
 ## Scope

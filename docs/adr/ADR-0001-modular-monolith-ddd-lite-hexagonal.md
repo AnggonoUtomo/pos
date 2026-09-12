@@ -1,4 +1,4 @@
-﻿# ADR-0001: Modular Monolith Dengan DDD-Lite dan Hexagonal Architecture
+# ADR-0001: Modular Monolith Dengan DDD-Lite dan Hexagonal Architecture
 
 ## Status
 
@@ -19,7 +19,7 @@ Sistem membutuhkan Boundary yang jelas, tetapi belum membutuhkan kompleksitas mi
 Gunakan modular monolith dengan struktur:
 
 ```text
-Modules/{Category}/{Module}
+app/Modules/{Category}/{Module}
 ```
 
 Kategori awal:

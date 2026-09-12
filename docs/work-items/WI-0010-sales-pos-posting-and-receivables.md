@@ -1,4 +1,4 @@
-﻿# WI-0010: Posting Penjualan POS dan Piutang
+# WI-0010: Posting Penjualan POS dan Piutang
 
 Status: Draf
 
@@ -17,7 +17,7 @@ Membangun sales/POS posting yang memilih gudang, memakai customer-level pricing,
 
 - Category: Sales
 - Module: POS
-- Namespace/path: `Modules/Sales/POS`
+- Namespace/path: `app/Modules/Sales/POS`
 - Jenis pekerjaan: POS fullscreen, sales posting, FIFO consume, payment, dan receivable
 
 ## Scope

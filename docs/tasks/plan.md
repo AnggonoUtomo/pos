@@ -1,4 +1,4 @@
-﻿# Rencana Implementasi: POS Modular ERP-Lite
+# Rencana Implementasi: POS Modular ERP-Lite
 
 Status: Draf sampai source Laravel dicopy dan diaudit.
 
@@ -8,7 +8,7 @@ Implementasi dilakukan bertahap berdasarkan work-item. Urutan dimulai dari audit
 
 ## Keputusan Arsitektur
 
-- Modular monolith dengan `Modules/{Category}/{Module}`.
+- Modular monolith dengan `app/Modules/{Category}/{Module}`.
 - ULID untuk primary key.
 - FIFO per item dan gudang.
 - Stok tidak boleh minus.

@@ -1,4 +1,4 @@
-﻿# WI-0008: Fondasi Persediaan FIFO
+# WI-0008: Fondasi Persediaan FIFO
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membangun fondasi inventory: warehouse, stock balance, stock movement, FIFO laye
 
 - Category: Inventory
 - Module: Stock
-- Namespace/path: `Modules/Inventory/Stock`
+- Namespace/path: `app/Modules/Inventory/Stock`
 - Jenis pekerjaan: warehouse, balance, movement, FIFO layer, dan stock card
 
 ## Scope

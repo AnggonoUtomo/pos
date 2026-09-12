@@ -29,7 +29,7 @@ class MakeModuleCommand extends Command
             return self::FAILURE;
         }
 
-        $modulePath = base_path("Modules/{$category}/{$module}");
+        $modulePath = app_path("Modules/{$category}/{$module}");
         $files = $this->plannedFiles($category, $module);
 
         if (File::exists($modulePath) && ! $this->option('force') && ! $this->option('dry-run')) {
@@ -72,11 +72,11 @@ class MakeModuleCommand extends Command
     private function plannedFiles(string $category, string $module): array
     {
         $files = [
-            base_path("Modules/{$category}/{$module}/ServiceProvider.php") => $this->serviceProviderStub($category, $module),
+            app_path("Modules/{$category}/{$module}/ServiceProvider.php") => $this->serviceProviderStub($category, $module),
         ];
 
         if ($this->option('with-routes')) {
-            $files[base_path("Modules/{$category}/{$module}/Presentation/Routes/web.php")] = $this->webRouteStub();
+            $files[app_path("Modules/{$category}/{$module}/Presentation/Routes/web.php")] = $this->webRouteStub();
         }
 
         if ($this->option('with-tests')) {
@@ -103,7 +103,7 @@ class MakeModuleCommand extends Command
         return <<<PHP
 <?php
 
-namespace Modules\\{$category}\\{$module};
+namespace App\\Modules\\{$category}\\{$module};
 
 use Illuminate\\Support\\ServiceProvider as BaseServiceProvider;
 
@@ -156,7 +156,7 @@ class {$module}ScaffoldTest extends TestCase
 {
     public function test_module_scaffold_exists(): void
     {
-        \$this->assertFileExists(base_path('Modules/{$category}/{$module}/ServiceProvider.php'));
+        \$this->assertFileExists(app_path('Modules/{$category}/{$module}/ServiceProvider.php'));
     }
 }
 
@@ -165,6 +165,8 @@ PHP;
 
     private function relativePath(string $path): string
     {
-        return str_replace(base_path().DIRECTORY_SEPARATOR, '', $path);
+        $relativePath = str_replace(base_path().DIRECTORY_SEPARATOR, '', $path);
+
+        return str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
     }
 }

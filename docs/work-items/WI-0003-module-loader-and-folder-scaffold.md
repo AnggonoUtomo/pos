@@ -1,4 +1,4 @@
-﻿# WI-0003: Scaffold Folder dan Loader Modul
+# WI-0003: Scaffold Folder dan Loader Modul
 
 Status: Sedang Dikerjakan
 
@@ -11,19 +11,23 @@ Menyiapkan fondasi folder modul dan mekanisme loading route/migration/provider t
 - `docs/ARCHITECTURE.md`
 - `docs/adr/ADR-0001-modular-monolith-ddd-lite-hexagonal.md`
 - `docs/QA-AUTOMATION.md`
+- `docs/modules/Platform/ModuleRuntime/README.md`
+- `docs/modules/Platform/ModuleRuntime/specification.md`
+- `docs/modules/Platform/ModuleRuntime/plan.md`
+- `docs/modules/Platform/ModuleRuntime/tasks.md`
 
 ## Modul Target
 
 - Category: Platform
 - Module: ModuleRuntime
-- Namespace/path: `Modules/{Category}/{Module}`, loader module, provider module
+- Namespace/path: `app/Modules/{Category}/{Module}`, loader module, provider module
 - Jenis pekerjaan: scaffold arsitektur module runtime
 
 ## Scope
 
 Masuk scope:
 
-- Struktur `Modules/{Category}/{Module}`.
+- Struktur `app/Modules/{Category}/{Module}`.
 - Module service provider atau loader sesuai pola Laravel yang disepakati.
 - Loading route modul.
 - Loading migration modul.
@@ -71,7 +75,7 @@ Di luar scope:
 
 - `php artisan module:make {Category} {Module}` ditambahkan sebagai generator minimal.
 - Generator membuat `ServiceProvider.php` dan hanya membuat route/test scaffold jika flag diminta.
-- Aplikasi melakukan auto-register provider module dari `Modules/*/*/ServiceProvider.php`.
+- Aplikasi melakukan auto-register provider module dari `app/Modules/*/*/ServiceProvider.php`.
 - Generator tidak membuat folder `Domain`, repository, port, event, adapter, atau migration secara otomatis.
 
 ## Bukti

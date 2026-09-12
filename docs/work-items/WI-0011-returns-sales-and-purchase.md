@@ -1,4 +1,4 @@
-﻿# WI-0011: Retur Penjualan dan Pembelian
+# WI-0011: Retur Penjualan dan Pembelian
 
 Status: Draf
 
@@ -16,7 +16,7 @@ Membangun retur penjualan dan retur pembelian berdasarkan transaksi asal.
 
 - Category: Sales dan Purchasing
 - Module: Returns
-- Namespace/path: `Modules/Sales/Returns`, `Modules/Purchasing/Returns`
+- Namespace/path: `app/Modules/Sales/Returns`, `app/Modules/Purchasing/Returns`
 - Jenis pekerjaan: retur penjualan/pembelian berbasis transaksi asal
 
 ## Scope
