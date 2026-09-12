@@ -20,15 +20,15 @@ Implementasi dilakukan bertahap berdasarkan work-item. Urutan dimulai dari audit
 
 ### Fase 0: Baseline
 
-- [ ] WI-0001: Audit Baseline Source Laravel dan Tooling
-- [ ] WI-0002: Review Baseline Dokumentasi dan Arsitektur
+- [x] WI-0001: Audit Baseline Source Laravel dan Tooling
+- [x] WI-0002: Review Baseline Dokumentasi dan Arsitektur
 
 Checkpoint:
 
-- [ ] Command sudah terverifikasi.
-- [ ] Dokumen sesuai dengan source.
-- [ ] Belum ada coding fitur.
-- [ ] Work-item sudah memakai format modul target, increment, checklist, dan QA automated.
+- [x] Command sudah terverifikasi.
+- [x] Dokumen sesuai dengan source.
+- [x] Belum ada coding fitur.
+- [x] Work-item sudah memakai format modul target, increment, checklist, dan QA automated.
 
 ### Fase 1: Fondasi
 

@@ -41,7 +41,7 @@ Di luar scope:
 
 ## Checklist Sebelum Coding
 
-- [ ] WI-0001 dan WI-0002 selesai.
+- [x] WI-0001 dan WI-0002 selesai.
 - [ ] Pola autoload composer dipahami.
 - [ ] Risiko route/migration discovery dicatat.
 
