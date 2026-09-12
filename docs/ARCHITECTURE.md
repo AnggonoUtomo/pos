@@ -122,6 +122,34 @@ Domain boleh belum ada pada capability yang benar-benar CRUD sederhana dan belum
 - Application boleh memakai Domain contracts dan DTO.
 - Domain tidak boleh bergantung pada Laravel request, controller, Inertia, atau Eloquent detail.
 - Infrastructure mengimplementasikan kontrak dari Domain/Application.
+
+## Authorization Controller
+
+Controller module yang membutuhkan permission memakai middleware Laravel pada
+adapter Presentation. Pola default:
+
+```php
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+final class EmployeeController implements HasMiddleware
+{
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:human_resource.view', only: ['index']),
+            new Middleware('can:human_resource.manage', only: ['store', 'update', 'activate', 'deactivate', 'storeUnitAssignment']),
+        ];
+    }
+}
+```
+
+Aturan:
+
+- Permission check backend adalah authority.
+- Controller boleh mendeklarasikan middleware permission per action.
+- Mutation tetap memanggil Application action/use case; middleware tidak menggantikan rule bisnis.
+- Frontend guard tidak boleh menjadi satu-satunya pengaman aksi.
 - Modul lain berkomunikasi lewat public application service, event, atau read model yang disepakati.
 
 Arah dependency:
@@ -331,7 +359,7 @@ Aturan folder:
 - `pages/{category}/{feature}/columns.tsx`: definisi kolom tabel jika kompleks.
 - `pages/{category}/{feature}/filters.ts`: helper filter/query lokal jika dibutuhkan.
 - `pages/{category}/{feature}/schema.ts`: schema validasi client jika dibutuhkan.
-- `hooks/`: hook lintas fitur yang benar-benar umum.
+- `hooks/`: hook lintas fitur yang benar-benar umum, termasuk `use-permission.ts`.
 - `lib/`: helper non-React, formatter, permission helper, dan utilitas route.
 
 Struktur khusus POS boleh lebih dalam karena workflow kasir lebih kompleks:
@@ -369,6 +397,18 @@ Prinsip:
 - Business rule berat tetap di backend/application service, bukan di page React.
 - POS boleh punya hook lokal untuk cart, hotkeys, dan payment UI, tetapi hasil posting tetap mengikuti kontrak backend.
 - Jangan membuat struktur frontend flat yang mencampur semua komponen fitur di satu folder global.
+
+Hook permission frontend standar ditempatkan di `resources/js/hooks/use-permission.ts`
+dan membaca `auth` dari `usePage<SharedData>().props`. Hook ini minimal menyediakan
+`can(permission)`, `canAny(permissionList)`, `hasRole(role)`, `isSuperAdmin`,
+`roles`, `permissions`, dan `user`.
+
+Aturan:
+
+- `can()` dan `canAny()` boleh menganggap `auth.super === true` sebagai bypass UI.
+- `hasRole()` membaca role eksplisit dan tidak otomatis menganggap super admin memiliki semua role.
+- Hook permission dipakai untuk UX seperti menu, tombol, dan empty action state.
+- Backend tetap wajib mengulang permission check melalui middleware/policy.
 
 ## Standar UI
 

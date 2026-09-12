@@ -372,6 +372,31 @@ inventory.warehouse_operations.transfers.create
 reporting.operational_reports.sales.view
 ```
 
+Controller Presentation wajib memakai authorization middleware atau policy untuk
+aksi yang membutuhkan permission. Untuk controller Laravel modern, pola yang
+disarankan adalah `HasMiddleware` dengan `can:{permission}`:
+
+```php
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+final class ExampleController implements HasMiddleware
+{
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:module.resource.view', only: ['index']),
+            new Middleware('can:module.resource.manage', only: ['store', 'update', 'activate', 'deactivate']),
+        ];
+    }
+}
+```
+
+Frontend boleh memakai hook `usePermission()` di `resources/js/hooks` untuk
+menyembunyikan tombol, menu, atau aksi UI berdasarkan `auth.permissions`,
+`auth.roles`, dan `auth.super`. Hook frontend hanya guard UX; backend permission
+tetap authority.
+
 ## Audit Trail
 
 Gunakan Spatie Laravel Activitylog sejak fase 1.

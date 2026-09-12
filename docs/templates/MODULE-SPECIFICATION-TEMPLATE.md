@@ -54,6 +54,8 @@ Table kandidat:
 
 - Permission:
   - ...
+- Backend guard:
+  - Controller Presentation memakai `HasMiddleware` dan `new Middleware('can:{permission}', only: [...])` atau policy yang eksplisit.
 - Audit:
   - ...
 
@@ -62,6 +64,7 @@ Table kandidat:
 - Page canonical:
   - `resources/js/pages/{category}/{module}/...`
 - Komponen business-specific ditempatkan dekat page module.
+- UI guard memakai `resources/js/hooks/use-permission.ts` bila page menampilkan aksi berbasis permission.
 - Backend permission tetap menjadi authority.
 
 ## Dependency

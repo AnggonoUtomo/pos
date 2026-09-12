@@ -46,6 +46,10 @@ Candidate public boundary:
 
 - Permission:
   - ...
+- Backend permission guard:
+  - ...
+- Frontend permission guard:
+  - `resources/js/hooks/use-permission.ts` untuk UX guard bila UI module membutuhkan kondisi permission.
 - Audit mutation:
   - ...
 

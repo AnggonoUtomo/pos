@@ -87,6 +87,8 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Gunakan `resources/js/components/shared` hanya untuk komponen lintas fitur yang benar-benar umum dan stabil.
 - Gunakan Form Request atau boundary validation untuk input user.
 - Gunakan service/application action untuk use case transaksi.
+- Controller module yang butuh permission memakai `HasMiddleware` dan middleware `can:{permission}` per action, atau policy eksplisit.
+- Frontend permission guard memakai hook `resources/js/hooks/use-permission.ts`; guard ini hanya untuk UX, backend tetap authority.
 - Komunikasi lintas modul harus lewat `Application/Contracts`, DTO, event publik, atau read model yang disepakati.
 - Domain event atau integration event hanya dibuat jika memang memiliki consumer.
 - `ServiceProvider.php` module adalah composition root untuk binding contract-adapter, route/migration, policy/listener, dan tidak boleh berisi business logic.

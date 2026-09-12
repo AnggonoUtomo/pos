@@ -17,6 +17,9 @@ Aplikasi POS adalah sistem internal. User dibuat oleh admin, bukan registrasi pu
 - Gunakan auth standar Laravel starter kit.
 - Matikan public registration.
 - Gunakan Spatie Laravel Permission untuk role dan permission.
+- Gunakan middleware/policy backend sebagai authority authorization.
+- Untuk controller module, pola default adalah `HasMiddleware` dengan middleware `can:{permission}` per action.
+- Frontend memakai hook `resources/js/hooks/use-permission.ts` untuk UX guard berbasis `auth.permissions`, `auth.roles`, dan `auth.super`.
 - Gunakan Spatie Laravel Activitylog untuk audit trail.
 - Simpan actor columns eksplisit pada transaksi: `created_by`, `posted_by`, `voided_by`.
 
@@ -43,4 +46,5 @@ Aplikasi POS adalah sistem internal. User dibuat oleh admin, bukan registrasi pu
 ## Konsekuensi
 
 - Identity module membungkus manajemen user/role/permission, tidak perlu melawan struktur auth bawaan.
+- UI dapat menyembunyikan aksi yang tidak boleh diakses user, tetapi setiap aksi tetap wajib divalidasi di backend.
 - Activity log wajib untuk aksi penting, tetapi bukan sumber saldo stok atau finance.
