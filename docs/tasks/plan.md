@@ -1,6 +1,6 @@
 # Rencana Implementasi: POS Modular ERP-Lite
 
-Status: Draf sampai source Laravel dicopy dan diaudit.
+Status: Draf aktif.
 
 ## Ringkasan
 

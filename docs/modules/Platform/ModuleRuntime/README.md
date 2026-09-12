@@ -6,7 +6,7 @@
 - Module: `ModuleRuntime`
 - Source: `app/Console/Commands`, `app/Providers/AppServiceProvider.php`, `bootstrap/app.php`
 - Frontend: tidak ada
-- Status: Draf berjalan
+- Status: Sebagian selesai; validasi route/migration module nyata menunggu modul domain pertama.
 
 ## Tujuan
 

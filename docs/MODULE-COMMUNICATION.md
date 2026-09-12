@@ -48,10 +48,10 @@ Contoh kasus:
 Contoh bentuk contract:
 
 ```php
-namespace App\Modules\Inventory\Inventory\Application\Contracts;
+namespace App\Modules\Inventory\Stock\Application\Contracts;
 
-use App\Modules\Inventory\Inventory\Application\DTOs\ConsumeStockData;
-use App\Modules\Inventory\Inventory\Application\DTOs\ConsumedStockResult;
+use App\Modules\Inventory\Stock\Application\DTOs\ConsumeStockData;
+use App\Modules\Inventory\Stock\Application\DTOs\ConsumedStockResult;
 
 interface ConsumesStock
 {
@@ -74,7 +74,7 @@ DTO dipakai untuk menjaga boundary stabil dan mencegah bocornya internal model.
 Contoh:
 
 ```php
-namespace App\Modules\Inventory\Inventory\Application\DTOs;
+namespace App\Modules\Inventory\Stock\Application\DTOs;
 
 final readonly class ConsumeStockData
 {
@@ -127,7 +127,7 @@ Integration event adalah event publik lintas modul. Ini adalah kontrak observabl
 Contoh:
 
 ```php
-namespace App\Modules\Commerce\Sales\Application\Events;
+namespace App\Modules\Sales\POS\Application\Events;
 
 final readonly class SalesInvoicePosted
 {
@@ -181,7 +181,7 @@ Tidak boleh:
 ### Sales Posting
 
 ```text
-Commerce.Sales
+Sales.POS
   -> Pricing snapshot dari Catalog/Parties
   -> Inventory ConsumesStock contract
   -> Payments RecordSalesPayment contract
@@ -191,7 +191,7 @@ Commerce.Sales
 ### Purchase Posting
 
 ```text
-Commerce.Purchasing
+Purchasing.PurchaseOrders
   -> Inventory ReceivesStock contract
   -> Payments RecordPurchasePayment contract
   -> publish PurchaseInvoicePosted integration event jika ada consumer
@@ -200,7 +200,7 @@ Commerce.Purchasing
 ### Sales Return
 
 ```text
-Commerce.Sales
+Sales.Returns
   -> validasi transaksi asal
   -> Inventory RestoreReturnedStock contract
   -> Payments RecordRefundOrReceivableAdjustment contract

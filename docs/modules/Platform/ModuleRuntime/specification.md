@@ -2,8 +2,9 @@
 
 ## Status
 
-Draf berjalan. Generator module minimal sudah tersedia dan terverifikasi. Loader
-provider module dasar sudah tersedia melalui scan `app/Modules/*/*/ServiceProvider.php`.
+Generator module minimal sudah tersedia dan terverifikasi. Loader provider module
+dasar sudah tersedia melalui scan `app/Modules/*/*/ServiceProvider.php`.
+Validasi route/migration module nyata dilakukan saat modul domain pertama dibuat.
 
 ## Tujuan dan Scope
 
@@ -110,5 +111,4 @@ Tidak ada UI.
 ## Risiko Terbuka
 
 - Auto-register provider via filesystem scan cukup untuk fase awal, tetapi bisa perlu registry/cache bila jumlah module besar.
-- Migration status lokal belum diverifikasi karena database lokal belum memiliki migration table.
 - Generator belum memiliki output JSON; bila CI membutuhkan machine-readable output, tambahkan pada increment terpisah.

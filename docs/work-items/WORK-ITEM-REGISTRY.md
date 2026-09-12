@@ -1,6 +1,6 @@
 ﻿# Daftar Work-Item
 
-Status awal: Draf. Work-item ini menjadi backlog implementasi setelah source Laravel 12 Inertia React fresh masuk ke workspace.
+Status awal: Draf. Work-item ini menjadi backlog implementasi POS modular.
 
 ## Legenda Status
 
@@ -16,7 +16,7 @@ Status awal: Draf. Work-item ini menjadi backlog implementasi setelah source Lar
 | --- | --- | --- | --- | --- |
 | WI-0001 | Audit Baseline Source Laravel dan Tooling | Draf | Tidak ada | `docs/work-items/WI-0001-baseline-laravel-source-and-tooling-audit.md` |
 | WI-0002 | Review Baseline Dokumentasi dan Arsitektur | Draf | WI-0001 | `docs/work-items/WI-0002-documentation-and-architecture-baseline-review.md` |
-| WI-0003 | Scaffold Folder dan Loader Modul | Draf | WI-0002 | `docs/work-items/WI-0003-module-loader-and-folder-scaffold.md` |
+| WI-0003 | Scaffold Folder dan Loader Modul | Sedang Dikerjakan | WI-0002 | `docs/work-items/WI-0003-module-loader-and-folder-scaffold.md` |
 | WI-0004 | Baseline Identitas dan Akses | Draf | WI-0003 | `docs/work-items/WI-0004-identity-access-baseline.md` |
 | WI-0005 | Baseline Pengaturan Perusahaan dan Penomoran | Draf | WI-0004 | `docs/work-items/WI-0005-company-settings-and-numbering-baseline.md` |
 | WI-0006 | Katalog Multi Satuan dan Harga Level Pelanggan | Draf | WI-0005 | `docs/work-items/WI-0006-catalog-multi-unit-and-customer-level-pricing.md` |

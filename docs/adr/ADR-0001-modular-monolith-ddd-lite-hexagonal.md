@@ -25,8 +25,10 @@ app/Modules/{Category}/{Module}
 Kategori awal:
 
 - `Platform`
-- `Commerce`
 - `Inventory`
+- `Sales`
+- `Purchasing`
+- `Finance`
 - `Reporting`
 
 Gunakan DDD-lite dan hexagonal architecture secara pragmatis. Modul boleh memiliki `Application`, `Domain`, `Infrastructure`, dan `Presentation`, tetapi folder kosong tidak dipaksakan.

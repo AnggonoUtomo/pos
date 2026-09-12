@@ -188,7 +188,7 @@ Rule penting:
 - `left_on` tidak diekspos ke consumer lookup;
 - `notes`, audit metadata, dan data sensitif tidak masuk DTO lookup;
 - implementation harus berada di public boundary
-  `Application/Contracts`/`Application/DTO`, bukan memakai
+  `Application/Contracts`/`Application/DTOs`, bukan memakai
   `Infrastructure/Models` lintas module.
 
 Candidate specialization:

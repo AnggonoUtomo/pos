@@ -59,5 +59,5 @@ Di luar scope:
 ## Verifikasi
 
 - [ ] Feature test sales return partial/full.
-- [ ] Feature test purchase return insufficient stock Ditolak.
+- [ ] Feature test purchase return insufficient stock ditolak.
 - [ ] Feature test receivable/payable adjustment.

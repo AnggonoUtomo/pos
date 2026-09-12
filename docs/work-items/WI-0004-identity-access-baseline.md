@@ -51,7 +51,7 @@ Di luar scope:
 ## Kriteria Penerimaan
 
 - [ ] Public registration tidak bisa diakses.
-- [ ] Admin-created user fRendah tersedia atau direncanakan jelas.
+- [ ] Flow admin-created user tersedia atau direncanakan jelas.
 - [ ] Role/permission dasar berjalan.
 - [ ] Permission middleware/policy baseline tersedia.
 - [ ] Activity log mencatat perubahan role/permission penting.

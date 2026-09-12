@@ -13,20 +13,27 @@ app/
   Modules/
     Platform/
       Identity/
-      Company/
-
-    Commerce/
-      Catalog/
-      Parties/
-      Sales/
-      Purchasing/
-      Payments/
+      CompanySettings/
 
     Inventory/
-      Inventory/
+      Catalog/
+      Stock/
+      WarehouseOperations/
+
+    Sales/
+      Parties/
+      POS/
+      Returns/
+
+    Purchasing/
+      PurchaseOrders/
+      Returns/
+
+    Finance/
+      Payments/
 
     Reporting/
-      Reports/
+      OperationalReports/
 ```
 
 ## Layer Modul
@@ -326,7 +333,7 @@ Aturan folder:
 Struktur khusus POS boleh lebih dalam karena workflow kasir lebih kompleks:
 
 ```text
-resources/js/pages/commerce/sales/pos/
+resources/js/pages/sales/pos/
   components/
     cart/
       cart-panel.tsx

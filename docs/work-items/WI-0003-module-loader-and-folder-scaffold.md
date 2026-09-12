@@ -49,27 +49,27 @@ Di luar scope:
 
 | Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
 | --- | --- | --- | --- | --- | --- |
-| INC-01 | Struktur folder dan autoload module | - [ ] Struktur namespace disetujui | - [ ] Folder canonical tersedia<br>- [ ] Autoload berjalan | `composer dump-autoload` | Draf |
-| INC-02 | Loader route dan migration module | - [ ] Pola Laravel provider dibaca | - [ ] Route/migration module terload | `php artisan route:list`, `php artisan migrate:status` | Draf |
-| INC-03 | Dokumentasi convention module | - [ ] Struktur final dicek | - [ ] Panduan membuat module tersedia | `git diff --check` | Draf |
+| INC-01 | Struktur folder dan autoload module | - [x] Struktur namespace disetujui | - [x] Folder canonical tersedia<br>- [x] Autoload berjalan | `composer dump-autoload` | Selesai |
+| INC-02 | Loader route dan migration module | - [x] Pola Laravel provider dibaca | - [x] Loader provider dasar tersedia<br>- [ ] Route/migration module nyata tervalidasi | `php artisan route:list`, `php artisan migrate:status` | Sebagian Selesai |
+| INC-03 | Dokumentasi convention module | - [x] Struktur final dicek | - [x] Panduan membuat module tersedia | `git diff --check` | Selesai |
 | INC-04 | Generator modul minimal | - [x] Guardrail generator disepakati<br>- [x] Tidak membuat Domain/port/event spekulatif | - [x] `module:make` tersedia<br>- [x] `--dry-run`, `--with-routes`, `--with-tests`, dan overwrite guard berjalan | `php artisan test tests/Feature/Console/MakeModuleCommandTest.php` | Selesai |
 
 ## Kriteria Penerimaan
 
-- [ ] Folder modul awal tersedia.
-- [ ] Route modul dapat diload.
-- [ ] Migration modul dapat diload.
-- [ ] Autoload namespace bekerja.
-- [ ] Binding contract-adapter, route, migration, policy/listener diarahkan melalui ServiceProvider module.
-- [ ] ServiceProvider tidak berisi business logic.
-- [ ] Dokumentasi module convention tersedia.
+- [x] Folder modul awal tersedia.
+- [ ] Route modul nyata dapat diload saat modul domain pertama dibuat.
+- [ ] Migration modul nyata dapat diload saat modul domain pertama dibuat.
+- [x] Autoload namespace bekerja.
+- [x] Binding contract-adapter, route, migration, policy/listener diarahkan melalui ServiceProvider module.
+- [x] ServiceProvider tidak berisi business logic.
+- [x] Dokumentasi module convention tersedia.
 
 ## Verifikasi
 
-- [ ] `composer dump-autoload`
-- [ ] `php artisan route:list`
-- [ ] `php artisan migrate:status`
-- [ ] `php artisan test` jika tersedia
+- [x] `composer dump-autoload`
+- [x] `php artisan route:list`
+- [x] `php artisan migrate:status`
+- [x] `php artisan test`
 
 ## Catatan Implementasi
 
@@ -106,6 +106,6 @@ Hasil: PASS
 Catatan: 23 route baseline tampil.
 
 Command: php artisan migrate:status
-Hasil: BLOCKED
-Catatan: Migration table not found pada database lokal; migrate tidak dijalankan agar tidak mengubah state database tanpa instruksi eksplisit.
+Hasil: PASS
+Catatan: Migration baseline aplikasi tampil.
 ```

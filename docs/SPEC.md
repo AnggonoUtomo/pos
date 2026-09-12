@@ -22,9 +22,7 @@ Arah produk terinspirasi dari workflow iPos-like: master data, pembelian, penjua
 
 ## Command
 
-Command final akan diverifikasi setelah source Laravel 12 Inertia React fresh dicopy ke workspace ini.
-
-Command awal yang diharapkan:
+Command baseline:
 
 ```bash
 composer install
@@ -46,29 +44,36 @@ app/
   Modules/
     Platform/
       Identity/
-      Company/
-
-    Commerce/
-      Catalog/
-      Parties/
-      Sales/
-      Purchasing/
-      Payments/
+      CompanySettings/
 
     Inventory/
-      Inventory/
+      Catalog/
+      Stock/
+      WarehouseOperations/
+
+    Sales/
+      Parties/
+      POS/
+      Returns/
+
+    Purchasing/
+      PurchaseOrders/
+      Returns/
+
+    Finance/
+      Payments/
 
     Reporting/
-      Reports/
+      OperationalReports/
 ```
 
 Konvensi penamaan:
 
 ```text
-PHP namespace: App\Modules\Commerce\Sales
-Route name: commerce.sales.invoices.index
-Permission: commerce.sales.invoices.create
-Event: commerce.sales.invoice_posted
+PHP namespace: App\Modules\Sales\POS
+Route name: sales.pos.invoices.index
+Permission: sales.pos.invoices.create
+Event: sales.pos.invoice_posted
 ```
 
 Setiap modul boleh memakai struktur DDD-lite hexagonal berikut:
@@ -359,12 +364,12 @@ Permission memakai dot notation:
 ```text
 platform.identity.users.view
 platform.identity.users.create
-commerce.sales.invoices.create
-commerce.sales.invoices.post
-commerce.sales.returns.create
-commerce.purchasing.invoices.post
-inventory.inventory.transfers.create
-reports.reports.sales.view
+sales.pos.invoices.create
+sales.pos.invoices.post
+sales.returns.create
+purchasing.purchase_orders.invoices.post
+inventory.warehouse_operations.transfers.create
+reporting.operational_reports.sales.view
 ```
 
 ## Audit Trail
@@ -455,7 +460,7 @@ Esc Tutup modal/batalkan dialog aktif
 
 ## Strategi Testing
 
-Strategi testing final akan disesuaikan setelah source Laravel tersedia.
+Strategi testing mengikuti `docs/QA-AUTOMATION.md` dan work-item aktif.
 
 Level yang diharapkan:
 

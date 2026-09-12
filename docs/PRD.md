@@ -30,7 +30,7 @@ Masuk scope:
 
 - Auth internal tanpa public registration.
 - Role dan permission.
-- Company/settings dasar.
+- Company settings dasar.
 - Master item, satuan, konversi, kategori, merek, barcode.
 - Customer, supplier, sales, customer level.
 - Multi gudang.
