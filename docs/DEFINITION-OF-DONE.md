@@ -25,6 +25,7 @@ Dokumen ini adalah standar minimum sebelum pekerjaan dianggap selesai.
 - [ ] Pastikan rencana QA automated mengacu ke `docs/QA-AUTOMATION.md`.
 - [ ] Jika UI/browser tersentuh, pastikan rencana Chrome DevTools MCP QA sudah disebut.
 - [ ] Pastikan modul target dan increment pengerjaan sudah disebut di work-item.
+- [ ] Pastikan kebutuhan demo seeder module sudah diputuskan.
 - [ ] Cek status git jika repository sudah tersedia.
 - [ ] Identifikasi risiko schema, route, permission, FIFO, payment, tax, audit log.
 
@@ -38,6 +39,7 @@ Dokumen ini adalah standar minimum sebelum pekerjaan dianggap selesai.
 - [ ] QA automated relevan sudah PASS atau alasan gagal/belum bisa dijalankan dicatat.
 - [ ] Chrome DevTools MCP QA sudah PASS untuk perubahan UI/browser, atau status `SKIPPED/BLOCKED` dan fallback dicatat.
 - [ ] Build frontend dijalankan jika UI berubah.
+- [ ] Demo seeder module diisi dan diverifikasi jika relevan, atau alasan skip dicatat.
 - [ ] Tidak ada transaksi posted yang bisa diedit bebas.
 - [ ] Tidak ada jalur stok minus.
 - [ ] Activity log dicatat untuk aksi penting.
@@ -69,6 +71,7 @@ Minimal berisi:
 - Checklist sebelum coding per increment.
 - Checklist selesai per increment.
 - Command QA automated per increment.
+- Keputusan demo seeder per module atau increment data.
 - Kolom status yang diperbarui setelah pekerjaan selesai.
 
 Agent atau developer harus menginformasikan modul target dan increment pertama sebelum mulai coding.

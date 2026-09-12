@@ -62,20 +62,24 @@ Gunakan generator modul untuk menjaga struktur folder dan namespace konsisten:
 
 ```bash
 php artisan module:make Platform Identity
-php artisan module:make Inventory Catalog --with-routes --with-tests
-php artisan module:make Sales POS --with-routes --with-tests --dry-run
+php artisan module:make Inventory Catalog --with-tests
+php artisan module:make Sales POS --with-tests --dry-run
 ```
 
 Aturan generator:
 
 - Membuat modul pada `app/Modules/{Category}/{Module}`.
 - Membuat `ServiceProvider.php` sebagai composition root module.
-- Opsi `--with-routes` membuat `Presentation/Routes/web.php`.
+- Selalu membuat `Routes/web.php`.
+- Selalu membuat `Database/Migrations/.gitkeep`.
+- Selalu membuat `Database/Seeders/{Module}DemoSeeder.php`.
+- Opsi `--with-routes` hanya compatibility flag; route module tetap dibuat default.
 - Opsi `--with-tests` membuat test scaffold di `tests/Feature/Modules` dan `tests/Unit/Modules`.
 - Opsi `--dry-run` wajib dipakai jika ingin melihat rencana file tanpa menulis ke filesystem.
 - Opsi `--force` hanya dipakai jika memang ingin overwrite file generated.
-- Generator tidak membuat `Domain`, repository, port, event, adapter, atau migration tanpa kebutuhan nyata.
+- Generator tidak membuat `Domain`, repository, port, event, adapter, atau migration class tanpa kebutuhan nyata.
 - Provider module pada `app/Modules/*/*/ServiceProvider.php` diregister otomatis oleh aplikasi.
+- Demo seeder diisi ketika module memiliki master/operational data relevan untuk demo, test manual, atau relasi lintas module. Jika belum relevan, tulis alasan skip pada work-item.
 
 ## Hexagon Per Modul
 

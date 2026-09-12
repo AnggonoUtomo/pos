@@ -32,12 +32,12 @@ provider dasar, test generator, dan dokumentasi module runtime.
 - Acceptance:
   - command tersedia;
   - dry-run tidak menulis file;
-  - scaffold minimal sesuai guardrail;
+  - scaffold minimal sesuai guardrail route/database/demo seeder module;
   - overwrite ditolak tanpa `--force`.
 - Verifikasi:
   - `composer dump-autoload`
   - `php artisan test --filter=MakeModuleCommandTest`
-  - `php artisan module:make Platform Identity --with-routes --with-tests --dry-run`
+  - `php artisan module:make Platform Identity --with-tests --dry-run`
 
 ## Increment 3: Provider Auto-Register Dasar
 

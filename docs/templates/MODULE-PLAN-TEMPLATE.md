@@ -26,11 +26,11 @@ Jelaskan scope module dan batas berhenti awal.
   - Increment 1 direview.
 - Acceptance:
   - target path benar;
-  - tidak ada folder kosong placeholder;
-  - `ServiceProvider.php` tersedia.
+  - tidak ada layer kosong placeholder;
+  - `ServiceProvider.php`, `Routes/web.php`, `Database/Migrations/.gitkeep`, dan `Database/Seeders/{Module}DemoSeeder.php` tersedia.
 - Verifikasi:
   - `php artisan module:make {Category} {Module} --dry-run`
-  - `php artisan module:make {Category} {Module} --with-routes --with-tests`
+  - `php artisan module:make {Category} {Module} --with-tests`
   - `php artisan test --filter=MakeModuleCommandTest`
   - `git diff --check`
 
@@ -73,6 +73,19 @@ Jelaskan scope module dan batas berhenti awal.
 - Verifikasi:
   - `npm run build`
   - Chrome DevTools MCP QA atau status `SKIPPED/BLOCKED`.
+
+## Increment 6: Demo Seeder Bila Relevan
+
+- Perubahan:
+  - isi `Database/Seeders/{Module}DemoSeeder.php` dengan data demo yang relevan.
+- Dependency:
+  - Increment data/persistence yang dibutuhkan tersedia.
+- Acceptance:
+  - relasi demo jelas;
+  - seeder tidak bypass invariant bisnis;
+  - jika belum relevan, alasan skip dicatat.
+- Verifikasi:
+  - `php artisan db:seed --class=...` pada database aman/test atau focused test seeder.
 
 ## Batas Berhenti
 

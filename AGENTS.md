@@ -61,6 +61,7 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Pastikan dampak database, route, permission, UI, dan laporan sudah disebut.
 - Pastikan risiko FIFO, stok, pembayaran, pajak, dan audit trail dipertimbangkan jika tersentuh.
 - Pastikan command QA automated untuk increment sudah jelas.
+- Pastikan kebutuhan demo seeder module diputuskan: diisi bila ada master/operational data relevan, atau alasan skip dicatat.
 - Cek status git jika repository sudah tersedia.
 - Jangan membuat fitur di luar work-item.
 - Jika menyentuh integrasi lintas modul, baca `docs/MODULE-COMMUNICATION.md`.
@@ -89,6 +90,8 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Komunikasi lintas modul harus lewat `Application/Contracts`, DTO, event publik, atau read model yang disepakati.
 - Domain event atau integration event hanya dibuat jika memang memiliki consumer.
 - `ServiceProvider.php` module adalah composition root untuk binding contract-adapter, route/migration, policy/listener, dan tidak boleh berisi business logic.
+- Module baru harus menyimpan route dan database miliknya di dalam module: `Routes/`, `Database/Migrations/`, dan `Database/Seeders/`.
+- Demo seeder module harus memakai relasi yang relevan dan tidak boleh bypass invariant FIFO, pricing, payment, permission, posted transaction, atau audit.
 - Jangan gunakan Laravel Boost atau Wayfinder sebagai source of truth arsitektur.
 - Jangan pindahkan migration module ke `database/migrations` global untuk table milik module.
 - Jangan taruh business rule FIFO, pricing, tax, atau payment langsung di controller.

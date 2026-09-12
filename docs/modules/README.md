@@ -23,6 +23,8 @@ docs/modules/{Category}/{Module}/
 
 - Dokumentasi module dibuat sebelum coding module dimulai.
 - Public boundary hanya dibuat jika ada consumer nyata.
-- Domain, port, event, repository, adapter, dan migration tidak dibuat hanya untuk melengkapi diagram.
+- Domain, port, event, repository, adapter, dan migration class tidak dibuat hanya untuk melengkapi diagram.
+- Module baru menyimpan route dan database miliknya di `Routes/`, `Database/Migrations/`, dan `Database/Seeders/`.
+- Demo seeder module diisi bila ada master/operational data relevan untuk demo, test manual, atau relasi lintas module. Jika tidak relevan, alasan skip dicatat pada work-item.
 - Work-item aktif harus merujuk dokumen module bila pekerjaan menyentuh module tersebut.
 - Setiap bukti verifikasi harus mencatat command nyata dan hasilnya.

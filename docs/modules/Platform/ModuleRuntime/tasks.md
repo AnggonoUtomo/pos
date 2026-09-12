@@ -25,7 +25,7 @@
   - Acceptance: test gagal karena `module:make` belum tersedia.
   - Verification: `php artisan test tests/Feature/Console/MakeModuleCommandTest.php`.
 - [x] Implementasikan command `module:make`.
-  - Acceptance: dry-run, scaffold minimal, route/test flag, dan overwrite guard berjalan.
+  - Acceptance: dry-run, scaffold minimal route/database/demo seeder, test flag, dan overwrite guard berjalan.
   - Verification: `php artisan test --filter=MakeModuleCommandTest`.
 - [x] Pastikan namespace `App\\Modules\\` mengikuti autoload Laravel.
   - Acceptance: class generated module autoload-able melalui `App\\ => app/`.

@@ -27,13 +27,17 @@ class MakeModuleCommandTest extends TestCase
         $exitCode = Artisan::call('module:make', [
             'category' => 'Testing',
             'module' => 'SampleModule',
-            '--with-routes' => true,
             '--with-tests' => true,
             '--dry-run' => true,
         ]);
 
+        $output = Artisan::output();
+
         $this->assertSame(0, $exitCode);
-        $this->assertStringContainsString('DRY RUN', Artisan::output());
+        $this->assertStringContainsString('DRY RUN', $output);
+        $this->assertStringContainsString('app/Modules/Testing/SampleModule/Routes/web.php', $output);
+        $this->assertStringContainsString('app/Modules/Testing/SampleModule/Database/Migrations/.gitkeep', $output);
+        $this->assertStringContainsString('app/Modules/Testing/SampleModule/Database/Seeders/SampleModuleDemoSeeder.php', $output);
         $this->assertFileDoesNotExist(app_path('Modules/Testing/SampleModule/ServiceProvider.php'));
     }
 
@@ -42,21 +46,27 @@ class MakeModuleCommandTest extends TestCase
         $exitCode = Artisan::call('module:make', [
             'category' => 'Testing',
             'module' => 'SampleModule',
-            '--with-routes' => true,
             '--with-tests' => true,
         ]);
 
         $this->assertSame(0, $exitCode);
         $this->assertFileExists(app_path('Modules/Testing/SampleModule/ServiceProvider.php'));
-        $this->assertFileExists(app_path('Modules/Testing/SampleModule/Presentation/Routes/web.php'));
+        $this->assertFileExists(app_path('Modules/Testing/SampleModule/Routes/web.php'));
+        $this->assertFileExists(app_path('Modules/Testing/SampleModule/Database/Migrations/.gitkeep'));
+        $this->assertFileExists(app_path('Modules/Testing/SampleModule/Database/Seeders/SampleModuleDemoSeeder.php'));
         $this->assertFileExists(base_path('tests/Feature/Modules/Testing/SampleModule/SampleModuleScaffoldTest.php'));
         $this->assertFileExists(base_path('tests/Unit/Modules/Testing/SampleModule/.gitkeep'));
 
         $serviceProvider = File::get(app_path('Modules/Testing/SampleModule/ServiceProvider.php'));
 
         $this->assertStringContainsString('namespace App\\Modules\\Testing\\SampleModule;', $serviceProvider);
-        $this->assertStringContainsString("loadRoutesFrom(__DIR__.'/Presentation/Routes/web.php')", $serviceProvider);
+        $this->assertStringContainsString("loadRoutesFrom(__DIR__.'/Routes/web.php')", $serviceProvider);
         $this->assertStringNotContainsString('Domain', $serviceProvider);
+
+        $demoSeeder = File::get(app_path('Modules/Testing/SampleModule/Database/Seeders/SampleModuleDemoSeeder.php'));
+
+        $this->assertStringContainsString('namespace App\\Modules\\Testing\\SampleModule\\Database\\Seeders;', $demoSeeder);
+        $this->assertStringContainsString('class SampleModuleDemoSeeder extends Seeder', $demoSeeder);
     }
 
     public function test_it_refuses_to_overwrite_an_existing_module_without_force(): void

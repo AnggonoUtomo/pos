@@ -52,7 +52,7 @@ Di luar scope:
 | INC-01 | Struktur folder dan autoload module | - [x] Struktur namespace disetujui | - [x] Folder canonical tersedia<br>- [x] Autoload berjalan | `composer dump-autoload` | Selesai |
 | INC-02 | Loader route dan migration module | - [x] Pola Laravel provider dibaca | - [x] Loader provider dasar tersedia<br>- [ ] Route/migration module nyata tervalidasi | `php artisan route:list`, `php artisan migrate:status` | Sebagian Selesai |
 | INC-03 | Dokumentasi convention module | - [x] Struktur final dicek | - [x] Panduan membuat module tersedia | `git diff --check` | Selesai |
-| INC-04 | Generator modul minimal | - [x] Guardrail generator disepakati<br>- [x] Tidak membuat Domain/port/event spekulatif | - [x] `module:make` tersedia<br>- [x] `--dry-run`, `--with-routes`, `--with-tests`, dan overwrite guard berjalan | `php artisan test tests/Feature/Console/MakeModuleCommandTest.php` | Selesai |
+| INC-04 | Generator modul minimal | - [x] Guardrail generator disepakati<br>- [x] Tidak membuat Domain/port/event spekulatif | - [x] `module:make` tersedia<br>- [x] `Routes/web.php`, `Database/Migrations/.gitkeep`, `Database/Seeders/{Module}DemoSeeder.php`, `--dry-run`, `--with-tests`, dan overwrite guard berjalan | `php artisan test --filter=MakeModuleCommandTest` | Selesai |
 
 ## Kriteria Penerimaan
 
@@ -74,9 +74,10 @@ Di luar scope:
 ## Catatan Implementasi
 
 - `php artisan module:make {Category} {Module}` ditambahkan sebagai generator minimal.
-- Generator membuat `ServiceProvider.php` dan hanya membuat route/test scaffold jika flag diminta.
+- Generator membuat `ServiceProvider.php`, `Routes/web.php`, `Database/Migrations/.gitkeep`, dan `Database/Seeders/{Module}DemoSeeder.php`.
+- Generator hanya membuat test scaffold jika flag `--with-tests` diminta.
 - Aplikasi melakukan auto-register provider module dari `app/Modules/*/*/ServiceProvider.php`.
-- Generator tidak membuat folder `Domain`, repository, port, event, adapter, atau migration secara otomatis.
+- Generator tidak membuat folder `Domain`, repository, port, event, adapter, atau migration class secara otomatis.
 
 ## Bukti
 
@@ -89,17 +90,17 @@ Command: php -l app\Console\Commands\MakeModuleCommand.php
 Hasil: PASS
 Catatan: No syntax errors detected.
 
-Command: php artisan test tests/Feature/Console/MakeModuleCommandTest.php
+Command: php artisan test --filter=MakeModuleCommandTest
 Hasil: PASS
-Catatan: 3 tests, 13 assertions.
+Catatan: 3 tests, 20 assertions.
 
 Command: php artisan test
 Hasil: PASS
-Catatan: 29 tests, 76 assertions.
+Catatan: 32 tests, 89 assertions.
 
-Command: php artisan module:make Platform Identity --with-routes --with-tests --dry-run
+Command: php artisan module:make Platform Identity --with-tests --dry-run
 Hasil: PASS
-Catatan: Menampilkan rencana file tanpa membuat file.
+Catatan: Menampilkan `ServiceProvider.php`, `Routes/web.php`, `Database/Migrations/.gitkeep`, `Database/Seeders/IdentityDemoSeeder.php`, dan test scaffold tanpa membuat file.
 
 Command: php artisan route:list --except-vendor
 Hasil: PASS

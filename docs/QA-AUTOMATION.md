@@ -24,6 +24,7 @@ Command baseline dipilih sesuai dampak perubahan.
 | Frontend berubah | `npm run build` |
 | Lint tersedia dan menyentuh frontend | `npm run lint` |
 | Permission/auth berubah | test auth/permission terkait |
+| Demo seeder berubah | `php artisan db:seed --class=...` pada database aman/test atau test seeder terkait |
 | FIFO/stok/transaksi berubah | feature test transaksi dan stock invariant terkait |
 | UI/browser berubah | Chrome DevTools MCP QA, ditambah `npm run build` |
 

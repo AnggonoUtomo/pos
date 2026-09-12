@@ -53,9 +53,11 @@ Metadata audit tidak boleh menyimpan secret, credential, token, atau payload sen
 
 ## Operasi
 
+- Route module berada di `app/Modules/{Category}/{Module}/Routes/`.
 - Migration module berada di `app/Modules/{Category}/{Module}/Database/Migrations/`.
+- Demo seeder module berada di `app/Modules/{Category}/{Module}/Database/Seeders/{Module}DemoSeeder.php`.
 - `ServiceProvider.php` menjadi composition root dan tidak berisi business logic.
-- Seeder/factory dibuat hanya ketika ada kebutuhan test atau demo nyata.
+- Demo seeder diisi ketika ada kebutuhan test manual, demo, atau relasi module yang nyata. Jika belum relevan, alasan skip dicatat pada work-item.
 
 ## Verifikasi Utama
 

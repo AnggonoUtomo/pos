@@ -14,7 +14,9 @@ Scope awal:
 - validasi nama category dan module;
 - dry-run tanpa menulis file;
 - scaffold `ServiceProvider.php`;
-- scaffold route web bila `--with-routes`;
+- scaffold `Routes/web.php`;
+- scaffold `Database/Migrations/.gitkeep`;
+- scaffold `Database/Seeders/{Module}DemoSeeder.php`;
 - scaffold test bila `--with-tests`;
 - overwrite guard bila module sudah ada;
 - namespace `App\\Modules\\` melalui autoload Laravel `App\\ => app/`;
@@ -32,7 +34,7 @@ Scope awal:
   - `app/Modules/{Category}/{Module}/ServiceProvider.php`.
 
 Generator sengaja tidak membuat `Domain`, repository, port, event, adapter, atau
-migration tanpa flag/kebutuhan nyata.
+migration class tanpa kebutuhan nyata.
 
 ## Di Luar Scope
 
@@ -55,7 +57,7 @@ Argument:
 
 Option:
 
-- `--with-routes`: membuat `Presentation/Routes/web.php`.
+- `--with-routes`: compatibility flag; `Routes/web.php` tetap dibuat default.
 - `--with-tests`: membuat scaffold test feature dan unit placeholder.
 - `--dry-run`: menampilkan rencana file tanpa menulis.
 - `--force`: mengizinkan overwrite file generated.
@@ -65,10 +67,12 @@ Option:
 File minimum:
 
 - `app/Modules/{Category}/{Module}/ServiceProvider.php`.
+- `app/Modules/{Category}/{Module}/Routes/web.php`.
+- `app/Modules/{Category}/{Module}/Database/Migrations/.gitkeep`.
+- `app/Modules/{Category}/{Module}/Database/Seeders/{Module}DemoSeeder.php`.
 
 File opsional:
 
-- `app/Modules/{Category}/{Module}/Presentation/Routes/web.php`.
 - `tests/Feature/Modules/{Category}/{Module}/{Module}ScaffoldTest.php`.
 - `tests/Unit/Modules/{Category}/{Module}/.gitkeep`.
 
@@ -101,7 +105,9 @@ Tidak ada UI.
 - [x] Command `module:make` tersedia di Artisan.
 - [x] `--dry-run` tidak menulis file.
 - [x] Generator membuat `ServiceProvider.php`.
-- [x] Generator membuat route file jika `--with-routes`.
+- [x] Generator membuat `Routes/web.php`.
+- [x] Generator membuat `Database/Migrations/.gitkeep`.
+- [x] Generator membuat `Database/Seeders/{Module}DemoSeeder.php`.
 - [x] Generator membuat test scaffold jika `--with-tests`.
 - [x] Generator menolak overwrite module existing tanpa `--force`.
 - [x] Generated service provider tidak membuat Domain placeholder.

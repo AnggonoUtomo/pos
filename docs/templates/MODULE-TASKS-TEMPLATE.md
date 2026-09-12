@@ -25,8 +25,8 @@
   - Acceptance: target file benar dan tidak ada file ditulis.
   - Verification: `php artisan module:make {Category} {Module} --dry-run`.
 - [ ] Generate skeleton module.
-  - Acceptance: file awal module dibuat tanpa folder kosong placeholder.
-  - Verification: `php artisan module:make {Category} {Module} --with-routes --with-tests`.
+  - Acceptance: `ServiceProvider.php`, `Routes/web.php`, `Database/Migrations/.gitkeep`, `Database/Seeders/{Module}DemoSeeder.php`, dan test scaffold dibuat tanpa layer kosong placeholder.
+  - Verification: `php artisan module:make {Category} {Module} --with-tests`.
 
 ## Increment 3: Data Foundation
 
@@ -45,5 +45,11 @@
 - [ ] Tambahkan route/page/component.
   - Acceptance: page canonical, build lulus, dan QA browser dicatat.
   - Verification: `npm run build` dan Chrome DevTools MCP QA bila tersedia.
+
+## Increment 6: Demo Seeder Bila Relevan
+
+- [ ] Isi atau putuskan skip demo seeder.
+  - Acceptance: data demo relevan dengan relasi module dan tidak bypass invariant bisnis, atau alasan skip dicatat.
+  - Verification: `php artisan db:seed --class=...` pada database aman/test atau focused test seeder.
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.
