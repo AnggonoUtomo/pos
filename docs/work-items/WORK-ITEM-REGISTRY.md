@@ -36,4 +36,6 @@ Sebelum mengubah kode untuk work-item mana pun:
 - Work-item harus minimal berstatus `Siap`.
 - Checklist sebelum coding harus terisi.
 - Command verifikasi yang relevan harus disebut.
+- Modul target harus disebut sebelum coding.
+- Rencana increment harus tertulis dengan checklist sebelum/sesudah dan QA automated.
 - Scope harus jelas dan tidak bercampur dengan work-item lain.

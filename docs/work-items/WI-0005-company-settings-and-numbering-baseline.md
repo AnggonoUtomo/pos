@@ -10,6 +10,14 @@ Membuat company profile, setting pajak dasar, dan document numbering yang aman d
 
 - `docs/SPEC.md`
 - `docs/ARCHITECTURE.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Platform
+- Module: CompanySettings
+- Namespace/path: `Modules/Platform/CompanySettings`
+- Jenis pekerjaan: company profile, setting, dan penomoran dokumen
 
 ## Scope
 
@@ -31,6 +39,14 @@ Di luar scope:
 - [ ] Format nomor final dibaca dari spec.
 - [ ] Strategi lock sequence ditentukan.
 - [ ] Dampak timezone/tanggal dokumen dipahami.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Company profile dan setting dasar | - [ ] Field company phase 1 disetujui | - [ ] Setting dapat dibaca/diubah | feature test company settings | Draf |
+| INC-02 | Numbering service | - [ ] Format nomor disetujui | - [ ] Nomor unik dan berurutan per tipe dokumen | unit/feature test numbering | Draf |
+| INC-03 | Audit perubahan setting | - [ ] Aksi penting ditentukan | - [ ] Activity log tercatat | test activity log setting terkait | Draf |
 
 ## Kriteria Penerimaan
 

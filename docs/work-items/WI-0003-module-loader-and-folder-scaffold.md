@@ -10,6 +10,14 @@ Menyiapkan fondasi folder modul dan mekanisme loading route/migration/provider t
 
 - `docs/ARCHITECTURE.md`
 - `docs/adr/ADR-0001-modular-monolith-ddd-lite-hexagonal.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Platform
+- Module: ModuleRuntime
+- Namespace/path: `Modules/{Category}/{Module}`, loader module, provider module
+- Jenis pekerjaan: scaffold arsitektur module runtime
 
 ## Scope
 
@@ -32,6 +40,14 @@ Di luar scope:
 - [ ] WI-0001 dan WI-0002 selesai.
 - [ ] Pola autoload composer dipahami.
 - [ ] Risiko route/migration discovery dicatat.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Struktur folder dan autoload module | - [ ] Struktur namespace disetujui | - [ ] Folder canonical tersedia<br>- [ ] Autoload berjalan | `composer dump-autoload` | Draf |
+| INC-02 | Loader route dan migration module | - [ ] Pola Laravel provider dibaca | - [ ] Route/migration module terload | `php artisan route:list`, `php artisan migrate:status` | Draf |
+| INC-03 | Dokumentasi convention module | - [ ] Struktur final dicek | - [ ] Panduan membuat module tersedia | `git diff --check` | Draf |
 
 ## Kriteria Penerimaan
 

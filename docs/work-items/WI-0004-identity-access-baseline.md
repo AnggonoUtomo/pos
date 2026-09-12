@@ -10,6 +10,14 @@ Menyiapkan auth internal, Spatie Permission, public registration off, role/permi
 
 - `docs/adr/ADR-0005-auth-permission-and-activity-log.md`
 - `docs/SPEC.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Platform
+- Module: Identity
+- Namespace/path: `Modules/Platform/Identity`
+- Jenis pekerjaan: auth internal, role, permission, dan audit access
 
 ## Scope
 
@@ -31,6 +39,14 @@ Di luar scope:
 - [ ] Starter kit auth teridentifikasi.
 - [ ] Route register diketahui.
 - [ ] Permission naming disetujui.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Disable public registration | - [ ] Route register dan page register ditemukan | - [ ] Register publik tidak bisa diakses | `php artisan test --filter=RegistrationTest` | Draf |
+| INC-02 | Spatie Permission baseline | - [ ] Nama role/permission disepakati | - [ ] Role/permission seed dan middleware berjalan | `php artisan test --filter=Permission` | Draf |
+| INC-03 | Activity log identity | - [ ] Event perubahan akses ditentukan | - [ ] Perubahan role/permission tercatat | test activity log identity terkait | Draf |
 
 ## Kriteria Penerimaan
 

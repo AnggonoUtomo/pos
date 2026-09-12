@@ -13,6 +13,14 @@ Menyesuaikan dokumen baseline dengan source Laravel yang sebenarnya setelah audi
 - `docs/ARCHITECTURE.md`
 - `docs/adr/`
 - `docs/work-items/WI-0001-baseline-laravel-source-and-tooling-audit.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Platform
+- Module: Documentation
+- Namespace/path: `docs`, `AGENTS.md`
+- Jenis pekerjaan: review dan sinkronisasi dokumentasi baseline
 
 ## Scope
 
@@ -32,6 +40,14 @@ Di luar scope:
 
 - [ ] WI-0001 selesai atau minimal menghasilkan audit yang cukup.
 - [ ] Konflik dokumen vs source sudah dicatat.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Review dokumen baseline | - [ ] `SPEC`, `PRD`, `ARCHITECTURE`, ADR dibaca | - [ ] Gap dan konflik dicatat | Review manual dokumen | Draf |
+| INC-02 | Review work-item dan template | - [ ] Registry work-item dibaca | - [ ] Checklist dan acceptance criteria sinkron | `git diff --check` | Draf |
+| INC-03 | Review aturan QA | - [ ] `docs/QA-AUTOMATION.md` dibaca | - [ ] QA gate tercermin di DoD/work-item | `git diff --check` | Draf |
 
 ## Kriteria Penerimaan
 

@@ -10,6 +10,14 @@ Membangun retur penjualan dan retur pembelian berdasarkan transaksi asal.
 
 - `docs/SPEC.md`
 - `docs/adr/ADR-0003-inventory-fifo-no-negative-stock.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Sales dan Purchasing
+- Module: Returns
+- Namespace/path: `Modules/Sales/Returns`, `Modules/Purchasing/Returns`
+- Jenis pekerjaan: retur penjualan/pembelian berbasis transaksi asal
 
 ## Scope
 
@@ -32,6 +40,14 @@ Di luar scope:
 - [ ] Alokasi FIFO penjualan tersedia.
 - [ ] Informasi layer/cost stok pembelian tersedia.
 - [ ] Aturan pembayaran/refund dipahami.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Retur penjualan | - [ ] Sales posted tersedia | - [ ] Retur dibatasi transaksi asal<br>- [ ] Stok masuk kembali sesuai aturan | feature test sales return | Draf |
+| INC-02 | Retur pembelian | - [ ] Purchase posted tersedia | - [ ] Retur pembelian mengurangi stok/hutang sesuai aturan | feature test purchase return | Draf |
+| INC-03 | Audit dan lifecycle retur | - [ ] Status retur disepakati | - [ ] Retur tercatat audited | feature test return lifecycle/activity log | Draf |
 
 ## Kriteria Penerimaan
 

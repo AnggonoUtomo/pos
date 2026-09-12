@@ -12,6 +12,14 @@ Menetapkan baseline UI aplikasi dengan shadcn/ui untuk admin ERP sidebar dan POS
 - `docs/ARCHITECTURE.md`
 - `docs/adr/ADR-0006-shadcn-ui-default-ui-system.md`
 - `components.json`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Platform
+- Module: UiShell
+- Namespace/path: `resources/js/layouts`, `resources/js/pages`, `resources/js/components`
+- Jenis pekerjaan: baseline shadcn/ui, admin ERP sidebar, dan POS fullscreen
 
 ## Scope
 
@@ -37,6 +45,15 @@ Di luar scope:
 - [ ] Struktur `resources/js` dipahami.
 - [ ] Struktur feature-folder frontend dari `docs/ARCHITECTURE.md` dibaca.
 - [ ] Komponen shadcn/ui yang sudah tersedia diidentifikasi.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Audit shadcn/ui baseline | - [ ] `components.json` dibaca | - [ ] Komponen tersedia teridentifikasi | `npm run build` | Draf |
+| INC-02 | Admin ERP sidebar layout | - [ ] Pola layout app dibaca | - [ ] Layout admin siap sebagai baseline | `npm run build`, pemeriksaan manual admin | Draf |
+| INC-03 | POS fullscreen layout | - [ ] Kebutuhan desktop/tablet dipahami | - [ ] Layout POS fullscreen siap sebagai baseline | `npm run build`, pemeriksaan manual POS | Draf |
+| INC-04 | Dokumentasi UI modular | - [ ] Struktur feature-folder disepakati | - [ ] Aturan folder UI tercatat | `git diff --check` | Draf |
 
 ## Kriteria Penerimaan
 

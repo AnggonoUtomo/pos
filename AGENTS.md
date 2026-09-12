@@ -10,6 +10,8 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Jika dokumen dan kode bertentangan, hentikan asumsi dan laporkan konflik.
 - Verifikasi dengan command nyata sebelum menyatakan pekerjaan selesai.
 - Catat gap conformance pada work-item terkait; jangan menutup gap di luar scope tanpa persetujuan user.
+- Setiap work-item modul harus memiliki rencana increment dan checklist per increment sebelum coding dimulai.
+- QA automated wajib mengikuti `docs/QA-AUTOMATION.md`.
 
 ## Stack Dan Batas Arsitektur
 
@@ -42,17 +44,20 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 
 1. Pilih work-item dari `docs/work-items/WORK-ITEM-REGISTRY.md`.
 2. Baca dokumen rujukan work-item.
-3. Isi checklist sebelum coding di file work-item.
-4. Implementasi secara kecil dan terverifikasi.
-5. Jalankan checklist sesudah coding.
-6. Catat command, hasil, dan bukti verifikasi.
-7. Update status work-item.
+3. Informasikan modul target yang akan dikerjakan.
+4. Isi checklist sebelum coding di file work-item.
+5. Pastikan rencana increment dan QA automated sudah tertulis.
+6. Implementasi per increment kecil dan terverifikasi.
+7. Jalankan checklist sesudah coding per increment.
+8. Catat command, hasil, dan bukti verifikasi.
+9. Update status increment dan status work-item.
 
 ## Sebelum Coding
 
 - Pastikan work-item punya acceptance criteria.
 - Pastikan dampak database, route, permission, UI, dan laporan sudah disebut.
 - Pastikan risiko FIFO, stok, pembayaran, pajak, dan audit trail dipertimbangkan jika tersentuh.
+- Pastikan command QA automated untuk increment sudah jelas.
 - Cek status git jika repository sudah tersedia.
 - Jangan membuat fitur di luar work-item.
 - Jika menyentuh integrasi lintas modul, baca `docs/MODULE-COMMUNICATION.md`.
@@ -64,6 +69,7 @@ Panduan ini wajib dibaca sebelum agent atau pengembang mengubah kode di workspac
 - Jalankan migration/status check jika schema berubah.
 - Verifikasi behavior utama secara manual jika UI atau transaksi berubah.
 - Catat hasil command di work-item atau implementation report.
+- Isi checklist sesudah coding dan status increment pada work-item.
 - Jangan klaim selesai jika command gagal atau belum dijalankan.
 
 ## Gaya Perubahan

@@ -28,6 +28,7 @@ Checkpoint:
 - [ ] Command sudah terverifikasi.
 - [ ] Dokumen sesuai dengan source.
 - [ ] Belum ada coding fitur.
+- [ ] Work-item sudah memakai format modul target, increment, checklist, dan QA automated.
 
 ### Fase 1: Fondasi
 

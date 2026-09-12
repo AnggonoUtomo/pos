@@ -10,6 +10,14 @@ Membangun catalog foundation untuk item, satuan, konversi, barcode, customer lev
 
 - `docs/SPEC.md`
 - `docs/adr/ADR-0003-inventory-fifo-no-negative-stock.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Inventory
+- Module: Catalog
+- Namespace/path: `Modules/Inventory/Catalog`
+- Jenis pekerjaan: master barang, multi satuan, barcode, dan harga level pelanggan
 
 ## Scope
 
@@ -34,6 +42,15 @@ Di luar scope:
 - [ ] Base-unit rule dipahami.
 - [ ] Snapshot kebutuhan transaksi dipahami.
 - [ ] Unique constraint item/barcode dirancang.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Item, unit, dan base unit | - [ ] Field item/unit disetujui | - [ ] Item punya base unit valid | unit/feature test item unit | Draf |
+| INC-02 | Unit conversion dan barcode | - [ ] Aturan konversi base unit jelas | - [ ] Konversi tidak ambigu<br>- [ ] Barcode unik | unit test conversion, feature test barcode uniqueness | Draf |
+| INC-03 | Customer level price | - [ ] Level pelanggan tersedia atau contract placeholder jelas | - [ ] Lookup harga per item/unit/level berjalan | feature test price lookup | Draf |
+| INC-04 | UI dan audit harga | - [ ] Flow admin catalog disetujui | - [ ] Build lulus<br>- [ ] Activity log harga tercatat | `npm run build`, test activity log price terkait | Draf |
 
 ## Kriteria Penerimaan
 

@@ -12,6 +12,14 @@ Memeriksa source Laravel 12 Inertia React fresh setelah dicopy ke workspace, tan
 - `docs/SPEC.md`
 - `docs/ARCHITECTURE.md`
 - `docs/DEFINITION-OF-DONE.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Platform
+- Module: Baseline
+- Namespace/path: source root, `app`, `resources`, `routes`, `config`
+- Jenis pekerjaan: audit source dan tooling
 
 ## Scope
 
@@ -34,6 +42,14 @@ Di luar scope:
 - [ ] Source Laravel sudah dicopy ke workspace.
 - [ ] Repository state dicek.
 - [ ] Tidak ada perubahan user yang belum dipahami.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Audit stack dan dependency | - [ ] Source tersedia<br>- [ ] `.env` tidak ikut commit | - [ ] Versi stack tercatat<br>- [ ] Gap dependency dicatat | `php artisan --version`, `php -v`, `node -v`, `npm -v` | Draf |
+| INC-02 | Audit command baseline | - [ ] Dependency siap atau alasan belum siap dicatat | - [ ] Command build/test tercatat<br>- [ ] Hasil command dicatat | `npm run build`, `php artisan test` jika environment siap | Draf |
+| INC-03 | Audit starter kit dan route auth | - [ ] Route auth dibaca | - [ ] Auth starter kit teridentifikasi<br>- [ ] Gap public register dicatat | `php artisan route:list` | Draf |
 
 ## Kriteria Penerimaan
 

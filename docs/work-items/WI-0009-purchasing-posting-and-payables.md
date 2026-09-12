@@ -10,6 +10,14 @@ Membangun Purchase order/invoice posting yang menambah stok, membuat FIFO layer,
 
 - `docs/SPEC.md`
 - `docs/adr/ADR-0004-finance-lite-before-full-accounting.md`
+- `docs/QA-AUTOMATION.md`
+
+## Modul Target
+
+- Category: Purchasing
+- Module: PurchaseOrders
+- Namespace/path: `Modules/Purchasing/PurchaseOrders`
+- Jenis pekerjaan: transaksi pembelian, penerimaan, FIFO masuk, hutang finance lite
 
 ## Scope
 
@@ -33,6 +41,14 @@ Di luar scope:
 - [ ] Inventory contract tersedia.
 - [ ] Kontrak pembayaran/hutang tersedia atau dibuat minimal.
 - [ ] Tax include/exclude formula disepakati.
+
+## Rencana Increment
+
+| Increment | Fokus | Checklist Sebelum | Checklist Sesudah | QA automated | Status |
+| --- | --- | --- | --- | --- | --- |
+| INC-01 | Purchase draft dan receive posting | - [ ] Supplier dan warehouse tersedia | - [ ] Draft tidak mengubah stok<br>- [ ] Receive mengubah stok | feature test purchase receive | Draf |
+| INC-02 | FIFO layer dari pembelian | - [ ] Cost source disepakati | - [ ] FIFO layer bertambah sesuai qty/cost | feature test purchase FIFO layer | Draf |
+| INC-03 | Payable finance lite | - [ ] Rule hutang phase 1 dipahami | - [ ] Partial payment dan status hutang berjalan | feature test purchase payment/payable | Draf |
 
 ## Kriteria Penerimaan
 
