@@ -218,7 +218,8 @@
 ## Increment 11: Accent Theme Dan Icon Color Polish
 
 - [x] Tambahkan accent theme operasional.
-  - Acceptance: tersedia Default, Grey, Stone, Forest, Ruby, Quartz, Aurora.
+  - Acceptance: tersedia Default, Grey, Stone, Forest, Ruby, Quartz, Aurora,
+    Copper, Saffron, Plum.
   - Verification: Chrome DevTools MCP; review CSS token.
 - [x] Polish theme menu top nav.
   - Acceptance: mode Light/Dark/System dan accent theme dapat dipilih dari top
@@ -236,6 +237,10 @@
   - Acceptance: icon menu sidebar dan tooltip tetap terlihat saat sidebar
     collapse.
   - Verification: Chrome DevTools MCP desktop/tablet collapsed sidebar.
+- [x] Atur behavior top nav solid ke glass on scroll.
+  - Acceptance: top nav tidak terlihat melayang saat posisi awal dan berubah
+    menjadi glass setelah workspace discroll.
+  - Verification: Chrome DevTools MCP desktop/tablet scroll state.
 
 ## Hasil Verifikasi
 
@@ -270,5 +275,6 @@
 | `npm run build` | PASS | Vite production build selesai setelah Increment 11 |
 | `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 11 |
 | Chrome DevTools MCP | PASS | Theme menu dan accent theme lulus desktop/tablet; console bersih |
+| Chrome DevTools MCP | PASS | Copper, Saffron, Plum tampil dan token theme berubah; top nav solid saat top dan glass setelah scroll |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

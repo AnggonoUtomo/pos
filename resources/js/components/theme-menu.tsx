@@ -18,6 +18,9 @@ const accentOptions: { value: AccentTheme; label: string; className: string }[] 
     { value: 'ruby', label: 'Ruby', className: 'bg-rose-600' },
     { value: 'quartz', label: 'Quartz', className: 'bg-violet-600' },
     { value: 'aurora', label: 'Aurora', className: 'bg-cyan-600' },
+    { value: 'copper', label: 'Copper', className: 'bg-orange-700' },
+    { value: 'saffron', label: 'Saffron', className: 'bg-yellow-500' },
+    { value: 'plum', label: 'Plum', className: 'bg-purple-700' },
 ];
 
 export function ThemeMenu() {

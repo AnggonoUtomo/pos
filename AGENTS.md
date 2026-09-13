@@ -104,9 +104,12 @@ module cukup signifikan, buat dokumen module sebelum coding.
   bentuk dropdown di atas panel workspace.
 - Top nav admin wajib menyediakan command palette global untuk navigasi dan
   operasi lintas module. Shortcut pembuka default: `Ctrl+K` atau `Cmd+K`.
-- Theme UI memakai mode Light/Dark/System dan accent theme operasional. Icon
-  navigasi/operasi harus memakai warna semantic yang beragam, bukan flat
-  monokrom, selama tetap menjaga kontras dan konsistensi shadcn/ui.
+- Theme UI memakai mode Light/Dark/System dan accent theme operasional,
+  minimal Default, Grey, Stone, Forest, Ruby, Quartz, Aurora, Copper, Saffron,
+  dan Plum. Icon navigasi/operasi harus memakai warna semantic yang beragam,
+  bukan flat monokrom, selama tetap menjaga kontras dan konsistensi shadcn/ui.
+- Top nav admin memakai surface solid saat posisi awal dan baru berubah menjadi
+  glass setelah workspace discroll.
 - Jangan membuat design system paralel tanpa persetujuan eksplisit.
 - Letakkan komponen fitur dekat dengan page-nya:
   `resources/js/pages/{domain}/{module}/components`.

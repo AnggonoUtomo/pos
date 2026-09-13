@@ -204,6 +204,51 @@
     --sidebar-ring: hsl(188, 86%, 42%);
 }
 
+:root[data-theme='copper'] {
+    --primary: hsl(20, 74%, 36%);
+    --ring: hsl(20, 83%, 48%);
+    --chart-1: hsl(20, 83%, 48%);
+    --chart-2: hsl(38, 92%, 50%);
+    --chart-3: hsl(160, 84%, 39%);
+    --chart-4: hsl(199, 89%, 48%);
+    --chart-5: hsl(348, 83%, 47%);
+    --sidebar-background: hsl(24, 38%, 98%);
+    --sidebar-primary: hsl(20, 74%, 36%);
+    --sidebar-accent: hsl(24, 48%, 92%);
+    --sidebar-accent-foreground: hsl(20, 64%, 28%);
+    --sidebar-ring: hsl(20, 83%, 48%);
+}
+
+:root[data-theme='saffron'] {
+    --primary: hsl(42, 84%, 34%);
+    --ring: hsl(42, 96%, 46%);
+    --chart-1: hsl(42, 96%, 46%);
+    --chart-2: hsl(24, 95%, 53%);
+    --chart-3: hsl(150, 60%, 34%);
+    --chart-4: hsl(199, 89%, 48%);
+    --chart-5: hsl(271, 91%, 65%);
+    --sidebar-background: hsl(45, 46%, 98%);
+    --sidebar-primary: hsl(42, 84%, 34%);
+    --sidebar-accent: hsl(45, 58%, 91%);
+    --sidebar-accent-foreground: hsl(42, 70%, 26%);
+    --sidebar-ring: hsl(42, 96%, 46%);
+}
+
+:root[data-theme='plum'] {
+    --primary: hsl(292, 54%, 34%);
+    --ring: hsl(292, 64%, 48%);
+    --chart-1: hsl(292, 64%, 48%);
+    --chart-2: hsl(330, 81%, 60%);
+    --chart-3: hsl(199, 89%, 48%);
+    --chart-4: hsl(43, 96%, 56%);
+    --chart-5: hsl(160, 84%, 39%);
+    --sidebar-background: hsl(292, 34%, 98%);
+    --sidebar-primary: hsl(292, 54%, 34%);
+    --sidebar-accent: hsl(292, 38%, 93%);
+    --sidebar-accent-foreground: hsl(292, 48%, 26%);
+    --sidebar-ring: hsl(292, 64%, 48%);
+}
+
 .dark {
     --background: hsl(0, 0%, 3.9%);
     --foreground: hsl(0, 0%, 98%);
@@ -332,6 +377,51 @@
     --sidebar-accent: hsl(188, 30%, 16%);
     --sidebar-accent-foreground: hsl(188, 78%, 86%);
     --sidebar-ring: hsl(188, 86%, 54%);
+}
+
+.dark[data-theme='copper'] {
+    --primary: hsl(24, 90%, 68%);
+    --primary-foreground: hsl(20, 64%, 12%);
+    --ring: hsl(24, 90%, 58%);
+    --chart-1: hsl(24, 90%, 58%);
+    --chart-2: hsl(38, 92%, 60%);
+    --chart-3: hsl(160, 84%, 52%);
+    --chart-4: hsl(199, 89%, 64%);
+    --chart-5: hsl(348, 83%, 68%);
+    --sidebar-background: hsl(20, 28%, 9%);
+    --sidebar-accent: hsl(20, 28%, 18%);
+    --sidebar-accent-foreground: hsl(24, 84%, 86%);
+    --sidebar-ring: hsl(24, 90%, 58%);
+}
+
+.dark[data-theme='saffron'] {
+    --primary: hsl(45, 96%, 70%);
+    --primary-foreground: hsl(42, 68%, 13%);
+    --ring: hsl(45, 96%, 60%);
+    --chart-1: hsl(45, 96%, 60%);
+    --chart-2: hsl(24, 95%, 64%);
+    --chart-3: hsl(150, 60%, 54%);
+    --chart-4: hsl(199, 89%, 64%);
+    --chart-5: hsl(271, 91%, 74%);
+    --sidebar-background: hsl(42, 26%, 9%);
+    --sidebar-accent: hsl(42, 28%, 17%);
+    --sidebar-accent-foreground: hsl(45, 90%, 86%);
+    --sidebar-ring: hsl(45, 96%, 60%);
+}
+
+.dark[data-theme='plum'] {
+    --primary: hsl(292, 76%, 76%);
+    --primary-foreground: hsl(292, 54%, 14%);
+    --ring: hsl(292, 76%, 66%);
+    --chart-1: hsl(292, 76%, 66%);
+    --chart-2: hsl(330, 81%, 68%);
+    --chart-3: hsl(199, 89%, 64%);
+    --chart-4: hsl(43, 96%, 64%);
+    --chart-5: hsl(160, 84%, 52%);
+    --sidebar-background: hsl(292, 26%, 9%);
+    --sidebar-accent: hsl(292, 26%, 18%);
+    --sidebar-accent-foreground: hsl(292, 72%, 88%);
+    --sidebar-ring: hsl(292, 76%, 66%);
 }
 
 @layer base {
