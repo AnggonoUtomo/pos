@@ -17,7 +17,7 @@ Status awal: Draf. Work-item ini menjadi backlog implementasi POS modular.
 | WI-0001 | Audit Baseline Source Laravel dan Tooling | Selesai | Tidak ada | `docs/work-items/WI-0001-baseline-laravel-source-and-tooling-audit.md` |
 | WI-0002 | Review Baseline Dokumentasi dan Arsitektur | Selesai | WI-0001 | `docs/work-items/WI-0002-documentation-and-architecture-baseline-review.md` |
 | WI-0003 | Scaffold Folder dan Loader Modul | Sedang Dikerjakan | WI-0002 | `docs/work-items/WI-0003-module-loader-and-folder-scaffold.md` |
-| WI-0004 | Baseline Identitas dan Akses | Sedang Dikerjakan | WI-0003 | `docs/work-items/WI-0004-identity-access-baseline.md` |
+| WI-0004 | Baseline Identitas dan Akses | Selesai | WI-0003 | `docs/work-items/WI-0004-identity-access-baseline.md` |
 | WI-0005 | Baseline Pengaturan Perusahaan dan Penomoran | Draf | WI-0004 | `docs/work-items/WI-0005-company-settings-and-numbering-baseline.md` |
 | WI-0006 | Katalog Multi Satuan dan Harga Level Pelanggan | Draf | WI-0005 | `docs/work-items/WI-0006-catalog-multi-unit-and-customer-level-pricing.md` |
 | WI-0007 | Master Supplier Pelanggan dan Sales | Draf | WI-0006 | `docs/work-items/WI-0007-parties-supplier-customer-sales.md` |

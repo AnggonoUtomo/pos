@@ -5,7 +5,7 @@ Jangan mulai implementasi sebelum work-item terkait berstatus `Siap`.
 - [ ] WI-0001: Audit Baseline Source Laravel dan Tooling
 - [ ] WI-0002: Review Baseline Dokumentasi dan Arsitektur
 - [ ] WI-0003: Scaffold Folder dan Loader Modul
-- [ ] WI-0004: Baseline Identitas dan Akses
+- [x] WI-0004: Baseline Identitas dan Akses
 - [ ] WI-0005: Baseline Pengaturan Perusahaan dan Penomoran
 - [ ] WI-0006: Katalog Multi Satuan dan Harga Level Pelanggan
 - [ ] WI-0007: Master Supplier Pelanggan dan Sales

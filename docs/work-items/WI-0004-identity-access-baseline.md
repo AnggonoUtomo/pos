@@ -1,6 +1,6 @@
 # WI-0004: Baseline Identitas dan Akses
 
-Status: Sedang Dikerjakan
+Status: Selesai
 
 ## Tujuan
 
@@ -46,7 +46,9 @@ Di luar scope:
 | --- | --- | --- | --- | --- | --- |
 | INC-01 | Disable public registration | - [x] Route register dan page register ditemukan | - [x] Register publik tidak bisa diakses<br>- [x] Link register starter kit dihapus | `php artisan test --filter=RegistrationTest` | Selesai |
 | INC-02 | Spatie Permission baseline | - [x] Nama role/permission disepakati | - [x] Package terpasang<br>- [x] Config/migration tersedia<br>- [x] Role/permission seed dan middleware berjalan | `php artisan test --filter=PermissionBaselineTest` | Selesai |
-| INC-03 | Activity log identity | - [x] Event perubahan akses ditentukan | - [x] Package terpasang<br>- [x] Config/migration tersedia<br>- [x] Activity log identity event dapat dicatat<br>- [ ] Logging perubahan role/permission pada action admin | `php artisan test --filter=PermissionBaselineTest` | Sebagian Selesai |
+| INC-03 | Activity log identity | - [x] Event perubahan akses ditentukan | - [x] Package terpasang<br>- [x] Config/migration tersedia<br>- [x] Activity log identity event dapat dicatat<br>- [x] Logging perubahan role/permission pada action admin | `php artisan test tests/Feature/Modules/Platform/Identity/IdentityAccessActionTest.php` | Selesai |
+| INC-04 | Shared permission props dan hook | - [x] Pola `usePermission()` disepakati | - [x] `auth.roles`, `auth.permissions`, dan `auth.super` tersedia<br>- [x] Hook `use-permission.ts` tersedia | `npm run build`, focused Identity test | Selesai |
+| INC-05 | Module scaffold dan demo seeder Identity | - [x] Struktur `app/Modules` disepakati<br>- [x] Root `Modules/` legacy dihapus | - [x] Module `Platform/Identity` tersedia<br>- [x] Demo seeder module memanggil baseline identity seeder | `php artisan module:make Platform Identity --with-tests --dry-run`, `php artisan db:seed --class=...IdentityDemoSeeder` | Selesai |
 
 ## Kriteria Penerimaan
 
@@ -54,12 +56,16 @@ Di luar scope:
 - [x] Flow admin-created user tersedia atau direncanakan jelas.
 - [x] Role/permission dasar berjalan.
 - [x] Permission middleware/policy baseline tersedia.
-- [ ] Activity log mencatat perubahan role/permission penting.
+- [x] Activity log mencatat perubahan role/permission penting.
+- [x] Shared auth props menyediakan role, permission, dan super flag untuk frontend.
+- [x] Hook permission frontend tersedia untuk UX guard.
 
 ## Verifikasi
 
 - [x] `php artisan test --filter=Auth`
 - [x] `php artisan test --filter=PermissionBaselineTest`
+- [x] `php artisan test --filter=Identity`
+- [x] `php artisan test`
 - [x] Pemeriksaan manual route register nonaktif
 - [x] `npm run build` jika UI berubah
 
@@ -79,6 +85,13 @@ Di luar scope:
   - `SEED_SUPER_ADMIN_NAME`, default `Super Admin`.
   - `SEED_SUPER_ADMIN_PASSWORD`, default `password`.
 - Register route `GET|POST register` dimatikan, dan link register di welcome/login starter kit dihapus.
+- Module canonical `app/Modules/Platform/Identity` dibuat melalui generator module.
+- Root folder legacy `Modules/` dihapus karena canonical module berada di `app/Modules`.
+- Action `SyncUserRoles` mencatat activity log `identity.user_roles_synced` dengan before/after role.
+- Action `SyncRolePermissions` mencatat activity log `identity.role_permissions_synced` dengan before/after permission.
+- Shared Inertia auth props sekarang menyediakan `user`, `roles`, `permissions`, dan `super`.
+- Hook frontend `resources/js/hooks/use-permission.ts` menyediakan `can`, `canAny`, `hasRole`, `isSuperAdmin`, `roles`, `permissions`, dan `user`.
+- `IdentityDemoSeeder` memanggil `IdentityAccessSeeder` agar demo data akses tetap satu sumber.
 
 ## Bukti
 
@@ -119,9 +132,21 @@ Command: php artisan test --filter=PermissionBaselineTest
 Hasil: PASS
 Catatan: 3 tests, 7 assertions.
 
+Command: php artisan test --filter=Identity
+Hasil: PASS
+Catatan: 6 tests, 23 assertions.
+
+Command: php artisan test tests/Feature/Modules/Platform/Identity/IdentityAccessActionTest.php
+Hasil: PASS
+Catatan: 3 tests, 17 assertions.
+
+Command: php artisan db:seed --class="App\Modules\Platform\Identity\Database\Seeders\IdentityDemoSeeder"
+Hasil: PASS
+Catatan: IdentityDemoSeeder memanggil IdentityAccessSeeder.
+
 Command: php artisan test
 Hasil: PASS
-Catatan: 32 tests, 82 assertions.
+Catatan: 36 tests, 107 assertions.
 
 Command: npm audit
 Hasil: PASS

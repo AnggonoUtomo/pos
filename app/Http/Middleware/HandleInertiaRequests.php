@@ -37,14 +37,28 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        $user = $request->user();
 
         return array_merge(parent::share($request), [
-            ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'roles' => $this->booleanMap($user?->getRoleNames()->all() ?? []),
+                'permissions' => $this->booleanMap($user?->getAllPermissions()->pluck('name')->all() ?? []),
+                'super' => $user?->hasRole('super-admin') ?? false,
             ],
         ]);
+    }
+
+    /**
+     * @param  list<string>  $values
+     * @return array<string, true>
+     */
+    private function booleanMap(array $values): array
+    {
+        return collect($values)
+            ->mapWithKeys(fn (string $value): array => [$value => true])
+            ->all();
     }
 }
