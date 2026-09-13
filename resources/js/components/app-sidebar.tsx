@@ -70,10 +70,9 @@ const mainNavGroups: NavGroup[] = [
             },
             {
                 title: 'POS',
-                url: '',
+                url: '/pos',
                 icon: ShoppingCart,
-                badge: 'Segera',
-                comingSoon: true,
+                permission: 'sales.pos.invoices.create',
             },
             {
                 title: 'Retur Penjualan',

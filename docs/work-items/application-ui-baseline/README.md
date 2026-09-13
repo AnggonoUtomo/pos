@@ -92,26 +92,33 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 1 | Passed | Audit UI starterkit dan tentukan route/layout target | `rg`; `php artisan route:list --except-vendor`; `npm list sonner --depth=0` |
 | 2 | Passed | Tambah/aktifkan Sonner dan UI feedback baseline | `npm list sonner --depth=0`; `npm run lint`; `npm run build` |
 | 3 | Passed | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
-| 4 | Planned | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; Chrome DevTools MCP |
+| 4 | Passed | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; `php artisan test --filter=PosRouteTest` |
 | 5 | Planned | Rapikan folder modular frontend dan dokumentasi hasil | `git diff --check`; review docs |
 
 ## Handoff
 
-- Perubahan sampai Increment 3:
+- Perubahan sampai Increment 4:
   - Sonner baseline aktif pada root Inertia dan contoh feedback profile.
   - Admin ERP sidebar memakai peta module controlled.
   - Menu module tanpa route nyata tampil disabled/coming soon tanpa URL palsu.
   - Mobile sidebar memiliki title dan description screen-reader.
-- Verifikasi sampai Increment 3:
+  - Route authenticated `pos.index` tersedia pada `/pos`.
+  - POS fullscreen mock memakai data lokal untuk search item, cart, gudang,
+    customer level, diskon, pajak, dan payment drawer.
+- Verifikasi sampai Increment 4:
   - `npm run lint` lulus.
   - `npm run build` lulus.
-  - `php artisan route:list --except-vendor` lulus dan tetap menunjukkan 21
-    route aktif.
+  - `php artisan route:list --except-vendor` lulus dan menunjukkan 22 route
+    aktif termasuk `pos.index`.
+  - `php artisan test --filter=PosRouteTest` lulus.
   - Chrome DevTools MCP lulus untuk desktop expanded/collapsed dan mobile
     drawer; console bersih setelah reload.
 - Risiko terbuka:
-  - Route POS mock belum dibuat; akan dikerjakan pada Increment 4.
-  - Visual mock POS belum tersedia; belum ada klaim transaksi backend berjalan.
+  - Browser QA POS desktop/tablet belum bisa dijalankan karena Chrome DevTools
+    MCP tidak tersedia pada sesi Increment 4 dan CDP headless lokal tidak
+    berhasil dibuka.
+  - Mobile QA POS dilewati sesuai instruksi user.
+  - Belum ada klaim transaksi backend berjalan; POS masih mock UI.
 
 ## Hasil Audit Increment 1
 
@@ -159,3 +166,25 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   - Desktop collapsed: sidebar mengecil tanpa horizontal overflow.
   - Mobile drawer: drawer tampil, item disabled tetap non-link, console bersih
     setelah reload.
+
+## Hasil Increment 4
+
+- Route `pos.index` tersedia pada `/pos` di dalam middleware `auth`.
+- Sidebar admin mengubah menu POS dari coming soon menjadi link nyata ke
+  `/pos` dengan permission UX `sales.pos.invoices.create`.
+- Page POS fullscreen berada pada `resources/js/pages/sales/pos/index.tsx`
+  tanpa memakai layout admin card/dashboard.
+- Komponen POS diletakkan dekat page:
+  `resources/js/pages/sales/pos/components`.
+- POS mock memakai data lokal untuk item, gudang, customer level, dan multi
+  payment; belum melakukan mutation backend.
+- Cart menampilkan item, qty, satuan, harga level pelanggan, diskon item,
+  subtotal, pajak 11%, dan total.
+- Qty mock dibatasi berdasarkan stok base dan rasio satuan agar tidak melebihi
+  stok yang tersedia.
+- Payment drawer mendukung multi payment mock dan Sonner toast saat pembayaran
+  mock disimpan.
+- QA desktop/tablet via browser: `BLOCKED`; Chrome DevTools MCP tidak terekspos
+  pada sesi ini dan percobaan CDP headless lokal tidak membuka endpoint debug.
+  Verifikasi fallback yang lulus: lint, build, route list, dan route feature
+  test.

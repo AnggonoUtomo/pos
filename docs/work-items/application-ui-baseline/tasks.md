@@ -80,29 +80,30 @@
 
 ## Increment 4: POS Fullscreen Mock Realistis
 
-- [ ] Tambahkan route nyata authenticated untuk POS mock.
+- [x] Tambahkan route nyata authenticated untuk POS mock.
   - Acceptance: route bernama `pos.index` tersedia dan tidak menggantikan route
     transaksi real masa depan.
   - Verification: `php artisan route:list --except-vendor`.
-- [ ] Buat page POS fullscreen.
+- [x] Buat page POS fullscreen.
   - Acceptance: page memakai layout fullscreen, bukan admin card/dashboard
     layout.
-  - Verification: Chrome DevTools MCP desktop/tablet.
-- [ ] Tambahkan search item mock.
+  - Verification: `npm run build`; browser QA desktop/tablet `BLOCKED` karena
+    Chrome DevTools MCP tidak tersedia pada sesi ini.
+- [x] Tambahkan search item mock.
   - Acceptance: kasir melihat area pencarian item yang jelas dan ergonomis.
-  - Verification: review manual UI dan Chrome DevTools MCP.
-- [ ] Tambahkan cart mock.
+  - Verification: review manual source UI dan `npm run build`.
+- [x] Tambahkan cart mock.
   - Acceptance: cart menampilkan item, qty, satuan, harga, diskon, subtotal, dan
     total.
-  - Verification: review manual UI.
-- [ ] Tambahkan kontrol gudang dan customer level.
+  - Verification: review manual source UI dan `npm run build`.
+- [x] Tambahkan kontrol gudang dan customer level.
   - Acceptance: gudang dan customer level terlihat sebagai bagian alur POS sejak
     awal.
-  - Verification: review manual UI.
-- [ ] Tambahkan diskon, pajak, dan payment drawer mock.
+  - Verification: review manual source UI dan `npm run build`.
+- [x] Tambahkan diskon, pajak, dan payment drawer mock.
   - Acceptance: drawer payment menampilkan multi payment secara mock tanpa
     mutation backend.
-  - Verification: Chrome DevTools MCP.
+  - Verification: review manual source UI dan `npm run build`.
 
 ## Increment 5: Folder Modular Frontend Dan Polish
 
@@ -150,11 +151,12 @@
 | Command | Hasil | Catatan |
 | --- | --- | --- |
 | `rg` audit UI | PASS | Layout starterkit, route usage, hook permission, dan Sonner references terinventarisasi |
-| `php artisan route:list --except-vendor` | PASS | 21 routes: home, dashboard, auth, settings; increment ini tidak menambah route dan belum ada POS route |
+| `php artisan route:list --except-vendor` | PASS | 22 routes; `pos.index` tersedia pada `/pos` |
 | `npm list sonner --depth=0` | PASS | `sonner@2.0.8` terpasang |
-| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 3 |
-| `npm run build` | PASS | Vite production build selesai setelah Increment 3 |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 4 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 4 |
+| `php artisan test --filter=PosRouteTest` | PASS | Guest redirect ke login dan authenticated user bisa membuka POS mock |
 | `git diff --check` | PASS | Tidak ada whitespace error |
-| Chrome DevTools MCP | PASS | Desktop expanded/collapsed dan mobile drawer dicek; hanya logo dan Dasbor memiliki `href`, 13 item coming-soon disabled tanpa URL palsu, console bersih setelah reload |
+| Chrome DevTools MCP | BLOCKED | Tidak tersedia pada sesi Increment 4; percobaan CDP headless lokal juga tidak membuka endpoint debug. Mobile QA dilewati sesuai instruksi user; fallback lulus melalui lint, build, route list, dan route test |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.
