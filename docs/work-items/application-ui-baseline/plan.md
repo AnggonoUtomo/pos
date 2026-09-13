@@ -11,7 +11,7 @@ direview dan disetujui user.
 
 | No | Status | Nama | Perubahan | Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Planned | Audit UI starterkit | Inventarisasi layout, komponen shadcn/ui, route, permission hook, dan kebutuhan Sonner | Target file dan route jelas sebelum coding | `rg`; `php artisan route:list --except-vendor`; `npm list sonner --depth=0` |
+| 1 | Passed | Audit UI starterkit | Inventarisasi layout, komponen shadcn/ui, route, permission hook, dan kebutuhan Sonner | Target file dan route jelas sebelum coding | `rg`; `php artisan route:list --except-vendor`; `npm list sonner --depth=0` |
 | 2 | Planned | UI feedback baseline | Pastikan Sonner tersedia dan `Toaster` dipasang pada root/layout yang tepat | Toast bisa dipakai konsisten untuk CRUD UI | `npm run lint`; `npm run build` |
 | 3 | Planned | Admin ERP sidebar | Sesuaikan sidebar untuk module Platform, Inventory, Sales, Purchasing, Finance, Reporting dengan item controlled | Menu route nyata clickable; menu belum tersedia disabled/coming soon | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/mobile |
 | 4 | Planned | POS fullscreen mock | Buat page POS mock dengan search item, cart, gudang, customer level, diskon, pajak, payment drawer | Alur kasir realistis dapat dipakai sebagai target UI module bisnis | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/tablet |

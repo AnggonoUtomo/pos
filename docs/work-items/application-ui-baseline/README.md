@@ -89,7 +89,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 
 | Increment | Status | Ringkasan | Verifikasi |
 | --- | --- | --- | --- |
-| 1 | Planned | Audit UI starterkit dan tentukan route/layout target | `rg`; `php artisan route:list --except-vendor` |
+| 1 | Passed | Audit UI starterkit dan tentukan route/layout target | `rg`; `php artisan route:list --except-vendor`; `npm list sonner --depth=0` |
 | 2 | Planned | Tambah/aktifkan Sonner dan UI feedback baseline | `npm run lint`; `npm run build` |
 | 3 | Planned | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 4 | Planned | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; Chrome DevTools MCP |
@@ -105,3 +105,20 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   - Route POS mock perlu dipilih tanpa mengunci desain route transaksi real.
   - Visual mock POS harus cukup realistis tanpa menyiratkan transaksi backend
     sudah berjalan.
+
+## Hasil Audit Increment 1
+
+- Layout admin awal tersedia melalui `resources/js/layouts/app-layout.tsx` dan
+  `resources/js/layouts/app/app-sidebar-layout.tsx`.
+- Sidebar starterkit masih minimal: hanya Dashboard dan footer link starterkit.
+- `NavItem` belum memiliki metadata `disabled`, `comingSoon`, `permission`, atau
+  grouping module; ini perlu ditambah pada increment admin sidebar.
+- Hook `resources/js/hooks/use-permission.ts` sudah tersedia dan memakai
+  `isSuperSystem`.
+- Komponen shadcn/ui dasar sudah tersedia, tetapi `sonner` belum terpasang.
+- Route aktif baru mencakup home, dashboard, auth, dan settings. Belum ada route
+  POS fullscreen atau UI Identity.
+- Target route yang direkomendasikan untuk implementasi:
+  - Admin ERP shell tetap memakai `dashboard` sebagai entry awal.
+  - POS fullscreen mock ditambahkan sebagai route nyata authenticated, misalnya
+    `pos.index`, tanpa membuat route palsu untuk module lain.

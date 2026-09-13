@@ -1,27 +1,38 @@
 # Tasks: [Nama Pekerjaan]
 
-## Sebelum Coding
+## Sebelum Mulai
 
+- [ ] `AGENTS.md` dibaca.
+- [ ] Dokumen rujukan project dibaca sesuai scope.
+- [ ] Dokumen module dibaca bila pekerjaan menyentuh module.
 - [ ] Scope dan non-scope disetujui.
 - [ ] Module target sudah disebut ke user.
-- [ ] Dokumen rujukan dibaca.
 - [ ] Acceptance criteria jelas.
-- [ ] Dampak database, route, permission, UI, seeder, dan audit dicek.
-- [ ] Risiko FIFO, stok, payment, tax, diskon, dan pricing dicek bila tersentuh.
+- [ ] Dampak database, route, permission, UI, seeder, audit, soft delete, stok,
+  FIFO, payment, tax, diskon, dan pricing dicek sesuai scope.
 - [ ] QA automated ditentukan.
 - [ ] Chrome DevTools QA direncanakan bila UI/browser tersentuh.
 - [ ] Gap conformance dicatat bila ditemukan.
 
-## Increment
+## Increment 1: [Nama Increment]
 
-| No | Status | Task | Acceptance | Verification |
-| --- | --- | --- | --- | --- |
-| 1 | Planned | [Task kecil dengan satu hasil jelas] | [Kondisi lulus] | `[command]` |
+- [ ] [Task kecil dengan satu hasil jelas.]
+  - Acceptance: [kondisi lulus yang dapat diverifikasi].
+  - Verification: `[command atau review manual]`.
+- [ ] [Task kecil berikutnya.]
+  - Acceptance: [kondisi lulus yang dapat diverifikasi].
+  - Verification: `[command atau review manual]`.
+
+## Increment 2: [Nama Increment]
+
+- [ ] [Task kecil dengan satu hasil jelas.]
+  - Acceptance: [kondisi lulus yang dapat diverifikasi].
+  - Verification: `[command atau review manual]`.
 
 ## Sesudah Coding
 
 - [ ] Scope selesai.
-- [ ] Focused test lulus.
+- [ ] Focused test lulus atau dinyatakan tidak relevan.
 - [ ] Lint/build/typecheck lulus bila relevan.
 - [ ] Route/migration check lulus bila relevan.
 - [ ] Chrome DevTools QA PASS, atau BLOCKED/SKIPPED dengan alasan.

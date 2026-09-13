@@ -39,8 +39,11 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Pecah perubahan multi-file menjadi increment yang dapat diverifikasi.
 - Jalankan test atau pemeriksaan yang proporsional dengan risiko perubahan.
 - Pertahankan perubahan user yang tidak terkait.
-- Jangan membuat branch, commit, push, atau memasang dependency tanpa permintaan
-  eksplisit user.
+- Jangan membuat branch atau memasang dependency tanpa permintaan eksplisit user.
+- Setelah task atau increment selesai dan verifikasi relevan lulus, buat commit
+  otomatis sebagai save point.
+- Push hanya dilakukan saat keseluruhan work item/task besar selesai atau jika
+  user meminta eksplisit.
 - Untuk perubahan module, informasikan module target sebelum coding.
 - Setiap work item module wajib memiliki rencana increment dan checklist sebelum
   coding dimulai.
@@ -134,6 +137,6 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Nama tabel, kolom, class, method, route, permission, enum, DTOs, event,
   contract, dan namespace memakai English technical naming.
 - Commit message mengikuti gaya ringkas seperti `feat:`, `fix:`, `docs:`, atau
-  `chore:` jika user meminta commit.
+  `chore:`.
 - Pada handoff, laporkan perubahan, verifikasi, yang tidak disentuh, dan risiko
   terbuka secara ringkas.

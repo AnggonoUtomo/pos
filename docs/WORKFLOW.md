@@ -63,9 +63,12 @@ perubahan struktural dan minta keputusan.
 7. Isi checklist sesudah coding.
 8. Update status increment, status work item, dan `tasks.md` module.
 9. Laporkan risiko yang masih terbuka.
-10. Berhenti setelah scope work item terpenuhi dan tunggu arahan berikutnya.
+10. Buat commit otomatis sebagai save point setelah task atau increment selesai
+    dan verifikasi relevan lulus.
+11. Berhenti setelah scope work item terpenuhi dan tunggu arahan berikutnya.
 
-Commit dan push hanya dilakukan jika user meminta eksplisit.
+Push hanya dilakukan saat keseluruhan work item/task besar selesai atau jika
+user meminta eksplisit.
 
 ## Status Work Item
 
