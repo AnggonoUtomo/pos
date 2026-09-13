@@ -90,7 +90,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | Increment | Status | Ringkasan | Verifikasi |
 | --- | --- | --- | --- |
 | 1 | Passed | Audit UI starterkit dan tentukan route/layout target | `rg`; `php artisan route:list --except-vendor`; `npm list sonner --depth=0` |
-| 2 | Planned | Tambah/aktifkan Sonner dan UI feedback baseline | `npm run lint`; `npm run build` |
+| 2 | Passed | Tambah/aktifkan Sonner dan UI feedback baseline | `npm list sonner --depth=0`; `npm run lint`; `npm run build` |
 | 3 | Planned | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 4 | Planned | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 5 | Planned | Rapikan folder modular frontend dan dokumentasi hasil | `git diff --check`; review docs |
@@ -101,7 +101,6 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - Verifikasi: belum dijalankan.
 - Chrome DevTools QA: direncanakan untuk admin sidebar dan POS fullscreen.
 - Risiko terbuka:
-  - Package atau komponen Sonner mungkin perlu ditambahkan bila belum tersedia.
   - Route POS mock perlu dipilih tanpa mengunci desain route transaksi real.
   - Visual mock POS harus cukup realistis tanpa menyiratkan transaksi backend
     sudah berjalan.
@@ -122,3 +121,15 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   - Admin ERP shell tetap memakai `dashboard` sebagai entry awal.
   - POS fullscreen mock ditambahkan sebagai route nyata authenticated, misalnya
     `pos.index`, tanpa membuat route palsu untuk module lain.
+
+## Hasil Increment 2
+
+- Dependency `sonner` sudah terpasang.
+- Komponen `resources/js/components/ui/sonner.tsx` tersedia.
+- `Toaster` sudah dipasang pada root Inertia di `resources/js/app.tsx`.
+- Contoh pola toast CRUD update dipasang pada halaman profile settings:
+  success toast saat profil berhasil diperbarui dan error toast saat validasi
+  gagal.
+- Chrome DevTools MCP smoke check berhasil membuka aplikasi lokal; route profile
+  redirect ke login karena belum authenticated, halaman login render tanpa
+  console error.

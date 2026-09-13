@@ -40,18 +40,18 @@
 
 ## Increment 2: Sonner Toast Baseline
 
-- [ ] Pastikan dependency Sonner tersedia.
+- [x] Pastikan dependency Sonner tersedia.
   - Acceptance: `sonner` terdaftar pada package dependency, atau ada alasan
     eksplisit bila memakai mekanisme lain.
   - Verification: `npm list sonner --depth=0`.
-- [ ] Tambahkan komponen shadcn/ui Sonner bila belum ada.
+- [x] Tambahkan komponen shadcn/ui Sonner bila belum ada.
   - Acceptance: file UI Sonner tersedia pada lokasi shadcn/ui project.
   - Verification: review file dan `npm run build`.
-- [ ] Pasang `Toaster` pada root/layout yang tepat.
+- [x] Pasang `Toaster` pada root/layout yang tepat.
   - Acceptance: toast dapat dipanggil dari page/layout tanpa pemasangan ulang per
     fitur.
   - Verification: `npm run build`.
-- [ ] Tambahkan contoh pola toast CRUD untuk baseline UI.
+- [x] Tambahkan contoh pola toast CRUD untuk baseline UI.
   - Acceptance: ada contoh success/error toast yang akan menjadi pola module
     CRUD berikutnya.
   - Verification: `npm run lint` dan review manual.
@@ -150,11 +150,11 @@
 | Command | Hasil | Catatan |
 | --- | --- | --- |
 | `rg` audit UI | PASS | Layout starterkit, route usage, hook permission, dan Sonner references terinventarisasi |
-| `php artisan route:list --except-vendor` | PASS | 21 routes: home, dashboard, auth, settings; belum ada POS route |
-| `npm list sonner --depth=0` | NEEDS ACTION | Exit 1 dengan output `(empty)`; Sonner belum terpasang |
-| `npm run lint` | Pending | Dijalankan setelah UI berubah |
-| `npm run build` | Pending | Dijalankan setelah UI berubah |
+| `php artisan route:list --except-vendor` | PASS | 21 routes: home, dashboard, auth, settings; increment ini tidak menambah route dan belum ada POS route |
+| `npm list sonner --depth=0` | PASS | `sonner@2.0.8` terpasang |
+| `npm run lint` | PASS | ESLint selesai tanpa error |
+| `npm run build` | PASS | Vite production build selesai |
 | `git diff --check` | Pending | Dijalankan sebelum handoff |
-| Chrome DevTools MCP | Pending | Dijalankan untuk admin dan POS |
+| Chrome DevTools MCP | PASS terbatas | Profile redirect ke login karena belum authenticated; login render tanpa console error |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.
