@@ -1,0 +1,107 @@
+# Work Item: Application UI Baseline
+
+## Status
+
+Ready
+
+## Owner Dan Lokasi
+
+- Owner module: lintas module.
+- Target kode:
+  - `resources/js/components`
+  - `resources/js/layouts`
+  - `resources/js/pages`
+  - `resources/js/hooks`
+  - route Laravel/Inertia terkait bila diperlukan
+- Target dokumen:
+  - `docs/work-items/application-ui-baseline/`
+
+## Kondisi Awal
+
+Laravel starter kit sudah menyediakan layout, komponen shadcn/ui dasar, halaman
+auth/settings/dashboard, dan hook `use-permission.ts`. Project POS belum memiliki
+standar awal final untuk admin ERP sidebar, POS fullscreen, peta module lengkap
+yang controlled, Sonner toast, dan mock alur kasir realistis.
+
+## Scope
+
+- Menetapkan UI baseline sebagai standar awal final, bukan shell sementara.
+- Membuat admin ERP sidebar sebagai layout utama admin.
+- Menampilkan peta module lengkap secara controlled tanpa membuat route palsu.
+- Membuat POS fullscreen mock yang realistis untuk desktop/tablet.
+- POS mock memuat search item, cart, pilih gudang, customer level, diskon,
+  pajak, dan payment drawer.
+- Menyiapkan shadcn/ui sebagai default UX dan Sonner toast untuk feedback CRUD.
+- Menggunakan `usePermission()` dan `isSuperSystem` untuk UX permission guard.
+- Menetapkan pola folder frontend modular:
+  `resources/js/pages/{domain}/{module}/components`.
+- Menjalankan QA automated dan Chrome DevTools MCP untuk baseline UI.
+
+## Tidak Dikerjakan
+
+- Logic transaksi real.
+- Posting stok, FIFO, payment posting, retur, void, atau adjustment.
+- Query database item/customer/gudang real.
+- Membuat route palsu untuk module yang belum ada.
+- Membuat design system paralel di luar shadcn/ui.
+- Mengubah struktur `Old-docs/`.
+
+## Acceptance Criteria
+
+- [ ] Admin ERP sidebar tampil sebagai layout utama dengan navigasi module
+  lengkap tetapi controlled.
+- [ ] Menu tanpa route nyata tidak clickable, disabled, atau diberi state
+  coming soon tanpa route palsu.
+- [ ] POS fullscreen mock dapat dibuka dari route nyata yang disepakati.
+- [ ] POS mock menampilkan search item, cart, pilih gudang, customer level,
+  diskon, pajak, subtotal/total, dan payment drawer.
+- [ ] POS mock memakai data statis lokal untuk UX, bukan transaksi backend real.
+- [ ] Sonner toast tersedia dan dipakai pada contoh feedback UI yang relevan.
+- [ ] Permission UX memakai `usePermission()` dan `isSuperSystem`.
+- [ ] Komponen fitur diletakkan dekat page sesuai struktur modular frontend.
+- [ ] Layout desktop/tablet POS dan admin responsive dasar lulus QA browser.
+- [ ] `npm run lint`, `npm run build`, dan verifikasi route relevan lulus.
+
+## Dampak Yang Harus Dicek
+
+- [ ] Database/migration: tidak disentuh pada work item ini.
+- [ ] Route: route nyata untuk POS mock/admin entry dicek bila ditambah.
+- [ ] Permission/policy: backend tetap authority; frontend guard hanya UX.
+- [ ] UI/Inertia: terdampak utama.
+- [ ] Seeder demo: tidak disentuh.
+- [ ] Activity log: tidak relevan untuk mock UI baseline.
+- [ ] Soft delete atau mekanisme koreksi: tidak disentuh.
+- [ ] Transaksi stok/FIFO/payment/tax/diskon/pricing: hanya mock UI, tidak
+  menjalankan mutation bisnis.
+
+## Dependency Dan Keputusan
+
+- Interview intent disetujui user: UI baseline dibuat matang sebagai standar
+  awal final.
+- shadcn/ui menjadi default UI/UX.
+- Sonner toast wajib untuk feedback CRUD.
+- Admin ERP memakai sidebar.
+- POS memakai fullscreen desktop/tablet.
+- Menu module belum tersedia harus controlled tanpa route palsu.
+- Chrome DevTools MCP dipakai untuk QA browser bila tersedia.
+
+## Increment
+
+| Increment | Status | Ringkasan | Verifikasi |
+| --- | --- | --- | --- |
+| 1 | Planned | Audit UI starterkit dan tentukan route/layout target | `rg`; `php artisan route:list --except-vendor` |
+| 2 | Planned | Tambah/aktifkan Sonner dan UI feedback baseline | `npm run lint`; `npm run build` |
+| 3 | Planned | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
+| 4 | Planned | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; Chrome DevTools MCP |
+| 5 | Planned | Rapikan folder modular frontend dan dokumentasi hasil | `git diff --check`; review docs |
+
+## Handoff
+
+- Perubahan: belum dikerjakan.
+- Verifikasi: belum dijalankan.
+- Chrome DevTools QA: direncanakan untuk admin sidebar dan POS fullscreen.
+- Risiko terbuka:
+  - Package atau komponen Sonner mungkin perlu ditambahkan bila belum tersedia.
+  - Route POS mock perlu dipilih tanpa mengunci desain route transaksi real.
+  - Visual mock POS harus cukup realistis tanpa menyiratkan transaksi backend
+    sudah berjalan.
