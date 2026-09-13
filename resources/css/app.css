@@ -112,6 +112,93 @@
     --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
 }
 
+:root[data-theme='grey'] {
+    --primary: hsl(220, 9%, 28%);
+    --ring: hsl(220, 9%, 46%);
+    --chart-1: hsl(220, 13%, 46%);
+    --chart-2: hsl(199, 89%, 48%);
+    --chart-3: hsl(160, 84%, 39%);
+    --chart-4: hsl(38, 92%, 50%);
+    --chart-5: hsl(271, 91%, 65%);
+    --sidebar-accent: hsl(220, 14%, 94%);
+    --sidebar-accent-foreground: hsl(220, 18%, 26%);
+    --sidebar-ring: hsl(220, 9%, 46%);
+}
+
+:root[data-theme='stone'] {
+    --primary: hsl(25, 12%, 28%);
+    --ring: hsl(25, 28%, 45%);
+    --chart-1: hsl(25, 55%, 48%);
+    --chart-2: hsl(142, 42%, 40%);
+    --chart-3: hsl(203, 57%, 43%);
+    --chart-4: hsl(43, 74%, 48%);
+    --chart-5: hsl(0, 64%, 52%);
+    --sidebar-background: hsl(30, 20%, 97%);
+    --sidebar-accent: hsl(30, 18%, 91%);
+    --sidebar-accent-foreground: hsl(25, 18%, 24%);
+    --sidebar-ring: hsl(25, 28%, 45%);
+}
+
+:root[data-theme='forest'] {
+    --primary: hsl(150, 54%, 28%);
+    --ring: hsl(150, 60%, 34%);
+    --chart-1: hsl(150, 60%, 34%);
+    --chart-2: hsl(173, 70%, 34%);
+    --chart-3: hsl(83, 64%, 42%);
+    --chart-4: hsl(38, 92%, 50%);
+    --chart-5: hsl(199, 89%, 48%);
+    --sidebar-background: hsl(150, 30%, 97%);
+    --sidebar-primary: hsl(150, 54%, 28%);
+    --sidebar-accent: hsl(150, 32%, 91%);
+    --sidebar-accent-foreground: hsl(150, 46%, 22%);
+    --sidebar-ring: hsl(150, 60%, 34%);
+}
+
+:root[data-theme='ruby'] {
+    --primary: hsl(348, 74%, 42%);
+    --ring: hsl(348, 83%, 47%);
+    --chart-1: hsl(348, 83%, 47%);
+    --chart-2: hsl(25, 95%, 53%);
+    --chart-3: hsl(271, 91%, 65%);
+    --chart-4: hsl(199, 89%, 48%);
+    --chart-5: hsl(142, 71%, 45%);
+    --sidebar-background: hsl(345, 38%, 98%);
+    --sidebar-primary: hsl(348, 74%, 42%);
+    --sidebar-accent: hsl(345, 50%, 93%);
+    --sidebar-accent-foreground: hsl(348, 70%, 30%);
+    --sidebar-ring: hsl(348, 83%, 47%);
+}
+
+:root[data-theme='quartz'] {
+    --primary: hsl(266, 64%, 42%);
+    --ring: hsl(266, 83%, 58%);
+    --chart-1: hsl(266, 83%, 58%);
+    --chart-2: hsl(199, 89%, 48%);
+    --chart-3: hsl(330, 81%, 60%);
+    --chart-4: hsl(43, 96%, 56%);
+    --chart-5: hsl(160, 84%, 39%);
+    --sidebar-background: hsl(266, 35%, 98%);
+    --sidebar-primary: hsl(266, 64%, 42%);
+    --sidebar-accent: hsl(266, 40%, 94%);
+    --sidebar-accent-foreground: hsl(266, 54%, 30%);
+    --sidebar-ring: hsl(266, 83%, 58%);
+}
+
+:root[data-theme='aurora'] {
+    --primary: hsl(188, 78%, 32%);
+    --ring: hsl(188, 86%, 42%);
+    --chart-1: hsl(188, 86%, 42%);
+    --chart-2: hsl(262, 83%, 58%);
+    --chart-3: hsl(142, 71%, 45%);
+    --chart-4: hsl(330, 81%, 60%);
+    --chart-5: hsl(38, 92%, 50%);
+    --sidebar-background: hsl(190, 38%, 98%);
+    --sidebar-primary: hsl(188, 78%, 32%);
+    --sidebar-accent: hsl(188, 44%, 92%);
+    --sidebar-accent-foreground: hsl(188, 68%, 24%);
+    --sidebar-ring: hsl(188, 86%, 42%);
+}
+
 .dark {
     --background: hsl(0, 0%, 3.9%);
     --foreground: hsl(0, 0%, 98%);
@@ -145,6 +232,96 @@
     --sidebar-accent-foreground: hsl(240, 4.8%, 95.9%);
     --sidebar-border: hsl(0, 0%, 15.9%);
     --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
+}
+
+.dark[data-theme='grey'] {
+    --primary: hsl(220, 14%, 86%);
+    --primary-foreground: hsl(220, 16%, 16%);
+    --ring: hsl(220, 14%, 70%);
+    --chart-1: hsl(220, 14%, 70%);
+    --chart-2: hsl(199, 89%, 64%);
+    --chart-3: hsl(160, 84%, 52%);
+    --chart-4: hsl(38, 92%, 60%);
+    --chart-5: hsl(271, 91%, 74%);
+    --sidebar-background: hsl(220, 16%, 9%);
+    --sidebar-accent: hsl(220, 14%, 18%);
+    --sidebar-accent-foreground: hsl(220, 20%, 90%);
+    --sidebar-ring: hsl(220, 14%, 70%);
+}
+
+.dark[data-theme='stone'] {
+    --primary: hsl(35, 24%, 82%);
+    --primary-foreground: hsl(25, 18%, 14%);
+    --ring: hsl(35, 38%, 64%);
+    --chart-1: hsl(35, 38%, 64%);
+    --chart-2: hsl(142, 54%, 52%);
+    --chart-3: hsl(203, 72%, 60%);
+    --chart-4: hsl(43, 86%, 62%);
+    --chart-5: hsl(0, 72%, 64%);
+    --sidebar-background: hsl(25, 16%, 9%);
+    --sidebar-accent: hsl(25, 16%, 18%);
+    --sidebar-accent-foreground: hsl(35, 30%, 88%);
+    --sidebar-ring: hsl(35, 38%, 64%);
+}
+
+.dark[data-theme='forest'] {
+    --primary: hsl(150, 54%, 68%);
+    --primary-foreground: hsl(150, 50%, 12%);
+    --ring: hsl(150, 60%, 54%);
+    --chart-1: hsl(150, 60%, 54%);
+    --chart-2: hsl(173, 70%, 52%);
+    --chart-3: hsl(83, 64%, 58%);
+    --chart-4: hsl(38, 92%, 60%);
+    --chart-5: hsl(199, 89%, 64%);
+    --sidebar-background: hsl(150, 30%, 8%);
+    --sidebar-accent: hsl(150, 30%, 16%);
+    --sidebar-accent-foreground: hsl(150, 44%, 84%);
+    --sidebar-ring: hsl(150, 60%, 54%);
+}
+
+.dark[data-theme='ruby'] {
+    --primary: hsl(348, 83%, 72%);
+    --primary-foreground: hsl(348, 64%, 14%);
+    --ring: hsl(348, 83%, 62%);
+    --chart-1: hsl(348, 83%, 62%);
+    --chart-2: hsl(25, 95%, 62%);
+    --chart-3: hsl(271, 91%, 74%);
+    --chart-4: hsl(199, 89%, 64%);
+    --chart-5: hsl(142, 71%, 56%);
+    --sidebar-background: hsl(348, 28%, 9%);
+    --sidebar-accent: hsl(348, 28%, 17%);
+    --sidebar-accent-foreground: hsl(348, 68%, 86%);
+    --sidebar-ring: hsl(348, 83%, 62%);
+}
+
+.dark[data-theme='quartz'] {
+    --primary: hsl(266, 83%, 76%);
+    --primary-foreground: hsl(266, 58%, 14%);
+    --ring: hsl(266, 83%, 66%);
+    --chart-1: hsl(266, 83%, 66%);
+    --chart-2: hsl(199, 89%, 64%);
+    --chart-3: hsl(330, 81%, 68%);
+    --chart-4: hsl(43, 96%, 64%);
+    --chart-5: hsl(160, 84%, 52%);
+    --sidebar-background: hsl(266, 26%, 9%);
+    --sidebar-accent: hsl(266, 26%, 18%);
+    --sidebar-accent-foreground: hsl(266, 72%, 88%);
+    --sidebar-ring: hsl(266, 83%, 66%);
+}
+
+.dark[data-theme='aurora'] {
+    --primary: hsl(188, 86%, 64%);
+    --primary-foreground: hsl(188, 68%, 12%);
+    --ring: hsl(188, 86%, 54%);
+    --chart-1: hsl(188, 86%, 54%);
+    --chart-2: hsl(262, 83%, 70%);
+    --chart-3: hsl(142, 71%, 56%);
+    --chart-4: hsl(330, 81%, 68%);
+    --chart-5: hsl(38, 92%, 60%);
+    --sidebar-background: hsl(188, 28%, 8%);
+    --sidebar-accent: hsl(188, 30%, 16%);
+    --sidebar-accent-foreground: hsl(188, 78%, 86%);
+    --sidebar-ring: hsl(188, 86%, 54%);
 }
 
 @layer base {

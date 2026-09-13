@@ -215,6 +215,20 @@
     `Ctrl+K`/`Cmd+K`; command aktif tidak membuat route palsu.
   - Verification: Chrome DevTools MCP desktop/tablet.
 
+## Increment 11: Accent Theme Dan Icon Color Polish
+
+- [x] Tambahkan accent theme operasional.
+  - Acceptance: tersedia Default, Grey, Stone, Forest, Ruby, Quartz, Aurora.
+  - Verification: Chrome DevTools MCP; review CSS token.
+- [x] Polish theme menu top nav.
+  - Acceptance: mode Light/Dark/System dan accent theme dapat dipilih dari top
+    nav tanpa route baru.
+  - Verification: Chrome DevTools MCP desktop/tablet.
+- [x] Beri warna semantic pada icon utama.
+  - Acceptance: icon command palette, top nav, dan dashboard summary tidak flat
+    monokrom.
+  - Verification: review source; Chrome DevTools MCP.
+
 ## Hasil Verifikasi
 
 | Command | Hasil | Catatan |
@@ -244,5 +258,9 @@
 | `npm run build` | PASS | Vite production build selesai setelah Increment 10 |
 | `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 10 |
 | Chrome DevTools MCP | PASS | Shortcut dropdown dashboard dan command palette top nav lulus desktop/tablet |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 11 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 11 |
+| `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 11 |
+| Chrome DevTools MCP | PASS | Theme menu dan accent theme lulus desktop/tablet; console bersih |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

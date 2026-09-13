@@ -5,21 +5,15 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { ThemeMenu } from '@/components/theme-menu';
 import { UserInfo } from '@/components/user-info';
 import { UserMenuContent } from '@/components/user-menu-content';
-import { useAppearance } from '@/hooks/use-appearance';
 import { type BreadcrumbItem as BreadcrumbItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { MonitorCog, Moon, ShoppingCart, Sun, Warehouse } from 'lucide-react';
+import { MonitorCog, ShoppingCart, Warehouse } from 'lucide-react';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const { auth } = usePage<SharedData>().props;
-    const { appearance, updateAppearance } = useAppearance();
-
-    const toggleAppearance = () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        updateAppearance(isDark ? 'light' : 'dark');
-    };
 
     return (
         <header className="bg-background/95 sticky top-0 z-30 flex min-h-16 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3 backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:min-h-12 lg:flex-nowrap lg:px-5">
@@ -34,13 +28,13 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             <nav aria-label="Navigasi cepat admin" className="order-3 flex w-full items-center gap-2 overflow-x-auto lg:order-none lg:w-auto lg:overflow-visible">
                 <Button asChild variant="ghost" size="sm" className="h-8 shrink-0 gap-2">
                     <Link href="/dashboard" prefetch>
-                        <MonitorCog className="size-4" />
+                        <MonitorCog className="size-4 text-sky-600 dark:text-sky-300" />
                         Dasbor
                     </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm" className="h-8 shrink-0 gap-2">
                     <Link href="/pos" prefetch>
-                        <ShoppingCart className="size-4" />
+                        <ShoppingCart className="size-4 text-emerald-600 dark:text-emerald-300" />
                         POS
                     </Link>
                 </Button>
@@ -56,20 +50,10 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             {auth.user && (
                 <div className="ml-auto flex shrink-0 items-center gap-1">
                     <CommandPalette />
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="relative size-10"
-                        onClick={toggleAppearance}
-                        aria-label={appearance === 'dark' ? 'Aktifkan tema terang' : 'Aktifkan tema gelap'}
-                    >
-                        <Sun className="size-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                        <Moon className="absolute size-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                    </Button>
+                    <ThemeMenu />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-10 gap-2 px-2">
+                            <Button variant="ghost" className="h-10 gap-2 px-2 [&_.grid]:hidden xl:[&_.grid]:grid">
                                 <UserInfo user={auth.user} />
                             </Button>
                         </DropdownMenuTrigger>

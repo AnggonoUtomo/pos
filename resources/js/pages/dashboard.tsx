@@ -24,6 +24,7 @@ const summaryCards = [
         note: '128 transaksi selesai',
         trend: '+12,4%',
         tone: 'emerald',
+        iconTone: 'text-emerald-600 dark:text-emerald-300',
         icon: ReceiptText,
     },
     {
@@ -32,6 +33,7 @@ const summaryCards = [
         note: '3 draft payment',
         trend: 'Live',
         tone: 'blue',
+        iconTone: 'text-sky-600 dark:text-sky-300',
         icon: ShoppingCart,
     },
     {
@@ -40,6 +42,7 @@ const summaryCards = [
         note: 'Butuh pembelian ulang',
         trend: 'Cek',
         tone: 'amber',
+        iconTone: 'text-amber-600 dark:text-amber-300',
         icon: Boxes,
     },
     {
@@ -48,6 +51,7 @@ const summaryCards = [
         note: 'Menunggu review admin',
         trend: '-2',
         tone: 'rose',
+        iconTone: 'text-rose-600 dark:text-rose-300',
         icon: ArrowDownRight,
     },
 ];
@@ -151,7 +155,7 @@ export default function Dashboard() {
                                         <p className="text-muted-foreground mt-1 text-xs">{item.note}</p>
                                     </div>
                                     <div className={cn('rounded-lg border p-2', toneClasses[item.tone])}>
-                                        <item.icon className="size-4" />
+                                        <item.icon className={cn('size-4', item.iconTone)} />
                                     </div>
                                 </div>
                                 <div className="mt-4 flex items-center justify-between">

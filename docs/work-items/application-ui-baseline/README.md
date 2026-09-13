@@ -103,6 +103,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 8 | Passed | Polish sidebar footer dan theme toggle top nav | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 9 | Passed | Polish collapsed sidebar scroll dan tooltip | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 10 | Passed | Shortcut operasi halaman dan command palette | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 11 | Passed | Accent theme dan icon color polish | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## Handoff
 
@@ -278,6 +279,20 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   `Cmd+K`.
 - Dashboard memasang contoh `WorkspaceShortcutDropdown` sebagai baseline
   halaman admin.
+- Verifikasi:
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `git diff --check` lulus.
+  - Chrome DevTools MCP desktop/tablet lulus.
+
+## Hasil Increment 11
+
+- Theme menu top nav dibuat lebih visual dengan pilihan mode Light, Dark,
+  System dan accent theme Default, Grey, Stone, Forest, Ruby, Quartz, Aurora.
+- Accent theme mengubah token primary, ring, chart, dan sidebar accent tanpa
+  membuat design system paralel.
+- Icon command palette, top nav, dan dashboard summary diberi warna semantic
+  yang lebih beragam.
 - Verifikasi:
   - `npm run lint` lulus.
   - `npm run build` lulus.

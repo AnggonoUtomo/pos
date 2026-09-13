@@ -154,6 +154,9 @@ yang efisien. CRUD sederhana tidak wajib diberi ceremony CQRS penuh.
   workspace dengan pola dropdown.
 - Top nav admin menyediakan command palette global untuk navigasi dan operasi
   lintas module. Shortcut default command palette adalah `Ctrl+K` atau `Cmd+K`.
+- Theme UI mendukung mode Light/Dark/System dan accent theme operasional seperti
+  Grey, Stone, Forest, Ruby, Quartz, dan Aurora. Icon navigasi/operasi memakai
+  warna semantic yang beragam agar scanning lebih hidup.
 - Komponen fitur diletakkan dekat page:
   `resources/js/pages/{domain}/{module}/components`.
 - Komponen shared hanya untuk UI lintas fitur yang benar-benar stabil.
