@@ -100,6 +100,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 5 | Passed | Rapikan folder modular frontend dan dokumentasi hasil | `npm run lint`; `npm run build`; `git diff --check`; review file |
 | 6 | Passed | Final verification dan handoff | `npm run lint`; `npm run build`; `php artisan route:list --except-vendor`; `php artisan test --filter=PosRouteTest`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 7 | Passed | Polish dashboard shell sesuai referensi `SampleUI/dashboard-shell-01` dan shadcnstudio | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 8 | Passed | Polish sidebar footer dan theme toggle top nav | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## Handoff
 
@@ -249,6 +250,18 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - Referensi yang dipakai:
   - Local sample: `SampleUI/dashboard-shell-01`.
   - External: `https://shadcnstudio.com/blocks/dashboard-and-application/dashboard-shell`.
+- Verifikasi:
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `git diff --check` lulus.
+  - Chrome DevTools MCP desktop/tablet lulus.
+
+## Hasil Increment 8
+
+- Footer user menu pada sidebar dihapus agar navigasi sidebar fokus pada module.
+- User menu tetap tersedia pada top nav.
+- Top nav memiliki toggle light/dark memakai mekanisme `useAppearance()`
+  bawaan starterkit.
 - Verifikasi:
   - `npm run lint` lulus.
   - `npm run build` lulus.

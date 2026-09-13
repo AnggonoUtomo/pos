@@ -170,6 +170,19 @@
     `tasks.md`.
   - Verification: review manual; `git diff --check`.
 
+## Increment 8: Sidebar Footer Dan Theme Toggle Top Nav
+
+- [x] Hapus footer menu pada sidebar.
+  - Acceptance: sidebar tidak lagi menampilkan user menu pada area footer.
+  - Verification: review source; Chrome DevTools MCP desktop/tablet.
+- [x] Tambahkan toggle light/dark pada top nav.
+  - Acceptance: toggle memakai mekanisme `useAppearance()` existing dan berada
+    sebelum user menu top nav.
+  - Verification: Chrome DevTools MCP desktop/tablet.
+- [x] Pastikan user menu tetap tersedia.
+  - Acceptance: user menu masih ada pada top nav.
+  - Verification: Chrome DevTools MCP snapshot.
+
 ## Hasil Verifikasi
 
 | Command | Hasil | Catatan |
@@ -187,5 +200,9 @@
 | `npm run build` | PASS | Vite production build selesai setelah Increment 7 |
 | `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 7 |
 | Chrome DevTools MCP | PASS | Dashboard shell desktop/tablet lulus; top nav, sidebar badge accent, dan dashboard operasional tampil tanpa horizontal overflow |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 8 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 8 |
+| `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 8 |
+| Chrome DevTools MCP | PASS | Sidebar footer menu hilang; top nav memiliki toggle theme dan user menu; desktop/tablet tanpa horizontal overflow |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

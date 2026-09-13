@@ -6,12 +6,19 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserInfo } from '@/components/user-info';
 import { UserMenuContent } from '@/components/user-menu-content';
+import { useAppearance } from '@/hooks/use-appearance';
 import { type BreadcrumbItem as BreadcrumbItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { MonitorCog, ShoppingCart, Warehouse } from 'lucide-react';
+import { MonitorCog, Moon, ShoppingCart, Sun, Warehouse } from 'lucide-react';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const { auth } = usePage<SharedData>().props;
+    const { appearance, updateAppearance } = useAppearance();
+
+    const toggleAppearance = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        updateAppearance(isDark ? 'light' : 'dark');
+    };
 
     return (
         <header className="bg-background/95 sticky top-0 z-30 flex min-h-16 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3 backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:min-h-12 lg:flex-nowrap lg:px-5">
@@ -46,7 +53,18 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             </nav>
 
             {auth.user && (
-                <div className="ml-auto flex shrink-0 items-center">
+                <div className="ml-auto flex shrink-0 items-center gap-1">
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="relative size-10"
+                        onClick={toggleAppearance}
+                        aria-label={appearance === 'dark' ? 'Aktifkan tema terang' : 'Aktifkan tema gelap'}
+                    >
+                        <Sun className="size-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                        <Moon className="absolute size-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                    </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-10 gap-2 px-2">
