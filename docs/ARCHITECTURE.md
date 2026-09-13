@@ -150,6 +150,10 @@ yang efisien. CRUD sederhana tidak wajib diberi ceremony CQRS penuh.
 - shadcn/ui menjadi default komponen UI.
 - `lucide-react` menjadi default icon.
 - Sonner toast dari shadcn/ui digunakan untuk feedback operasi CRUD.
+- Setiap halaman module menampilkan shortcut operasi halaman di atas panel
+  workspace dengan pola dropdown.
+- Top nav admin menyediakan command palette global untuk navigasi dan operasi
+  lintas module. Shortcut default command palette adalah `Ctrl+K` atau `Cmd+K`.
 - Komponen fitur diletakkan dekat page:
   `resources/js/pages/{domain}/{module}/components`.
 - Komponen shared hanya untuk UI lintas fitur yang benar-benar stabil.

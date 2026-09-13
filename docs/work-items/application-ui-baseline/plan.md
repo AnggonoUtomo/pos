@@ -20,6 +20,7 @@ direview dan disetujui user.
 | 7 | Passed | Dashboard shell reference polish | Selaraskan admin dashboard dengan pola `SampleUI/dashboard-shell-01` dan referensi shadcnstudio dashboard shell | Admin memiliki top nav, quick action POS, badge accent, dan dashboard operasional pengganti placeholder | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 8 | Passed | Sidebar footer dan theme toggle | Hapus footer menu sidebar dan tambahkan toggle light/dark pada top nav | Sidebar tanpa footer user menu; theme dapat ditoggle dari top nav | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 9 | Passed | Collapsed sidebar scroll dan tooltip | Sembunyikan scrollbar sidebar tanpa mematikan scroll dan pastikan tooltip tersedia saat collapsed | Sidebar collapsed tetap bisa discroll; tooltip menu/logo tersedia | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 10 | Passed | Shortcut operasi dan command palette | Tambah dropdown shortcut operasi per halaman dan command palette global di top nav | Setiap halaman module punya pola shortcut dropdown; command palette dapat dibuka dari top nav dan keyboard | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## QA Automated
 

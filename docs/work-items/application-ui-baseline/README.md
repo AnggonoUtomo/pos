@@ -102,6 +102,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 7 | Passed | Polish dashboard shell sesuai referensi `SampleUI/dashboard-shell-01` dan shadcnstudio | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 8 | Passed | Polish sidebar footer dan theme toggle top nav | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 9 | Passed | Polish collapsed sidebar scroll dan tooltip | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 10 | Passed | Shortcut operasi halaman dan command palette | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## Handoff
 
@@ -263,6 +264,20 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - User menu tetap tersedia pada top nav.
 - Top nav memiliki toggle light/dark memakai mekanisme `useAppearance()`
   bawaan starterkit.
+- Verifikasi:
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `git diff --check` lulus.
+  - Chrome DevTools MCP desktop/tablet lulus.
+
+## Hasil Increment 10
+
+- Aturan UI/UX ditambahkan: setiap halaman module wajib menampilkan shortcut
+  operasi halaman di atas panel workspace dengan pola dropdown.
+- Top nav admin memiliki command palette global dengan shortcut `Ctrl+K` atau
+  `Cmd+K`.
+- Dashboard memasang contoh `WorkspaceShortcutDropdown` sebagai baseline
+  halaman admin.
 - Verifikasi:
   - `npm run lint` lulus.
   - `npm run build` lulus.

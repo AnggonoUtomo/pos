@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { WorkspaceShortcutDropdown, type WorkspaceShortcut } from '@/components/workspace-shortcuts';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
@@ -70,6 +71,26 @@ const operations = [
     { title: 'Multi gudang', value: 'Pilih gudang per transaksi', icon: Warehouse },
 ];
 
+const dashboardShortcuts: WorkspaceShortcut[] = [
+    {
+        label: 'Buka command palette',
+        description: 'Cari menu dan operasi global aplikasi.',
+        keys: ['Ctrl', 'K'],
+    },
+    {
+        label: 'Buka layar POS',
+        description: 'Akses cepat ke mode kasir fullscreen.',
+        keys: ['Alt', 'P'],
+        disabled: true,
+    },
+    {
+        label: 'Refresh ringkasan',
+        description: 'Muat ulang data ringkasan halaman ketika query real tersedia.',
+        keys: ['R'],
+        disabled: true,
+    },
+];
+
 const toneClasses: Record<string, string> = {
     emerald: 'border-emerald-200 bg-emerald-500/10 text-emerald-700 dark:border-emerald-900 dark:text-emerald-300',
     blue: 'border-sky-200 bg-sky-500/10 text-sky-700 dark:border-sky-900 dark:text-sky-300',
@@ -89,6 +110,12 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dasbor" />
+
+            <WorkspaceShortcutDropdown
+                title="Shortcut Operasi Dasbor"
+                description="Shortcut wajib tampil di atas panel workspace setiap halaman module."
+                shortcuts={dashboardShortcuts}
+            />
 
             <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 lg:px-6">
                 <section className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

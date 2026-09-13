@@ -198,6 +198,23 @@
     memakai tooltip existing.
   - Verification: Chrome DevTools MCP snapshot/hover.
 
+## Increment 10: Shortcut Operasi Dan Command Palette
+
+- [x] Tambahkan aturan UI/UX shortcut operasi lintas module.
+  - Acceptance: `AGENTS.md` dan `docs/ARCHITECTURE.md` mencatat kewajiban
+    shortcut operasi halaman dan command palette top nav.
+  - Verification: review dokumen; `git diff --check`.
+- [x] Buat komponen reusable shortcut operasi workspace.
+  - Acceptance: komponen dropdown dapat menerima daftar shortcut page-specific.
+  - Verification: `npm run lint`; `npm run build`.
+- [x] Pasang shortcut operasi di dashboard.
+  - Acceptance: dropdown shortcut tampil di atas panel workspace dashboard.
+  - Verification: Chrome DevTools MCP desktop/tablet.
+- [x] Tambahkan command palette pada top nav.
+  - Acceptance: command palette bisa dibuka dari tombol top nav dan
+    `Ctrl+K`/`Cmd+K`; command aktif tidak membuat route palsu.
+  - Verification: Chrome DevTools MCP desktop/tablet.
+
 ## Hasil Verifikasi
 
 | Command | Hasil | Catatan |
@@ -223,5 +240,9 @@
 | `npm run build` | PASS | Vite production build selesai setelah Increment 9 |
 | `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 9 |
 | Chrome DevTools MCP | PASS | Sidebar collapsed tetap scrollable, scrollbar sidebar hidden, dan tooltip menu/logo tersedia |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 10 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 10 |
+| `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 10 |
+| Chrome DevTools MCP | PASS | Shortcut dropdown dashboard dan command palette top nav lulus desktop/tablet |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

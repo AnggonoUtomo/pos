@@ -100,6 +100,10 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Untuk UI, gunakan shadcn/ui dan `lucide-react` sebagai default sebelum membuat
   komponen custom.
 - Untuk feedback operasi CRUD UI, gunakan Sonner toast dari shadcn/ui.
+- Setiap halaman module wajib menyediakan daftar shortcut operasi halaman dalam
+  bentuk dropdown di atas panel workspace.
+- Top nav admin wajib menyediakan command palette global untuk navigasi dan
+  operasi lintas module. Shortcut pembuka default: `Ctrl+K` atau `Cmd+K`.
 - Jangan membuat design system paralel tanpa persetujuan eksplisit.
 - Letakkan komponen fitur dekat dengan page-nya:
   `resources/js/pages/{domain}/{module}/components`.

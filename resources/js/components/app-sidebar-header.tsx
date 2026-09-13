@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { CommandPalette } from '@/components/command-palette';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -54,6 +55,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
 
             {auth.user && (
                 <div className="ml-auto flex shrink-0 items-center gap-1">
+                    <CommandPalette />
                     <Button
                         type="button"
                         variant="ghost"
