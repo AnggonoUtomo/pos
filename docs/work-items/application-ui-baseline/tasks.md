@@ -228,6 +228,14 @@
   - Acceptance: icon command palette, top nav, dan dashboard summary tidak flat
     monokrom.
   - Verification: review source; Chrome DevTools MCP.
+- [x] Pastikan top nav dan dashboard ikut accent theme.
+  - Acceptance: workspace, top nav, card dashboard, tabel, dan panel operasional
+    memakai token theme, bukan hanya sidebar.
+  - Verification: Chrome DevTools MCP desktop/tablet.
+- [x] Perbaiki overlap top nav terhadap sidebar collapsed.
+  - Acceptance: icon menu sidebar dan tooltip tetap terlihat saat sidebar
+    collapse.
+  - Verification: Chrome DevTools MCP desktop/tablet collapsed sidebar.
 
 ## Hasil Verifikasi
 

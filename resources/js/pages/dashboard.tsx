@@ -70,9 +70,9 @@ const recentTransactions = [
 ];
 
 const operations = [
-    { title: 'Harga level pelanggan', value: '3 level aktif', icon: CreditCard },
-    { title: 'Multi satuan', value: 'Base unit terkunci', icon: PackageSearch },
-    { title: 'Multi gudang', value: 'Pilih gudang per transaksi', icon: Warehouse },
+    { title: 'Harga level pelanggan', value: '3 level aktif', icon: CreditCard, iconTone: 'text-[var(--chart-1)]' },
+    { title: 'Multi satuan', value: 'Base unit terkunci', icon: PackageSearch, iconTone: 'text-[var(--chart-2)]' },
+    { title: 'Multi gudang', value: 'Pilih gudang per transaksi', icon: Warehouse, iconTone: 'text-[var(--chart-3)]' },
 ];
 
 const dashboardShortcuts: WorkspaceShortcut[] = [
@@ -125,15 +125,15 @@ export default function Dashboard() {
                 <section className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                            <h1 className="text-2xl font-semibold tracking-normal">Dasbor Operasional</h1>
+                            <h1 className="text-2xl font-semibold tracking-normal text-primary">Dasbor Operasional</h1>
                             <ToneBadge tone="emerald">Shift aktif</ToneBadge>
                         </div>
                         <p className="text-muted-foreground mt-1 text-sm">Ringkasan awal untuk penjualan, gudang, harga level pelanggan, dan Finance Lite.</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                        <Button asChild variant="outline" size="sm">
+                        <Button asChild variant="outline" size="sm" className="border-[var(--app-border)] bg-[var(--app-panel)] text-primary">
                             <Link href="/pos" prefetch>
-                                <ShoppingCart className="size-4" />
+                                <ShoppingCart className="size-4 text-[var(--chart-3)]" />
                                 Buka POS
                             </Link>
                         </Button>
@@ -146,7 +146,7 @@ export default function Dashboard() {
 
                 <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                     {summaryCards.map((item) => (
-                        <Card key={item.title}>
+                        <Card key={item.title} className="border-[var(--app-border)] bg-[var(--app-panel)]">
                             <CardContent className="p-4">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
@@ -168,7 +168,7 @@ export default function Dashboard() {
                 </section>
 
                 <section className="grid gap-4 xl:grid-cols-[1fr_380px]">
-                    <Card>
+                    <Card className="border-[var(--app-border)] bg-[var(--app-panel)]">
                         <CardHeader className="flex-row items-center justify-between space-y-0 p-4">
                             <div>
                                 <CardTitle className="text-base">Transaksi Terbaru</CardTitle>
@@ -179,7 +179,7 @@ export default function Dashboard() {
                         <CardContent className="p-0">
                             <div className="overflow-x-auto">
                                 <table className="w-full min-w-[680px] text-sm">
-                                    <thead className="bg-muted/40 text-muted-foreground">
+                                    <thead className="bg-[var(--app-panel-strong)] text-muted-foreground">
                                         <tr className="border-y">
                                             <th className="px-4 py-3 text-left font-medium">Nomor</th>
                                             <th className="px-4 py-3 text-left font-medium">Pelanggan</th>
@@ -207,7 +207,7 @@ export default function Dashboard() {
                     </Card>
 
                     <div className="grid gap-4">
-                        <Card>
+                        <Card className="border-[var(--app-border)] bg-[var(--app-panel)]">
                             <CardHeader className="p-4">
                                 <CardTitle className="text-base">Status Gudang</CardTitle>
                             </CardHeader>
@@ -221,7 +221,7 @@ export default function Dashboard() {
                                             </div>
                                             <ToneBadge tone={warehouse.tone}>{warehouse.value}</ToneBadge>
                                         </div>
-                                        <div className="bg-muted h-2 overflow-hidden rounded-full">
+                                        <div className="h-2 overflow-hidden rounded-full bg-[var(--app-panel-strong)]">
                                             <div className={cn('h-full rounded-full', toneClasses[warehouse.tone].split(' ')[1])} style={{ width: warehouse.value }} />
                                         </div>
                                     </div>
@@ -229,7 +229,7 @@ export default function Dashboard() {
                             </CardContent>
                         </Card>
 
-                        <Card>
+                        <Card className="border-[var(--app-border)] bg-[var(--app-panel)]">
                             <CardHeader className="p-4">
                                 <CardTitle className="text-base">Baseline Yang Dijaga</CardTitle>
                             </CardHeader>
@@ -237,8 +237,8 @@ export default function Dashboard() {
                                 {operations.map((operation, index) => (
                                     <div key={operation.title}>
                                         <div className="flex items-center gap-3">
-                                            <div className="bg-muted flex size-9 items-center justify-center rounded-lg">
-                                                <operation.icon className="text-muted-foreground size-4" />
+                                            <div className="flex size-9 items-center justify-center rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-strong)]">
+                                                <operation.icon className={cn('size-4', operation.iconTone)} />
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="text-sm font-medium">{operation.title}</p>

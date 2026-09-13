@@ -291,8 +291,13 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   System dan accent theme Default, Grey, Stone, Forest, Ruby, Quartz, Aurora.
 - Accent theme mengubah token primary, ring, chart, dan sidebar accent tanpa
   membuat design system paralel.
+- Token theme juga dipakai pada workspace background, top nav, dashboard card,
+  tabel, dan panel operasional agar perubahan accent tidak hanya terlihat di
+  sidebar.
 - Icon command palette, top nav, dan dashboard summary diberi warna semantic
   yang lebih beragam.
+- Layer sidebar dinaikkan saat desktop collapse agar top nav tidak menutup area
+  icon menu dan tooltip.
 - Verifikasi:
   - `npm run lint` lulus.
   - `npm run build` lulus.
