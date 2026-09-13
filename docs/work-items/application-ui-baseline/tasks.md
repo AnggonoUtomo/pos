@@ -107,21 +107,22 @@
 
 ## Increment 5: Folder Modular Frontend Dan Polish
 
-- [ ] Letakkan komponen fitur dekat page.
+- [x] Letakkan komponen fitur dekat page.
   - Acceptance: komponen POS berada di
     `resources/js/pages/sales/pos/components` atau path modular yang disepakati.
   - Verification: review struktur file.
-- [ ] Batasi shared components.
+- [x] Batasi shared components.
   - Acceptance: `resources/js/components/shared` hanya dibuat bila ada komponen
     lintas fitur yang benar-benar stabil.
   - Verification: review struktur file.
-- [ ] Rapikan import dan naming frontend.
+- [x] Rapikan import dan naming frontend.
   - Acceptance: technical naming tetap English, label UI Bahasa Indonesia.
   - Verification: `npm run lint` dan review manual.
-- [ ] Cek tidak ada visual overlap utama.
+- [x] Cek tidak ada visual overlap utama.
   - Acceptance: admin dan POS tidak memiliki teks/tombol saling tindih pada
     viewport target.
-  - Verification: Chrome DevTools MCP.
+  - Verification: review source layout; Chrome DevTools MCP `BLOCKED` pada sesi
+    ini.
 
 ## Increment 6: Final Verification Dan Handoff
 
@@ -153,10 +154,11 @@
 | `rg` audit UI | PASS | Layout starterkit, route usage, hook permission, dan Sonner references terinventarisasi |
 | `php artisan route:list --except-vendor` | PASS | 22 routes; `pos.index` tersedia pada `/pos` |
 | `npm list sonner --depth=0` | PASS | `sonner@2.0.8` terpasang |
-| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 4 |
-| `npm run build` | PASS | Vite production build selesai setelah Increment 4 |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 5 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 5 |
 | `php artisan test --filter=PosRouteTest` | PASS | Guest redirect ke login dan authenticated user bisa membuka POS mock |
 | `git diff --check` | PASS | Tidak ada whitespace error |
-| Chrome DevTools MCP | BLOCKED | Tidak tersedia pada sesi Increment 4; percobaan CDP headless lokal juga tidak membuka endpoint debug. Mobile QA dilewati sesuai instruksi user; fallback lulus melalui lint, build, route list, dan route test |
+| Review struktur frontend | PASS | POS berada di `resources/js/pages/sales/pos/components`; `resources/js/components/shared` tidak dibuat karena belum ada consumer lintas fitur |
+| Chrome DevTools MCP | BLOCKED | Tidak tersedia pada sesi Increment 4/5; percobaan CDP headless lokal juga tidak membuka endpoint debug. Mobile QA dilewati sesuai instruksi user; fallback lulus melalui lint, build, route list, route test, dan review struktur |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

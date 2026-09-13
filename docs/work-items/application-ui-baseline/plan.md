@@ -15,7 +15,7 @@ direview dan disetujui user.
 | 2 | Passed | UI feedback baseline | Pastikan Sonner tersedia dan `Toaster` dipasang pada root/layout yang tepat | Toast bisa dipakai konsisten untuk CRUD UI | `npm list sonner --depth=0`; `npm run lint`; `npm run build` |
 | 3 | Passed | Admin ERP sidebar | Sesuaikan sidebar untuk module Platform, Inventory, Sales, Purchasing, Finance, Reporting dengan item controlled | Menu route nyata clickable; menu belum tersedia disabled/coming soon | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/mobile |
 | 4 | Passed | POS fullscreen mock | Buat page POS mock dengan search item, cart, gudang, customer level, diskon, pajak, payment drawer | Alur kasir realistis dapat dipakai sebagai target UI module bisnis | `npm run lint`; `npm run build`; `php artisan test --filter=PosRouteTest`; Chrome DevTools MCP desktop/tablet bila tersedia |
-| 5 | Planned | Folder modular dan polish | Pindahkan/letakkan komponen fitur pada `resources/js/pages/{domain}/{module}/components` dan update docs bila perlu | Struktur frontend sesuai baseline docs | `git diff --check`; review file |
+| 5 | Passed | Folder modular dan polish | Pindahkan/letakkan komponen fitur pada `resources/js/pages/{domain}/{module}/components` dan update docs bila perlu | Struktur frontend sesuai baseline docs | `npm run lint`; `npm run build`; `git diff --check`; review file |
 | 6 | Planned | Final verification | Jalankan gate relevan dan catat hasil ke `tasks.md` | Work item siap handoff | `npm run lint`; `npm run build`; `php artisan route:list --except-vendor`; `git diff --check` |
 
 ## QA Automated

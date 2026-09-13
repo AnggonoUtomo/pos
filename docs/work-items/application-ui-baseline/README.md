@@ -93,11 +93,11 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 2 | Passed | Tambah/aktifkan Sonner dan UI feedback baseline | `npm list sonner --depth=0`; `npm run lint`; `npm run build` |
 | 3 | Passed | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 4 | Passed | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; `php artisan test --filter=PosRouteTest` |
-| 5 | Planned | Rapikan folder modular frontend dan dokumentasi hasil | `git diff --check`; review docs |
+| 5 | Passed | Rapikan folder modular frontend dan dokumentasi hasil | `npm run lint`; `npm run build`; `git diff --check`; review file |
 
 ## Handoff
 
-- Perubahan sampai Increment 4:
+- Perubahan sampai Increment 5:
   - Sonner baseline aktif pada root Inertia dan contoh feedback profile.
   - Admin ERP sidebar memakai peta module controlled.
   - Menu module tanpa route nyata tampil disabled/coming soon tanpa URL palsu.
@@ -105,7 +105,11 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   - Route authenticated `pos.index` tersedia pada `/pos`.
   - POS fullscreen mock memakai data lokal untuk search item, cart, gudang,
     customer level, diskon, pajak, dan payment drawer.
-- Verifikasi sampai Increment 4:
+  - Komponen POS berada dekat page pada `resources/js/pages/sales/pos`.
+  - Tidak ada `resources/js/components/shared` yang dibuat untuk komponen yang
+    belum benar-benar reusable.
+  - Branding shell admin berubah dari Laravel Starter Kit menjadi POS Modular.
+- Verifikasi sampai Increment 5:
   - `npm run lint` lulus.
   - `npm run build` lulus.
   - `php artisan route:list --except-vendor` lulus dan menunjukkan 22 route
@@ -115,7 +119,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
     drawer; console bersih setelah reload.
 - Risiko terbuka:
   - Browser QA POS desktop/tablet belum bisa dijalankan karena Chrome DevTools
-    MCP tidak tersedia pada sesi Increment 4 dan CDP headless lokal tidak
+    MCP tidak tersedia pada sesi Increment 4/5 dan CDP headless lokal tidak
     berhasil dibuka.
   - Mobile QA POS dilewati sesuai instruksi user.
   - Belum ada klaim transaksi backend berjalan; POS masih mock UI.
@@ -188,3 +192,20 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   pada sesi ini dan percobaan CDP headless lokal tidak membuka endpoint debug.
   Verifikasi fallback yang lulus: lint, build, route list, dan route feature
   test.
+
+## Hasil Increment 5
+
+- Struktur frontend POS sudah modular:
+  - `resources/js/pages/sales/pos/index.tsx`
+  - `resources/js/pages/sales/pos/components`
+  - `resources/js/pages/sales/pos/mock-data.ts`
+  - `resources/js/pages/sales/pos/types.ts`
+- Tidak ada folder `resources/js/components/shared`; belum ada komponen POS yang
+  dipromosikan menjadi shared karena belum memiliki consumer lintas fitur.
+- Branding app shell diganti dari Laravel Starter Kit menjadi POS Modular.
+- Label dashboard pada shell admin dirapikan menjadi Dasbor.
+- Header layout cadangan dibersihkan dari link starterkit Laravel dan kontrol
+  search yang belum berfungsi.
+- QA visual browser tetap `BLOCKED` karena Chrome DevTools MCP tidak tersedia
+  pada sesi ini. Verifikasi fallback yang lulus: lint, build, review struktur
+  file, dan `git diff --check`.
