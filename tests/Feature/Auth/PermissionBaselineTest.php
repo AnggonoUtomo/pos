@@ -3,7 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Database\Seeders\IdentityAccessSeeder;
+use App\Modules\Platform\Identity\Database\Seeders\IdentityAccessSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
@@ -14,15 +14,15 @@ class PermissionBaselineTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_identity_access_seed_creates_super_admin_role_permissions_and_user(): void
+    public function test_identity_access_seed_creates_super_system_role_permissions_and_user(): void
     {
         $this->seed(IdentityAccessSeeder::class);
 
         $user = User::query()->where('email', 'admin@example.com')->firstOrFail();
 
-        $this->assertTrue(Role::query()->where('name', 'super-admin')->exists());
+        $this->assertTrue(Role::query()->where('name', 'super-system')->exists());
         $this->assertTrue(Permission::query()->where('name', 'platform.identity.users.view')->exists());
-        $this->assertTrue($user->hasRole('super-admin'));
+        $this->assertTrue($user->hasRole('super-system'));
         $this->assertTrue($user->can('platform.identity.users.view'));
     }
 
@@ -39,9 +39,9 @@ class PermissionBaselineTest extends TestCase
             ->assertForbidden();
 
         $this->seed(IdentityAccessSeeder::class);
-        $superAdmin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        $superSystem = User::query()->where('email', 'admin@example.com')->firstOrFail();
 
-        $this->actingAs($superAdmin)
+        $this->actingAs($superSystem)
             ->get('/_test/identity-permission')
             ->assertOk();
     }

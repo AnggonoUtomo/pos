@@ -6,7 +6,7 @@ use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\User;
 use App\Modules\Platform\Identity\Application\Actions\SyncRolePermissions;
 use App\Modules\Platform\Identity\Application\Actions\SyncUserRoles;
-use Database\Seeders\IdentityAccessSeeder;
+use App\Modules\Platform\Identity\Database\Seeders\IdentityAccessSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
@@ -80,7 +80,7 @@ class IdentityAccessActionTest extends TestCase
         $shared = app(HandleInertiaRequests::class)->share($request);
 
         $this->assertTrue($shared['auth']['superSystem']);
-        $this->assertTrue($shared['auth']['roles']['super-admin']);
+        $this->assertTrue($shared['auth']['roles']['super-system']);
         $this->assertTrue($shared['auth']['permissions']['platform.identity.users.view']);
     }
 }

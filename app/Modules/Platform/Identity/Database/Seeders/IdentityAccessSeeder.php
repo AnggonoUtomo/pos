@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Modules\Platform\Identity\Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,6 +12,7 @@ use Spatie\Permission\PermissionRegistrar;
 class IdentityAccessSeeder extends Seeder
 {
     private const GUARD = 'web';
+    private const SUPER_SYSTEM_ROLE = 'super-system';
 
     /**
      * @var list<string>
@@ -35,19 +36,19 @@ class IdentityAccessSeeder extends Seeder
             Permission::findOrCreate($permission, self::GUARD);
         }
 
-        $superAdmin = Role::findOrCreate('super-admin', self::GUARD);
-        $superAdmin->syncPermissions($this->permissions);
+        $superSystem = Role::findOrCreate(self::SUPER_SYSTEM_ROLE, self::GUARD);
+        $superSystem->syncPermissions($this->permissions);
 
         $user = User::query()->updateOrCreate(
-            ['email' => env('SEED_SUPER_ADMIN_EMAIL', 'admin@example.com')],
+            ['email' => env('SEED_SUPER_SYSTEM_EMAIL', 'admin@example.com')],
             [
-                'name' => env('SEED_SUPER_ADMIN_NAME', 'Super Admin'),
-                'password' => Hash::make(env('SEED_SUPER_ADMIN_PASSWORD', 'password')),
+                'name' => env('SEED_SUPER_SYSTEM_NAME', 'Super System'),
+                'password' => Hash::make(env('SEED_SUPER_SYSTEM_PASSWORD', 'password')),
                 'email_verified_at' => now(),
             ],
         );
 
-        $user->assignRole($superAdmin);
+        $user->assignRole($superSystem);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
