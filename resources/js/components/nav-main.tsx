@@ -1,10 +1,28 @@
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { usePermission } from '@/hooks/use-permission';
+import { cn } from '@/lib/utils';
 import { type NavGroup, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
 function isCurrentUrl(currentUrl: string, itemUrl: string): boolean {
     return currentUrl === itemUrl || currentUrl.startsWith(`${itemUrl}/`);
+}
+
+const badgeToneClasses: Record<NonNullable<NavItem['badgeTone']>, string> = {
+    neutral: 'bg-muted text-muted-foreground',
+    blue: 'bg-sky-500/10 text-sky-700 dark:text-sky-300',
+    emerald: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+    amber: 'bg-amber-500/10 text-amber-700 dark:text-amber-300',
+    rose: 'bg-rose-500/10 text-rose-700 dark:text-rose-300',
+    violet: 'bg-violet-500/10 text-violet-700 dark:text-violet-300',
+};
+
+function NavBadge({ item }: { item: NavItem }) {
+    if (!item.badge) {
+        return null;
+    }
+
+    return <SidebarMenuBadge className={cn('rounded-full px-2 font-medium', badgeToneClasses[item.badgeTone ?? 'neutral'])}>{item.badge}</SidebarMenuBadge>;
 }
 
 function NavMainItem({ item }: { item: NavItem }) {
@@ -22,7 +40,7 @@ function NavMainItem({ item }: { item: NavItem }) {
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                 </SidebarMenuButton>
-                {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
+                <NavBadge item={item} />
             </SidebarMenuItem>
         );
     }
@@ -35,7 +53,7 @@ function NavMainItem({ item }: { item: NavItem }) {
                     <span>{item.title}</span>
                 </Link>
             </SidebarMenuButton>
-            {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
+            <NavBadge item={item} />
         </SidebarMenuItem>
     );
 }

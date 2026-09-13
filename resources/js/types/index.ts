@@ -23,6 +23,7 @@ export interface NavItem {
     icon?: LucideIcon | null;
     isActive?: boolean;
     badge?: string;
+    badgeTone?: 'neutral' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet';
     comingSoon?: boolean;
     disabled?: boolean;
     permission?: string;

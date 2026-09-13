@@ -17,6 +17,7 @@ direview dan disetujui user.
 | 4 | Passed | POS fullscreen mock | Buat page POS mock dengan search item, cart, gudang, customer level, diskon, pajak, payment drawer | Alur kasir realistis dapat dipakai sebagai target UI module bisnis | `npm run lint`; `npm run build`; `php artisan test --filter=PosRouteTest`; Chrome DevTools MCP desktop/tablet bila tersedia |
 | 5 | Passed | Folder modular dan polish | Pindahkan/letakkan komponen fitur pada `resources/js/pages/{domain}/{module}/components` dan update docs bila perlu | Struktur frontend sesuai baseline docs | `npm run lint`; `npm run build`; `git diff --check`; review file |
 | 6 | Passed | Final verification | Jalankan gate relevan dan catat hasil ke `tasks.md` | Work item siap handoff | `npm run lint`; `npm run build`; `php artisan route:list --except-vendor`; `php artisan test --filter=PosRouteTest`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 7 | Passed | Dashboard shell reference polish | Selaraskan admin dashboard dengan pola `SampleUI/dashboard-shell-01` dan referensi shadcnstudio dashboard shell | Admin memiliki top nav, quick action POS, badge accent, dan dashboard operasional pengganti placeholder | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## QA Automated
 
@@ -27,6 +28,7 @@ direview dan disetujui user.
   dipakai.
 - Chrome DevTools MCP:
   - Admin desktop sidebar expanded/collapsed.
+  - Dashboard shell desktop/tablet dengan top nav.
   - POS fullscreen desktop.
   - POS tablet viewport.
   - Console error dan layout overlap.

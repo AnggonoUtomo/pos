@@ -147,6 +147,29 @@
   - Acceptance: checklist ini berisi command, hasil, risiko, dan gap terbuka.
   - Verification: review manual dokumen.
 
+## Increment 7: Dashboard Shell Reference Polish
+
+- [x] Pelajari pola lokal `SampleUI/dashboard-shell-01`.
+  - Acceptance: pola sidebar, sticky top nav, content container, dan accent
+    badge teridentifikasi tanpa menyalin folder sample ke source aktif.
+  - Verification: review source sample.
+- [x] Selaraskan admin header dengan pola dashboard shell.
+  - Acceptance: header admin memiliki top nav, shortcut Dasbor/POS, status
+    gudang, status Finance Lite, breadcrumb, sidebar trigger, dan user menu.
+  - Verification: `npm run build`; Chrome DevTools MCP desktop/tablet.
+- [x] Tambahkan accent badge pada sidebar.
+  - Acceptance: `NavItem` mendukung `badgeTone`; badge POS aktif dan menu
+    coming soon memiliki tone berbeda sesuai area.
+  - Verification: `npm run lint`; review source.
+- [x] Ganti placeholder dashboard dengan dashboard operasional baseline.
+  - Acceptance: dashboard menampilkan ringkasan penjualan, transaksi POS, stok,
+    retur, status gudang, dan baseline multi gudang/multi satuan/harga level.
+  - Verification: `npm run build`; Chrome DevTools MCP desktop/tablet.
+- [x] Update dokumen work item.
+  - Acceptance: Increment 7 tercatat pada `README.md`, `plan.md`, dan
+    `tasks.md`.
+  - Verification: review manual; `git diff --check`.
+
 ## Hasil Verifikasi
 
 | Command | Hasil | Catatan |
@@ -160,5 +183,9 @@
 | `git diff --check` | PASS | Tidak ada whitespace error |
 | Review struktur frontend | PASS | POS berada di `resources/js/pages/sales/pos/components`; `resources/js/components/shared` tidak dibuat karena belum ada consumer lintas fitur |
 | Chrome DevTools MCP | PASS | POS desktop/tablet dan admin desktop/tablet lulus; tidak ada horizontal overflow; console bersih. Mobile QA dilewati sesuai instruksi user |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 7 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 7 |
+| `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 7 |
+| Chrome DevTools MCP | PASS | Dashboard shell desktop/tablet lulus; top nav, sidebar badge accent, dan dashboard operasional tampil tanpa horizontal overflow |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

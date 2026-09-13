@@ -31,6 +31,8 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - Membuat POS fullscreen mock yang realistis untuk desktop/tablet.
 - POS mock memuat search item, cart, pilih gudang, customer level, diskon,
   pajak, dan payment drawer.
+- Admin dashboard mengikuti pola dashboard shell dengan sidebar, top nav,
+  quick action POS, user menu, badge accent, dan content area operasional.
 - Menyiapkan shadcn/ui sebagai default UX dan Sonner toast untuk feedback CRUD.
 - Menggunakan `usePermission()` dan `isSuperSystem` untuk UX permission guard.
 - Menetapkan pola folder frontend modular:
@@ -56,6 +58,8 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - [x] POS mock menampilkan search item, cart, pilih gudang, customer level,
   diskon, pajak, subtotal/total, dan payment drawer.
 - [x] POS mock memakai data statis lokal untuk UX, bukan transaksi backend real.
+- [x] Admin dashboard memiliki top nav, quick action POS, user menu, badge
+  accent, dan content area operasional.
 - [x] Sonner toast tersedia dan dipakai pada contoh feedback UI yang relevan.
 - [x] Permission UX memakai `usePermission()` dan `isSuperSystem`.
 - [x] Komponen fitur diletakkan dekat page sesuai struktur modular frontend.
@@ -95,6 +99,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 4 | Passed | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; `php artisan test --filter=PosRouteTest` |
 | 5 | Passed | Rapikan folder modular frontend dan dokumentasi hasil | `npm run lint`; `npm run build`; `git diff --check`; review file |
 | 6 | Passed | Final verification dan handoff | `npm run lint`; `npm run build`; `php artisan route:list --except-vendor`; `php artisan test --filter=PosRouteTest`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 7 | Passed | Polish dashboard shell sesuai referensi `SampleUI/dashboard-shell-01` dan shadcnstudio | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## Handoff
 
@@ -122,6 +127,8 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - Risiko terbuka:
   - Mobile QA POS dilewati sesuai instruksi user.
   - Belum ada klaim transaksi backend berjalan; POS masih mock UI.
+  - Nilai pada dashboard operasional masih snapshot statis UI baseline, belum
+    query dari module transaksi/gudang real.
 
 ## Hasil Audit Increment 1
 
@@ -227,3 +234,23 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
     punya link nyata `/pos`, dan tidak ada horizontal overflow.
   - Console bersih setelah QA.
 - Mobile QA POS tidak dijalankan sesuai instruksi user.
+
+## Hasil Increment 7
+
+- Admin shell mengikuti pola referensi dashboard shell:
+  - Sidebar tetap menjadi navigasi utama.
+  - Header admin menjadi sticky top nav dengan breadcrumb, shortcut Dasbor/POS,
+    status Gudang Utama, status Finance Lite, dan user menu.
+  - Badge sidebar mendukung accent tone untuk membedakan status aktif, segera,
+    inventori, retur, dan finance.
+- Halaman `dashboard` tidak lagi memakai placeholder starterkit. Dashboard
+  menampilkan ringkasan penjualan, transaksi POS, stok menipis, retur pending,
+  transaksi terbaru, status gudang, dan baseline operasional yang dijaga.
+- Referensi yang dipakai:
+  - Local sample: `SampleUI/dashboard-shell-01`.
+  - External: `https://shadcnstudio.com/blocks/dashboard-and-application/dashboard-shell`.
+- Verifikasi:
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `git diff --check` lulus.
+  - Chrome DevTools MCP desktop/tablet lulus.
