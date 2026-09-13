@@ -154,7 +154,7 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton size="lg" tooltip="Dasbor" asChild>
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
@@ -163,7 +163,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="scrollbar-none group-data-[collapsible=icon]:overflow-auto">
                 <NavMain groups={mainNavGroups} />
             </SidebarContent>
         </Sidebar>

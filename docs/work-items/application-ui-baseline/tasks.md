@@ -183,6 +183,21 @@
   - Acceptance: user menu masih ada pada top nav.
   - Verification: Chrome DevTools MCP snapshot.
 
+## Increment 9: Collapsed Sidebar Scroll Dan Tooltip
+
+- [x] Sembunyikan batang scrollbar sidebar tanpa mematikan fungsi scroll.
+  - Acceptance: area sidebar tetap memakai overflow scroll/auto dan scrollbar
+    tidak tampil secara visual.
+  - Verification: review source; Chrome DevTools MCP.
+- [x] Aktifkan scroll saat sidebar collapsed.
+  - Acceptance: mode collapsed tidak memakai `overflow-hidden` pada
+    `SidebarContent`.
+  - Verification: Chrome DevTools MCP.
+- [x] Tambahkan tooltip untuk logo/sidebar entry utama.
+  - Acceptance: logo memiliki tooltip saat sidebar collapsed; menu module tetap
+    memakai tooltip existing.
+  - Verification: Chrome DevTools MCP snapshot/hover.
+
 ## Hasil Verifikasi
 
 | Command | Hasil | Catatan |
@@ -204,5 +219,9 @@
 | `npm run build` | PASS | Vite production build selesai setelah Increment 8 |
 | `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 8 |
 | Chrome DevTools MCP | PASS | Sidebar footer menu hilang; top nav memiliki toggle theme dan user menu; desktop/tablet tanpa horizontal overflow |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 9 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 9 |
+| `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 9 |
+| Chrome DevTools MCP | PASS | Sidebar collapsed tetap scrollable, scrollbar sidebar hidden, dan tooltip menu/logo tersedia |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

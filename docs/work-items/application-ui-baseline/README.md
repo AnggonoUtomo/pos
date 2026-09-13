@@ -101,6 +101,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 6 | Passed | Final verification dan handoff | `npm run lint`; `npm run build`; `php artisan route:list --except-vendor`; `php artisan test --filter=PosRouteTest`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 7 | Passed | Polish dashboard shell sesuai referensi `SampleUI/dashboard-shell-01` dan shadcnstudio | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 8 | Passed | Polish sidebar footer dan theme toggle top nav | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 9 | Passed | Polish collapsed sidebar scroll dan tooltip | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## Handoff
 
@@ -262,6 +263,18 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - User menu tetap tersedia pada top nav.
 - Top nav memiliki toggle light/dark memakai mekanisme `useAppearance()`
   bawaan starterkit.
+- Verifikasi:
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `git diff --check` lulus.
+  - Chrome DevTools MCP desktop/tablet lulus.
+
+## Hasil Increment 9
+
+- Batang scrollbar sidebar disembunyikan secara visual tanpa mematikan fungsi
+  scroll.
+- Sidebar tetap dapat discroll saat mode collapsed.
+- Logo/menu utama memiliki tooltip saat sidebar collapsed.
 - Verifikasi:
   - `npm run lint` lulus.
   - `npm run build` lulus.
