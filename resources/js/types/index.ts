@@ -22,6 +22,10 @@ export interface NavItem {
     url: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    badge?: string;
+    comingSoon?: boolean;
+    disabled?: boolean;
+    permission?: string;
 }
 
 export interface SharedData {

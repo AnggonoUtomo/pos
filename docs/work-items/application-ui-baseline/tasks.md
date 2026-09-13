@@ -58,23 +58,23 @@
 
 ## Increment 3: Admin ERP Sidebar Controlled
 
-- [ ] Perluas tipe navigasi frontend.
+- [x] Perluas tipe navigasi frontend.
   - Acceptance: `NavItem` mendukung metadata yang dibutuhkan seperti permission,
     disabled, coming soon, badge, dan/atau children tanpa memaksa route palsu.
   - Verification: `npm run build`.
-- [ ] Susun peta navigasi module.
+- [x] Susun peta navigasi module.
   - Acceptance: Platform, Inventory, Sales, Purchasing, Finance, dan Reporting
     tampil sebagai arah produk.
   - Verification: review manual sidebar.
-- [ ] Implement item controlled untuk module yang belum memiliki route nyata.
+- [x] Implement item controlled untuk module yang belum memiliki route nyata.
   - Acceptance: item tanpa route nyata disabled/coming soon dan tidak clickable
     ke URL palsu.
   - Verification: Chrome DevTools MCP dan review DOM/link.
-- [ ] Gunakan permission UX.
+- [x] Gunakan permission UX.
   - Acceptance: `usePermission()` dan `isSuperSystem` dipakai hanya untuk UX;
     backend tetap authority.
   - Verification: review source dan `npm run build`.
-- [ ] Verifikasi layout admin desktop dan responsive dasar.
+- [x] Verifikasi layout admin desktop dan responsive dasar.
   - Acceptance: sidebar expanded/collapsed dan mobile drawer tidak overlap.
   - Verification: Chrome DevTools MCP.
 
@@ -152,9 +152,9 @@
 | `rg` audit UI | PASS | Layout starterkit, route usage, hook permission, dan Sonner references terinventarisasi |
 | `php artisan route:list --except-vendor` | PASS | 21 routes: home, dashboard, auth, settings; increment ini tidak menambah route dan belum ada POS route |
 | `npm list sonner --depth=0` | PASS | `sonner@2.0.8` terpasang |
-| `npm run lint` | PASS | ESLint selesai tanpa error |
-| `npm run build` | PASS | Vite production build selesai |
-| `git diff --check` | Pending | Dijalankan sebelum handoff |
-| Chrome DevTools MCP | PASS terbatas | Profile redirect ke login karena belum authenticated; login render tanpa console error |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 3 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 3 |
+| `git diff --check` | PASS | Tidak ada whitespace error |
+| Chrome DevTools MCP | PASS | Desktop expanded/collapsed dan mobile drawer dicek; hanya logo dan Dasbor memiliki `href`, 13 item coming-soon disabled tanpa URL palsu, console bersih setelah reload |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

@@ -1,30 +1,138 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import { type NavGroup } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BarChart3, Boxes, Building2, CreditCard, LayoutGrid, Package, ReceiptText, RotateCcw, Settings, ShieldCheck, ShoppingCart, Tags, Truck, Warehouse } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const mainNavGroups: NavGroup[] = [
     {
-        title: 'Dashboard',
-        url: '/dashboard',
-        icon: LayoutGrid,
+        title: 'Platform',
+        items: [
+            {
+                title: 'Dasbor',
+                url: '/dashboard',
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Identitas & Akses',
+                url: '',
+                icon: ShieldCheck,
+                badge: 'Segera',
+                comingSoon: true,
+                permission: 'identity.view',
+            },
+            {
+                title: 'Pengaturan Perusahaan',
+                url: '',
+                icon: Settings,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+        ],
     },
-];
-
-const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Inventori',
+        items: [
+            {
+                title: 'Katalog',
+                url: '',
+                icon: Package,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+            {
+                title: 'Gudang',
+                url: '',
+                icon: Warehouse,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+            {
+                title: 'Stok',
+                url: '',
+                icon: Boxes,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+        ],
     },
     {
-        title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
+        title: 'Penjualan',
+        items: [
+            {
+                title: 'Pelanggan',
+                url: '',
+                icon: Building2,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+            {
+                title: 'POS',
+                url: '',
+                icon: ShoppingCart,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+            {
+                title: 'Retur Penjualan',
+                url: '',
+                icon: RotateCcw,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+        ],
+    },
+    {
+        title: 'Pembelian',
+        items: [
+            {
+                title: 'Supplier',
+                url: '',
+                icon: Truck,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+            {
+                title: 'Order Pembelian',
+                url: '',
+                icon: ReceiptText,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+        ],
+    },
+    {
+        title: 'Keuangan',
+        items: [
+            {
+                title: 'Pembayaran',
+                url: '',
+                icon: CreditCard,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+        ],
+    },
+    {
+        title: 'Laporan',
+        items: [
+            {
+                title: 'Laporan Operasional',
+                url: '',
+                icon: BarChart3,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+            {
+                title: 'Harga',
+                url: '',
+                icon: Tags,
+                badge: 'Segera',
+                comingSoon: true,
+            },
+        ],
     },
 ];
 
@@ -44,11 +152,10 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain groups={mainNavGroups} />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

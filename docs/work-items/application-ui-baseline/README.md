@@ -91,19 +91,27 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | --- | --- | --- | --- |
 | 1 | Passed | Audit UI starterkit dan tentukan route/layout target | `rg`; `php artisan route:list --except-vendor`; `npm list sonner --depth=0` |
 | 2 | Passed | Tambah/aktifkan Sonner dan UI feedback baseline | `npm list sonner --depth=0`; `npm run lint`; `npm run build` |
-| 3 | Planned | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
+| 3 | Passed | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 4 | Planned | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 5 | Planned | Rapikan folder modular frontend dan dokumentasi hasil | `git diff --check`; review docs |
 
 ## Handoff
 
-- Perubahan: belum dikerjakan.
-- Verifikasi: belum dijalankan.
-- Chrome DevTools QA: direncanakan untuk admin sidebar dan POS fullscreen.
+- Perubahan sampai Increment 3:
+  - Sonner baseline aktif pada root Inertia dan contoh feedback profile.
+  - Admin ERP sidebar memakai peta module controlled.
+  - Menu module tanpa route nyata tampil disabled/coming soon tanpa URL palsu.
+  - Mobile sidebar memiliki title dan description screen-reader.
+- Verifikasi sampai Increment 3:
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `php artisan route:list --except-vendor` lulus dan tetap menunjukkan 21
+    route aktif.
+  - Chrome DevTools MCP lulus untuk desktop expanded/collapsed dan mobile
+    drawer; console bersih setelah reload.
 - Risiko terbuka:
-  - Route POS mock perlu dipilih tanpa mengunci desain route transaksi real.
-  - Visual mock POS harus cukup realistis tanpa menyiratkan transaksi backend
-    sudah berjalan.
+  - Route POS mock belum dibuat; akan dikerjakan pada Increment 4.
+  - Visual mock POS belum tersedia; belum ada klaim transaksi backend berjalan.
 
 ## Hasil Audit Increment 1
 
@@ -133,3 +141,21 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - Chrome DevTools MCP smoke check berhasil membuka aplikasi lokal; route profile
   redirect ke login karena belum authenticated, halaman login render tanpa
   console error.
+
+## Hasil Increment 3
+
+- `NavItem` frontend mendukung `badge`, `comingSoon`, `disabled`, dan
+  `permission`.
+- `NavMain` menerima group navigasi dan memakai `usePermission()` hanya untuk
+  UX guard.
+- Sidebar admin menampilkan arah module Platform, Inventori, Penjualan,
+  Pembelian, Keuangan, dan Laporan.
+- Hanya logo dan Dasbor yang memiliki link nyata ke `/dashboard`.
+- Tiga belas item module yang belum tersedia tampil `Segera`, disabled, dan
+  tidak memiliki `href`.
+- Link footer starterkit bawaan dihapus agar sidebar fokus pada produk POS.
+- QA Chrome DevTools MCP:
+  - Desktop expanded: group tampil, tidak ada horizontal overflow.
+  - Desktop collapsed: sidebar mengecil tanpa horizontal overflow.
+  - Mobile drawer: drawer tampil, item disabled tetap non-link, console bersih
+    setelah reload.
