@@ -39,6 +39,8 @@ export function PaymentDrawer({ open, total, payments, onOpenChange, onPaymentCh
                                 <label key={payment.id} className="grid gap-1.5 text-sm">
                                     <span>{payment.method}</span>
                                     <Input
+                                        id={`payment-${payment.id}`}
+                                        name={`payment_${payment.id}`}
                                         value={payment.amount}
                                         onChange={(event) => onPaymentChange(payment.id, Number(event.target.value))}
                                         inputMode="numeric"

@@ -74,6 +74,8 @@ export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onD
                                                 <Minus />
                                             </Button>
                                             <Input
+                                                id={`qty-${line.item.id}`}
+                                                name={`qty_${line.item.id}`}
                                                 aria-label={`Qty ${line.item.name}`}
                                                 value={line.qty}
                                                 onChange={(event) => onQtyChange(line.item.id, Number(event.target.value))}
@@ -92,6 +94,8 @@ export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onD
                                         </div>
 
                                         <Input
+                                            id={`discount-${line.item.id}`}
+                                            name={`discount_${line.item.id}`}
                                             aria-label={`Diskon ${line.item.name}`}
                                             value={line.discount}
                                             onChange={(event) => onDiscountChange(line.item.id, Number(event.target.value))}

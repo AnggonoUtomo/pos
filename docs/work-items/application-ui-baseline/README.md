@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready
+Completed
 
 ## Owner Dan Lokasi
 
@@ -48,30 +48,30 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 
 ## Acceptance Criteria
 
-- [ ] Admin ERP sidebar tampil sebagai layout utama dengan navigasi module
+- [x] Admin ERP sidebar tampil sebagai layout utama dengan navigasi module
   lengkap tetapi controlled.
-- [ ] Menu tanpa route nyata tidak clickable, disabled, atau diberi state
+- [x] Menu tanpa route nyata tidak clickable, disabled, atau diberi state
   coming soon tanpa route palsu.
-- [ ] POS fullscreen mock dapat dibuka dari route nyata yang disepakati.
-- [ ] POS mock menampilkan search item, cart, pilih gudang, customer level,
+- [x] POS fullscreen mock dapat dibuka dari route nyata yang disepakati.
+- [x] POS mock menampilkan search item, cart, pilih gudang, customer level,
   diskon, pajak, subtotal/total, dan payment drawer.
-- [ ] POS mock memakai data statis lokal untuk UX, bukan transaksi backend real.
-- [ ] Sonner toast tersedia dan dipakai pada contoh feedback UI yang relevan.
-- [ ] Permission UX memakai `usePermission()` dan `isSuperSystem`.
-- [ ] Komponen fitur diletakkan dekat page sesuai struktur modular frontend.
-- [ ] Layout desktop/tablet POS dan admin responsive dasar lulus QA browser.
-- [ ] `npm run lint`, `npm run build`, dan verifikasi route relevan lulus.
+- [x] POS mock memakai data statis lokal untuk UX, bukan transaksi backend real.
+- [x] Sonner toast tersedia dan dipakai pada contoh feedback UI yang relevan.
+- [x] Permission UX memakai `usePermission()` dan `isSuperSystem`.
+- [x] Komponen fitur diletakkan dekat page sesuai struktur modular frontend.
+- [x] Layout desktop/tablet POS dan admin responsive dasar lulus QA browser.
+- [x] `npm run lint`, `npm run build`, dan verifikasi route relevan lulus.
 
 ## Dampak Yang Harus Dicek
 
-- [ ] Database/migration: tidak disentuh pada work item ini.
-- [ ] Route: route nyata untuk POS mock/admin entry dicek bila ditambah.
-- [ ] Permission/policy: backend tetap authority; frontend guard hanya UX.
-- [ ] UI/Inertia: terdampak utama.
-- [ ] Seeder demo: tidak disentuh.
-- [ ] Activity log: tidak relevan untuk mock UI baseline.
-- [ ] Soft delete atau mekanisme koreksi: tidak disentuh.
-- [ ] Transaksi stok/FIFO/payment/tax/diskon/pricing: hanya mock UI, tidak
+- [x] Database/migration: tidak disentuh pada work item ini.
+- [x] Route: route nyata untuk POS mock/admin entry dicek bila ditambah.
+- [x] Permission/policy: backend tetap authority; frontend guard hanya UX.
+- [x] UI/Inertia: terdampak utama.
+- [x] Seeder demo: tidak disentuh.
+- [x] Activity log: tidak relevan untuk mock UI baseline.
+- [x] Soft delete atau mekanisme koreksi: tidak disentuh.
+- [x] Transaksi stok/FIFO/payment/tax/diskon/pricing: hanya mock UI, tidak
   menjalankan mutation bisnis.
 
 ## Dependency Dan Keputusan
@@ -94,10 +94,11 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 3 | Passed | Bangun admin ERP sidebar dengan navigasi module controlled | `npm run lint`; `npm run build`; Chrome DevTools MCP |
 | 4 | Passed | Bangun POS fullscreen mock realistis | `npm run lint`; `npm run build`; `php artisan test --filter=PosRouteTest` |
 | 5 | Passed | Rapikan folder modular frontend dan dokumentasi hasil | `npm run lint`; `npm run build`; `git diff --check`; review file |
+| 6 | Passed | Final verification dan handoff | `npm run lint`; `npm run build`; `php artisan route:list --except-vendor`; `php artisan test --filter=PosRouteTest`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 
 ## Handoff
 
-- Perubahan sampai Increment 5:
+- Perubahan sampai Increment 6:
   - Sonner baseline aktif pada root Inertia dan contoh feedback profile.
   - Admin ERP sidebar memakai peta module controlled.
   - Menu module tanpa route nyata tampil disabled/coming soon tanpa URL palsu.
@@ -109,18 +110,16 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   - Tidak ada `resources/js/components/shared` yang dibuat untuk komponen yang
     belum benar-benar reusable.
   - Branding shell admin berubah dari Laravel Starter Kit menjadi POS Modular.
-- Verifikasi sampai Increment 5:
+- Verifikasi sampai Increment 6:
   - `npm run lint` lulus.
   - `npm run build` lulus.
   - `php artisan route:list --except-vendor` lulus dan menunjukkan 22 route
     aktif termasuk `pos.index`.
   - `php artisan test --filter=PosRouteTest` lulus.
-  - Chrome DevTools MCP lulus untuk desktop expanded/collapsed dan mobile
-    drawer; console bersih setelah reload.
+  - `git diff --check` lulus.
+  - Chrome DevTools MCP lulus untuk admin desktop/tablet dan POS
+    desktop/tablet; console bersih.
 - Risiko terbuka:
-  - Browser QA POS desktop/tablet belum bisa dijalankan karena Chrome DevTools
-    MCP tidak tersedia pada sesi Increment 4/5 dan CDP headless lokal tidak
-    berhasil dibuka.
   - Mobile QA POS dilewati sesuai instruksi user.
   - Belum ada klaim transaksi backend berjalan; POS masih mock UI.
 
@@ -209,3 +208,22 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 - QA visual browser tetap `BLOCKED` karena Chrome DevTools MCP tidak tersedia
   pada sesi ini. Verifikasi fallback yang lulus: lint, build, review struktur
   file, dan `git diff --check`.
+
+## Hasil Increment 6
+
+- Final verification lulus:
+  - `npm list sonner --depth=0`
+  - `npm run lint`
+  - `npm run build`
+  - `php artisan route:list --except-vendor`
+  - `php artisan test --filter=PosRouteTest`
+  - `git diff --check`
+- Chrome DevTools MCP lulus:
+  - POS desktop: item bisa ditambahkan ke cart, payment drawer terbuka, tidak
+    ada horizontal overflow, input POS memiliki `id` atau `name`.
+  - POS tablet: search, cart, total, payment drawer tetap terbaca dan tidak ada
+    horizontal overflow.
+  - Admin desktop/tablet: branding POS Modular dan label Dasbor tampil, menu POS
+    punya link nyata `/pos`, dan tidak ada horizontal overflow.
+  - Console bersih setelah QA.
+- Mobile QA POS tidak dijalankan sesuai instruksi user.

@@ -126,24 +126,24 @@
 
 ## Increment 6: Final Verification Dan Handoff
 
-- [ ] Jalankan lint frontend.
+- [x] Jalankan lint frontend.
   - Acceptance: lint selesai tanpa error.
   - Verification: `npm run lint`.
-- [ ] Jalankan build frontend.
+- [x] Jalankan build frontend.
   - Acceptance: production build selesai tanpa error.
   - Verification: `npm run build`.
-- [ ] Jalankan route check.
+- [x] Jalankan route check.
   - Acceptance: route POS/admin yang ditambahkan muncul sesuai nama dan tidak ada
     route palsu.
   - Verification: `php artisan route:list --except-vendor`.
-- [ ] Jalankan whitespace check.
+- [x] Jalankan whitespace check.
   - Acceptance: tidak ada whitespace error.
   - Verification: `git diff --check`.
-- [ ] Jalankan Chrome DevTools QA.
-  - Acceptance: admin desktop/mobile dan POS desktop/tablet lulus atau alasan
-    BLOCKED dicatat.
+- [x] Jalankan Chrome DevTools QA.
+  - Acceptance: admin desktop/tablet dan POS desktop/tablet lulus atau alasan
+    BLOCKED dicatat. Mobile POS dilewati sesuai instruksi user.
   - Verification: Chrome DevTools MCP.
-- [ ] Update hasil verifikasi dan status work item.
+- [x] Update hasil verifikasi dan status work item.
   - Acceptance: checklist ini berisi command, hasil, risiko, dan gap terbuka.
   - Verification: review manual dokumen.
 
@@ -154,11 +154,11 @@
 | `rg` audit UI | PASS | Layout starterkit, route usage, hook permission, dan Sonner references terinventarisasi |
 | `php artisan route:list --except-vendor` | PASS | 22 routes; `pos.index` tersedia pada `/pos` |
 | `npm list sonner --depth=0` | PASS | `sonner@2.0.8` terpasang |
-| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 5 |
-| `npm run build` | PASS | Vite production build selesai setelah Increment 5 |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah Increment 6 |
+| `npm run build` | PASS | Vite production build selesai setelah Increment 6 |
 | `php artisan test --filter=PosRouteTest` | PASS | Guest redirect ke login dan authenticated user bisa membuka POS mock |
 | `git diff --check` | PASS | Tidak ada whitespace error |
 | Review struktur frontend | PASS | POS berada di `resources/js/pages/sales/pos/components`; `resources/js/components/shared` tidak dibuat karena belum ada consumer lintas fitur |
-| Chrome DevTools MCP | BLOCKED | Tidak tersedia pada sesi Increment 4/5; percobaan CDP headless lokal juga tidak membuka endpoint debug. Mobile QA dilewati sesuai instruksi user; fallback lulus melalui lint, build, route list, route test, dan review struktur |
+| Chrome DevTools MCP | PASS | POS desktop/tablet dan admin desktop/tablet lulus; tidak ada horizontal overflow; console bersih. Mobile QA dilewati sesuai instruksi user |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.
