@@ -1,92 +1,43 @@
 # Platform/ModuleRuntime
 
-## Identitas
+## Status
 
-- Category: `Platform`
-- Module: `ModuleRuntime`
-- Source: `app/Console/Commands`, `app/Providers/AppServiceProvider.php`, `bootstrap/app.php`
-- Frontend: tidak ada
-- Status: Sebagian selesai; validasi route/migration module nyata menunggu modul domain pertama.
+Pending Validation
 
 ## Tujuan
 
-Module runtime menyediakan fondasi teknis untuk membuat dan memuat module POS
-secara konsisten dengan struktur `app/Modules/{Category}/{Module}`.
-
-Fokus awalnya adalah generator module minimal, namespace `App\\Modules\\`,
-auto-register `ServiceProvider.php` module, dan guardrail agar agent/developer
-tidak membuat layer kosong atau abstraction spekulatif.
+Capability ini mengatur discovery, bootstrap, dan scaffolding module. Saat ini
+source terkait belum menjadi module fisik penuh di `app/Modules`, sehingga perlu
+work item tersendiri bila akan dirapikan menjadi module platform.
 
 ## Boundary
 
-Memiliki:
-
-- command `php artisan module:make`;
-- struktur source module `app/Modules/{Category}/{Module}`;
-- konvensi `ServiceProvider.php` sebagai composition root module;
-- auto-register provider dari `app/Modules/*/*/ServiceProvider.php`;
-- scaffold route, migration folder, dan demo seeder module;
-- opsi scaffold test module;
-- guardrail overwrite via `--force`;
-- dry-run via `--dry-run`.
-
-Tidak memiliki:
-
-- business module Catalog, Inventory, Sales, Purchasing, Finance, atau Reporting;
-- domain rule POS;
-- permission domain;
-- migration class domain;
-- repository, port, event, adapter, atau Domain folder tanpa kebutuhan nyata;
-- UI module.
+- Memiliki: generator module, aturan scaffold route, database, seeder, provider,
+  dan test module.
+- Tidak memiliki: business capability POS, authorization bisnis, atau migration
+  milik module lain.
 
 ## Public Boundary
 
-Public boundary runtime saat ini berupa command Artisan:
+- Command: `php artisan module:make {Domain} {Module}`.
+- Contract: belum ada.
+- DTOs: belum ada.
+- Events: belum ada.
 
-```bash
-php artisan module:make {Category} {Module}
-```
+## Dependency
 
-Opsi yang tersedia:
+- Laravel console command.
+- Filesystem project.
+- Struktur canonical `app/Modules/{Domain}/{Module}`.
 
-- `--with-routes`
-- `--with-tests`
-- `--dry-run`
-- `--force`
+## Data Dan Seeder
 
-`--with-routes` dipertahankan sebagai compatibility flag. `Routes/web.php` dibuat default.
-
-Module lain tidak memanggil `MakeModuleCommand` sebagai service domain. Command
-ini hanya tooling development.
-
-## Data dan Identifier
-
-- Tidak memiliki tabel.
-- Tidak memiliki primary identifier domain.
-- Membuat folder `Database/Migrations` dengan `.gitkeep`, bukan migration class domain.
-
-## Permission dan Audit
-
-- Tidak memiliki permission runtime aplikasi.
-- Tidak mencatat activity log karena command ini tooling developer, bukan aksi user aplikasi.
-
-## Operasi
-
-- Namespace `App\\Modules\\` mengikuti autoload Laravel `App\\ => app/`.
-- Command didaftarkan melalui `bootstrap/app.php`.
-- Provider module diregister otomatis oleh `AppServiceProvider`.
-- `ServiceProvider.php` hasil generator memuat `Routes/web.php` dan `Database/Migrations` bila file/folder tersedia.
-- Generator membuat `Database/Seeders/{Module}DemoSeeder.php` sebagai titik awal data demo module.
-- `--dry-run` harus dipakai lebih dulu jika struktur target belum pasti.
+Tidak memiliki tabel bisnis. Seeder tidak relevan kecuali nanti ada registry
+module persisted.
 
 ## Verifikasi Utama
 
-```bash
-composer dump-autoload
-php -l app\Console\Commands\MakeModuleCommand.php
-php -l app\Providers\AppServiceProvider.php
+```powershell
 php artisan test --filter=MakeModuleCommandTest
-php artisan module:make Platform Identity --with-tests --dry-run
-php artisan test
-git diff --check
+php artisan module:make Testing SampleModule --dry-run
 ```

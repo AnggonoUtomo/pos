@@ -41,6 +41,8 @@ Candidate public boundary:
 - Primary identifier: ULID.
 - Business identifier:
   - ...
+- Delete strategy:
+  - Soft delete default untuk CRUD master/operasional mutable, atau alasan pengecualian dicatat.
 
 ## Permission dan Audit
 
@@ -50,6 +52,8 @@ Candidate public boundary:
   - ...
 - Frontend permission guard:
   - `resources/js/hooks/use-permission.ts` untuk UX guard bila UI module membutuhkan kondisi permission.
+- UI feedback:
+  - Sonner toast untuk feedback create/update/delete/restore bila UI module memiliki CRUD.
 - Audit mutation:
   - ...
 

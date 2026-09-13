@@ -1,88 +1,58 @@
 # Platform/Identity
 
-## Identitas
+## Status
 
-- Category: `Platform`
-- Module: `Identity`
-- Source: `app/Modules/Platform/Identity/`
-- Frontend: `resources/js/hooks/use-permission.ts`
-- Status: Baseline selesai untuk auth internal, role, permission, shared auth props, dan audit perubahan akses.
+Active
 
 ## Tujuan
 
-Module Identity menjadi boundary untuk akses aplikasi internal: user dibuat admin, public registration mati, role/permission memakai Spatie Permission, dan perubahan akses penting tercatat di activity log.
+Module ini mengelola baseline akses aplikasi: role, permission, shared auth
+permission untuk Inertia, sinkronisasi role user, sinkronisasi permission role,
+dan demo seeder identity.
 
 ## Boundary
 
-Memiliki:
-
-- action sinkronisasi role user;
-- action sinkronisasi permission role;
-- shared auth props untuk Inertia;
-- hook permission frontend untuk UX guard;
-- demo seeder baseline identity.
-
-Tidak memiliki:
-
-- UI access matrix lengkap;
-- SSO atau external auth;
-- warehouse access final;
-- manajemen menu/navigation berbasis permission.
+- Memiliki: role/permission baseline, authorization helper backend, shared auth
+  permission, demo seeder akses.
+- Tidak memiliki: registrasi publik, profil user lanjutan, multi company,
+  payroll, customer/supplier identity, atau audit ledger.
 
 ## Public Boundary
 
-Candidate consumer:
+- Contracts: belum ada contract lintas module.
+- DTOs: belum ada DTOs publik.
+- Events: belum ada event publik lintas module.
+- Routes: route module berada di
+  `app/Modules/Platform/Identity/Routes/web.php`.
 
-- module UI admin yang perlu membaca `auth.permissions`, `auth.roles`, dan `auth.super`;
-- controller/admin action yang mengelola role dan permission.
+## Dependency
 
-Candidate public boundary:
+- Laravel authentication starter kit.
+- Spatie Laravel Permission untuk role dan permission.
+- Spatie Laravel Activitylog untuk audit mutation akses.
 
-- `Application/Actions/SyncUserRoles`
-- `Application/Actions/SyncRolePermissions`
-- `resources/js/hooks/use-permission.ts`
+## Permission
 
-## Data dan Identifier
+Permission mengikuti key English technical naming. Permission baseline harus
+diamankan di backend; frontend hanya menyembunyikan atau menampilkan UI.
 
-- Table package Spatie Permission:
-  - `roles`
-  - `permissions`
-  - `model_has_roles`
-  - `model_has_permissions`
-  - `role_has_permissions`
-- Table audit:
-  - `activity_log`
-- User table tetap milik starter kit:
-  - `users`
+## Data Dan Seeder
 
-## Permission dan Audit
-
-- Permission:
-  - permission baseline mengikuti `docs/SPEC.md`.
-- Backend permission guard:
-  - route/controller admin berikutnya wajib memakai middleware `can:{permission}` atau policy eksplisit.
-- Frontend permission guard:
-  - `resources/js/hooks/use-permission.ts` untuk UX guard.
-- Audit mutation:
-  - `identity.user_roles_synced`
-  - `identity.role_permissions_synced`
-
-Metadata audit tidak boleh menyimpan secret, credential, token, atau payload sensitif yang tidak relevan.
+- Migration: belum ada migration khusus module selain scaffold folder.
+- Seeder demo:
+  `app/Modules/Platform/Identity/Database/Seeders/IdentityDemoSeeder.php`.
+- Soft delete: tidak relevan untuk role/permission baseline saat ini; perubahan
+  akses dicatat melalui audit.
 
 ## Operasi
 
-- Route module berada di `app/Modules/Platform/Identity/Routes/`.
-- Migration module berada di `app/Modules/Platform/Identity/Database/Migrations/`.
-- Demo seeder module berada di `app/Modules/Platform/Identity/Database/Seeders/IdentityDemoSeeder.php`.
-- `ServiceProvider.php` menjadi composition root dan tidak berisi business logic.
-- Demo seeder memanggil `Database\Seeders\IdentityAccessSeeder` agar data role, permission, dan super admin baseline tetap satu sumber.
+- Shared auth Inertia menyediakan `roles`, `permissions`, dan `superSystem`.
+- Hook UX berada di `resources/js/hooks/use-permission.ts`.
+- Public registration harus tetap dimatikan.
 
 ## Verifikasi Utama
 
-```bash
+```powershell
 php artisan test --filter=Identity
 php artisan test --filter=PermissionBaselineTest
-php artisan db:seed --class="App\\Modules\\Platform\\Identity\\Database\\Seeders\\IdentityDemoSeeder"
-npm run build
-git diff --check
 ```

@@ -6,14 +6,14 @@ export function usePermission() {
 
     const permissions = auth.permissions ?? {};
     const roles = auth.roles ?? {};
-    const isSuperAdmin = auth.super === true;
+    const isSuperSystem = auth.superSystem === true;
 
     const can = (permission: string): boolean => {
-        return isSuperAdmin || permissions[permission] === true;
+        return isSuperSystem || permissions[permission] === true;
     };
 
     const canAny = (permissionList: string[]): boolean => {
-        return isSuperAdmin || permissionList.some((permission) => permissions[permission] === true);
+        return isSuperSystem || permissionList.some((permission) => permissions[permission] === true);
     };
 
     const hasRole = (role: string): boolean => {
@@ -24,7 +24,7 @@ export function usePermission() {
         user: auth.user,
         roles,
         permissions,
-        isSuperAdmin,
+        isSuperSystem,
         can,
         canAny,
         hasRole,

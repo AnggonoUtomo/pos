@@ -19,7 +19,7 @@ Aplikasi POS adalah sistem internal. User dibuat oleh admin, bukan registrasi pu
 - Gunakan Spatie Laravel Permission untuk role dan permission.
 - Gunakan middleware/policy backend sebagai authority authorization.
 - Untuk controller module, pola default adalah `HasMiddleware` dengan middleware `can:{permission}` per action.
-- Frontend memakai hook `resources/js/hooks/use-permission.ts` untuk UX guard berbasis `auth.permissions`, `auth.roles`, dan `auth.super`.
+- Frontend memakai hook `resources/js/hooks/use-permission.ts` untuk UX guard berbasis `auth.permissions`, `auth.roles`, dan `auth.superSystem`.
 - Gunakan Spatie Laravel Activitylog untuk audit trail.
 - Simpan actor columns eksplisit pada transaksi: `created_by`, `posted_by`, `voided_by`.
 

@@ -28,6 +28,8 @@ Gunakan shadcn/ui sebagai default UI/UX aplikasi.
 
 Admin ERP dan POS fullscreen harus memakai token visual, spacing, komponen dasar, dan pola interaksi yang konsisten dengan shadcn/ui. Komponen khusus POS boleh dibuat hanya jika workflow kasir membutuhkan interaksi yang tidak cocok dengan komponen standar.
 
+Feedback operasi CRUD memakai Sonner toast dari shadcn/ui. Toast dipakai untuk status sukses dan error non-field, sedangkan validasi field tetap ditampilkan dekat input dan aksi destructive tetap membutuhkan konfirmasi.
+
 Frontend memakai struktur feature-folder per halaman/domain di `resources/js/pages`. Komponen lokal fitur disimpan di folder fitur masing-masing, misalnya `pages/platform/users/components`. Komponen hanya dinaikkan ke `components/shared` jika benar-benar dipakai lintas fitur dan kontraknya stabil.
 
 ## Alternatif Yang Dipertimbangkan
@@ -56,5 +58,6 @@ Frontend memakai struktur feature-folder per halaman/domain di `resources/js/pag
 - Ikon memakai `lucide-react`.
 - Token warna dan spacing mengikuti Tailwind/shadcn.
 - UI custom POS tetap harus konsisten dengan design system utama.
+- Operasi CRUD UI memiliki feedback konsisten melalui Sonner toast.
 - Struktur frontend tidak boleh flat; komponen fitur harus dekat dengan page/domain yang memakainya.
 - Perubahan design system besar membutuhkan ADR baru atau persetujuan eksplisit.

@@ -1,84 +1,27 @@
-# Implementation Plan: Platform/Identity
+# Plan: Platform/Identity
 
-## Scope
+## Scope Module
 
-Pekerjaan ini menyelesaikan baseline identitas dan akses untuk fase awal POS: auth internal, permission baseline, shared permission props, hook permission frontend, dan audit perubahan role/permission.
+Menyediakan fondasi identity dan access control untuk seluruh aplikasi POS.
 
-## Increment 1: Dokumentasi Module
+## Increment
 
-- Perubahan:
-  - `docs/modules/Platform/Identity/README.md`
-  - `docs/modules/Platform/Identity/specification.md`
-  - `docs/modules/Platform/Identity/plan.md`
-  - `docs/modules/Platform/Identity/tasks.md`
-- Dependency:
-  - WI-0004 aktif.
-- Acceptance:
-  - boundary, non-scope, acceptance criteria, dependency, risiko, dan verifikasi tertulis.
-- Verifikasi:
-  - `git diff --check`
+| No | Status | Nama | Perubahan | Acceptance | Verifikasi |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Passed | Baseline package | Spatie Permission dan Activitylog tersedia | Package dapat digunakan aplikasi | `composer show spatie/laravel-permission`; `composer show spatie/laravel-activitylog` |
+| 2 | Passed | Shared auth permission | Inertia shared auth menyediakan user, roles, permissions, superSystem | Frontend bisa membaca permission untuk UX | `php artisan test --filter=Identity` |
+| 3 | Passed | Hook permission frontend | `use-permission.ts` menyediakan can, canAny, hasRole, isSuperSystem | UI dapat membuat guard UX konsisten | `npm run build` |
+| 4 | Passed | Demo seeder identity | Seeder demo identity tersedia | Seeder dapat dijalankan | `php artisan db:seed --class="App\\Modules\\Platform\\Identity\\Database\\Seeders\\IdentityDemoSeeder"` |
+| 5 | Planned | UI manajemen akses | Page role/permission/user access | Admin bisa mengelola akses dari UI | Ditentukan pada work item UI |
 
-## Increment 2: Skeleton Module
+## QA Automated
 
-- Perubahan:
-  - generate `app/Modules/Platform/Identity/` dengan generator.
-- Dependency:
-  - ModuleRuntime tersedia.
-- Acceptance:
-  - `ServiceProvider.php`, `Routes/web.php`, `Database/Migrations/.gitkeep`, dan `Database/Seeders/IdentityDemoSeeder.php` tersedia.
-- Verifikasi:
-  - `php artisan module:make Platform Identity --with-tests --dry-run`
-  - `php artisan module:make Platform Identity --with-tests`
-  - `php artisan test --filter=MakeModuleCommandTest`
-
-## Increment 3: Access Audit Actions
-
-- Perubahan:
-  - `SyncUserRoles`
-  - `SyncRolePermissions`
-  - feature test activity log.
-- Dependency:
-  - Spatie Permission dan Activitylog tersedia.
-- Acceptance:
-  - perubahan role user tercatat;
-  - perubahan permission role tercatat;
-  - audit menyimpan before/after tanpa secret.
-- Verifikasi:
-  - `php artisan test tests/Feature/Modules/Platform/Identity/IdentityAccessActionTest.php`
-
-## Increment 4: Shared Permission Props dan Hook
-
-- Perubahan:
-  - `HandleInertiaRequests`
-  - `resources/js/types/index.ts`
-  - `resources/js/hooks/use-permission.ts`
-- Dependency:
-  - role/permission user tersedia.
-- Acceptance:
-  - `auth.roles`, `auth.permissions`, dan `auth.super` tersedia;
-  - hook menyediakan `can`, `canAny`, dan `hasRole`;
-  - build frontend lulus.
-- Verifikasi:
-  - `php artisan test tests/Feature/Modules/Platform/Identity/IdentityAccessActionTest.php`
-  - `npm run build`
-
-## Increment 5: Demo Seeder
-
-- Perubahan:
-  - `IdentityDemoSeeder`.
-- Dependency:
-  - `IdentityAccessSeeder` tersedia.
-- Acceptance:
-  - seeder module memanggil baseline identity seeder.
-- Verifikasi:
-  - `php artisan db:seed --class="App\\Modules\\Platform\\Identity\\Database\\Seeders\\IdentityDemoSeeder"`
+- Backend focused: `php artisan test --filter=Identity`.
+- Permission baseline: `php artisan test --filter=PermissionBaselineTest`.
+- Frontend: `npm run lint` dan `npm run build` bila UI/hook berubah.
+- Browser: Chrome DevTools MCP bila UI identity dibuat.
 
 ## Batas Berhenti
 
-Pekerjaan berhenti pada baseline backend dan shared frontend permission. UI access matrix lengkap, warehouse access final, dan CRUD user/role admin dikerjakan pada work-item berikutnya.
-
-## Rollback
-
-- Revert commit WI-0004.
-- Rollback migration package hanya jika environment disposable.
-- Jangan menghapus user/role production tanpa prosedur data migration eksplisit.
+Module tidak mengambil ownership data customer, supplier, employee, atau
+multi-company. Kebutuhan tersebut masuk module lain.

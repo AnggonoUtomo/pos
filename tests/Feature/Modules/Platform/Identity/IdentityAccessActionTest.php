@@ -79,7 +79,7 @@ class IdentityAccessActionTest extends TestCase
 
         $shared = app(HandleInertiaRequests::class)->share($request);
 
-        $this->assertTrue($shared['auth']['super']);
+        $this->assertTrue($shared['auth']['superSystem']);
         $this->assertTrue($shared['auth']['roles']['super-admin']);
         $this->assertTrue($shared['auth']['permissions']['platform.identity.users.view']);
     }

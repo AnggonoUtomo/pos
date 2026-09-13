@@ -1,30 +1,42 @@
 # Dokumentasi Module
 
-Folder ini menyimpan dokumentasi module per bounded context.
+Folder ini menyimpan dokumentasi per module aktif atau module yang mulai
+direncanakan secara serius.
 
-Struktur canonical:
+## Lokasi
+
+Setiap module yang baru dibuat atau mulai memperoleh pekerjaan signifikan
+memakai folder:
 
 ```text
-docs/modules/{Category}/{Module}/
-  README.md
-  specification.md
-  plan.md
-  tasks.md
+docs/modules/{Domain}/{Module}/
+|-- README.md
+|-- specification.md
+|-- plan.md
+|-- tasks.md
+|-- decisions/
+`-- work-items/
 ```
 
-## Peran Dokumen
+Nama Domain dan Module mengikuti source code, misalnya `Platform/Identity`.
+Folder work item memakai `kebab-case`, misalnya
+`work-items/role-permission-ui/`.
 
-- `README.md`: ringkasan module, boundary, public boundary, kepemilikan data, permission, audit, operasi, dan verifikasi utama.
-- `specification.md`: kontrak perilaku module, input/output, failure, data, authorization, dependency, acceptance criteria, dan risiko.
-- `plan.md`: urutan increment implementasi, dependency antar increment, batas berhenti, dan rollback.
-- `tasks.md`: checklist pekerjaan yang diisi sebelum dan sesudah coding.
+## Isi Minimum
+
+- `README.md`: ownership, status, dependency, route, permission, dan link penting.
+- `specification.md`: rule, contract, data, UI, dan QA khusus module.
+- `plan.md`: increment pengembangan module.
+- `tasks.md`: checklist module yang terus diperbarui.
+- `decisions/`: ADR khusus module bila ada.
+- `work-items/`: pekerjaan signifikan di dalam module.
 
 ## Aturan
 
-- Dokumentasi module dibuat sebelum coding module dimulai.
-- Public boundary hanya dibuat jika ada consumer nyata.
-- Domain, port, event, repository, adapter, dan migration class tidak dibuat hanya untuk melengkapi diagram.
-- Module baru menyimpan route dan database miliknya di `Routes/`, `Database/Migrations/`, dan `Database/Seeders/`.
-- Demo seeder module diisi bila ada master/operational data relevan untuk demo, test manual, atau relasi lintas module. Jika tidak relevan, alasan skip dicatat pada work-item.
-- Work-item aktif harus merujuk dokumen module bila pekerjaan menyentuh module tersebut.
-- Setiap bukti verifikasi harus mencatat command nyata dan hasilnya.
+- Jangan membuat folder kosong untuk module yang belum akan dikerjakan.
+- Module baru di source dibuat dengan `php artisan module:make {Domain} {Module}`.
+- Route, migration, dan seeder module berada di dalam module source.
+- Demo seeder wajib dipertimbangkan dan harus memakai relasi yang relevan.
+- Struktur source module wajib mengikuti
+  [`../ARCHITECTURE.md`](../ARCHITECTURE.md) dan
+  [`../FOLDER-STRUCTURE.md`](../FOLDER-STRUCTURE.md).

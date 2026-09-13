@@ -50,6 +50,11 @@ Table kandidat:
 
 - ...
 
+Delete strategy:
+
+- Soft delete default untuk CRUD master/operasional mutable.
+- Jika hard delete atau deactivate-only dipilih, tulis alasan dan dampak audit.
+
 ## Authorization dan Audit
 
 - Permission:
@@ -65,6 +70,7 @@ Table kandidat:
   - `resources/js/pages/{category}/{module}/...`
 - Komponen business-specific ditempatkan dekat page module.
 - UI guard memakai `resources/js/hooks/use-permission.ts` bila page menampilkan aksi berbasis permission.
+- Operasi CRUD UI memakai Sonner toast dari shadcn/ui untuk feedback sukses/gagal non-field.
 - Backend permission tetap menjadi authority.
 
 ## Dependency

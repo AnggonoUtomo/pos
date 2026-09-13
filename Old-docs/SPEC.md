@@ -138,6 +138,8 @@ Domain event atau integration event hanya dibuat jika memang memiliki consumer. 
 - Dokumentasi dan UI label memakai Bahasa Indonesia, tetapi nama tabel, kolom, class, route, permission, enum, dan namespace memakai English technical naming.
 - Migration milik modul tetap berada di modul, bukan dipindah ke `database/migrations` global.
 - Jangan membuat port, event, service, repository, adapter, atau integration tanpa consumer nyata.
+- CRUD master/operasional mutable memakai soft delete secara default, kecuali work-item mencatat alasan eksplisit untuk hard delete atau deactivate-only.
+- Ledger, stock movement, FIFO layer, payment record, transaction snapshot, dan activity log tidak memakai soft delete untuk mengubah histori; gunakan void, reversal, retur, atau adjustment yang audited.
 
 ## Siklus Hidup Transaksi
 
@@ -394,7 +396,7 @@ final class ExampleController implements HasMiddleware
 
 Frontend boleh memakai hook `usePermission()` di `resources/js/hooks` untuk
 menyembunyikan tombol, menu, atau aksi UI berdasarkan `auth.permissions`,
-`auth.roles`, dan `auth.super`. Hook frontend hanya guard UX; backend permission
+`auth.roles`, dan `auth.superSystem`. Hook frontend hanya guard UX; backend permission
 tetap authority.
 
 ## Audit Trail
@@ -439,6 +441,7 @@ Target:
 Standar UI:
 
 - Gunakan shadcn/ui sebagai default komponen UI aplikasi.
+- Gunakan Sonner toast dari shadcn/ui untuk feedback operasi CRUD.
 - Gunakan Tailwind CSS sesuai konfigurasi starter kit.
 - Gunakan `lucide-react` untuk ikon.
 - Komponen reusable mengikuti alias shadcn/ui: `@/components`, `@/components/ui`, `@/lib`, dan `@/hooks`.
@@ -449,6 +452,13 @@ Standar UI:
 - Komponen lintas fitur hanya boleh masuk `components/shared` jika benar-benar umum dan stabil.
 - Admin ERP memakai komponen shadcn/ui untuk tabel, form, dialog, dropdown, select, checkbox, tab, tooltip, dan navigation.
 - POS fullscreen boleh memakai komponen custom untuk kebutuhan kasir cepat, tetapi tetap mengikuti token, warna, spacing, dan interaction pattern shadcn/ui.
+
+Aturan toast CRUD:
+
+- Create/update/delete/restore/archive yang berhasil menampilkan toast sukses singkat.
+- Validasi gagal tetap ditampilkan dekat field; toast error dipakai untuk kegagalan non-field seperti konflik, network error, atau aksi ditolak.
+- Delete/restore/void yang berisiko tetap memakai dialog konfirmasi; toast bukan pengganti konfirmasi.
+- Toast tidak boleh menampilkan secret, token, credential, atau payload sensitif.
 
 Layout:
 

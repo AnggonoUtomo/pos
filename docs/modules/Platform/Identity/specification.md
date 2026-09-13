@@ -2,108 +2,81 @@
 
 ## Status
 
-Baseline selesai untuk WI-0004.
+Implemented sebagian, pending validasi lanjutan bila UI manajemen akses dibuat.
 
-## Tujuan dan Scope
+## Tujuan Dan Scope
 
-Scope awal:
-
-- public registration dimatikan;
-- Spatie Permission dan Activitylog tersedia;
-- role dan permission baseline dapat diseed;
-- perubahan role user dan permission role dicatat ke activity log;
-- shared auth props menyediakan user, roles, permissions, dan super flag;
-- hook permission frontend tersedia untuk UX guard.
+Platform/Identity menyediakan fondasi authorization aplikasi POS. Scope saat ini
+meliputi shared auth permission, role/permission seed baseline, action sinkron
+role user, action sinkron permission role, dan audit mutation akses.
 
 ## Arsitektur
 
-- Hexagon: `app/Modules/Platform/Identity`.
-- Inbound adapter:
-  - HTTP auth starter kit masih berada di controller bawaan Laravel.
-  - Inertia shared data berada di `HandleInertiaRequests`.
-- Use case awal:
-  - `SyncUserRoles`
-  - `SyncRolePermissions`
-- Candidate public contract:
-  - action application untuk admin access management;
-  - shape `auth.roles`, `auth.permissions`, dan `auth.super` untuk Inertia.
+- Hexagon: `Platform/Identity`.
+- Inbound adapter: HTTP route/controller bila UI identity dikembangkan,
+  database seeder untuk baseline akses.
+- Use case/inbound port: action sync role dan sync permission.
+- Outbound port: belum diperlukan.
+- Outbound adapter: Spatie Permission dan Spatie Activitylog dipakai melalui
+  layer yang relevan.
 - Composition root:
-  - `app/Modules/Platform/Identity/ServiceProvider.php`.
-
-Domain belum dibuat karena baseline identity saat ini memakai package Spatie sebagai boundary teknis dan belum memiliki rule murni di luar orchestration Application.
+  `app/Modules/Platform/Identity/ServiceProvider.php`.
 
 ## Di Luar Scope
 
-- UI access matrix lengkap.
-- Warehouse access final.
-- SSO atau external auth.
-- Policy granular semua module bisnis.
+- Public registration.
+- Full user profile management.
+- Customer/supplier master.
+- Multi company authorization.
 
 ## Contract
 
-### Input
-
-- `SyncUserRoles`: actor user, target user, daftar role name.
-- `SyncRolePermissions`: actor user, target role, daftar permission name.
-
-### Output
-
-- Role/permission tersinkron.
-- Activity log identity tercatat dengan state sebelum dan sesudah.
-
-### Failure
-
-- Role atau permission tidak valid mengikuti exception dari Spatie Permission.
-- Actor tidak punya permission pada controller admin masa depan: `403`.
-- Record tidak ditemukan: `404`.
+- Input: user id, role list, role id, permission list sesuai use case.
+- Output: state role/permission tersinkron dan activity log tercatat.
+- Failure: validation/authorization error dari Laravel atau exception use case.
 
 ## Data
 
-Table:
+- Role dan permission memakai tabel package Spatie.
+- Primary key tabel utama project tetap mengikuti ULID bila migration baru dibuat.
+- Activity log memakai tabel package Spatie.
 
-- `users`
-- `roles`
-- `permissions`
-- `model_has_roles`
-- `model_has_permissions`
-- `role_has_permissions`
-- `activity_log`
+## Seeder Demo
 
-## Authorization dan Audit
+Seeder demo identity mengisi baseline role/permission yang relevan untuk
+pengembangan. Seeder tidak boleh memberi akses berlebih tanpa alasan.
 
-- Permission:
-  - `platform.identity.users.view`
-  - `platform.identity.users.create`
-- Backend guard:
-  - Controller Presentation memakai `HasMiddleware` dan `new Middleware('can:{permission}', only: [...])` atau policy eksplisit.
-- Audit:
-  - `identity.user_roles_synced`
-  - `identity.role_permissions_synced`
+## Authorization Dan Audit
+
+- Permission backend wajib menjadi authority.
+- Shared frontend permission hanya untuk UX.
+- Mutation role/permission wajib audited.
+- Super user pada shared auth disebut `superSystem`.
 
 ## UI
 
-- Page canonical akan dibuat pada work-item UI/admin berikutnya.
-- UI guard memakai `resources/js/hooks/use-permission.ts` bila page menampilkan aksi berbasis permission.
-- Backend permission tetap menjadi authority.
+- Page: belum final.
+- Komponen: bila dibuat, gunakan `resources/js/pages/platform/identity`.
+- Toast: operasi CRUD/sync memakai Sonner.
+- State: loading, empty, error, dan disabled wajib tersedia.
+- Browser QA: admin sidebar desktop dan responsive dasar bila UI dibuat.
 
 ## Dependency
 
-- Laravel starter kit auth.
-- Spatie Laravel Permission.
-- Spatie Laravel Activitylog.
-- Inertia shared data.
+- Laravel auth.
+- Spatie Permission.
+- Spatie Activitylog.
 
 ## Acceptance Criteria
 
-- [x] Public registration tidak bisa diakses.
-- [x] Role/permission baseline berjalan.
-- [x] Permission middleware baseline tersedia.
-- [x] Activity log mencatat perubahan role user.
-- [x] Activity log mencatat perubahan permission role.
-- [x] Inertia shared auth menyediakan `roles`, `permissions`, dan `super`.
-- [x] Hook `usePermission()` tersedia.
+- [x] Shared Inertia auth memuat permission map.
+- [x] Shared Inertia auth memakai `superSystem`.
+- [x] Hook `usePermission()` tersedia untuk UX frontend.
+- [x] Focused identity test lulus.
+- [ ] UI manajemen akses selesai bila masuk scope work item berikutnya.
 
 ## Risiko Terbuka
 
-- Warehouse access final menunggu module Inventory/Warehouse.
-- UI access matrix lengkap perlu work-item terpisah agar tidak mencampur backend baseline dan layout admin.
+- Struktur UI identity belum menjadi baseline final.
+- Permission matrix seluruh module bisnis belum lengkap karena module bisnis
+  masih planned.

@@ -46,7 +46,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
                 'roles' => $this->booleanMap($user?->getRoleNames()->all() ?? []),
                 'permissions' => $this->booleanMap($user?->getAllPermissions()->pluck('name')->all() ?? []),
-                'super' => $user?->hasRole('super-admin') ?? false,
+                'superSystem' => $user?->hasRole('super-admin') ?? false,
             ],
         ]);
     }

@@ -4,7 +4,7 @@ export interface Auth {
     user: User | null;
     roles: Record<string, boolean>;
     permissions: Record<string, boolean>;
-    super: boolean;
+    superSystem: boolean;
 }
 
 export interface BreadcrumbItem {

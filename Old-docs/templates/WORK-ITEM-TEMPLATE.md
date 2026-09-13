@@ -39,6 +39,8 @@ Di luar scope:
 - [ ] QA automated per increment sudah ditentukan.
 - [ ] Chrome DevTools MCP QA direncanakan jika menyentuh UI/browser.
 - [ ] Kebutuhan demo seeder module sudah diputuskan.
+- [ ] Untuk CRUD module, strategi soft delete/deactivate/hard delete sudah diputuskan.
+- [ ] Untuk UI CRUD, pola Sonner toast sudah direncanakan.
 - [ ] Risiko schema/route/permission/FIFO/payment/tax/audit dipertimbangkan.
 - [ ] Status git dicek jika repository tersedia.
 
@@ -67,6 +69,8 @@ Di luar scope:
 - [ ] QA automated relevan sudah dijalankan.
 - [ ] Chrome DevTools MCP QA dijalankan untuk UI/browser atau dicatat `SKIPPED/BLOCKED`.
 - [ ] Demo seeder module diverifikasi jika relevan, atau alasan skip dicatat.
+- [ ] Soft delete/deactivate/hard delete sudah diverifikasi sesuai keputusan module.
+- [ ] Sonner toast CRUD sudah diverifikasi jika UI berubah.
 - [ ] Bukti command dicatat.
 - [ ] Gap atau command yang belum bisa dijalankan dicatat.
 - [ ] Tidak ada perubahan di luar scope tanpa catatan.
