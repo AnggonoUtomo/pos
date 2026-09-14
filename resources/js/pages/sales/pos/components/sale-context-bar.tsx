@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tags, Warehouse } from 'lucide-react';
 import { type CustomerLevelOption, type WarehouseOption } from '../types';
 
 type SaleContextBarProps = {
@@ -23,7 +24,10 @@ export function SaleContextBar({
     return (
         <div className="flex flex-wrap items-end gap-3">
             <div className="w-52 space-y-1.5">
-                <Label htmlFor="warehouse">Gudang</Label>
+                <Label htmlFor="warehouse" className="flex items-center gap-1.5">
+                    <Warehouse className="size-3.5 text-[var(--chart-2)]" />
+                    Gudang
+                </Label>
                 <Select value={warehouseId} onValueChange={onWarehouseChange}>
                     <SelectTrigger id="warehouse">
                         <SelectValue />
@@ -38,7 +42,10 @@ export function SaleContextBar({
                 </Select>
             </div>
             <div className="w-48 space-y-1.5">
-                <Label htmlFor="customer-level">Level Pelanggan</Label>
+                <Label htmlFor="customer-level" className="flex items-center gap-1.5">
+                    <Tags className="size-3.5 text-[var(--chart-1)]" />
+                    Level Pelanggan
+                </Label>
                 <Select value={customerLevelId} onValueChange={onCustomerLevelChange}>
                     <SelectTrigger id="customer-level">
                         <SelectValue />
@@ -52,7 +59,7 @@ export function SaleContextBar({
                     </SelectContent>
                 </Select>
             </div>
-            <Badge variant="secondary" className="mb-1 rounded-md">
+            <Badge variant="secondary" className="text-primary mb-1 rounded-md border border-[var(--app-border)] bg-[var(--app-panel-strong)]">
                 Mock UI
             </Badge>
         </div>

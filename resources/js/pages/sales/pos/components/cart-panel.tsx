@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Minus, Plus, Trash2 } from 'lucide-react';
-import { levelPrice, lineSubtotal, money, selectedUnit } from './pos-format';
+import { Minus, Plus, ShoppingBasket, Trash2 } from 'lucide-react';
 import { type CartLine, type CustomerLevelOption } from '../types';
+import { levelPrice, lineSubtotal, money, selectedUnit } from './pos-format';
 
 type CartPanelProps = {
     lines: CartLine[];
@@ -16,11 +16,16 @@ type CartPanelProps = {
 
 export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onDiscountChange, onRemove }: CartPanelProps) {
     return (
-        <section className="flex min-h-0 flex-col rounded-lg border bg-background">
-            <div className="flex items-center justify-between border-b p-4">
-                <div>
-                    <h2 className="text-base font-semibold">Keranjang</h2>
-                    <p className="text-muted-foreground text-sm">{lines.length} item aktif</p>
+        <section className="flex min-h-0 flex-col rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)]">
+            <div className="flex items-center justify-between border-b border-[var(--app-border)] bg-[var(--app-panel-strong)] p-4">
+                <div className="flex items-center gap-3">
+                    <div className="flex size-9 items-center justify-center rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)]">
+                        <ShoppingBasket className="size-4 text-[var(--chart-1)]" />
+                    </div>
+                    <div>
+                        <h2 className="text-base font-semibold">Keranjang</h2>
+                        <p className="text-muted-foreground text-sm">{lines.length} item aktif</p>
+                    </div>
                 </div>
             </div>
 
@@ -44,8 +49,13 @@ export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onD
                                                 {line.item.sku} / {money(price)}
                                             </p>
                                         </div>
-                                        <Button variant="ghost" size="icon" aria-label={`Hapus ${line.item.name}`} onClick={() => onRemove(line.item.id)}>
-                                            <Trash2 />
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            aria-label={`Hapus ${line.item.name}`}
+                                            onClick={() => onRemove(line.item.id)}
+                                        >
+                                            <Trash2 className="text-[var(--chart-5)]" />
                                         </Button>
                                     </div>
 
@@ -63,7 +73,7 @@ export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onD
                                             </SelectContent>
                                         </Select>
 
-                                        <div className="grid grid-cols-[2rem_1fr_2rem] rounded-md border">
+                                        <div className="grid grid-cols-[2rem_1fr_2rem] rounded-md border border-[var(--app-border)] bg-[var(--app-panel-strong)]">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
@@ -71,7 +81,7 @@ export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onD
                                                 aria-label={`Kurangi ${line.item.name}`}
                                                 onClick={() => onQtyChange(line.item.id, line.qty - 1)}
                                             >
-                                                <Minus />
+                                                <Minus className="text-[var(--chart-4)]" />
                                             </Button>
                                             <Input
                                                 id={`qty-${line.item.id}`}
@@ -89,7 +99,7 @@ export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onD
                                                 aria-label={`Tambah ${line.item.name}`}
                                                 onClick={() => onQtyChange(line.item.id, line.qty + 1)}
                                             >
-                                                <Plus />
+                                                <Plus className="text-[var(--chart-3)]" />
                                             </Button>
                                         </div>
 

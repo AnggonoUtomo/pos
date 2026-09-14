@@ -3,8 +3,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PackagePlus, Search } from 'lucide-react';
-import { money } from './pos-format';
 import { type CustomerLevelOption, type PosItem } from '../types';
+import { money } from './pos-format';
 
 type ItemSearchProps = {
     items: PosItem[];
@@ -27,13 +27,13 @@ export function ItemSearch({ items, query, category, customerLevel, onQueryChang
     });
 
     return (
-        <section className="flex min-h-0 flex-col rounded-lg border bg-background">
-            <div className="border-b p-4">
+        <section className="flex min-h-0 flex-col rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)]">
+            <div className="border-b border-[var(--app-border)] bg-[var(--app-panel-strong)] p-4">
                 <div className="flex flex-col gap-3 xl:flex-row">
                     <div className="min-w-0 flex-1 space-y-1.5">
                         <Label htmlFor="item-search">Cari Item</Label>
                         <div className="relative">
-                            <Search className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+                            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[var(--chart-2)]" />
                             <Input
                                 id="item-search"
                                 value={query}
@@ -73,7 +73,7 @@ export function ItemSearch({ items, query, category, customerLevel, onQueryChang
                                 key={item.id}
                                 type="button"
                                 onClick={() => onAddItem(item)}
-                                className="focus-visible:ring-ring flex min-h-32 rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2"
+                                className="focus-visible:ring-ring flex min-h-32 rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-strong)] p-3 text-left transition-colors hover:bg-[color-mix(in_oklab,var(--app-panel-strong)_82%,var(--primary)_18%)] focus-visible:ring-2 focus-visible:outline-none"
                             >
                                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                                     <div className="flex items-start justify-between gap-3">
@@ -81,7 +81,10 @@ export function ItemSearch({ items, query, category, customerLevel, onQueryChang
                                             <p className="truncate text-sm font-semibold">{item.name}</p>
                                             <p className="text-muted-foreground text-xs">{item.sku}</p>
                                         </div>
-                                        <Badge variant="outline" className="shrink-0 rounded-md">
+                                        <Badge
+                                            variant="outline"
+                                            className="text-primary shrink-0 rounded-md border-[var(--app-border)] bg-[var(--app-panel)]"
+                                        >
                                             {item.category}
                                         </Badge>
                                     </div>
@@ -98,7 +101,7 @@ export function ItemSearch({ items, query, category, customerLevel, onQueryChang
                                         </div>
                                     </div>
                                 </div>
-                                <PackagePlus className="text-muted-foreground ml-3 size-5 shrink-0" />
+                                <PackagePlus className="ml-3 size-5 shrink-0 text-[var(--chart-3)]" />
                             </button>
                         );
                     })}

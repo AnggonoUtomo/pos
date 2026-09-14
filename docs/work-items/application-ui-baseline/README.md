@@ -301,6 +301,8 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   icon menu dan tooltip.
 - Top nav memakai surface solid pada posisi awal dan berubah menjadi glass
   setelah workspace discroll.
+- POS fullscreen memakai token theme yang sama untuk background, topbar, panel
+  item, cart, summary, payment drawer, dan icon operasional.
 - Verifikasi:
   - `npm run lint` lulus.
   - `npm run build` lulus.

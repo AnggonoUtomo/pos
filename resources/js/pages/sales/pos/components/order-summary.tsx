@@ -13,7 +13,7 @@ type OrderSummaryProps = {
 
 export function OrderSummary({ subtotal, discount, tax, total, onOpenPayment }: OrderSummaryProps) {
     return (
-        <section className="rounded-lg border bg-background p-4">
+        <section className="rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] p-4">
             <div className="grid gap-2 text-sm">
                 <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
@@ -33,8 +33,8 @@ export function OrderSummary({ subtotal, discount, tax, total, onOpenPayment }: 
                     <span>{money(total)}</span>
                 </div>
             </div>
-            <Button className="mt-4 w-full" size="lg" onClick={onOpenPayment} disabled={total <= 0}>
-                <CreditCard />
+            <Button className="shadow-primary/10 mt-4 w-full shadow-sm" size="lg" onClick={onOpenPayment} disabled={total <= 0}>
+                <CreditCard className="text-primary-foreground" />
                 Pembayaran
             </Button>
         </section>

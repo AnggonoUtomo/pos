@@ -1,7 +1,8 @@
 import AppLogoIcon from '@/components/app-logo-icon';
+import { ThemeMenu } from '@/components/theme-menu';
 import { Button } from '@/components/ui/button';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ArrowLeft, BadgeDollarSign, RotateCcw } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { CartPanel } from './components/cart-panel';
@@ -83,7 +84,9 @@ export default function PosIndex() {
 
     const handlePaymentChange = (id: string, amount: number): void => {
         setPayments((currentPayments) =>
-            currentPayments.map((payment) => (payment.id === id ? { ...payment, amount: Math.max(0, Number.isFinite(amount) ? amount : 0) } : payment)),
+            currentPayments.map((payment) =>
+                payment.id === id ? { ...payment, amount: Math.max(0, Number.isFinite(amount) ? amount : 0) } : payment,
+            ),
         );
     };
 
@@ -102,28 +105,34 @@ export default function PosIndex() {
     return (
         <>
             <Head title="POS" />
-            <main className="flex h-screen min-h-[720px] flex-col bg-muted/30 text-foreground">
-                <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-3">
+            <main className="text-foreground flex h-screen min-h-[720px] flex-col bg-[var(--app-workspace)]">
+                <header className="flex shrink-0 items-center justify-between border-b border-[var(--app-border)] bg-[var(--app-topbar)] px-5 py-3 shadow-none">
                     <div className="flex items-center gap-3">
                         <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
                             <AppLogoIcon className="size-5 fill-current" />
                         </div>
                         <div>
-                            <h1 className="text-lg font-semibold leading-none">POS</h1>
+                            <h1 className="text-primary text-lg leading-none font-semibold">POS</h1>
                             <p className="text-muted-foreground mt-1 text-sm">
                                 {selectedWarehouse.name} / {customerLevel.name}
                             </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" asChild>
+                        <ThemeMenu />
+                        <Button variant="outline" className="text-primary border-[var(--app-border)] bg-[var(--app-panel)]" asChild>
                             <Link href="/dashboard">
-                                <ArrowLeft />
+                                <ArrowLeft className="text-[var(--chart-2)]" />
                                 Admin
                             </Link>
                         </Button>
-                        <Button variant="outline" onClick={resetSale} disabled={cartLines.length === 0}>
-                            <RotateCcw />
+                        <Button
+                            variant="outline"
+                            className="border-[var(--app-border)] bg-[var(--app-panel)]"
+                            onClick={resetSale}
+                            disabled={cartLines.length === 0}
+                        >
+                            <RotateCcw className="text-[var(--chart-5)]" />
                             Reset
                         </Button>
                     </div>
@@ -185,7 +194,11 @@ function SaleContext({
     onCustomerLevelChange: (value: string) => void;
 }) {
     return (
-        <section className="rounded-lg border bg-background p-4">
+        <section className="rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] p-4">
+            <div className="text-primary mb-3 flex items-center gap-2 text-sm font-medium">
+                <BadgeDollarSign className="size-4 text-[var(--chart-1)]" />
+                Konteks Transaksi
+            </div>
             <SaleContextBar
                 warehouses={warehouses}
                 customerLevels={customerLevels}

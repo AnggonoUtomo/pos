@@ -160,6 +160,8 @@ yang efisien. CRUD sederhana tidak wajib diberi ceremony CQRS penuh.
   hidup.
 - Top nav admin memakai surface solid saat posisi awal dan baru berubah menjadi
   glass setelah workspace discroll.
+- POS fullscreen memakai token theme yang sama untuk background, topbar, panel,
+  dan icon operasional.
 - Komponen fitur diletakkan dekat page:
   `resources/js/pages/{domain}/{module}/components`.
 - Komponen shared hanya untuk UI lintas fitur yang benar-benar stabil.

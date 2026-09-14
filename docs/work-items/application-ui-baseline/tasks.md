@@ -241,6 +241,11 @@
   - Acceptance: top nav tidak terlihat melayang saat posisi awal dan berubah
     menjadi glass setelah workspace discroll.
   - Verification: Chrome DevTools MCP desktop/tablet scroll state.
+- [x] Terapkan accent theme pada POS fullscreen.
+  - Acceptance: background, topbar, panel item, cart, summary, payment drawer,
+    dan icon POS memakai token theme aktif.
+  - Verification: source review; `npm run lint`; `npm run build`; browser QA
+    bila Chrome DevTools MCP tersedia.
 
 ## Hasil Verifikasi
 
@@ -276,5 +281,9 @@
 | `git diff --check` | PASS | Tidak ada whitespace error setelah Increment 11 |
 | Chrome DevTools MCP | PASS | Theme menu dan accent theme lulus desktop/tablet; console bersih |
 | Chrome DevTools MCP | PASS | Copper, Saffron, Plum tampil dan token theme berubah; top nav solid saat top dan glass setelah scroll |
+| Source review | PASS | POS fullscreen memakai token theme untuk background, topbar, panel, summary, drawer, dan icon operasional |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah POS fullscreen theme polish |
+| `npm run build` | PASS | Vite production build selesai setelah POS fullscreen theme polish |
+| Chrome DevTools MCP | BLOCKED | Tool Chrome DevTools MCP tidak callable pada sesi resume; package Playwright/Puppeteer juga tidak tersedia di project |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.
