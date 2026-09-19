@@ -22,6 +22,7 @@ direview dan disetujui user.
 | 9 | Passed | Collapsed sidebar scroll dan tooltip | Sembunyikan scrollbar sidebar tanpa mematikan scroll dan pastikan tooltip tersedia saat collapsed | Sidebar collapsed tetap bisa discroll; tooltip menu/logo tersedia | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 10 | Passed | Shortcut operasi dan command palette | Tambah dropdown shortcut operasi per halaman dan command palette global di top nav | Setiap halaman module punya pola shortcut dropdown; command palette dapat dibuka dari top nav dan keyboard | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 11 | Passed | Accent theme dan icon color polish | Tambah accent theme, warna semantic icon, dan behavior top nav solid ke glass on scroll agar UI light/dark tidak flat | Theme menu punya mode dan accent theme; icon utama lebih berwarna; top nav/dashboard ikut accent theme | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 12 | Passed | Light top nav/sidebar balance dan Vite hot file lokal | Tukar intensitas tint top nav dan sidebar light, lalu guard hot file lokal yang memaksa asset ke Vite dev server mati | Top nav light lebih kalem; sidebar light lebih hidup; `pos.test` bisa memakai build asset saat `npm run dev` tidak berjalan | `php -l`; request `pos.test`; `Test-Path public/hot`; `npm run lint`; `npm run build`; `git diff --check` |
 
 ## QA Automated
 

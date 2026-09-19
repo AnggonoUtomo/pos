@@ -93,6 +93,16 @@ Untuk perubahan UI/browser, agent wajib mencoba Chrome DevTools MCP lebih dulu.
 Jika tool tidak tersedia atau gagal setelah percobaan wajar, catat status
 `BLOCKED` dan gunakan fallback yang tersedia.
 
+## Catatan Vite Hot File Lokal
+
+Laravel Vite akan membaca asset dari dev server bila `public/hot` ada. Jika
+`http://pos.test` memuat URL seperti `http://127.0.0.1:5173/@vite/client`,
+`http://[::1]:5173/@vite/client`, atau `@react-refresh` sementara
+`npm run dev` tidak berjalan, hapus `public/hot` atau jalankan kembali
+`npm run dev`. Aplikasi juga memiliki guard lokal yang menghapus `public/hot`
+stale saat dev server tidak reachable. File `public/hot` bersifat runtime lokal
+dan sudah di-ignore oleh git, sehingga tidak boleh menjadi acuan deployment.
+
 Urutan akses eksplisit:
 
 1. Cari tool DevTools melalui `tool_search` dengan kata kunci Chrome DevTools

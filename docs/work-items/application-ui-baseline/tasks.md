@@ -247,6 +247,22 @@
   - Verification: source review; `npm run lint`; `npm run build`; browser QA
     bila Chrome DevTools MCP tersedia.
 
+## Increment 12: Light Top Nav Dan Sidebar Balance
+
+- [x] Tukar intensitas surface top nav dan sidebar light theme.
+  - Acceptance: top nav light memakai tint halus seperti background sidebar
+    awal, sidebar light memakai tint top nav sebelumnya, dan dark sidebar tidak
+    diubah.
+  - Verification: review CSS token; `npm run build`.
+- [x] Bersihkan `public/hot` lokal yang mengarah ke Vite dev server mati.
+  - Acceptance: `public/hot` tidak ada saat membuka `http://pos.test` tanpa
+    `npm run dev`.
+  - Verification: request `http://pos.test`; `Test-Path public/hot`.
+- [x] Dokumentasikan guard Vite hot file.
+  - Acceptance: `docs/QUALITY.md` menjelaskan penyebab dan tindakan saat asset
+    mencoba dimuat dari `127.0.0.1:5173`.
+  - Verification: review dokumen.
+
 ## Hasil Verifikasi
 
 | Command | Hasil | Catatan |
@@ -285,5 +301,14 @@
 | `npm run lint` | PASS | ESLint selesai tanpa error setelah POS fullscreen theme polish |
 | `npm run build` | PASS | Vite production build selesai setelah POS fullscreen theme polish |
 | Chrome DevTools MCP | BLOCKED | Tool Chrome DevTools MCP tidak callable pada sesi resume; package Playwright/Puppeteer juga tidak tersedia di project |
+| `php -l app/Providers/AppServiceProvider.php` | PASS | Tidak ada syntax error pada guard hot file lokal |
+| `vendor\bin\pint --dirty` | PASS | Format PHP sesuai Pint |
+| `npm run lint` | PASS | ESLint selesai tanpa error setelah light top nav/sidebar balance |
+| `npm run build` | PASS | Vite production build selesai setelah light top nav/sidebar balance |
+| Request `http://pos.test` dengan `public/hot` stale | PASS | Status 200; tidak ada `5173`, `@vite/client`, atau `@react-refresh`; `public/hot` IPv4/IPv6 stale terhapus |
+| Chrome DevTools MCP `http://pos.test` | PASS | Saat Vite dev server hidup di `[::1]:5173`, asset dev termuat tanpa console error; network Vite status 200 |
+| `php artisan test --filter=PosRouteTest` | PASS | 2 test, 3 assertion lulus |
+| `git diff --check` | PASS | Tidak ada whitespace error |
+| `Test-Path public/hot` | PASS | Mengembalikan `False`; `pos.test` tidak dipaksa memakai Vite dev server mati |
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

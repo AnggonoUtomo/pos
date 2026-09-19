@@ -104,6 +104,7 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 | 9 | Passed | Polish collapsed sidebar scroll dan tooltip | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 10 | Passed | Shortcut operasi halaman dan command palette | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
 | 11 | Passed | Accent theme dan icon color polish | `npm run lint`; `npm run build`; `git diff --check`; Chrome DevTools MCP desktop/tablet |
+| 12 | Passed | Light top nav/sidebar balance dan Vite hot file lokal | `php -l`; request `pos.test`; `npm run lint`; `npm run build`; `git diff --check` |
 
 ## Handoff
 
@@ -308,6 +309,26 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
   - `npm run build` lulus.
   - `git diff --check` lulus.
   - Chrome DevTools MCP desktop/tablet lulus.
+
+## Hasil Increment 12
+
+- Top nav light memakai tint halus dari background sidebar awal.
+- Sidebar light memakai tint top nav sebelumnya agar surface kiri lebih hidup
+  tanpa mengubah dark sidebar.
+- `public/hot` lokal yang menunjuk `http://127.0.0.1:5173` dihapus agar
+  `http://pos.test` tidak mencoba memuat Vite dev asset saat dev server mati.
+- `docs/QUALITY.md` mencatat guard Vite hot file untuk kasus `ERR_CONNECTION_REFUSED`.
+- Verifikasi:
+  - `php -l app/Providers/AppServiceProvider.php` lulus.
+  - Request `http://pos.test` dengan hot file stale mengembalikan HTML build
+    asset dan menghapus `public/hot` untuk URL IPv4/IPv6 stale.
+  - Chrome DevTools MCP membuka `http://pos.test`; saat Vite dev server hidup
+    di `[::1]:5173`, asset dev termuat tanpa console error.
+  - `Test-Path public/hot` mengembalikan `False` setelah simulasi hot file
+    stale.
+  - `npm run lint` lulus.
+  - `npm run build` lulus.
+  - `git diff --check` lulus.
 
 ## Hasil Increment 9
 
