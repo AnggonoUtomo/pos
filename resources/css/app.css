@@ -266,6 +266,10 @@
     --sidebar-border: color-mix(in oklab, hsl(0, 0%, 91%) 84%, var(--primary) 16%);
     --sidebar-primary: var(--primary);
     --sidebar-ring: var(--ring);
+    --app-topbar: color-mix(in oklab, var(--background) 91%, var(--primary) 9%);
+    --app-panel: color-mix(in oklab, var(--card) 94%, var(--primary) 6%);
+    --app-panel-strong: color-mix(in oklab, var(--card) 88%, var(--primary) 12%);
+    --app-border: color-mix(in oklab, var(--border) 70%, var(--primary) 30%);
 }
 
 :root[data-theme='default'] {
@@ -327,6 +331,17 @@
     --app-panel: hsl(220, 10%, 10%);
     --app-panel-strong: hsl(220, 10%, 13%);
     --app-border: hsl(220, 10%, 18%);
+}
+
+.dark[data-theme] {
+    --sidebar-background: color-mix(in oklab, var(--background) 86%, var(--primary) 14%);
+    --sidebar-accent: color-mix(in oklab, var(--background) 76%, var(--primary) 24%);
+    --sidebar-accent-foreground: color-mix(in oklab, var(--foreground) 88%, var(--primary) 12%);
+    --sidebar-border: color-mix(in oklab, var(--border) 78%, var(--primary) 22%);
+    --app-topbar: color-mix(in oklab, var(--background) 84%, var(--primary) 16%);
+    --app-panel: color-mix(in oklab, var(--card) 88%, var(--primary) 12%);
+    --app-panel-strong: color-mix(in oklab, var(--card) 80%, var(--primary) 20%);
+    --app-border: color-mix(in oklab, var(--border) 74%, var(--primary) 26%);
 }
 
 .dark[data-theme='default'] {
