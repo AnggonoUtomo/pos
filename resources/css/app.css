@@ -110,8 +110,8 @@
     --sidebar-accent-foreground: hsl(0, 0%, 30%);
     --sidebar-border: hsl(0, 0%, 91%);
     --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
-    --app-workspace: color-mix(in oklab, var(--background) 94%, var(--primary) 6%);
-    --app-topbar: color-mix(in oklab, var(--background) 97%, var(--primary) 15%);
+    --app-workspace: var(--background);
+    --app-topbar: var(--background);
     --app-panel: color-mix(in oklab, var(--card) 94%, var(--primary) 6%);
     --app-panel-strong: color-mix(in oklab, var(--card) 88%, var(--primary) 12%);
     --app-border: color-mix(in oklab, var(--border) 70%, var(--primary) 30%);
