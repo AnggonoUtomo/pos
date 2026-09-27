@@ -280,6 +280,15 @@
     --app-border: color-mix(in oklab, var(--border) 94%, var(--primary) 6%);
 }
 
+:root[data-theme='clean'] {
+    --sidebar-background: color-mix(in oklab, var(--background) 97%, var(--primary) 3%);
+    --sidebar-accent: color-mix(in oklab, hsl(0, 0%, 96%) 96%, var(--primary) 4%);
+    --sidebar-accent-foreground: color-mix(in oklab, var(--foreground) 94%, var(--primary) 6%);
+    --sidebar-border: color-mix(in oklab, hsl(0, 0%, 91%) 94%, var(--primary) 6%);
+    --app-topbar: color-mix(in oklab, var(--background) 97%, var(--primary) 3%);
+    --app-border: color-mix(in oklab, var(--border) 92%, var(--primary) 8%);
+}
+
 .dark {
     --background: hsl(0, 0%, 3.9%);
     --foreground: hsl(0, 0%, 98%);
