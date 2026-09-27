@@ -102,7 +102,7 @@
     --chart-4: hsl(43, 74%, 66%);
     --chart-5: hsl(27, 87%, 67%);
     --radius: 0.5rem;
-    --sidebar-background: var(--background);
+    --sidebar-background: color-mix(in oklab, var(--background) 91%, var(--primary) 9%);
     --sidebar-foreground: hsl(240, 5.3%, 30%);
     --sidebar-primary: hsl(0, 0%, 10%);
     --sidebar-primary-foreground: hsl(0, 0%, 98%);
@@ -110,8 +110,8 @@
     --sidebar-accent-foreground: hsl(0, 0%, 30%);
     --sidebar-border: hsl(0, 0%, 91%);
     --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
-    --app-workspace: color-mix(in oklab, var(--background) 94%, var(--primary) 6%);
-    --app-topbar: var(--background);
+    --app-workspace: color-mix(in oklab, var(--background) 97%, var(--primary) 3%);
+    --app-topbar: color-mix(in oklab, var(--background) 91%, var(--primary) 9%);
     --app-panel: color-mix(in oklab, var(--card) 94%, var(--primary) 6%);
     --app-panel-strong: color-mix(in oklab, var(--card) 88%, var(--primary) 12%);
     --app-border: color-mix(in oklab, var(--border) 70%, var(--primary) 30%);
@@ -250,7 +250,7 @@
 }
 
 :root[data-theme] {
-    --sidebar-background: var(--background);
+    --sidebar-background: color-mix(in oklab, var(--background) 91%, var(--primary) 9%);
     --sidebar-accent: color-mix(in oklab, hsl(0, 0%, 96%) 90%, var(--primary) 10%);
     --sidebar-accent-foreground: color-mix(in oklab, var(--foreground) 82%, var(--primary) 18%);
     --sidebar-border: color-mix(in oklab, hsl(0, 0%, 91%) 84%, var(--primary) 16%);
@@ -436,10 +436,32 @@
 @layer base {
     * {
         @apply border-border;
+        scrollbar-color: color-mix(in oklab, var(--primary) 30%, transparent) transparent;
+        scrollbar-width: thin;
     }
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    *::-webkit-scrollbar {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        border: 0.125rem solid transparent;
+        border-radius: 999px;
+        background-color: color-mix(in oklab, var(--primary) 28%, transparent);
+        background-clip: content-box;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: color-mix(in oklab, var(--primary) 42%, transparent);
     }
 }
 
