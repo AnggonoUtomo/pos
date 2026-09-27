@@ -268,6 +268,18 @@
     --sidebar-ring: var(--ring);
 }
 
+:root[data-theme='default'] {
+    --sidebar-background: var(--background);
+    --sidebar-accent: color-mix(in oklab, hsl(0, 0%, 96%) 98%, var(--primary) 2%);
+    --sidebar-accent-foreground: color-mix(in oklab, var(--foreground) 96%, var(--primary) 4%);
+    --sidebar-border: color-mix(in oklab, hsl(0, 0%, 91%) 96%, var(--primary) 4%);
+    --app-workspace: var(--background);
+    --app-topbar: var(--background);
+    --app-panel: color-mix(in oklab, var(--card) 98%, var(--primary) 2%);
+    --app-panel-strong: color-mix(in oklab, var(--card) 96%, var(--primary) 4%);
+    --app-border: color-mix(in oklab, var(--border) 94%, var(--primary) 6%);
+}
+
 .dark {
     --background: hsl(0, 0%, 3.9%);
     --foreground: hsl(0, 0%, 98%);
