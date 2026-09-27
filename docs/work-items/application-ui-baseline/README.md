@@ -289,8 +289,8 @@ yang controlled, Sonner toast, dan mock alur kasir realistis.
 ## Hasil Increment 11
 
 - Theme menu top nav dibuat lebih visual dengan pilihan mode Light, Dark,
-  System dan accent theme Default, Grey, Stone, Forest, Ruby, Quartz, Aurora,
-  Copper, Saffron, Plum.
+  System dan accent theme Default, Clean Default, Grey, Stone, Forest, Ruby,
+  Quartz, Aurora, Copper, Saffron, Plum.
 - Accent theme mengubah token primary, ring, chart, dan sidebar accent tanpa
   membuat design system paralel.
 - Token theme juga dipakai pada workspace background, top nav, dashboard card,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export type Appearance = 'light' | 'dark' | 'system';
-export type AccentTheme = 'default' | 'grey' | 'stone' | 'forest' | 'ruby' | 'quartz' | 'aurora' | 'copper' | 'saffron' | 'plum';
+export type AccentTheme = 'default' | 'clean' | 'grey' | 'stone' | 'forest' | 'ruby' | 'quartz' | 'aurora' | 'copper' | 'saffron' | 'plum';
 
 const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
 

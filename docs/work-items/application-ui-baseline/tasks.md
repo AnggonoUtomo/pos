@@ -218,8 +218,8 @@
 ## Increment 11: Accent Theme Dan Icon Color Polish
 
 - [x] Tambahkan accent theme operasional.
-  - Acceptance: tersedia Default, Grey, Stone, Forest, Ruby, Quartz, Aurora,
-    Copper, Saffron, Plum.
+  - Acceptance: tersedia Default, Clean Default, Grey, Stone, Forest, Ruby,
+    Quartz, Aurora, Copper, Saffron, Plum.
   - Verification: Chrome DevTools MCP; review CSS token.
 - [x] Polish theme menu top nav.
   - Acceptance: mode Light/Dark/System dan accent theme dapat dipilih dari top

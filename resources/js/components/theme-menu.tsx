@@ -12,6 +12,7 @@ const appearanceOptions: { value: Appearance; label: string; icon: typeof Sun }[
 
 const accentOptions: { value: AccentTheme; label: string; className: string }[] = [
     { value: 'default', label: 'Default', className: 'bg-neutral-950' },
+    { value: 'clean', label: 'Clean Default', className: 'bg-slate-300 ring-1 ring-slate-500' },
     { value: 'grey', label: 'Grey', className: 'bg-slate-500' },
     { value: 'stone', label: 'Stone', className: 'bg-stone-600' },
     { value: 'forest', label: 'Forest', className: 'bg-emerald-600' },
