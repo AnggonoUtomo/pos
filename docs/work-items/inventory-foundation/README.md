@@ -83,19 +83,20 @@ sebelum mutation transaksi dapat aman:
 | --- | --- | --- | --- |
 | 1 | Passed | Dokumen work item dan rencana implementasi Inventory foundation | `git diff --check`; review dokumen |
 | 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
-| 3 | Ready | Fondasi master `Inventory/Units`; konversi dimiliki Items | dry-run generator; focused test; route dan migration check |
+| 3 | Passed | Fondasi master `Inventory/Units`; konversi dimiliki Items | 9 focused test; full suite 58 test; route, migration dan seed MySQL |
 | 4 | Planned | Scaffold module `Inventory/Items` | dry-run generator; focused test; route check |
 | 5 | Planned | Master data database, permission, seeder demo | migration/status check; seed test; permission test |
 | 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
 
 ## Handoff
 
-- Perubahan: Increment 1 dan 2 selesai; fondasi gudang, permission, demo seeder,
-  soft delete, audit, serta kompatibilitas subject_id ULID tersedia.
-- Verifikasi: 49 test/150 assertion lulus; migration dan seed ulang MySQL lokal
-  lulus pada 9 Oktober 2026. Detail ada di tasks.md dan dokumen module Warehouses.
+- Perubahan: Increment 1-3 selesai; fondasi gudang dan satuan dengan ULID,
+  permission, demo seeder, soft delete, audit, serta kompatibilitas subject_id
+  ULID tersedia.
+- Verifikasi: 58 test/184 assertion lulus; migration dan seed ulang MySQL lokal
+  lulus pada 9 Oktober 2026. Detail ada di tasks.md dan dokumen masing-masing module.
 - Chrome DevTools QA: SKIPPED karena increment ini belum mengubah UI.
-- Status keseluruhan tetap In Progress: satuan/barang, integrasi, dan UI belum
+- Status keseluruhan tetap In Progress: barang, integrasi, dan UI belum
   dikerjakan. Pemisahan Units/Items disetujui user dan dicatat pada ADR-009.
   Gudang tidak memiliki dependency CompanySettings nyata pada fondasi single
   company ini.

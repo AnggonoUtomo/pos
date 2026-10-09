@@ -17,7 +17,7 @@ Status yang digunakan:
 | Platform | ModuleRuntime | Discovery, bootstrap, dan scaffolding module; source saat ini masih tersebar pada command/framework app | Laravel application container | Pending Validation |
 | Platform | Identity | Role, permission, shared auth permission, user access baseline | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
 | Platform | CompanySettings | Identitas perusahaan tunggal, preference operasional, format nomor | Identity | Planned |
-| Inventory | Units | Master satuan; base unit dan konversi ditentukan per barang | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Planned |
+| Inventory | Units | Fondasi master satuan; base unit/konversi dimiliki Items; UI belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Items | Barang, SKU, barcode, base unit, multi satuan dan konversi per barang; kategori/brand bila diperlukan | Units | Planned |
 | Inventory | Warehouses | Fondasi master gudang; pemilihan transaksi dan UI belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Stock | Stock movement, FIFO layer, no-negative-stock invariant | Items, Warehouses | Planned |

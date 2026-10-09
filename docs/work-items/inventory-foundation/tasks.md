@@ -52,10 +52,10 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
 
 ## Increment 3: Module Units
 
-- [ ] Jalankan dry-run scaffold `Inventory/Units`.
+- [x] Jalankan dry-run scaffold `Inventory/Units`.
   - Acceptance: output module sesuai struktur canonical.
   - Verification: `php artisan module:make Inventory Units --dry-run`.
-- [ ] Buat module source `Inventory/Units`.
+- [x] Buat module source `Inventory/Units`.
   - Acceptance: master satuan memiliki ULID, kode unik, nama, simbol, status aktif,
     soft delete, audit, dan demo seeder idempotent.
   - Verification: focused test; migration/status check.
@@ -63,6 +63,11 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
   - Acceptance: Units memiliki master satuan; Items memiliki base unit dan ratio
     positif per barang; ratio base unit 1. Schema Units tidak menyimpan ratio.
   - Verification: ADR-009; review indeks module dan rencana Increment 4.
+
+Increment 3 Passed pada 9 Oktober 2026. Master satuan, audit, permission,
+demo seeder, dan verifikasi MySQL selesai. Detail tersedia di
+[tasks Units](../../modules/Inventory/Units/tasks.md). Konversi per barang
+tetap menjadi scope Increment 4; belum ada endpoint HTTP/UI satuan.
 
 ## Increment 4: Module Items
 
@@ -132,6 +137,13 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
 | `php artisan migrate --no-interaction` dan `migrate:status` | PASS | 7 migration Ran pada MySQL lokal |
 | Seeder access/demo gudang dan smoke seed ulang MySQL | PASS | 2 gudang, 2 permission inventory, 2 audit; data dan audit tidak berubah saat seed ulang |
 | QA browser/frontend | SKIPPED | Increment 2 backend saja; tidak ada UI baru |
+| `php artisan test --filter=Units` | PASS | Increment 3: 9 test/34 assertion |
+| `php artisan test` | PASS | Setelah Increment 3: 58 test/184 assertion |
+| `php vendor/bin/pint --test` dengan path Units | PASS | Format PHP sesuai |
+| `php artisan migrate --no-interaction` dan `migrate:status` | PASS | Setelah Increment 3: semua 8 migration Ran di MySQL lokal |
+| Seeder access/demo Units dan smoke seed ulang MySQL | PASS | 7 satuan, 7 audit satuan, subject ULID terhubung; seed ulang tidak mengubah data/audit |
+| `php artisan route:list --except-vendor` | PASS | Setelah Increment 3: tetap 22 route existing |
+| QA browser/frontend | SKIPPED | Increment 3 backend saja; tidak ada UI baru |
 
 Scope keseluruhan belum selesai. Konflik ownership telah diselesaikan melalui
 keputusan user: Units/Items terpisah sesuai ADR-009.

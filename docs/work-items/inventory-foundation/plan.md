@@ -25,7 +25,7 @@ minus.
 | --- | --- | --- | --- | --- |
 | 1 | Passed | Dokumen perencanaan | Work item memiliki README, plan, tasks, scope dan non-scope jelas | `git diff --check`; review manual |
 | 2 | Passed | `Inventory/Warehouses` | Scaffold, schema, seeder demo, permission awal, soft delete, dan audit model | 11 focused test; 49 full test; route, migration/status, seed ulang MySQL |
-| 3 | Ready | `Inventory/Units` | Master satuan dengan ULID, kode unik, simbol, status aktif, soft delete, audit, permission, demo | dry-run generator; focused test; migration/status check; seed ulang |
+| 3 | Passed | `Inventory/Units` | Master satuan dengan ULID, kode unik, simbol, status aktif, soft delete, audit, permission, demo | 9 focused test; 58 full test; migration/status, route, seed ulang MySQL |
 | 4 | Planned | `Inventory/Items` | Item master, base unit, relasi satuan jual/beli dengan ratio per barang yang positif; ratio base unit 1 | dry-run generator; focused test; migration/status check |
 | 5 | Planned | Seeder dan permission baseline | Demo gudang, satuan, dan item dapat dipakai POS mock; permission backend tersedia | seed class module; permission test; activity log smoke test |
 | 6 | Planned | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/tablet |

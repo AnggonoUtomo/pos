@@ -1,0 +1,74 @@
+# Specification: Inventory/Units
+
+## Status Dan Scope
+
+Fondasi backend Implemented pada 9 Oktober 2026. Memiliki master satuan untuk retail/grosir
+tanpa saldo stok, konversi global, harga, barcode barang, atau transaksi POS.
+
+## Arsitektur
+
+- Composition root: `app/Modules/Inventory/Units/ServiceProvider.php`.
+- Migration, seeder, route scaffold, dan model berada di dalam module.
+- Eloquent model Unit berada pada Infrastructure/Persistence/Models.
+- Seeder menjadi adapter provisioning dengan database transaction.
+- Belum ada Domain, Application action, port, atau DTOs tanpa consumer nyata.
+- Items kelak membaca/memvalidasi satuan melalui public contract, bukan model
+  privat Units. Base unit, konversi, dan aturan precision dimiliki Items.
+
+## Data
+
+| Kolom | Ketentuan |
+| --- | --- |
+| `id` | ULID primary key |
+| `code` | String maksimal 32, unique termasuk soft-deleted row |
+| `name` | String maksimal 150 |
+| `symbol` | String maksimal 16, simbol tampil satuan |
+| `is_active` | Boolean default true |
+| `created_at`, `updated_at` | Timestamp Laravel |
+| `deleted_at` | Soft delete master mutable |
+
+Tidak ada conversion_ratio atau is_base_unit pada schema. Kode diisi eksplisit;
+validasi/normalisasi request ditetapkan bersama CRUD. Satuan nonaktif/terhapus
+tidak boleh dipilih untuk relasi barang baru saat Items dibuat.
+
+## Seeder Demo
+
+| Kode | Nama | Simbol |
+| --- | --- | --- |
+| PCS | Buah | pcs |
+| PACK | Pak | pak |
+| BOX | Dus | dus |
+| KG | Kilogram | kg |
+| G | Gram | g |
+| L | Liter | l |
+| ML | Mililiter | ml |
+
+Seeder mencari existing row termasuk soft-deleted row. Pengulangan tidak
+menimpa nama/simbol/status, mengganti ULID, mengembalikan data terhapus, atau
+menghasilkan audit tanpa perubahan. Demo ditolak di luar local/testing.
+Access seeder terpisah, tidak mengubah akun/role/permission user.
+
+## Authorization Dan Audit
+
+- Permission inventory.view dan inventory.manage, guard web.
+- Belum ada endpoint; backend middleware per action diuji bersama CRUD nanti.
+- Spatie Activitylog mencatat create/update/delete/restore dan actor jika ada.
+- Atribut audit hanya code, name, symbol, is_active, deleted_at.
+- Update tanpa perubahan tidak menambah log; subject audit memakai ULID dengan
+  compatibility migration existing dari fondasi Warehouses.
+- Mutation operasional nanti memakai Application transaction untuk data/audit.
+
+## UI Dan Risiko
+
+Belum ada UI baru. Increment 6 wajib memakai Sonner, dropdown shortcut,
+permission UX, dan QA desktop/tablet. Integrasi POS dan FIFO tidak tersentuh.
+Saat Items hadir, aturan perubahan/nonaktif/soft delete satuan yang sudah
+direferensikan perlu ditetapkan; identitas dan konversi historis tidak boleh rusak.
+
+## Acceptance Criteria
+
+- [x] Provider ditemukan dan schema units tersedia.
+- [x] ULID, kode unik, default aktif, dan soft delete terverifikasi.
+- [x] Demo seeder menjaga existing row dan menolak environment produksi.
+- [x] Permission seed idempotent dan tidak memberi akses user otomatis.
+- [x] Audit lifecycle, actor/subject, dan update tanpa perubahan terverifikasi.
