@@ -13,6 +13,7 @@ Dokumen ini menjadi indeks singkat ADR yang berlaku.
 | [ADR-007](decisions/ADR-007-MODULE-COMMUNICATION-BOUNDARY.md) | Komunikasi lintas module melalui public boundary | Accepted |
 | [ADR-008](decisions/ADR-008-ENGLISH-TECHNICAL-NAMING.md) | Technical naming memakai English, dokumentasi dan UI label Bahasa Indonesia | Accepted |
 | [ADR-009](decisions/ADR-009-INVENTORY-UNITS-AND-ITEMS.md) | Master satuan pada Units, barang dan konversi per barang pada Items | Accepted |
+| [ADR-010](decisions/ADR-010-SUPER-SYSTEM-GATE-BYPASS.md) | Super-system bypass permission melalui Gate; invariant bisnis tetap wajib | Accepted |
 
 Tambahkan ADR baru hanya untuk keputusan yang mahal, sulit dibalik, atau
 mengubah baseline arsitektur/domain.

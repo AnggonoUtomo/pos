@@ -62,7 +62,11 @@ Warehouses, Units, Items, bukan membuat seeder bisnis baru di root.
 
 QA frontend/browser SKIPPED karena belum ada tampilan baru; fallback feature
 HTTP melalui Laravel termasuk guest, tanpa izin, view saja, manage saja, dan
-super-system. Smoke HTTP lokal guest dilakukan tanpa memutasi database user.
+super-system. Bypass Gate disetujui user melalui ADR-010; validasi/invariant
+tidak dibypass. Middleware verified mengikuti starter kit existing: model User
+belum mengimplementasikan MustVerifyEmail, sehingga bukan jaminan enforcement
+verifikasi email. Tidak mengubah flow auth di increment ini. Smoke HTTP lokal
+guest dilakukan tanpa memutasi database user.
 
 ## Dependency Graph
 

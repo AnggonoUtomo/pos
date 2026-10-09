@@ -52,6 +52,8 @@ pengembangan. Seeder tidak boleh memberi akses berlebih tanpa alasan.
 - Shared frontend permission hanya untuk UX.
 - Mutation role/permission wajib audited.
 - Super user pada shared auth disebut `superSystem`.
+- Role super-system guard web mendapat bypass Gate::before sesuai ADR-010.
+  User lain memakai permission normal; validation/invariant tidak dibypass.
 
 ## UI
 
