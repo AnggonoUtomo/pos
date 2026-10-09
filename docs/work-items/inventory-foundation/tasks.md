@@ -56,11 +56,13 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
   - Acceptance: output module sesuai struktur canonical.
   - Verification: `php artisan module:make Inventory Units --dry-run`.
 - [ ] Buat module source `Inventory/Units`.
-  - Acceptance: mendukung base unit dan satuan turunan untuk multi satuan.
+  - Acceptance: master satuan memiliki ULID, kode unik, nama, simbol, status aktif,
+    soft delete, audit, dan demo seeder idempotent.
   - Verification: focused test; migration/status check.
-- [ ] Tentukan aturan konversi.
-  - Acceptance: conversion ratio tidak nol/negatif dan siap dipakai item.
-  - Verification: unit/feature test validasi.
+- [x] Tetapkan ownership konversi berdasarkan keputusan user.
+  - Acceptance: Units memiliki master satuan; Items memiliki base unit dan ratio
+    positif per barang; ratio base unit 1. Schema Units tidak menyimpan ratio.
+  - Verification: ADR-009; review indeks module dan rencana Increment 4.
 
 ## Increment 4: Module Items
 
@@ -73,7 +75,8 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
   - Verification: focused test; migration/status check.
 - [ ] Siapkan relasi satuan item.
   - Acceptance: item dapat memiliki satuan jual/beli awal yang mengarah ke unit
-    dan conversion ratio valid.
+    dan ratio positif per barang; base unit ratio 1. Dua barang boleh memiliki
+    ratio berbeda untuk unit yang sama.
   - Verification: feature test relasi.
 
 ## Increment 5: Permission, Audit, Dan Seeder Demo
@@ -130,7 +133,7 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
 | Seeder access/demo gudang dan smoke seed ulang MySQL | PASS | 2 gudang, 2 permission inventory, 2 audit; data dan audit tidak berubah saat seed ulang |
 | QA browser/frontend | SKIPPED | Increment 2 backend saja; tidak ada UI baru |
 
-Scope keseluruhan belum selesai. Gap conformance Catalog versus Units/Items
-tercatat pada plan.md dan perlu keputusan sebelum implementasi satuan/barang.
+Scope keseluruhan belum selesai. Konflik ownership telah diselesaikan melalui
+keputusan user: Units/Items terpisah sesuai ADR-009.
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

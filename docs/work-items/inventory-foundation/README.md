@@ -83,7 +83,7 @@ sebelum mutation transaksi dapat aman:
 | --- | --- | --- | --- |
 | 1 | Passed | Dokumen work item dan rencana implementasi Inventory foundation | `git diff --check`; review dokumen |
 | 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
-| 3 | Planned | Scaffold module `Inventory/Units` | dry-run generator; focused test; route check |
+| 3 | Ready | Fondasi master `Inventory/Units`; konversi dimiliki Items | dry-run generator; focused test; route dan migration check |
 | 4 | Planned | Scaffold module `Inventory/Items` | dry-run generator; focused test; route check |
 | 5 | Planned | Master data database, permission, seeder demo | migration/status check; seed test; permission test |
 | 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
@@ -96,6 +96,6 @@ sebelum mutation transaksi dapat aman:
   lulus pada 9 Oktober 2026. Detail ada di tasks.md dan dokumen module Warehouses.
 - Chrome DevTools QA: SKIPPED karena increment ini belum mengubah UI.
 - Status keseluruhan tetap In Progress: satuan/barang, integrasi, dan UI belum
-  dikerjakan. Ownership Catalog versus Units/Items perlu keputusan eksplisit
-  sebelum Increment 3. Gudang tidak memiliki dependency CompanySettings nyata
-  pada fondasi single company ini.
+  dikerjakan. Pemisahan Units/Items disetujui user dan dicatat pada ADR-009.
+  Gudang tidak memiliki dependency CompanySettings nyata pada fondasi single
+  company ini.

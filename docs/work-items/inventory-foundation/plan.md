@@ -25,8 +25,8 @@ minus.
 | --- | --- | --- | --- | --- |
 | 1 | Passed | Dokumen perencanaan | Work item memiliki README, plan, tasks, scope dan non-scope jelas | `git diff --check`; review manual |
 | 2 | Passed | `Inventory/Warehouses` | Scaffold, schema, seeder demo, permission awal, soft delete, dan audit model | 11 focused test; 49 full test; route, migration/status, seed ulang MySQL |
-| 3 | Planned | `Inventory/Units` | Module scaffold mendukung base unit dan conversion ratio awal untuk multi satuan | dry-run generator; focused test; migration/status check |
-| 4 | Planned | `Inventory/Items` | Module scaffold mendukung item master, base unit, satuan jual/beli awal, dan status aktif | dry-run generator; focused test; migration/status check |
+| 3 | Ready | `Inventory/Units` | Master satuan dengan ULID, kode unik, simbol, status aktif, soft delete, audit, permission, demo | dry-run generator; focused test; migration/status check; seed ulang |
+| 4 | Planned | `Inventory/Items` | Item master, base unit, relasi satuan jual/beli dengan ratio per barang yang positif; ratio base unit 1 | dry-run generator; focused test; migration/status check |
 | 5 | Planned | Seeder dan permission baseline | Demo gudang, satuan, dan item dapat dipakai POS mock; permission backend tersedia | seed class module; permission test; activity log smoke test |
 | 6 | Planned | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/tablet |
 
@@ -74,7 +74,12 @@ Inventory/Units ---------+--> Inventory/Items --> Sales/POS real
   decimal scale tertentu per item?
 - Apakah item awal perlu kategori/brand sejak foundation, atau ditunda agar
   scope tetap kecil?
-- Gap conformance: MODULES.md masih menetapkan Inventory/Catalog, sedangkan
-  work item merencanakan Inventory/Units dan Inventory/Items. Hentikan perubahan
-  struktur satuan/barang sampai ownership ini diputuskan eksplisit. Fondasi
-  Warehouses tetap memiliki boundary yang konsisten di kedua dokumen.
+
+## Ownership Satuan Dan Konversi
+
+User menyetujui pemisahan Units/Items pada 9 Oktober 2026. ADR-009 menjadi
+acuan: Units memiliki master satuan, Items memiliki base unit dan konversi
+per barang. Tidak ada ratio atau flag base unit global pada master satuan.
+Consumer transaksi memakai public boundary; dependency ke model Units privat
+tidak diperbolehkan. Aturan ratio positif dan base unit ratio 1 diuji pada
+Increment 4 saat ada relasi barang nyata.

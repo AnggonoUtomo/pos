@@ -70,5 +70,6 @@ stok, FIFO, pembayaran, ataupun integrasi POS pada increment ini.
 
 ## Risiko Terbuka
 
-Perbedaan ownership `Catalog` versus `Units/Items` pada dokumen global tidak
-mengubah boundary gudang; harus diputuskan sebelum implementasi satuan/barang.
+Larangan menghapus/nonaktifkan gudang yang memiliki stok atau transaksi perlu
+ditetapkan dan diuji bersama consumer terkait. Ownership master satuan/barang
+mengikuti ADR-009 dan tidak mengubah boundary gudang.

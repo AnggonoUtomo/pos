@@ -12,6 +12,7 @@ Dokumen ini menjadi indeks singkat ADR yang berlaku.
 | [ADR-006](decisions/ADR-006-SHADCN-UI-SONNER-TOAST.md) | shadcn/ui dan Sonner toast sebagai baseline UI feedback | Accepted |
 | [ADR-007](decisions/ADR-007-MODULE-COMMUNICATION-BOUNDARY.md) | Komunikasi lintas module melalui public boundary | Accepted |
 | [ADR-008](decisions/ADR-008-ENGLISH-TECHNICAL-NAMING.md) | Technical naming memakai English, dokumentasi dan UI label Bahasa Indonesia | Accepted |
+| [ADR-009](decisions/ADR-009-INVENTORY-UNITS-AND-ITEMS.md) | Master satuan pada Units, barang dan konversi per barang pada Items | Accepted |
 
 Tambahkan ADR baru hanya untuk keputusan yang mahal, sulit dibalik, atau
 mengubah baseline arsitektur/domain.

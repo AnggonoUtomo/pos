@@ -17,14 +17,15 @@ Status yang digunakan:
 | Platform | ModuleRuntime | Discovery, bootstrap, dan scaffolding module; source saat ini masih tersebar pada command/framework app | Laravel application container | Pending Validation |
 | Platform | Identity | Role, permission, shared auth permission, user access baseline | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
 | Platform | CompanySettings | Identitas perusahaan tunggal, preference operasional, format nomor | Identity | Planned |
-| Inventory | Catalog | Item, kategori, brand, satuan, multi satuan, barcode | CompanySettings | Planned |
+| Inventory | Units | Master satuan; base unit dan konversi ditentukan per barang | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Planned |
+| Inventory | Items | Barang, SKU, barcode, base unit, multi satuan dan konversi per barang; kategori/brand bila diperlukan | Units | Planned |
 | Inventory | Warehouses | Fondasi master gudang; pemilihan transaksi dan UI belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Inventory | Stock | Stock movement, FIFO layer, no-negative-stock invariant | Catalog, Warehouses | Planned |
+| Inventory | Stock | Stock movement, FIFO layer, no-negative-stock invariant | Items, Warehouses | Planned |
 | Sales | Parties | Customer, customer level, harga level pelanggan | Identity | Planned |
-| Sales | POS | Transaksi POS fullscreen, cart, pricing, discount, tax, payment | Parties, Catalog, Warehouses, Stock, Finance Payments | Planned |
+| Sales | POS | Transaksi POS fullscreen, cart, pricing, discount, tax, payment | Parties, Items, Warehouses, Stock, Finance Payments | Planned |
 | Sales | Returns | Retur penjualan dan koreksi transaksi posted | POS, Stock, Finance Payments | Planned |
 | Purchasing | Suppliers | Supplier master | Identity | Planned |
-| Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Catalog, Warehouses, Stock | Planned |
+| Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Items, Warehouses, Stock | Planned |
 | Purchasing | Returns | Retur pembelian dan koreksi stok/payment | PurchaseOrders, Stock, Finance Payments | Planned |
 | Finance | Payments | Finance Lite: kas/bank, payment method, payment record, piutang/utang dasar | Sales POS, Purchasing PurchaseOrders | Planned |
 | Reporting | OperationalReports | Laporan stok, penjualan, pembelian, margin, kas sederhana | Inventory, Sales, Purchasing, Finance | Planned |
