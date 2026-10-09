@@ -8,6 +8,11 @@ use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 
 class EloquentItemRepository implements ItemRepository
 {
+    public function findIdBySku(string $sku): ?string
+    {
+        return Item::withTrashed()->where('sku', $sku)->value('id');
+    }
+
     public function create(CreateItemData $data): string
     {
         $item = Item::query()->create([

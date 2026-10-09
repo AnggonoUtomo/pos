@@ -84,19 +84,21 @@ sebelum mutation transaksi dapat aman:
 | 1 | Passed | Dokumen work item dan rencana implementasi Inventory foundation | `git diff --check`; review dokumen |
 | 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
 | 3 | Passed | Fondasi master `Inventory/Units`; konversi dimiliki Items | 9 focused test; full suite 58 test; route, migration dan seed MySQL |
-| 4 | In Progress | Fondasi Items: core 4A dan demo 4B | unit/feature test, lookup public, migration dan seed MySQL |
+| 4 | Passed | Fondasi Items: core 4A dan demo 4B | 40 focused test; 98 full test; lookup public, migration, seed dan rollback MySQL |
 | 5 | Planned | Master data database, permission, seeder demo | migration/status check; seed test; permission test |
 | 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
 
 ## Handoff
 
-- Perubahan: Increment 1-3 selesai; fondasi gudang dan satuan dengan ULID,
-  permission, demo seeder, soft delete, audit, serta kompatibilitas subject_id
-  ULID tersedia.
-- Verifikasi: 58 test/184 assertion lulus; migration dan seed ulang MySQL lokal
+- Perubahan: Increment 1-4 selesai; fondasi gudang, satuan, barang/multi satuan,
+  konversi exact, lookup public Units, permission seed, demo relasional, soft
+  delete, audit, serta kompatibilitas subject_id ULID tersedia.
+- Verifikasi: 98 test/295 assertion lulus; migration dan seed ulang MySQL lokal
   lulus pada 9 Oktober 2026. Detail ada di tasks.md dan dokumen masing-masing module.
 - Chrome DevTools QA: SKIPPED karena increment ini belum mengubah UI.
-- Status keseluruhan tetap In Progress: barang, integrasi, dan UI belum
-  dikerjakan. Pemisahan Units/Items disetujui user dan dicatat pada ADR-009.
+- Status keseluruhan tetap In Progress: validasi integrasi/permission HTTP pada
+  Increment 5 dan UI Increment 6 belum selesai. Pemisahan Units/Items disetujui
+  user dan dicatat pada ADR-009. Guard master yang telah direferensikan serta
+  snapshot transaksi masih perlu diterapkan ketika CRUD/transaksi dibuat.
   Gudang tidak memiliki dependency CompanySettings nyata pada fondasi single
   company ini.

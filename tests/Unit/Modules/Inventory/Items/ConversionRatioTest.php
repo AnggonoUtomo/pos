@@ -16,6 +16,20 @@ class ConversionRatioTest extends TestCase
         $this->assertSame('125.000000', ConversionRatio::fromString('1000')->toBaseQuantity('0.125'));
         $this->assertSame('0.250000', ConversionRatio::fromString('2.5')->toBaseQuantity('0.1'));
         $this->assertSame('0.000000', ConversionRatio::fromString('1')->toBaseQuantity('0'));
+        $this->assertSame('99999999999999.999999', ConversionRatio::fromString('1')->toBaseQuantity('99999999999999.999999'));
+    }
+
+    public function test_base_ratio_accepts_one(): void
+    {
+        $ratio = ConversionRatio::fromString('1.000000');
+        $ratio->assertBaseUnit();
+        $this->assertSame('1.000000', $ratio->value());
+    }
+
+    public function test_base_ratio_rejects_anything_other_than_one(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        ConversionRatio::fromString('1.5')->assertBaseUnit();
     }
 
     #[DataProvider('invalidRatios')]

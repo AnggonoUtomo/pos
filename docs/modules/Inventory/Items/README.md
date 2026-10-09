@@ -2,8 +2,8 @@
 
 ## Status
 
-Pending Validation: core 4A terverifikasi; demo dan finalisasi 4B sedang
-dikerjakan dalam Increment 4 Inventory Foundation.
+Active: fondasi backend Increment 4A/4B selesai dan terverifikasi pada
+9 Oktober 2026. Endpoint HTTP/UI CRUD dan integrasi transaksi belum tersedia.
 
 ## Tujuan Dan Boundary
 

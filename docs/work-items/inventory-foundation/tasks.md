@@ -48,7 +48,7 @@
 Increment 2 Passed pada 9 Oktober 2026. Audit model, permission awal, demo
 gudang, dan migration kompatibilitas subject audit ULID juga selesai. Checklist
 rinci ada di [tasks Warehouses](../../modules/Inventory/Warehouses/tasks.md).
-Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
+Increment 5 tetap pending untuk validasi integrasi dan permission HTTP nyata.
 
 ## Increment 3: Module Units
 
@@ -67,22 +67,28 @@ Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
 Increment 3 Passed pada 9 Oktober 2026. Master satuan, audit, permission,
 demo seeder, dan verifikasi MySQL selesai. Detail tersedia di
 [tasks Units](../../modules/Inventory/Units/tasks.md). Konversi per barang
-tetap menjadi scope Increment 4; belum ada endpoint HTTP/UI satuan.
+selesai pada Increment 4; belum ada endpoint HTTP/UI satuan.
 
 ## Increment 4: Module Items
 
-- [ ] Jalankan dry-run scaffold `Inventory/Items`.
+- [x] Jalankan dry-run scaffold `Inventory/Items`.
   - Acceptance: output module sesuai struktur canonical.
   - Verification: `php artisan module:make Inventory Items --dry-run`.
-- [ ] Buat module source `Inventory/Items`.
+- [x] Buat module source `Inventory/Items`.
   - Acceptance: item memiliki ULID, kode/SKU, nama, base unit, status aktif,
     dan soft delete master.
   - Verification: focused test; migration/status check.
-- [ ] Siapkan relasi satuan item.
+- [x] Siapkan relasi satuan item.
   - Acceptance: item dapat memiliki satuan jual/beli awal yang mengarah ke unit
     dan ratio positif per barang; base unit ratio 1. Dua barang boleh memiliki
     ratio berbeda untuk unit yang sama.
   - Verification: feature test relasi.
+
+Increment 4 Passed pada 9 Oktober 2026. Core 4A dan demo 4B mencakup konversi
+exact, lookup public Units, barcode unik, soft delete, audit atomic, permission
+seed, dan demo relasional. Detail tersedia di
+[tasks Items](../../modules/Inventory/Items/tasks.md). Endpoint HTTP/UI dan
+mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
 
 ## Increment 5: Permission, Audit, Dan Seeder Demo
 
@@ -144,6 +150,14 @@ tetap menjadi scope Increment 4; belum ada endpoint HTTP/UI satuan.
 | Seeder access/demo Units dan smoke seed ulang MySQL | PASS | 7 satuan, 7 audit satuan, subject ULID terhubung; seed ulang tidak mengubah data/audit |
 | `php artisan route:list --except-vendor` | PASS | Setelah Increment 3: tetap 22 route existing |
 | QA browser/frontend | SKIPPED | Increment 3 backend saja; tidak ada UI baru |
+| `php artisan test --filter="Items|UnitLookup"` | PASS | Increment 4: 40 test/111 assertion |
+| `php artisan test` | PASS | Setelah Increment 4: 98 test/295 assertion |
+| Pint source/test Items dan lookup Units terkait | PASS | Format PHP sesuai |
+| `php artisan migrate --no-interaction` dan `migrate:status` | PASS | Semua 9 migration Ran pada MySQL lokal |
+| Seeder access/demo Items dan smoke seed ulang MySQL | PASS | 3 barang, 7 relasi, 10 audit; subject ULID terhubung; seed ulang tidak mengubah data/audit |
+| Smoke rollback barcode duplikat MySQL | PASS | Barang, relasi, audit rollback bersama; jumlah record tidak berubah |
+| `php artisan route:list --except-vendor` | PASS | Tetap 22 route existing; belum ada endpoint barang |
+| QA browser/frontend | SKIPPED | Increment 4 backend saja; tidak ada UI baru |
 
 Scope keseluruhan belum selesai. Konflik ownership telah diselesaikan melalui
 keputusan user: Units/Items terpisah sesuai ADR-009.

@@ -25,20 +25,20 @@
   - Acceptance: create/update/delete/restore tercatat; gagal persistence tidak
     meninggalkan barang/relasi/audit.
   - Verification: test audit dan duplicate barcode rollback.
-- [ ] Verifikasi 4A dan commit otomatis.
+- [x] Verifikasi 4A dan commit otomatis.
   - Acceptance: focused/regression, Pint, route, migration/status lulus.
   - Verification: hasil command dan Git save point.
 
 ## Increment 4B: Demo Dan Finalisasi
 
-- [ ] Tambahkan demo/permission seeder module.
+- [x] Tambahkan demo/permission seeder module.
   - Acceptance: tiga barang relasional; missing unit rollback; local/testing;
     menjaga existing data/soft delete; permission tidak memberi akses user.
   - Verification: feature test seeder; smoke MySQL seed ulang.
-- [ ] Verifikasi seluruh Increment 4.
+- [x] Verifikasi seluruh Increment 4.
   - Acceptance: full backend regression, format, migration/status dan diff check lulus.
   - Verification: command project sesuai scope.
-- [ ] Update checklist module, Units, indeks, dan work item global.
+- [x] Update checklist module, Units, indeks, dan work item global.
   - Acceptance: status berdasarkan realita; UI/transaksi belum diklaim selesai.
   - Verification: review docs dan commit otomatis.
 
@@ -55,5 +55,27 @@ Verifikasi 4A pada 9 Oktober 2026:
 | `php artisan migrate --no-interaction` dan `migrate:status` | PASS | Semua 9 migration Ran pada MySQL lokal; tanpa reset/rollback |
 | `php artisan route:list --except-vendor` | PASS | 22 route existing; tanpa endpoint barang |
 
-Browser/lint/build/typecheck SKIPPED: tidak ada UI/HTTP baru. Demo/access Items
-belum diimplementasikan (scaffold), menunggu 4B. Tidak ada mutation stok/FIFO.
+Core 4A disimpan pada commit `cbb8acd` setelah verifikasi lulus.
+
+Verifikasi akhir 4B pada 9 Oktober 2026:
+
+| Command | Hasil | Bukti |
+| --- | --- | --- |
+| `php artisan test --filter="Items|UnitLookup"` | PASS | 40 test/111 assertion |
+| `php artisan test` | PASS | 98 test/295 assertion termasuk auth, Identity, generator, Inventory, dashboard, POS |
+| `php vendor/bin/pint --test` pada source/test Items dan Units terkait | PASS | Format PHP sesuai |
+| Seeder Units prasyarat, ItemsAccessSeeder, ItemsDemoSeeder via `db:seed --class=... --no-interaction` | PASS | MySQL lokal: 3 barang, 7 relasi, 10 audit barang/relasi, 2 permission inventory |
+| Smoke `tinker --execute` pada MySQL lokal | PASS | Seed ulang menjaga data/audit; semua subject ULID terhubung; 0.125 KG = 125 G |
+| Smoke rollback barcode duplikat pada MySQL lokal | PASS | Constraint menolak barcode; jumlah barang/relasi/audit tetap sama |
+| `git diff --check` | PASS | Tidak ada whitespace error; staging hanya file terkait |
+
+Browser/lint/build/typecheck SKIPPED: tidak ada UI/HTTP baru. Migration/status
+dan route tetap sesuai hasil 4A; 4B tidak menambah schema atau endpoint.
+Review import memastikan runtime Items hanya memakai contract Units; Domain
+bebas Laravel dan Application tidak mengimpor Infrastructure. Tidak memasang
+dependency baru, mengubah theme, menyentuh Old-docs, atau memutasi stok/FIFO.
+
+Risiko terbuka: perubahan/deaktivasi master yang sudah direferensikan perlu
+guard pada CRUD; snapshot dan no-negative-stock/FIFO diuji pada transaksi nyata.
+Permission HTTP dan QA desktop/tablet tetap pending pada increment berikutnya.
+Work item global belum selesai; push belum dilakukan.

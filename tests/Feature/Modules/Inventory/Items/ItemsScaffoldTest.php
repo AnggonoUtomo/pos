@@ -4,6 +4,7 @@ namespace Tests\Feature\Modules\Inventory\Items;
 
 use App\Modules\Inventory\Items\Application\Actions\CreateItem;
 use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
+use App\Modules\Inventory\Items\Application\DTOs\ItemUnitData;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemUnit;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
@@ -45,5 +46,15 @@ class ItemsScaffoldTest extends TestCase
         Item::query()->findOrFail($id)->delete();
         $this->expectException(QueryException::class);
         app(CreateItem::class)->handle(new CreateItemData('A', 'Barang Baru', $pcs));
+    }
+
+    public function test_barcode_stays_reserved_after_soft_delete(): void
+    {
+        $this->seed(UnitsDemoSeeder::class);
+        $pcs = app(UnitLookup::class)->findActiveByCode('PCS')->id;
+        $id = app(CreateItem::class)->handle(new CreateItemData('A', 'Barang A', $pcs, [new ItemUnitData($pcs, '1', 'RESERVED')]));
+        Item::query()->findOrFail($id)->units()->sole()->delete();
+        $this->expectException(QueryException::class);
+        app(CreateItem::class)->handle(new CreateItemData('B', 'Barang Baru', $pcs, [new ItemUnitData($pcs, '1', 'RESERVED')]));
     }
 }

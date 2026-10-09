@@ -26,20 +26,20 @@ minus.
 | 1 | Passed | Dokumen perencanaan | Work item memiliki README, plan, tasks, scope dan non-scope jelas | `git diff --check`; review manual |
 | 2 | Passed | `Inventory/Warehouses` | Scaffold, schema, seeder demo, permission awal, soft delete, dan audit model | 11 focused test; 49 full test; route, migration/status, seed ulang MySQL |
 | 3 | Passed | `Inventory/Units` | Master satuan dengan ULID, kode unik, simbol, status aktif, soft delete, audit, permission, demo | 9 focused test; 58 full test; migration/status, route, seed ulang MySQL |
-| 4 | In Progress | `Inventory/Items` | Item, base unit ratio 1, multi satuan per barang, barcode; core 4A dan demo 4B | unit/feature test; public lookup; migration/status; seed MySQL |
+| 4 | Passed | `Inventory/Items` | Item, base unit ratio 1, multi satuan per barang, barcode; core 4A dan demo 4B | 40 focused test; 98 full test; lookup public; migration/status; seed dan rollback MySQL |
 | 5 | Planned | Seeder dan permission baseline | Demo gudang, satuan, dan item dapat dipakai POS mock; permission backend tersedia | seed class module; permission test; activity log smoke test |
 | 6 | Planned | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/tablet |
 
 ## Dependency Graph
 
 ```text
-Platform/Identity
-        |
-        v
-Inventory/Warehouses ----+
-                         |
-Inventory/Units ---------+--> Inventory/Items --> Sales/POS real
+Inventory/Units --> Inventory/Items ---+
+                                     +--> Sales/POS real (planned)
+Inventory/Warehouses -----------------+
 ```
+
+Dependency runtime Items ke Units sudah tersedia melalui UnitLookup. Warehouses
+bukan dependency runtime Items; keduanya kelak dibaca oleh transaksi POS/Stock.
 
 ## QA Automated
 

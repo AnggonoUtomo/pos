@@ -2,7 +2,7 @@
 
 ## Status Dan Scope
 
-Fondasi backend sedang dikerjakan: create barang beserta satuan, audit,
+Fondasi backend Implemented pada 9 Oktober 2026: create barang beserta satuan, audit,
 permission, demo relasional, dan konversi kuantitas ke base unit.
 Belum ada endpoint/UI CRUD, perubahan base unit, saldo stok, FIFO, atau harga.
 
@@ -64,19 +64,20 @@ Access seeder menyiapkan permission tanpa mengubah role/akses akun.
 - DEMO-WATER-600: Air Mineral 600 ml, base PCS, BOX berisi 12 PCS.
 - DEMO-TEA-250: Teh Kemasan 250 ml, base PCS, PACK 6 PCS dan BOX 24 PCS.
 - DEMO-RICE: Beras, base G, KG berisi 1000 G; 0.125 KG menjadi 125 G.
-- Barcode demo berupa label unik DEMO-{sku}-{unit}; bukan EAN produksi.
+- Barcode demo berupa label unik {sku}-{unit}, misalnya DEMO-RICE-KG; bukan
+  EAN produksi.
 - Local/testing saja. Semua demo dibuat dalam transaction; unit demo yang
   diperlukan harus sudah aktif. Seeder tidak membuat/mengubah master Units.
 - SKU existing termasuk soft-deleted row dilewati tanpa mengubah relasi/audit.
 
 ## Acceptance Dan Risiko
 
-- [ ] Domain math akurat, menolak rasio/kuantitas invalid, overflow, dan rounding.
-- [ ] Lookup public Units menyaring unit nonaktif/terhapus dan mengembalikan DTO.
-- [ ] CreateItem memastikan rasio base unit 1 dan rasio dus berbeda per barang.
-- [ ] Kegagalan barcode/relasi membatalkan barang, relasi satuan, dan audit.
-- [ ] ULID, unique/FK, soft delete, permission, dan demo idempotent terverifikasi.
-- [ ] Regresi, migration/status, route inspection, dan seed MySQL lulus.
+- [x] Domain math akurat, menolak rasio/kuantitas invalid, overflow, dan rounding.
+- [x] Lookup public Units menyaring unit nonaktif/terhapus dan mengembalikan DTO.
+- [x] CreateItem memastikan rasio base unit 1 dan rasio dus berbeda per barang.
+- [x] Kegagalan barcode/relasi membatalkan barang, relasi satuan, dan audit.
+- [x] ULID, unique/FK, soft delete, permission seed, dan demo idempotent terverifikasi.
+- [x] Regresi, migration/status, route inspection, dan seed MySQL lulus.
 
 Perubahan base unit/rasio barang yang sudah memiliki transaksi belum diizinkan
 melalui use case pada tahap ini. Guard perubahan/deaktivasi master yang sudah

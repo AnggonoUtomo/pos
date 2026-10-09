@@ -45,3 +45,18 @@ benar diekspos melalui endpoint. Public boundary internal tetap mengikuti
 - `Application/Contracts`
 - `Application/DTOs`
 - `Application/Events`
+
+### Inventory/Units
+
+Consumer nyata: `Inventory/Items/Application/Actions/CreateItem` dan seeder demo
+Items. Model Infrastructure Units bersifat privat.
+
+| Contract | Method | Hasil | Ketentuan |
+| --- | --- | --- | --- |
+| UnitLookup | findActiveById(string id, bool lock = false) | UnitData atau null | Hanya satuan aktif, belum dihapus; lock wajib di dalam transaction connection default bersama |
+| UnitLookup | findActiveByCode(string code) | UnitData atau null | Lookup prasyarat seeder, tanpa membuat/mengubah Units |
+
+UnitData memiliki id, code, name, dan symbol. Contract tersedia di
+`app/Modules/Inventory/Units/Application/Contracts/UnitLookup.php`; DTO berada
+di `Application/DTOs/UnitData.php`. Exception lock di luar transaction:
+LogicException. Boundary diuji pada UnitLookupTest dan feature test Items.
