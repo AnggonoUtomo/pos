@@ -11,9 +11,11 @@ tanpa saldo stok, konversi global, harga, barcode barang, atau transaksi POS.
 - Migration, seeder, route scaffold, dan model berada di dalam module.
 - Eloquent model Unit berada pada Infrastructure/Persistence/Models.
 - Seeder menjadi adapter provisioning dengan database transaction.
-- Belum ada Domain, Application action, port, atau DTOs tanpa consumer nyata.
-- Items kelak membaca/memvalidasi satuan melalui public contract, bukan model
-  privat Units. Base unit, konversi, dan aturan precision dimiliki Items.
+- Tidak ada Domain atau Application action tanpa business rule nyata.
+- UnitLookup dan UnitData menjadi public boundary dengan consumer CreateItem.
+  Adapter Eloquent menyaring status aktif/soft delete; lockForUpdate hanya di
+  dalam transaction connection default bersama. Base unit, konversi, dan aturan
+  precision dimiliki Items; model privat Units tidak diimpor oleh runtime Items.
 
 ## Data
 

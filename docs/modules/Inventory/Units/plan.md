@@ -19,4 +19,5 @@ Tidak menjalankan reset/rollback database pengguna. QA browser, lint, build,
 dan typecheck frontend SKIPPED selama belum ada UI/endpoint baru.
 
 Konversi positif, ratio base unit 1, dan relasi barang diuji pada Increment 4.
-Lookup contract dibuat bersama consumer nyata. Work item global tetap In Progress.
+Lookup contract sudah tersedia bersama consumer CreateItem. Work item global
+tetap In Progress.

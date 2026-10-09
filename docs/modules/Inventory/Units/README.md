@@ -4,7 +4,8 @@
 
 Active: fondasi backend selesai dan terverifikasi pada Increment 3
 [Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).
-Endpoint HTTP, UI CRUD, dan consumer Items belum tersedia.
+Consumer Items memakai lookup public sejak Increment 4. Endpoint HTTP dan UI
+CRUD belum tersedia.
 
 ## Tujuan Dan Boundary
 
@@ -14,9 +15,12 @@ Unit yang sama dapat dipakai banyak barang dengan ratio berbeda.
 
 ## Public Boundary
 
-Belum ada contract, DTOs, event publik, atau endpoint HTTP. Model Infrastructure
-bersifat privat. Contract lookup satuan dibuat pada Increment 4 ketika Items
-menjadi consumer nyata. Routes/web.php disiapkan oleh generator.
+`Application/Contracts/UnitLookup` menyediakan `findActiveById(id, lock)` dan
+`findActiveByCode(code)`, dengan hasil `Application/DTOs/UnitData` atau null.
+Lookup hanya mengembalikan satuan aktif yang tidak dihapus. Lock memerlukan
+transaction pada connection default bersama; dipakai CreateItem untuk mutation.
+Model Infrastructure tetap privat. Tidak ada event publik atau endpoint HTTP.
+Routes/web.php disiapkan oleh generator.
 
 ## Dependency Dan Permission
 

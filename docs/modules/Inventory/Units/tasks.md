@@ -54,4 +54,13 @@ Verifikasi 9 Oktober 2026:
 
 Frontend lint/build/typecheck dan Chrome DevTools QA SKIPPED: increment ini
 belum mengubah UI atau endpoint HTTP. Tidak menjalankan rollback/reset database
-pengguna. Integrasi Items, aturan ratio/precision, dan UI tetap pending.
+pengguna. UI tetap pending. Integrasi lookup Items diverifikasi pada Increment 4.
+
+## Consumer Items: Increment 4
+
+- [x] Contract UnitLookup dan DTO UnitData memiliki consumer CreateItem nyata.
+- [x] Adapter/binding menyaring unit hilang, nonaktif, dan terhapus.
+- [x] Lookup mutation memakai lock dalam transaction bersama.
+- [x] Dua feature test lookup lulus (8 assertion); regresi 4A lulus.
+
+Perubahan ini tidak menambahkan endpoint atau aturan mutation master Units.

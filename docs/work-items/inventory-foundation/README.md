@@ -84,7 +84,7 @@ sebelum mutation transaksi dapat aman:
 | 1 | Passed | Dokumen work item dan rencana implementasi Inventory foundation | `git diff --check`; review dokumen |
 | 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
 | 3 | Passed | Fondasi master `Inventory/Units`; konversi dimiliki Items | 9 focused test; full suite 58 test; route, migration dan seed MySQL |
-| 4 | Planned | Scaffold module `Inventory/Items` | dry-run generator; focused test; route check |
+| 4 | In Progress | Fondasi Items: core 4A dan demo 4B | unit/feature test, lookup public, migration dan seed MySQL |
 | 5 | Planned | Master data database, permission, seeder demo | migration/status check; seed test; permission test |
 | 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
 
