@@ -105,6 +105,50 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
     alur POS mock.
   - Verification: seed command module; focused test bila tersedia.
 
+## Rincian Increment 5
+
+### Sebelum Mulai
+
+- [x] AGENTS, README, arsitektur, struktur canonical, API, Quality, dan dokumen
+  ketiga module diperiksa; worktree user dipertahankan.
+- [x] Target diinformasikan: Inventory/Warehouses, Units, Items.
+- [x] Boundary HTTP internal, format response, permission, audit, dan batas CRUD
+  didokumentasikan sebelum coding.
+
+### 5A: Endpoint Gudang Dan Satuan
+
+- [ ] Tulis test HTTP permission dan validation terlebih dahulu.
+  - Acceptance: guest/tanpa permission ditolak; view tidak dapat store; manage
+    dapat store; super-system memakai Gate existing.
+  - Verification: focused feature test RED sebelum implementasi.
+- [ ] Implementasikan read/create melalui Application dan adapter masing-masing.
+  - Acceptance: pagination terbatas; soft-deleted tersembunyi; ULID; allowlist;
+    request normalisasi; unique termasuk deleted; audit actor dalam transaction.
+  - Verification: feature test response, validasi, actor/subject dan rollback.
+- [ ] Verifikasi dan commit 5A.
+  - Acceptance: focused test/regresi, Pint, route dan diff check lulus.
+  - Verification: Git save point setelah QA.
+
+### 5B: Endpoint Barang
+
+- [ ] Hubungkan request/controller ke CreateItem dan list query.
+  - Acceptance: can per action; ratio string; base unit/relasi tervalidasi;
+    barcode unik; batas 100 satuan; exception tidak membocorkan SQL.
+  - Verification: HTTP test permission, input invalid dan atomicity.
+- [ ] Verifikasi dan commit 5B.
+  - Acceptance: focused test/regresi, Pint, route dan diff check lulus.
+  - Verification: Git save point setelah QA.
+
+### 5C: Integrasi Dan Finalisasi
+
+- [ ] Verifikasi demo/access ketiga module secara terintegrasi.
+  - Acceptance: 2 gudang, 7 satuan, 3 barang/7 relasi; seed ulang menjaga edit
+    dan soft delete; audit ULID terhubung; akses user tidak berubah.
+  - Verification: integration test; smoke MySQL tanpa reset.
+- [ ] Jalankan gate akhir dan sinkronkan dokumentasi.
+  - Acceptance: status berdasarkan realita; scope UI/transaksi tetap pending.
+  - Verification: full test, Pint, route/status, diff, HTTP guest dan commit.
+
 ## Increment 6: UI Admin Inventory
 
 - [ ] Buat halaman list master gudang, satuan, dan item.

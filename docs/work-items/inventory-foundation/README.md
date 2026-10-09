@@ -85,7 +85,7 @@ sebelum mutation transaksi dapat aman:
 | 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
 | 3 | Passed | Fondasi master `Inventory/Units`; konversi dimiliki Items | 9 focused test; full suite 58 test; route, migration dan seed MySQL |
 | 4 | Passed | Fondasi Items: core 4A dan demo 4B | 40 focused test; 98 full test; lookup public, migration, seed dan rollback MySQL |
-| 5 | Planned | Master data database, permission, seeder demo | migration/status check; seed test; permission test |
+| 5 | In Progress | Endpoint data/store dengan permission; validasi audit/demo terintegrasi | feature HTTP; permission matrix; seed/audit integration |
 | 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
 
 ## Handoff
