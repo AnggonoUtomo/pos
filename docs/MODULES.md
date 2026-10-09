@@ -18,7 +18,7 @@ Status yang digunakan:
 | Platform | Identity | Role, permission, shared auth permission, user access baseline | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
 | Platform | CompanySettings | Identitas perusahaan tunggal, preference operasional, format nomor | Identity | Planned |
 | Inventory | Catalog | Item, kategori, brand, satuan, multi satuan, barcode | CompanySettings | Planned |
-| Inventory | Warehouses | Gudang, lokasi stok, pemilihan gudang transaksi | CompanySettings | Planned |
+| Inventory | Warehouses | Fondasi master gudang; pemilihan transaksi dan UI belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Stock | Stock movement, FIFO layer, no-negative-stock invariant | Catalog, Warehouses | Planned |
 | Sales | Parties | Customer, customer level, harga level pelanggan | Identity | Planned |
 | Sales | POS | Transaksi POS fullscreen, cart, pricing, discount, tax, payment | Parties, Catalog, Warehouses, Stock, Finance Payments | Planned |

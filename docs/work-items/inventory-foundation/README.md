@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready
+In Progress
 
 ## Owner Dan Lokasi
 
@@ -45,11 +45,11 @@ sebelum mutation transaksi dapat aman:
 
 ## Acceptance Criteria
 
-- [ ] Work item memiliki increment detail sebelum coding.
-- [ ] Dependency Inventory foundation terhadap POS real terdokumentasi.
-- [ ] Scope gudang, satuan, dan item dipisahkan jelas.
-- [ ] QA automated per increment ditentukan.
-- [ ] Risiko terbuka dicatat sebelum coding module dimulai.
+- [x] Work item memiliki increment detail sebelum coding.
+- [x] Dependency Inventory foundation terhadap POS real terdokumentasi.
+- [x] Scope gudang, satuan, dan item dipisahkan jelas.
+- [x] QA automated per increment ditentukan.
+- [x] Risiko terbuka dicatat sebelum coding module dimulai.
 
 ## Dampak Yang Harus Dicek
 
@@ -81,8 +81,8 @@ sebelum mutation transaksi dapat aman:
 
 | Increment | Status | Ringkasan | Verifikasi |
 | --- | --- | --- | --- |
-| 1 | Ready | Dokumen work item dan rencana implementasi Inventory foundation | `git diff --check`; review dokumen |
-| 2 | Planned | Scaffold module `Inventory/Warehouses` | dry-run generator; focused test; route check |
+| 1 | Passed | Dokumen work item dan rencana implementasi Inventory foundation | `git diff --check`; review dokumen |
+| 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
 | 3 | Planned | Scaffold module `Inventory/Units` | dry-run generator; focused test; route check |
 | 4 | Planned | Scaffold module `Inventory/Items` | dry-run generator; focused test; route check |
 | 5 | Planned | Master data database, permission, seeder demo | migration/status check; seed test; permission test |
@@ -90,9 +90,12 @@ sebelum mutation transaksi dapat aman:
 
 ## Handoff
 
-- Perubahan: work item Inventory foundation dibuat sebagai acuan sebelum coding.
-- Verifikasi: pending sampai Increment 1 selesai.
-- Chrome DevTools QA: SKIPPED untuk increment dokumentasi awal karena belum ada
-  UI baru.
-- Risiko terbuka: urutan detail module dapat berubah setelah scaffold dry-run
-  dan audit source saat coding dimulai.
+- Perubahan: Increment 1 dan 2 selesai; fondasi gudang, permission, demo seeder,
+  soft delete, audit, serta kompatibilitas subject_id ULID tersedia.
+- Verifikasi: 49 test/150 assertion lulus; migration dan seed ulang MySQL lokal
+  lulus pada 9 Oktober 2026. Detail ada di tasks.md dan dokumen module Warehouses.
+- Chrome DevTools QA: SKIPPED karena increment ini belum mengubah UI.
+- Status keseluruhan tetap In Progress: satuan/barang, integrasi, dan UI belum
+  dikerjakan. Ownership Catalog versus Units/Items perlu keputusan eksplisit
+  sebelum Increment 3. Gudang tidak memiliki dependency CompanySettings nyata
+  pada fondasi single company ini.

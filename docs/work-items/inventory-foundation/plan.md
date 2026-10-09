@@ -23,8 +23,8 @@ minus.
 
 | Increment | Status | Scope | Acceptance | Verification |
 | --- | --- | --- | --- | --- |
-| 1 | Ready | Dokumen perencanaan | Work item memiliki README, plan, tasks, scope dan non-scope jelas | `git diff --check`; review manual |
-| 2 | Planned | `Inventory/Warehouses` | Module scaffold memiliki route, migration folder, seeder demo, permission key awal, soft delete master | dry-run generator; `php artisan route:list --except-vendor`; focused test |
+| 1 | Passed | Dokumen perencanaan | Work item memiliki README, plan, tasks, scope dan non-scope jelas | `git diff --check`; review manual |
+| 2 | Passed | `Inventory/Warehouses` | Scaffold, schema, seeder demo, permission awal, soft delete, dan audit model | 11 focused test; 49 full test; route, migration/status, seed ulang MySQL |
 | 3 | Planned | `Inventory/Units` | Module scaffold mendukung base unit dan conversion ratio awal untuk multi satuan | dry-run generator; focused test; migration/status check |
 | 4 | Planned | `Inventory/Items` | Module scaffold mendukung item master, base unit, satuan jual/beli awal, dan status aktif | dry-run generator; focused test; migration/status check |
 | 5 | Planned | Seeder dan permission baseline | Demo gudang, satuan, dan item dapat dipakai POS mock; permission backend tersedia | seed class module; permission test; activity log smoke test |
@@ -68,9 +68,13 @@ Inventory/Units ---------+--> Inventory/Items --> Sales/POS real
 
 ## Open Questions
 
-- Apakah master gudang membutuhkan kode gudang unik yang user-editable sejak
-  awal, atau cukup generated code?
+- Kode gudang awal diisi eksplisit dan unique termasuk soft-deleted row;
+  validasi input CRUD akan ditetapkan bersama form.
 - Apakah satuan konversi boleh fractional untuk semua item, atau dibatasi
   decimal scale tertentu per item?
 - Apakah item awal perlu kategori/brand sejak foundation, atau ditunda agar
   scope tetap kecil?
+- Gap conformance: MODULES.md masih menetapkan Inventory/Catalog, sedangkan
+  work item merencanakan Inventory/Units dan Inventory/Items. Hentikan perubahan
+  struktur satuan/barang sampai ownership ini diputuskan eksplisit. Fondasi
+  Warehouses tetap memiliki boundary yang konsisten di kedua dokumen.

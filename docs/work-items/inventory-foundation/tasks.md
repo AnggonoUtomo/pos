@@ -32,18 +32,23 @@
 
 ## Increment 2: Module Warehouses
 
-- [ ] Jalankan dry-run scaffold `Inventory/Warehouses`.
+- [x] Jalankan dry-run scaffold `Inventory/Warehouses`.
   - Acceptance: output membuat module di `app/Modules/Inventory/Warehouses`
     dengan `Routes/`, `Database/Migrations`, dan `Database/Seeders`.
   - Verification: `php artisan module:make Inventory Warehouses --dry-run`.
-- [ ] Buat module source `Inventory/Warehouses`.
+- [x] Buat module source `Inventory/Warehouses`.
   - Acceptance: provider, route, migration folder, seeder demo, permission key,
     dan test minimal tersedia.
   - Verification: focused test; `php artisan route:list --except-vendor`.
-- [ ] Tentukan data gudang awal.
+- [x] Tentukan data gudang awal.
   - Acceptance: gudang memiliki ULID, kode, nama, status aktif, dan soft delete
     sebagai master mutable.
   - Verification: migration/status check.
+
+Increment 2 Passed pada 9 Oktober 2026. Audit model, permission awal, demo
+gudang, dan migration kompatibilitas subject audit ULID juga selesai. Checklist
+rinci ada di [tasks Warehouses](../../modules/Inventory/Warehouses/tasks.md).
+Increment 5 tetap pending untuk master lain, relasi, dan permission HTTP nyata.
 
 ## Increment 3: Module Units
 
@@ -117,5 +122,15 @@
 | --- | --- | --- |
 | `git push origin main` | PASS | Commit UI/theme sebelumnya sudah dipush sebelum work item Inventory dibuat |
 | `git diff --check` | PASS | Tidak ada whitespace error pada work item Inventory foundation |
+| `php artisan test --filter=Warehouses` | PASS | Increment 2: 11 test/38 assertion |
+| `php artisan test` | PASS | Increment 2: 49 test/150 assertion, termasuk regresi Identity |
+| `php vendor/bin/pint --test` dengan path perubahan | PASS | PHP perubahan sesuai format |
+| `php artisan route:list --except-vendor` | PASS | 22 route existing; belum ada endpoint HTTP gudang |
+| `php artisan migrate --no-interaction` dan `migrate:status` | PASS | 7 migration Ran pada MySQL lokal |
+| Seeder access/demo gudang dan smoke seed ulang MySQL | PASS | 2 gudang, 2 permission inventory, 2 audit; data dan audit tidak berubah saat seed ulang |
+| QA browser/frontend | SKIPPED | Increment 2 backend saja; tidak ada UI baru |
+
+Scope keseluruhan belum selesai. Gap conformance Catalog versus Units/Items
+tercatat pada plan.md dan perlu keputusan sebelum implementasi satuan/barang.
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

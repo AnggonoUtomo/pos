@@ -36,7 +36,8 @@ class IdentityAccessActionTest extends TestCase
             ->firstOrFail();
 
         $this->assertSame('identity', $activity->log_name);
-        $this->assertSame($user->getKey(), $activity->subject_id);
+        $this->assertSame((string) $user->getKey(), $activity->subject_id);
+        $this->assertTrue($activity->subject->is($user));
         $this->assertSame($actor->getKey(), $activity->causer_id);
         $this->assertSame(['staff'], $activity->properties->get('before')['roles']);
         $this->assertSame(['manager'], $activity->properties->get('after')['roles']);
@@ -64,7 +65,8 @@ class IdentityAccessActionTest extends TestCase
             ->firstOrFail();
 
         $this->assertSame('identity', $activity->log_name);
-        $this->assertSame($role->getKey(), $activity->subject_id);
+        $this->assertSame((string) $role->getKey(), $activity->subject_id);
+        $this->assertTrue($activity->subject->is($role));
         $this->assertSame($actor->getKey(), $activity->causer_id);
         $this->assertSame(['sales.pos.invoices.create'], $activity->properties->get('before')['permissions']);
         $this->assertSame(['sales.pos.invoices.post'], $activity->properties->get('after')['permissions']);
