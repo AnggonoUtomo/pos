@@ -2,7 +2,22 @@ import { NavMain } from '@/components/nav-main';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavGroup } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BarChart3, Boxes, Building2, CreditCard, LayoutGrid, Package, ReceiptText, RotateCcw, Settings, ShieldCheck, ShoppingCart, Tags, Truck, Warehouse } from 'lucide-react';
+import {
+    BarChart3,
+    Boxes,
+    Building2,
+    CreditCard,
+    LayoutGrid,
+    Package,
+    ReceiptText,
+    RotateCcw,
+    Settings,
+    ShieldCheck,
+    ShoppingCart,
+    Tags,
+    Truck,
+    Warehouse,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavGroups: NavGroup[] = [
@@ -37,20 +52,29 @@ const mainNavGroups: NavGroup[] = [
         title: 'Inventori',
         items: [
             {
-                title: 'Katalog',
+                title: 'Barang',
                 url: '',
                 icon: Package,
                 badge: 'Segera',
                 badgeTone: 'emerald',
                 comingSoon: true,
+                permission: 'inventory.view',
             },
             {
                 title: 'Gudang',
-                url: '',
+                url: '/inventory/warehouses',
                 icon: Warehouse,
-                badge: 'Segera',
+                badge: 'Aktif',
                 badgeTone: 'emerald',
-                comingSoon: true,
+                permission: 'inventory.view',
+            },
+            {
+                title: 'Satuan',
+                url: '/inventory/units',
+                icon: Tags,
+                badge: 'Aktif',
+                badgeTone: 'amber',
+                permission: 'inventory.view',
             },
             {
                 title: 'Stok',

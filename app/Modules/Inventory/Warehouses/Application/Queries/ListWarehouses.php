@@ -9,8 +9,8 @@ class ListWarehouses
     public function __construct(private WarehouseRepository $warehouses) {}
 
     /** @return array{data: list<array<string, mixed>>, meta: array<string, int>} */
-    public function handle(int $page = 1): array
+    public function handle(int $page = 1, array $filters = []): array
     {
-        return $this->warehouses->paginate($page);
+        return $this->warehouses->paginate($page, $filters);
     }
 }

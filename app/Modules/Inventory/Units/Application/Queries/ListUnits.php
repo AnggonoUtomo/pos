@@ -9,8 +9,8 @@ class ListUnits
     public function __construct(private UnitRepository $units) {}
 
     /** @return array{data: list<array<string, mixed>>, meta: array<string, int>} */
-    public function handle(int $page = 1): array
+    public function handle(int $page = 1, array $filters = []): array
     {
-        return $this->units->paginate($page);
+        return $this->units->paginate($page, $filters);
     }
 }

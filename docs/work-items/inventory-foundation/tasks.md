@@ -178,15 +178,15 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 
 ### 6B: Halaman Gudang Dan Satuan
 
-- [ ] Tambahkan halaman Inertia dan query filter/pagination server.
+- [x] Tambahkan halaman Inertia dan query filter/pagination server.
   - Acceptance: cari kode/nama, status aktif/nonaktif dan tab data terhapus;
     state filter di URL; route data/store lama tetap kompatibel.
   - Verification: Inertia/HTTP focused test.
-- [ ] Implementasikan tabel, dialog tambah/edit, konfirmasi hapus/pulihkan.
+- [x] Implementasikan tabel, dialog tambah/edit, konfirmasi hapus/pulihkan.
   - Acceptance: Sonner, error per field, processing, empty state, permission UX,
     shortcut dropdown dan keyboard; navigasi sidebar/palette aktif.
   - Verification: lint/typecheck/build dan QA browser.
-- [ ] Verifikasi dan commit 6B.
+- [x] Verifikasi dan commit 6B.
   - Acceptance: source buildable dan operasi master berfungsi.
   - Verification: save point Git selektif.
 
@@ -242,6 +242,19 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 - [ ] Risiko terbuka dicatat.
 
 ## Hasil Verifikasi
+
+6B pada 10 Oktober 2026: InventoryPagesTest RED 4 test (GET index belum ada),
+GREEN 4 test/82 assertion. Regresi CRUD/master/pages 28 test/364 assertion PASS.
+Scoped ESLint dan build PASS. Typecheck global BLOCKED oleh 10 error baseline
+auth.user nullable dan CSS welcome; izin perbaikan terpisah ditanyakan ke user.
+Chrome DevTools MCP BLOCKED (tool tidak tersedia), browser plugin BLOCKED
+(tidak ada browser terhubung); fallback Playwright lokal PASS. Delapan screenshot
+1440x1000, 1024x768, 768x1024 untuk gudang/satuan, expanded/collapsed; CRUD,
+restore, search/empty, shortcut, palette, readonly dan guard referensi PASS.
+Console error/warning kosong. Artifact lokal di
+storage/framework/testing/inventory-browser-8babd1120fdc0f33 (git ignored).
+QA memperbaiki state dialog error melalui preserveState pada mutation Inertia.
+Browser memakai SQLite disposable/credential runtime, tidak memutasi MySQL user.
 
 6A pada 10 Oktober 2026: RED 9 test karena endpoint belum tersedia; GREEN
 InventoryCrudTest 11 test/90 assertion. Regresi Inventory awal 100 test/579

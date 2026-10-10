@@ -66,8 +66,9 @@ Access seeder terpisah, tidak mengubah akun/role/permission user.
 
 ## UI Dan Risiko
 
-Belum ada UI baru. Increment 6 wajib memakai Sonner, dropdown shortcut,
-permission UX, dan QA desktop/tablet. Integrasi POS dan FIFO tidak tersentuh.
+UI admin tersedia pada resources/js/pages/inventory/units: list/filter server,
+pagination, dialog CRUD, Sonner, dropdown shortcut, permission UX dan QA
+desktop/tablet. Integrasi POS dan FIFO tidak tersentuh.
 ManageUnit menjalankan update/delete/restore dalam transaction. Update nonaktif
 dan delete menolak satuan yang pernah dirujuk barang melalui public
 Items/Application/Contracts/ItemUnitUsage::isReferenced. Referensi mencakup

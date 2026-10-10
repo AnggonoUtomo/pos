@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified'])->prefix('inventory/warehouses')->name('inventory.warehouses.')->group(function () {
     Route::get('data', [WarehouseController::class, 'data'])->name('data');
+    Route::get('/', [WarehouseController::class, 'index'])->name('index');
     Route::post('/', [WarehouseController::class, 'store'])->name('store');
     Route::put('{id}', [WarehouseController::class, 'update'])->whereUlid('id')->name('update');
     Route::delete('{id}', [WarehouseController::class, 'destroy'])->whereUlid('id')->name('destroy');

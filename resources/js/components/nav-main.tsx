@@ -5,7 +5,8 @@ import { type NavGroup, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
 function isCurrentUrl(currentUrl: string, itemUrl: string): boolean {
-    return currentUrl === itemUrl || currentUrl.startsWith(`${itemUrl}/`);
+    const path = currentUrl.split('?')[0];
+    return path === itemUrl || path.startsWith(`${itemUrl}/`);
 }
 
 const badgeToneClasses: Record<NonNullable<NavItem['badgeTone']>, string> = {
@@ -22,7 +23,11 @@ function NavBadge({ item }: { item: NavItem }) {
         return null;
     }
 
-    return <SidebarMenuBadge className={cn('rounded-full px-2 font-medium', badgeToneClasses[item.badgeTone ?? 'neutral'])}>{item.badge}</SidebarMenuBadge>;
+    return (
+        <SidebarMenuBadge className={cn('rounded-full px-2 font-medium', badgeToneClasses[item.badgeTone ?? 'neutral'])}>
+            {item.badge}
+        </SidebarMenuBadge>
+    );
 }
 
 function NavMainItem({ item }: { item: NavItem }) {

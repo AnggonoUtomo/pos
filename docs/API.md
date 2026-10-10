@@ -97,6 +97,13 @@ Semua mutation/audit atomic. Base unit tidak dapat diganti. Satuan terpakai
 Konversi yang dihapus mempertahankan barcode; tambah ulang unit yang sama dapat
 memulihkan row miliknya. Konflik DB menghasilkan 422 tanpa detail SQL.
 
+Halaman GET /inventory/warehouses dan /inventory/units tersedia dengan route
+inventory.{module}.index, permission inventory.view, response Inertia. Props
+records berisi pagination dan deleted_at, filters berisi search/status/trashed.
+Filter search maksimum 150 karakter, status all/active/inactive, trashed boolean
+(query 0/1); tab terhapus hanya menampilkan row trashed. Endpoint /data lama
+tetap tanpa filter/field tambahan untuk menjaga consumer existing.
+
 ## Contract Lintas Module
 
 Contract lintas module tidak didokumentasikan sebagai HTTP API kecuali benar-

@@ -7,6 +7,7 @@ use App\Modules\Inventory\Units\Application\Actions\CreateUnit;
 use App\Modules\Inventory\Units\Application\Actions\ManageUnit;
 use App\Modules\Inventory\Units\Application\DTOs\CreateUnitData;
 use App\Modules\Inventory\Units\Application\Queries\ListUnits;
+use App\Modules\Inventory\Units\Presentation\Requests\ListUnitsRequest;
 use App\Modules\Inventory\Units\Presentation\Requests\StoreUnitRequest;
 use App\Modules\Inventory\Units\Presentation\Requests\UpdateUnitRequest;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -16,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 use InvalidArgumentException;
 
 class UnitController extends Controller implements HasMiddleware
@@ -23,9 +26,19 @@ class UnitController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('can:inventory.view', only: ['data']),
+            new Middleware('can:inventory.view', only: ['data', 'index']),
             new Middleware('can:inventory.manage', only: ['store', 'update', 'destroy', 'restore']),
         ];
+    }
+
+    public function index(ListUnitsRequest $request, ListUnits $query): Response
+    {
+        $filters = $request->filters();
+
+        return Inertia::render('inventory/units/index', [
+            'records' => $query->handle((int) $request->validated('page', 1), $filters),
+            'filters' => $filters,
+        ]);
     }
 
     public function update(UpdateUnitRequest $request, string $id, ManageUnit $action): JsonResponse|RedirectResponse

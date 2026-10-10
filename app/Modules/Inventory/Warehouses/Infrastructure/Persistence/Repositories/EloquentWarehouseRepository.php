@@ -39,10 +39,19 @@ class EloquentWarehouseRepository implements WarehouseRepository
         ])->id;
     }
 
-    public function paginate(int $page): array
+    public function paginate(int $page, array $filters = []): array
     {
-        $paginator = Warehouse::query()->orderBy('code')->orderBy('id')
-            ->paginate(25, ['id', 'code', 'name', 'is_active'], page: $page);
+        $query = ! empty($filters['trashed']) ? Warehouse::onlyTrashed() : Warehouse::query();
+        $query->when($filters['search'] ?? '', fn ($query, $search) => $query->where(fn ($row) => $row
+            ->where('code', 'like', '%'.$search.'%')->orWhere('name', 'like', '%'.$search.'%')));
+        if (in_array($filters['status'] ?? 'all', ['active', 'inactive'], true)) {
+            $query->where('is_active', $filters['status'] === 'active');
+        }
+        $columns = ['id', 'code', 'name', 'is_active'];
+        if ($filters !== []) {
+            $columns[] = 'deleted_at';
+        }
+        $paginator = $query->orderBy('code')->orderBy('id')->paginate(25, $columns, page: $page);
 
         return [
             'data' => $paginator->getCollection()->toArray(),

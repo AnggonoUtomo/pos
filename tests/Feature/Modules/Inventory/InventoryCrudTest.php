@@ -71,6 +71,7 @@ class InventoryCrudTest extends TestCase
     {
         [$item, $base] = $this->makeItem();
         $this->deleteJson("/inventory/units/{$base}")->assertUnprocessable()->assertJsonValidationErrors('inventory');
+        $this->from('/inventory/units')->delete("/inventory/units/{$base}")->assertRedirect('/inventory/units')->assertSessionHasErrors('inventory');
         $this->putJson("/inventory/units/{$base}", ['code' => 'PCS', 'name' => 'Buah', 'symbol' => 'pcs', 'is_active' => false])->assertUnprocessable();
         $this->deleteJson("/inventory/items/{$item}")->assertOk();
         $this->deleteJson("/inventory/units/{$base}")->assertUnprocessable();

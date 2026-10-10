@@ -3,7 +3,8 @@
 ## Status
 
 Fondasi backend Implemented dan terverifikasi pada 9 Oktober 2026;
-Endpoint daftar/create internal tersedia sejak Increment 5A; CRUD UI belum tersedia.
+Endpoint daftar/create internal tersedia sejak Increment 5A; CRUD backend dan
+UI admin tersedia pada Increment 6A/6B, terverifikasi desktop/tablet.
 
 ## Scope Dan Arsitektur
 
@@ -58,9 +59,10 @@ Permission disiapkan terpisah dan dapat di-seed tanpa memasukkan demo data.
 
 ## UI Dan Di Luar Scope
 
-UI admin dijadwalkan pada Increment 6 dengan Sonner, dropdown shortcut,
-permission UX, dan QA desktop/tablet. Belum ada halaman, perubahan navigasi,
-stok, FIFO, pembayaran, ataupun integrasi POS pada increment ini.
+UI admin tersedia pada resources/js/pages/inventory/warehouses dengan list,
+filter server, pagination, dialog CRUD, Sonner, shortcut, dan permission UX.
+Route index nyata diaktifkan pada sidebar/palette. Tidak ada stok, FIFO,
+pembayaran atau integrasi POS nyata.
 
 ## Acceptance Criteria
 

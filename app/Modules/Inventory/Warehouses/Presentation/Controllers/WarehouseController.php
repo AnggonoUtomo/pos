@@ -7,6 +7,7 @@ use App\Modules\Inventory\Warehouses\Application\Actions\CreateWarehouse;
 use App\Modules\Inventory\Warehouses\Application\Actions\ManageWarehouse;
 use App\Modules\Inventory\Warehouses\Application\DTOs\CreateWarehouseData;
 use App\Modules\Inventory\Warehouses\Application\Queries\ListWarehouses;
+use App\Modules\Inventory\Warehouses\Presentation\Requests\ListWarehousesRequest;
 use App\Modules\Inventory\Warehouses\Presentation\Requests\StoreWarehouseRequest;
 use App\Modules\Inventory\Warehouses\Presentation\Requests\UpdateWarehouseRequest;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -16,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 use InvalidArgumentException;
 
 class WarehouseController extends Controller implements HasMiddleware
@@ -23,9 +26,19 @@ class WarehouseController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('can:inventory.view', only: ['data']),
+            new Middleware('can:inventory.view', only: ['data', 'index']),
             new Middleware('can:inventory.manage', only: ['store', 'update', 'destroy', 'restore']),
         ];
+    }
+
+    public function index(ListWarehousesRequest $request, ListWarehouses $query): Response
+    {
+        $filters = $request->filters();
+
+        return Inertia::render('inventory/warehouses/index', [
+            'records' => $query->handle((int) $request->validated('page', 1), $filters),
+            'filters' => $filters,
+        ]);
     }
 
     public function update(UpdateWarehouseRequest $request, string $id, ManageWarehouse $action): JsonResponse|RedirectResponse
