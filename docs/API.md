@@ -59,7 +59,8 @@ id/code/name/is_active; satuan menambah symbol. Field mutation: code/name,
 symbol untuk satuan, optional is_active boolean default true. Input text di-trim;
 field lain tidak dipersist. Code unik termasuk soft-deleted row.
 
-Guest JSON 401, web redirect login; tanpa permission 403; invalid/konflik unique
+Guest GET JSON 401, web redirect login; POST tanpa CSRF valid 419. Tanpa permission
+403; invalid/konflik unique
 422 validation errors JSON atau web session errors. Konflik persistence unique
 dipetakan pada code; SQL/error infrastruktur tidak disertakan. Super-system
 guard web bypass permission Gate sesuai ADR-010, bukan validasi/invariant.

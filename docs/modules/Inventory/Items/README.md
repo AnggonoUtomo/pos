@@ -46,4 +46,4 @@ php artisan test --filter="Items|UnitLookup"
 ```
 
 Detail tersedia pada [specification](specification.md), [plan](plan.md), dan
-[tasks](tasks.md). Work item global masih In Progress sampai Increment 5-6 selesai.
+[tasks](tasks.md). Work item global masih In Progress sampai UI Increment 6 selesai.

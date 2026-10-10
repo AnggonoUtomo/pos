@@ -58,3 +58,15 @@ disposable. Rollback database pengguna tidak dijalankan.
 
 Dua assertion Identity disesuaikan untuk subject_id string dan dilengkapi
 verifikasi relasi user/role. Perubahan ini diperlukan oleh schema audit baru.
+
+## Increment 5: Integrasi HTTP
+
+- [x] CreateWarehouse/ListWarehouses memakai port, adapter, dan DTOs module.
+- [x] Controller HasMiddleware memakai can:inventory.view/manage per action.
+- [x] Validasi/normalisasi, pagination, soft delete, audit actor, dan konflik
+  unique/rollback terverifikasi melalui InventoryMasterHttpTest.
+- [x] Demo/access seeder diuji bersama Units dan Items; akses user tetap.
+
+Gate akhir 10 Oktober 2026: 131 test/624 assertion PASS; route/status, Pint,
+dan smoke MySQL PASS. UI CRUD lengkap dan guard stok/transaksi pada mutation
+master tetap pending. Detail pada work item Inventory Foundation.

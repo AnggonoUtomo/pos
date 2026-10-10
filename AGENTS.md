@@ -61,6 +61,9 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Dependensi konkret lintas module dilarang. Gunakan public contract, DTOs, atau
   event publik yang memang memiliki consumer nyata.
 - Backend adalah security authority. Frontend permission hanya untuk UX.
+- Role `super-system` guard `web` mendapat bypass authorization Gate::before
+  milik Platform/Identity sesuai ADR-010. Auth, validation, transaction, dan
+  invariant bisnis tetap wajib; jangan menempatkan invariant hanya pada policy.
 - Jangan menyimpan atau menampilkan secret, token, password, credential, atau
   payload sensitif dalam source, log, test output, maupun dokumentasi.
 

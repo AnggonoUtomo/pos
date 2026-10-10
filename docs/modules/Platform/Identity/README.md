@@ -49,6 +49,9 @@ diamankan di backend; frontend hanya menyembunyikan atau menampilkan UI.
 - Shared auth Inertia menyediakan `roles`, `permissions`, dan `superSystem`.
 - Hook UX berada di `resources/js/hooks/use-permission.ts`.
 - Public registration harus tetap dimatikan.
+- Gate::before memberi bypass authorization kepada role super-system guard web
+  sesuai ADR-010. Tidak mengubah assignment akun, tidak memberi akses kepada
+  user biasa, dan tidak melewati validation/invariant.
 
 ## Verifikasi Utama
 

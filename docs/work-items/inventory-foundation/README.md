@@ -85,19 +85,21 @@ sebelum mutation transaksi dapat aman:
 | 2 | Passed | Fondasi module `Inventory/Warehouses` | 11 focused test; full suite 49 test; route, migration, seed MySQL |
 | 3 | Passed | Fondasi master `Inventory/Units`; konversi dimiliki Items | 9 focused test; full suite 58 test; route, migration dan seed MySQL |
 | 4 | Passed | Fondasi Items: core 4A dan demo 4B | 40 focused test; 98 full test; lookup public, migration, seed dan rollback MySQL |
-| 5 | In Progress | Endpoint data/store dengan permission; validasi audit/demo terintegrasi | feature HTTP; permission matrix; seed/audit integration |
+| 5 | Passed | Endpoint data/store dengan permission; audit/demo terintegrasi; Gate super-system sesuai ADR-010 | 33 focused test; 131 full test; HTTP, MySQL, route/status |
 | 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
 
 ## Handoff
 
-- Perubahan: Increment 1-4 selesai; fondasi gudang, satuan, barang/multi satuan,
+- Perubahan: Increment 1-5 selesai; fondasi gudang, satuan, barang/multi satuan,
   konversi exact, lookup public Units, permission seed, demo relasional, soft
-  delete, audit, serta kompatibilitas subject_id ULID tersedia.
-- Verifikasi: 98 test/295 assertion lulus; migration dan seed ulang MySQL lokal
-  lulus pada 9 Oktober 2026. Detail ada di tasks.md dan dokumen masing-masing module.
+  delete, audit, serta kompatibilitas subject_id ULID tersedia. Keenam endpoint
+  data/store memakai can per action; role super-system bypass Gate sesuai ADR-010.
+- Verifikasi: 131 test/624 assertion lulus; semua 9 migration Ran, 28 route;
+  demo/seed ulang MySQL lokal dan HTTP guest/CSRF lulus pada 10 Oktober 2026.
+  Detail ada di tasks.md dan dokumen masing-masing module.
 - Chrome DevTools QA: SKIPPED karena increment ini belum mengubah UI.
-- Status keseluruhan tetap In Progress: validasi integrasi/permission HTTP pada
-  Increment 5 dan UI Increment 6 belum selesai. Pemisahan Units/Items disetujui
+- Status keseluruhan tetap In Progress: UI CRUD lengkap pada Increment 6 belum
+  selesai. Pemisahan Units/Items disetujui
   user dan dicatat pada ADR-009. Guard master yang telah direferensikan serta
   snapshot transaksi masih perlu diterapkan ketika CRUD/transaksi dibuat.
   Gudang tidak memiliki dependency CompanySettings nyata pada fondasi single

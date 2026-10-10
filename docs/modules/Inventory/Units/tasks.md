@@ -64,3 +64,15 @@ pengguna. UI tetap pending. Integrasi lookup Items diverifikasi pada Increment 4
 - [x] Dua feature test lookup lulus (8 assertion); regresi 4A lulus.
 
 Perubahan ini tidak menambahkan endpoint atau aturan mutation master Units.
+
+## Increment 5: Integrasi HTTP
+
+- [x] CreateUnit/ListUnits memakai port, adapter, dan DTOs module.
+- [x] Controller HasMiddleware memakai can:inventory.view/manage per action.
+- [x] Validasi/normalisasi, pagination, soft delete, audit actor, dan konflik
+  unique/rollback terverifikasi melalui InventoryMasterHttpTest.
+- [x] Demo/access seeder diuji bersama Warehouses dan Items; akses user tetap.
+
+Gate akhir 10 Oktober 2026: 131 test/624 assertion PASS; route/status, Pint,
+dan smoke MySQL PASS. UI CRUD lengkap dan guard mutation master yang sudah
+direferensikan tetap scope Increment 6. Detail pada work item Inventory Foundation.

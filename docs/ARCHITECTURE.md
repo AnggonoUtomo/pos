@@ -135,6 +135,9 @@ yang efisien. CRUD sederhana tidak wajib diberi ceremony CQRS penuh.
 ## Authorization Dan Audit
 
 - Backend adalah security authority.
+- Platform/Identity mendaftarkan Gate::before untuk role super-system guard web
+  sesuai ADR-010. Bypass hanya authorization; auth, validation, transaction dan
+  invariant Domain tetap berjalan. User biasa memakai permission/policy normal.
 - Controller module yang butuh permission memakai `HasMiddleware` dan middleware
   `can:{permission}` per action, atau policy eksplisit.
 - Frontend permission guard memakai `resources/js/hooks/use-permission.ts` dengan

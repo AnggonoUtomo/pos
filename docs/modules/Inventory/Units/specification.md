@@ -61,13 +61,14 @@ Access seeder terpisah, tidak mengubah akun/role/permission user.
 - Atribut audit hanya code, name, symbol, is_active, deleted_at.
 - Update tanpa perubahan tidak menambah log; subject audit memakai ULID dengan
   compatibility migration existing dari fondasi Warehouses.
-- Mutation operasional nanti memakai Application transaction untuk data/audit.
+- CreateUnit memakai Application transaction untuk data/audit; mutation CRUD
+  lain wajib mengikuti boundary yang sama.
 
 ## UI Dan Risiko
 
 Belum ada UI baru. Increment 6 wajib memakai Sonner, dropdown shortcut,
 permission UX, dan QA desktop/tablet. Integrasi POS dan FIFO tidak tersentuh.
-Saat Items hadir, aturan perubahan/nonaktif/soft delete satuan yang sudah
+Saat CRUD mutation dilengkapi, aturan perubahan/nonaktif/soft delete satuan yang sudah
 direferensikan perlu ditetapkan; identitas dan konversi historis tidak boleh rusak.
 
 ## Acceptance Criteria

@@ -77,5 +77,20 @@ dependency baru, mengubah theme, menyentuh Old-docs, atau memutasi stok/FIFO.
 
 Risiko terbuka: perubahan/deaktivasi master yang sudah direferensikan perlu
 guard pada CRUD; snapshot dan no-negative-stock/FIFO diuji pada transaksi nyata.
-Permission HTTP dan QA desktop/tablet tetap pending pada increment berikutnya.
+Permission HTTP data/store sudah tersedia pada Increment 5; UI CRUD lengkap
+dan QA desktop/tablet menunggu Increment 6.
 Work item global belum selesai; push belum dilakukan.
+
+## Increment 5: Integrasi HTTP
+
+- [x] Controller HasMiddleware memakai can:view/manage per action.
+- [x] Request tervalidasi/allowlist, unit ID lowercase, ratio string, barcode '0'.
+- [x] List query terpaginasikan dengan eager load relasi milik Items.
+- [x] Exception unique/invariant menjadi validation error tanpa detail SQL.
+- [x] Audit actor/subject dan rollback data/audit lulus melalui HTTP.
+- [x] Demo/access seeder lulus integration test tanpa mengubah akses user.
+
+ItemsHttpTest: 16 test/108 assertion PASS. Gate akhir 10 Oktober 2026: full
+suite 131 test/624 assertion PASS; 6 route Inventory memiliki auth/can; semua
+9 migration Ran; demo MySQL dan seed ulang PASS. Detail lintas module pada
+work item Inventory Foundation. Tidak ada perubahan UI atau stok/FIFO.

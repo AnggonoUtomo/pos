@@ -48,7 +48,7 @@
 Increment 2 Passed pada 9 Oktober 2026. Audit model, permission awal, demo
 gudang, dan migration kompatibilitas subject audit ULID juga selesai. Checklist
 rinci ada di [tasks Warehouses](../../modules/Inventory/Warehouses/tasks.md).
-Increment 5 tetap pending untuk validasi integrasi dan permission HTTP nyata.
+Validasi integrasi dan permission HTTP data/store selesai pada Increment 5.
 
 ## Increment 3: Module Units
 
@@ -67,7 +67,8 @@ Increment 5 tetap pending untuk validasi integrasi dan permission HTTP nyata.
 Increment 3 Passed pada 9 Oktober 2026. Master satuan, audit, permission,
 demo seeder, dan verifikasi MySQL selesai. Detail tersedia di
 [tasks Units](../../modules/Inventory/Units/tasks.md). Konversi per barang
-selesai pada Increment 4; belum ada endpoint HTTP/UI satuan.
+selesai pada Increment 4; endpoint data/store tersedia pada Increment 5, UI
+CRUD lengkap menunggu Increment 6.
 
 ## Increment 4: Module Items
 
@@ -87,20 +88,20 @@ selesai pada Increment 4; belum ada endpoint HTTP/UI satuan.
 Increment 4 Passed pada 9 Oktober 2026. Core 4A dan demo 4B mencakup konversi
 exact, lookup public Units, barcode unik, soft delete, audit atomic, permission
 seed, dan demo relasional. Detail tersedia di
-[tasks Items](../../modules/Inventory/Items/tasks.md). Endpoint HTTP/UI dan
-mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
+[tasks Items](../../modules/Inventory/Items/tasks.md). Endpoint data/store
+tersedia pada Increment 5; UI CRUD lengkap dan mutation stok/FIFO belum tersedia.
 
 ## Increment 5: Permission, Audit, Dan Seeder Demo
 
-- [ ] Tambahkan permission backend.
+- [x] Tambahkan permission backend.
   - Acceptance: permission minimal `inventory.view` dan `inventory.manage`
     tersedia serta dipakai pada controller/action terkait.
   - Verification: permission focused test.
-- [ ] Tambahkan activity log untuk mutation master.
+- [x] Tambahkan activity log untuk mutation master.
   - Acceptance: create/update/delete master penting tercatat melalui Spatie
     Activitylog.
   - Verification: activity log smoke test.
-- [ ] Tambahkan demo seeder relasional.
+- [x] Tambahkan demo seeder relasional.
   - Acceptance: seeder membuat gudang, satuan, dan item demo yang dapat dipakai
     alur POS mock.
   - Verification: seed command module; focused test bila tersedia.
@@ -119,7 +120,7 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
 
 - [x] Tulis test HTTP permission dan validation terlebih dahulu.
   - Acceptance: guest/tanpa permission ditolak; view tidak dapat store; manage
-    dapat store; super-system memakai Gate existing.
+    dapat store; super-system memakai Gate sesuai keputusan user ADR-010.
   - Verification: focused feature test RED sebelum implementasi.
 - [x] Implementasikan read/create melalui Application dan adapter masing-masing.
   - Acceptance: pagination terbatas; soft-deleted tersembunyi; ULID; allowlist;
@@ -135,19 +136,23 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
   - Acceptance: can per action; ratio string; base unit/relasi tervalidasi;
     barcode unik; batas 100 satuan; exception tidak membocorkan SQL.
   - Verification: HTTP test permission, input invalid dan atomicity.
-- [ ] Verifikasi dan commit 5B.
+- [x] Verifikasi dan commit 5B.
   - Acceptance: focused test/regresi, Pint, route dan diff check lulus.
   - Verification: Git save point setelah QA.
 
 ### 5C: Integrasi Dan Finalisasi
 
-- [ ] Verifikasi demo/access ketiga module secara terintegrasi.
+- [x] Verifikasi demo/access ketiga module secara terintegrasi.
   - Acceptance: 2 gudang, 7 satuan, 3 barang/7 relasi; seed ulang menjaga edit
     dan soft delete; audit ULID terhubung; akses user tidak berubah.
   - Verification: integration test; smoke MySQL tanpa reset.
-- [ ] Jalankan gate akhir dan sinkronkan dokumentasi.
+- [x] Jalankan gate akhir dan sinkronkan dokumentasi.
   - Acceptance: status berdasarkan realita; scope UI/transaksi tetap pending.
   - Verification: full test, Pint, route/status, diff, HTTP guest dan commit.
+
+Increment 5 Passed pada 10 Oktober 2026. Read/create internal, permission
+matrix, Gate super-system, audit, dan demo terintegrasi selesai. Belum ada UI
+CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 
 ## Increment 6: UI Admin Inventory
 
@@ -186,6 +191,32 @@ Save point 5A: `c44aeb8`. Bypass super-system disetujui user dan disimpan pada
 16 test/108 assertion PASS; full suite 129 test/597 assertion PASS. Validasi
 base ratio, unit tidak tersedia, precision, duplicate SKU/barcode, ULID case,
 barcode '0', rollback/audit, serta super-system tanpa bypass invariant lulus.
+
+Save point 5B: `3cbdee6`. Verifikasi akhir Increment 5 pada 10 Oktober 2026:
+
+| Command | Hasil | Bukti |
+| --- | --- | --- |
+| Filter InventoryMasterHttpTest, ItemsHttpTest, InventoryDemoIntegrationTest, SuperSystemGateTest | PASS | 33 test/329 assertion |
+| `php artisan test` | PASS | 131 test/624 assertion |
+| `php vendor/bin/pint --test` source/test Inventory dan Gate Identity terkait | PASS | Format PHP sesuai |
+| `php artisan route:list --except-vendor` dan `--path=inventory -v` | PASS | 28 route total; 6 route Inventory dengan auth/verified/can per action |
+| `php artisan migrate:status` | PASS | Semua 9 migration Ran; tidak menambah schema atau reset database |
+| Seed access/demo ketiga module dan repeat smoke MySQL via tinker | PASS | 2 gudang, 7 satuan, 3 barang, 7 relasi, 19 audit; data/audit dan akses user tidak berubah saat seed ulang; subject ULID terhubung |
+| HTTP guest GET data pada `http://pos.test` | PASS | Warehouses/Units/Items masing-masing 401 |
+| HTTP POST Items tanpa CSRF pada `http://pos.test` | PASS | 419; middleware web tetap melindungi mutation |
+| Review layer/import, input allowlist, error mapping, pagination | PASS | Domain tetap murni; Application tanpa Infrastructure; runtime Items tidak mengambil model privat Units |
+| `git diff --check` | PASS | Tidak ada whitespace error; staging hanya scope pekerjaan |
+
+QA Chrome DevTools dan lint/build/typecheck frontend SKIPPED: hanya endpoint
+data/store, tidak ada UI baru; fallback HTTP feature test dan smoke host lokal
+lulus. Tidak menyentuh theme, SampleUI, Old-docs, dependency, credential seed,
+akun/role assignment, atau stok/FIFO/payment. Assignment role super-system
+tetap milik Identity; bypass baru tidak memberikan role tersebut kepada user.
+MustVerifyEmail mengikuti starter kit existing; tidak mengubah flow auth.
+Risiko terbuka: CRUD lengkap/guard master referensial dan QA desktop/tablet
+menunggu Increment 6; snapshot/no-negative-stock/FIFO menunggu transaksi nyata.
+Checklist sesudah coding mengacu keseluruhan work item, belum selesai
+karena Increment 6 pending. Push belum dilakukan.
 
 | Command | Hasil | Catatan |
 | --- | --- | --- |
