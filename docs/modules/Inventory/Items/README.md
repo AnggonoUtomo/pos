@@ -3,7 +3,8 @@
 ## Status
 
 Active: fondasi backend Increment 4A/4B selesai dan terverifikasi pada
-9 Oktober 2026. Endpoint HTTP/UI CRUD dan integrasi transaksi belum tersedia.
+9 Oktober 2026; endpoint internal data/store tersedia sejak Increment 5B pada
+10 Oktober 2026. UI CRUD lengkap dan integrasi transaksi belum tersedia.
 
 ## Tujuan Dan Boundary
 
@@ -21,7 +22,9 @@ public boundary Units untuk membaca satuan aktif, bukan model Eloquent Units.
 
 Domain ConversionRatio bebas framework dan memakai brick/math yang sudah
 tersedia melalui dependency Laravel. ServiceProvider menghubungkan repository
-ke adapter serta memuat migration/route. Route HTTP dan UI belum dibuat.
+ke adapter serta memuat migration/route. Route data/store memanggil ListItems
+dan CreateItem melalui Presentation; HasMiddleware memakai can per action.
+UI belum dibuat; response/validation contract tersedia pada docs/API.md.
 
 ## Data, Permission, Dan Demo
 

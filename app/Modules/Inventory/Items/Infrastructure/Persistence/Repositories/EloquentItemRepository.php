@@ -8,6 +8,21 @@ use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 
 class EloquentItemRepository implements ItemRepository
 {
+    public function paginate(int $page): array
+    {
+        $paginator = Item::query()->with(['units' => fn ($query) => $query
+            ->select(['id', 'item_id', 'unit_id', 'conversion_ratio', 'barcode', 'is_sale_unit', 'is_purchase_unit'])->orderBy('id')])
+            ->orderBy('sku')->orderBy('id')->paginate(25, ['id', 'sku', 'name', 'base_unit_id', 'is_active'], page: $page);
+
+        return [
+            'data' => $paginator->getCollection()->toArray(),
+            'meta' => [
+                'current_page' => $paginator->currentPage(), 'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(), 'total' => $paginator->total(),
+            ],
+        ];
+    }
+
     public function findIdBySku(string $sku): ?string
     {
         return Item::withTrashed()->where('sku', $sku)->value('id');

@@ -125,13 +125,13 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
   - Acceptance: pagination terbatas; soft-deleted tersembunyi; ULID; allowlist;
     request normalisasi; unique termasuk deleted; audit actor dalam transaction.
   - Verification: feature test response, validasi, actor/subject dan rollback.
-- [ ] Verifikasi dan commit 5A.
+- [x] Verifikasi dan commit 5A.
   - Acceptance: focused test/regresi, Pint, route dan diff check lulus.
   - Verification: Git save point setelah QA.
 
 ### 5B: Endpoint Barang
 
-- [ ] Hubungkan request/controller ke CreateItem dan list query.
+- [x] Hubungkan request/controller ke CreateItem dan list query.
   - Acceptance: can per action; ratio string; base unit/relasi tervalidasi;
     barcode unik; batas 100 satuan; exception tidak membocorkan SQL.
   - Verification: HTTP test permission, input invalid dan atomicity.
@@ -180,6 +180,12 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
 assertion PASS; full suite 113 test/489 assertion PASS; Pint source/test terkait
 PASS; route:list -v menunjukkan 4 route Inventory dengan can per action.
 Tidak ada migration atau perubahan UI; QA frontend/browser SKIPPED.
+
+Save point 5A: `c44aeb8`. Bypass super-system disetujui user dan disimpan pada
+`4f45005` dengan ADR-010. 5B diverifikasi pada 10 Oktober 2026: ItemsHttpTest
+16 test/108 assertion PASS; full suite 129 test/597 assertion PASS. Validasi
+base ratio, unit tidak tersedia, precision, duplicate SKU/barcode, ULID case,
+barcode '0', rollback/audit, serta super-system tanpa bypass invariant lulus.
 
 | Command | Hasil | Catatan |
 | --- | --- | --- |

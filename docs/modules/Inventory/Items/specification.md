@@ -4,7 +4,8 @@
 
 Fondasi backend Implemented pada 9 Oktober 2026: create barang beserta satuan, audit,
 permission, demo relasional, dan konversi kuantitas ke base unit.
-Belum ada endpoint/UI CRUD, perubahan base unit, saldo stok, FIFO, atau harga.
+Endpoint data/store internal tersedia pada Increment 5B. Belum ada UI CRUD
+lengkap, perubahan base unit, saldo stok, FIFO, atau harga.
 
 ## Model Data
 
@@ -40,7 +41,7 @@ item/unit, dan barcode tetap direservasi pada soft-deleted row.
 - Domain/ValueObjects/ConversionRatio memiliki validasi dan toBaseQuantity.
 - Application/Actions/CreateItem mengorkestrasi validation dan DB transaction.
 - Application/DTOs/CreateItemData dan ItemUnitData menjadi input use case.
-- Application/Contracts/ItemRepository menangani create dan pencarian SKU
+- Application/Contracts/ItemRepository menangani create, paginate, dan pencarian SKU
   termasuk soft-deleted row untuk seeder idempotent.
 - Infrastructure/Persistence/Repositories/EloquentItemRepository menyimpan
   hasil validasi; tidak mengambil kepemilikan business rule.
@@ -49,14 +50,23 @@ item/unit, dan barcode tetap direservasi pada soft-deleted row.
 - Lookup dengan lock dipanggil di dalam transaction CreateItem pada connection
   default bersama. Adapter memakai lockForUpdate pada satuan yang dirujuk.
 - Exception invalid input: InvalidArgumentException; konflik constraint DB
-  tetap exception persistence, dipetakan pada boundary HTTP saat CRUD tersedia.
+  dipetakan pada boundary HTTP: unique constraint menjadi validation error
+  inventory; invariant menjadi error units. Error SQL tidak ditampilkan.
+- StoreItemRequest hanya menerima field master yang diizinkan; ratio harus
+  decimal string, unit_id distinct dan dinormalisasi lowercase sesuai HasUlids,
+  maksimal 100 relasi; barcode kosong menjadi null, barcode '0' tetap valid.
+- ListItems mengembalikan pagination 25 record dengan eager load relasi milik
+  Items, tanpa mengambil model privat Units. Data terhapus disaring, barang
+  nonaktif tetap tampil untuk admin. Response mengikuti API.md.
 
 ## Atomicity, Authorization, Dan Audit
 
 Barang, seluruh relasi satuan, dan audit harus commit atau rollback bersama.
 Model Item dan ItemUnit mencatat atribut master relevan dan lifecycle; actor
-mengikuti auth context bila ada. Audit bukan ledger. Use case belum diekspos
-HTTP; permission controller akan diterapkan dan diuji pada Increment 6.
+mengikuti auth context bila ada. Audit bukan ledger. Endpoint data/store memakai
+HasMiddleware dengan can:inventory.view/manage per action, auth dan verified
+mengikuti starter kit existing. Super-system memakai Gate sesuai ADR-010 dan
+tetap harus lolos validasi bisnis.
 Access seeder menyiapkan permission tanpa mengubah role/akses akun.
 
 ## Demo

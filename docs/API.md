@@ -49,6 +49,8 @@ menghasilkan 201 `{id}`, POST web redirect kembali dengan flash success.
 | POST | /inventory/warehouses | inventory.warehouses.store | inventory.manage |
 | GET | /inventory/units/data | inventory.units.data | inventory.view |
 | POST | /inventory/units | inventory.units.store | inventory.manage |
+| GET | /inventory/items/data | inventory.items.data | inventory.view |
+| POST | /inventory/items | inventory.items.store | inventory.manage |
 
 Response daftar: `{data, meta}`; meta current_page/last_page/per_page/total,
 25 record per page, page integer 1..2147483647, order code lalu id. Master
@@ -61,6 +63,20 @@ Guest JSON 401, web redirect login; tanpa permission 403; invalid/konflik unique
 422 validation errors JSON atau web session errors. Konflik persistence unique
 dipetakan pada code; SQL/error infrastruktur tidak disertakan. Super-system
 guard web bypass permission Gate sesuai ADR-010, bukan validasi/invariant.
+
+Barang memakai pagination/metadata yang sama, order sku lalu id, dengan field
+id/sku/name/base_unit_id/is_active dan units (id/item_id/unit_id/conversion_ratio/
+barcode/is_sale_unit/is_purchase_unit). Relasi units diurutkan id dan disaring
+soft delete, di-eager-load tanpa model Units privat.
+Input barang: sku/name/base_unit_id ULID; optional is_active; optional units
+list maksimal 100 row. Row berisi unit_id ULID distinct, conversion_ratio
+decimal string, optional barcode nullable dan flag boolean jual/beli. ULID
+input dinormalisasi lowercase; barcode '0' tidak diubah menjadi null. SKU dan
+barcode unik termasuk data terhapus; barcode payload distinct case-insensitive.
+Action memvalidasi satuan aktif dan ratio; base row otomatis bila belum ada.
+Error request memakai field asal; error invariant memakai units; konflik unique
+saat persistence memakai inventory. Form UI nantinya wajib menampilkan error
+umum tersebut selain error per field. Edit/hapus/restore dan UI menunggu Increment 6.
 
 ## Contract Lintas Module
 
