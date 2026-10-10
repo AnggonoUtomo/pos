@@ -59,7 +59,7 @@ try {
         checks.push(`${label}: framing PASS`);
     };
     await login(page, 'qa-manager@example.test');
-    for (const [module, label, withSymbol] of (process.argv.includes('--guard-only') ? [] : [['warehouses', 'Gudang', false], ['units', 'Satuan', true]])) {
+    for (const [module, label, withSymbol] of (process.argv.includes('--guard-only') || process.argv.includes('--items-only') ? [] : [['warehouses', 'Gudang', false], ['units', 'Satuan', true]])) {
         await page.goto(`${url}/inventory/${module}`);
         await page.getByRole('heading', { name: label, exact: true }).waitFor();
         await checkFraming(`${module}-desktop-expanded`);
@@ -103,6 +103,71 @@ try {
         await page.setViewportSize({ width: 1440, height: 1000 });
         checks.push(`${module}: CRUD, restore, search, empty, keyboard PASS`);
     }
+    if (!process.argv.includes('--guard-only') && !process.argv.includes('--masters-only')) {
+        await page.goto(`${url}/inventory/items`);
+        await page.getByRole('heading', { name: 'Barang', exact: true }).waitFor();
+        await checkFraming('items-desktop-expanded');
+        await page.getByRole('button', { name: 'Toggle Sidebar', exact: true }).click();
+        await checkFraming('items-desktop-collapsed');
+        await page.getByRole('button', { name: 'Toggle Sidebar', exact: true }).click();
+        await page.keyboard.press('Control+Shift+N');
+        await page.getByLabel('SKU', { exact: true }).fill('QA-ITEM');
+        await page.getByLabel('Nama barang', { exact: true }).fill('QA Barang');
+        await page.getByLabel('Satuan dasar', { exact: true }).click();
+        await page.getByRole('option', { name: 'Buah (pcs)', exact: true }).click();
+        assert(await page.getByRole('textbox', { name: 'Rasio baris 1', exact: true }).getAttribute('readonly') !== null);
+        await page.getByRole('textbox', { name: 'Barcode baris 1', exact: true }).fill('0');
+        await page.getByRole('button', { name: 'Tambah satuan', exact: true }).click();
+        await page.getByRole('combobox', { name: 'Satuan baris 2', exact: true }).click();
+        await page.getByRole('option', { name: 'Dus (dus)', exact: true }).click();
+        await page.getByRole('textbox', { name: 'Rasio baris 2', exact: true }).fill('0.5');
+        await page.getByRole('textbox', { name: 'Barcode baris 2', exact: true }).fill('QA-ITEM-BOX');
+        await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
+        await page.getByText('Rasio minimal 1 karena base unit adalah satuan terkecil.', { exact: true }).waitFor();
+        await page.getByRole('textbox', { name: 'Rasio baris 2', exact: true }).fill('12');
+        await page.keyboard.press('Control+Enter');
+        await settle();
+        await page.getByRole('button', { name: 'Edit QA Barang', exact: true }).click();
+        assert(await page.getByLabel('Satuan dasar', { exact: true }).isDisabled());
+        const ratioIndex = (await page.getByRole('textbox', { name: 'Barcode baris 1', exact: true }).inputValue()) === 'QA-ITEM-BOX' ? 1 : 2;
+        const baseIndex = ratioIndex === 1 ? 2 : 1;
+        assert.equal(await page.getByRole('textbox', { name: `Barcode baris ${baseIndex}`, exact: true }).inputValue(), '0');
+        await page.getByLabel('Nama barang', { exact: true }).fill('QA Barang Diubah');
+        await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).fill('24.000001');
+        await page.getByRole('checkbox', { name: `Satuan jual baris ${ratioIndex}`, exact: true }).uncheck();
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await checkFraming('items-form-tablet-landscape');
+        await page.setViewportSize({ width: 768, height: 1024 });
+        await checkFraming('items-form-tablet-portrait');
+        await page.setViewportSize({ width: 1440, height: 1000 });
+        await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
+        await settle();
+        await page.getByRole('button', { name: 'Edit QA Barang Diubah', exact: true }).click();
+        assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).inputValue(), '24.000001');
+        assert.equal(await page.getByRole('checkbox', { name: `Satuan jual baris ${ratioIndex}`, exact: true }).isChecked(), false);
+        await page.keyboard.press('Escape');
+        await page.getByRole('button', { name: 'Hapus QA Barang Diubah', exact: true }).click();
+        await page.getByRole('dialog').getByRole('button', { name: 'Hapus', exact: true }).click();
+        await settle();
+        await page.getByRole('button', { name: 'Terhapus', exact: true }).click();
+        await page.getByRole('button', { name: 'Pulihkan QA Barang Diubah', exact: true }).click();
+        await page.getByRole('dialog').getByRole('button', { name: 'Pulihkan', exact: true }).click();
+        await settle();
+        await page.getByRole('button', { name: 'Data', exact: true }).click();
+        await page.getByRole('textbox', { name: 'Cari barang', exact: true }).fill('QA-ITEM-BOX');
+        await page.getByRole('button', { name: 'Cari', exact: true }).click();
+        await page.waitForURL((current) => current.searchParams.get('search') === 'QA-ITEM-BOX');
+        await page.waitForFunction(() => document.querySelectorAll('tbody tr').length === 1);
+        await page.getByRole('button', { name: 'Edit QA Barang Diubah', exact: true }).waitFor();
+        assert.equal(await page.locator('tbody tr').count(), 1);
+        await page.goto(`${url}/inventory/items`);
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await checkFraming('items-tablet-landscape');
+        await page.setViewportSize({ width: 768, height: 1024 });
+        await checkFraming('items-tablet-portrait');
+        await page.setViewportSize({ width: 1440, height: 1000 });
+        checks.push('Items: CRUD/restore, barcode 0/search, exact ratio, flags, base locked, invalid ratio PASS');
+    }
     await page.goto(`${url}/inventory/units`);
     await page.getByRole('button', { name: 'Hapus Buah', exact: true }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Hapus', exact: true }).click();
@@ -120,10 +185,27 @@ try {
     await page.getByRole('dialog').getByRole('button', { name: /Gudang/ }).click();
     await page.waitForURL('**/inventory/warehouses');
     checks.push('Command palette navigation PASS');
+    if (!process.argv.includes('--guard-only') && !process.argv.includes('--masters-only')) {
+        await page.getByRole('button', { name: 'Tema', exact: true }).click();
+        await page.getByRole('menuitem', { name: 'Dark', exact: true }).click();
+        for (const module of ['warehouses', 'units', 'items']) {
+            await page.goto(`${url}/inventory/${module}`);
+            await page.locator('html.dark').waitFor();
+            await checkFraming(`${module}-desktop-dark`);
+        }
+        await page.getByRole('button', { name: 'Tema', exact: true }).click();
+        await page.getByRole('button', { name: 'Clean Default', exact: true }).click();
+        await page.keyboard.press('Escape');
+        await page.locator('html.dark[data-theme="clean"]').waitFor();
+        await checkFraming('items-desktop-dark-clean');
+        checks.push('Dark/clean theme integration tanpa perubahan CSS PASS');
+    }
     const readonly = await browser.newContext({ viewport: { width: 1024, height: 768 } });
     const viewer = await readonly.newPage();
+    viewer.on('pageerror', (error) => failures.push(error.message));
+    viewer.on('console', (message) => { if (message.type() === 'error' || message.type() === 'warning') failures.push(message.text()); });
     await login(viewer, 'qa-viewer@example.test');
-    for (const module of ['warehouses', 'units']) {
+    for (const module of (process.argv.includes('--masters-only') || process.argv.includes('--guard-only') ? ['warehouses', 'units'] : ['warehouses', 'units', 'items'])) {
         await viewer.goto(`${url}/inventory/${module}`);
         assert.equal(await viewer.getByRole('button', { name: /^Tambah / }).count(), 0);
         assert.equal(await viewer.getByRole('button', { name: /^(Edit|Hapus) / }).count(), 0);

@@ -161,6 +161,15 @@ class InventoryCrudTest extends TestCase
         $this->assertSame($before, Activity::count());
     }
 
+    public function test_item_update_rejects_case_variant_duplicate_barcodes(): void
+    {
+        [$id, $base, $box] = $this->makeItem();
+        $this->putJson("/inventory/items/{$id}", ['sku' => 'QA', 'name' => 'Barang', 'base_unit_id' => $base, 'is_active' => true,
+            'units' => [['unit_id' => $base, 'conversion_ratio' => '1', 'barcode' => 'SAME'],
+                ['unit_id' => $box, 'conversion_ratio' => '12', 'barcode' => 'same']]])
+            ->assertUnprocessable()->assertJsonValidationErrors(['units.0.barcode', 'units.1.barcode']);
+    }
+
     private function makeItem(): array
     {
         $base = Unit::create(['code' => 'PCS', 'name' => 'Buah', 'symbol' => 'pcs'])->id;

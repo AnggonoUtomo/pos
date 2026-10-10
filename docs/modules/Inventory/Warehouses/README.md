@@ -4,8 +4,8 @@
 
 Active: fondasi backend selesai dan terverifikasi pada
 [Increment 2 Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).
-Endpoint internal data/store tersedia sejak Increment 5A. UI CRUD dan integrasi
-POS belum tersedia.
+Endpoint internal data/store tersedia sejak Increment 5A. CRUD admin terverifikasi
+desktop/tablet pada Increment 6. Integrasi POS belum tersedia.
 
 ## Tujuan Dan Boundary
 
@@ -47,6 +47,6 @@ php artisan db:seed --class="App\Modules\Inventory\Warehouses\Database\Seeders\W
 php artisan test --filter=Warehouses
 ```
 
-UI CRUD lengkap dan pemilihan gudang POS masih menunggu increment berikutnya.
+UI CRUD lengkap tersedia; pemilihan gudang POS menunggu transaksi nyata.
 Detail ada pada [specification](specification.md), [plan](plan.md),
 dan [tasks](tasks.md).

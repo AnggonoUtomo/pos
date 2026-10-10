@@ -10,6 +10,13 @@ use LogicException;
 
 class EloquentUnitLookup implements UnitLookup
 {
+    public function listActive(): array
+    {
+        return Unit::query()->where('is_active', true)->orderBy('code')->orderBy('id')
+            ->limit(1000)->get(['id', 'code', 'name', 'symbol'])
+            ->map(fn (Unit $unit): UnitData => $this->toData($unit))->all();
+    }
+
     public function findActiveById(string $id, bool $lock = false): ?UnitData
     {
         if ($lock && DB::transactionLevel() === 0) {

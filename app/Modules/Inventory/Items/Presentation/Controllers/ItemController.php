@@ -8,6 +8,7 @@ use App\Modules\Inventory\Items\Application\Actions\ManageItem;
 use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Application\DTOs\ItemUnitData;
 use App\Modules\Inventory\Items\Application\Queries\ListItems;
+use App\Modules\Inventory\Items\Presentation\Requests\ListItemsRequest;
 use App\Modules\Inventory\Items\Presentation\Requests\StoreItemRequest;
 use App\Modules\Inventory\Items\Presentation\Requests\UpdateItemRequest;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -17,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 use InvalidArgumentException;
 
 class ItemController extends Controller implements HasMiddleware
@@ -24,7 +27,7 @@ class ItemController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('can:inventory.view', only: ['data']),
+            new Middleware('can:inventory.view', only: ['data', 'index']),
             new Middleware('can:inventory.manage', only: ['store', 'update', 'destroy', 'restore']),
         ];
     }
@@ -34,6 +37,16 @@ class ItemController extends Controller implements HasMiddleware
         $input = $request->validate(['page' => ['sometimes', 'integer', 'min:1', 'max:2147483647']]);
 
         return response()->json($query->handle((int) ($input['page'] ?? 1)));
+    }
+
+    public function index(ListItemsRequest $request, ListItems $query): Response
+    {
+        $filters = $request->filters();
+
+        return Inertia::render('inventory/items/index', [
+            'records' => $query->handle((int) $request->validated('page', 1), $filters),
+            'filters' => $filters, 'unitOptions' => $query->unitOptions(),
+        ]);
     }
 
     public function update(UpdateItemRequest $request, string $id, ManageItem $action): JsonResponse|RedirectResponse

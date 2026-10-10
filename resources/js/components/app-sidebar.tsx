@@ -53,11 +53,10 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Barang',
-                url: '',
+                url: '/inventory/items',
                 icon: Package,
-                badge: 'Segera',
+                badge: 'Aktif',
                 badgeTone: 'emerald',
-                comingSoon: true,
                 permission: 'inventory.view',
             },
             {

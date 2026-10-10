@@ -5,7 +5,7 @@
 Active: fondasi backend selesai dan terverifikasi pada Increment 3
 [Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).
 Consumer Items memakai lookup public sejak Increment 4. Endpoint internal
-data/store tersedia sejak Increment 5A; UI CRUD belum tersedia.
+data/store tersedia sejak Increment 5A; UI CRUD desktop/tablet tersedia pada Increment 6.
 
 ## Tujuan Dan Boundary
 
@@ -16,7 +16,8 @@ Unit yang sama dapat dipakai banyak barang dengan ratio berbeda.
 ## Public Boundary
 
 `Application/Contracts/UnitLookup` menyediakan `findActiveById(id, lock)` dan
-`findActiveByCode(code)`, dengan hasil `Application/DTOs/UnitData` atau null.
+`findActiveByCode(code)`, dengan hasil `Application/DTOs/UnitData` atau null;
+`listActive()` menyediakan maksimal 1000 pilihan untuk ListItems.
 Lookup hanya mengembalikan satuan aktif yang tidak dihapus. Lock memerlukan
 transaction pada connection default bersama; dipakai CreateItem untuk mutation.
 Model Infrastructure tetap privat. Tidak ada event publik. Route data/store
@@ -47,5 +48,7 @@ php artisan db:seed --class="App\Modules\Inventory\Units\Database\Seeders\UnitsD
 php artisan test --filter=Units
 ```
 
-UI CRUD lengkap menunggu Increment 6. Detail tersedia pada
+ManageUnit memanggil public ItemUnitUsage untuk menolak hapus/nonaktif satuan
+terpakai, termasuk referensi terhapus. UI CRUD terverifikasi pada Increment 6.
+Detail tersedia pada
 [specification](specification.md), [plan](plan.md), dan [tasks](tasks.md).

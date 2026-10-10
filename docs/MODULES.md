@@ -17,9 +17,9 @@ Status yang digunakan:
 | Platform | ModuleRuntime | Discovery, bootstrap, dan scaffolding module; source saat ini masih tersebar pada command/framework app | Laravel application container | Pending Validation |
 | Platform | Identity | Role, permission, shared auth permission, user access baseline | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
 | Platform | CompanySettings | Identitas perusahaan tunggal, preference operasional, format nomor | Identity | Planned |
-| Inventory | Units | Fondasi master satuan; base unit/konversi dimiliki Items; UI belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Inventory | Items | Fondasi barang, SKU, barcode, base unit, multi satuan dan konversi per barang; UI dan kategori/brand ditunda | Units (UnitLookup), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Inventory | Warehouses | Fondasi master gudang; pemilihan transaksi dan UI belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Inventory | Units | Master satuan dan UI CRUD; base unit/konversi dimiliki Items; guard satuan terpakai | Items (ItemUnitUsage read contract), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Inventory | Items | Barang, SKU, barcode, base unit immutable, multi satuan/konversi dan UI CRUD; kategori/brand ditunda | Units (UnitLookup), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Inventory | Warehouses | Master gudang dan UI CRUD; pemilihan transaksi belum tersedia | Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Stock | Stock movement, FIFO layer, no-negative-stock invariant | Items, Warehouses | Planned |
 | Sales | Parties | Customer, customer level, harga level pelanggan | Identity | Planned |
 | Sales | POS | Transaksi POS fullscreen, cart, pricing, discount, tax, payment | Parties, Items, Warehouses, Stock, Finance Payments | Planned |

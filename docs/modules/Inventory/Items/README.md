@@ -4,7 +4,8 @@
 
 Active: fondasi backend Increment 4A/4B selesai dan terverifikasi pada
 9 Oktober 2026; endpoint internal data/store tersedia sejak Increment 5B pada
-10 Oktober 2026. UI CRUD lengkap dan integrasi transaksi belum tersedia.
+10 Oktober 2026. CRUD backend dan UI desktop/tablet tersedia pada Increment 6;
+integrasi transaksi belum tersedia.
 
 ## Tujuan Dan Boundary
 
@@ -16,15 +17,16 @@ payment, kategori/brand, atau transaksi POS pada increment ini.
 
 CreateItem adalah use case internal. Data input berada di Application/DTOs;
 port persistence berada di Application/Contracts. Model Eloquent tetap privat.
-Consumer lintas module Items belum tersedia, sehingga tidak membuat event atau
-contract publik transaksi hipotetis. Items memakai UnitLookup dan UnitData dari
+ItemUnitUsage memiliki consumer ManageUnit untuk guard satuan terpakai, termasuk
+referensi terhapus. Tidak membuat event/contract transaksi hipotetis. Items memakai UnitLookup dan UnitData dari
 public boundary Units untuk membaca satuan aktif, bukan model Eloquent Units.
 
 Domain ConversionRatio bebas framework dan memakai brick/math yang sudah
 tersedia melalui dependency Laravel. ServiceProvider menghubungkan repository
 ke adapter serta memuat migration/route. Route data/store memanggil ListItems
 dan CreateItem melalui Presentation; HasMiddleware memakai can per action.
-UI belum dibuat; response/validation contract tersedia pada docs/API.md.
+UI resources/js/pages/inventory/items memakai komponen lokal untuk tabel, form,
+dan editor konversi. Response/validation contract tersedia pada docs/API.md.
 
 ## Data, Permission, Dan Demo
 
@@ -46,4 +48,4 @@ php artisan test --filter="Items|UnitLookup"
 ```
 
 Detail tersedia pada [specification](specification.md), [plan](plan.md), dan
-[tasks](tasks.md). Work item global masih In Progress sampai UI Increment 6 selesai.
+[tasks](tasks.md). Work item global menunggu penyelesaian gap typecheck existing.

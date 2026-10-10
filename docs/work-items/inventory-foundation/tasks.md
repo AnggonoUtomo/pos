@@ -192,14 +192,14 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 
 ### 6C: Halaman Barang Multi Satuan
 
-- [ ] Tambahkan pilihan satuan melalui public UnitLookup dan halaman barang.
+- [x] Tambahkan pilihan satuan melalui public UnitLookup dan halaman barang.
   - Acceptance: list mencari SKU/nama/barcode; tampil base unit dan jumlah satuan.
   - Verification: HTTP/Inertia test lookup dan filter.
-- [ ] Implementasikan editor barang serta baris konversi/barcode jual/beli.
+- [x] Implementasikan editor barang serta baris konversi/barcode jual/beli.
   - Acceptance: rasio string exact, base unit 1 terkunci; field errors dan Sonner;
     tambah/hapus/pulihkan satuan tambahan; permission dan shortcut konsisten.
   - Verification: test invalid ratio/barcode, build dan QA browser CRUD.
-- [ ] Verifikasi dan commit 6C.
+- [x] Verifikasi dan commit 6C.
   - Acceptance: CRUD barang tidak mengubah stok/FIFO/harga.
   - Verification: save point Git selektif.
 
@@ -242,6 +242,18 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 - [ ] Risiko terbuka dicatat.
 
 ## Hasil Verifikasi
+
+6C pada 10 Oktober 2026: RED 2 test index barang dan 1 test barcode duplikat
+edit; GREEN regresi CRUD/pages/ItemsHttp/UnitLookup 36 test/341 assertion,
+kemudian UnitLookupTest 3 test/12 assertion termasuk limit pilihan 1000 PASS.
+InventoryPagesTest 6 test/126 assertion PASS; scoped ESLint, Pint dan build PASS.
+QA barang PASS: CRUD/restore, barcode '0'/pencarian, rasio exact 24.000001,
+flag jual/beli, base terkunci dan rasio invalid; screenshot form/list desktop
+dan tablet. QA gabungan terakhir PASS dengan console kosong, 18 screenshot,
+dark default/clean, sidebar expanded/collapsed, palette dan viewer readonly.
+Artifact: storage/framework/testing/inventory-browser-6bd12c92d51efb51.
+Global typecheck tetap BLOCKED oleh error existing yang sama; Inventory tidak
+menambah error TypeScript. CSS/theme, stok/FIFO dan MySQL user tidak diubah.
 
 6B pada 10 Oktober 2026: InventoryPagesTest RED 4 test (GET index belum ada),
 GREEN 4 test/82 assertion. Regresi CRUD/master/pages 28 test/364 assertion PASS.

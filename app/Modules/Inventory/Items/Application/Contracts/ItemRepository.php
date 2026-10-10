@@ -19,5 +19,5 @@ interface ItemRepository
     public function findIdBySku(string $sku): ?string;
 
     /** @return array{data: list<array<string, mixed>>, meta: array<string, int>} */
-    public function paginate(int $page): array;
+    public function paginate(int $page, array $filters = []): array;
 }

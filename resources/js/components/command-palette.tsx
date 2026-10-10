@@ -40,7 +40,14 @@ const commandItems = [
         tone: 'text-slate-600 dark:text-slate-300',
         disabled: true,
     },
-    { title: 'Barang', description: 'Barang dan konversi satuan', icon: Package, tone: 'text-teal-600 dark:text-teal-300', disabled: true },
+    {
+        title: 'Barang',
+        description: 'Barang dan konversi satuan',
+        url: '/inventory/items',
+        permission: 'inventory.view',
+        icon: Package,
+        tone: 'text-teal-600 dark:text-teal-300',
+    },
     {
         title: 'Gudang',
         description: 'Master gudang',

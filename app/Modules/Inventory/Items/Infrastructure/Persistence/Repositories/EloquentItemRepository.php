@@ -54,11 +54,22 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
             || ItemUnit::withTrashed()->where('unit_id', $unitId)->exists();
     }
 
-    public function paginate(int $page): array
+    public function paginate(int $page, array $filters = []): array
     {
-        $paginator = Item::query()->with(['units' => fn ($query) => $query
+        $query = ! empty($filters['trashed']) ? Item::onlyTrashed() : Item::query();
+        $query->when($filters['search'] ?? '', fn ($query, $search) => $query->where(fn ($row) => $row
+            ->where('sku', 'like', '%'.$search.'%')->orWhere('name', 'like', '%'.$search.'%')
+            ->orWhereHas('units', fn ($unit) => $unit->where('barcode', 'like', '%'.$search.'%'))));
+        if (in_array($filters['status'] ?? 'all', ['active', 'inactive'], true)) {
+            $query->where('is_active', $filters['status'] === 'active');
+        }
+        $columns = ['id', 'sku', 'name', 'base_unit_id', 'is_active'];
+        if ($filters !== []) {
+            $columns[] = 'deleted_at';
+        }
+        $paginator = $query->with(['units' => fn ($query) => $query
             ->select(['id', 'item_id', 'unit_id', 'conversion_ratio', 'barcode', 'is_sale_unit', 'is_purchase_unit'])->orderBy('id')])
-            ->orderBy('sku')->orderBy('id')->paginate(25, ['id', 'sku', 'name', 'base_unit_id', 'is_active'], page: $page);
+            ->orderBy('sku')->orderBy('id')->paginate(25, $columns, page: $page);
 
         return [
             'data' => $paginator->getCollection()->toArray(),

@@ -31,6 +31,7 @@ export function MasterWorkspace({
     meta,
     canManage,
     onCreate,
+    searchPlaceholder = 'Cari kode atau nama...',
     children,
 }: {
     title: string;
@@ -39,6 +40,7 @@ export function MasterWorkspace({
     meta: MasterRecords<unknown>['meta'];
     canManage: boolean;
     onCreate: () => void;
+    searchPlaceholder?: string;
     children: ReactNode;
 }) {
     const [search, setSearch] = useState(filters.search);
@@ -126,7 +128,7 @@ export function MasterWorkspace({
                         <Input
                             ref={searchRef}
                             aria-label={`Cari ${title.toLowerCase()}`}
-                            placeholder="Cari kode atau nama..."
+                            placeholder={searchPlaceholder}
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                             maxLength={150}

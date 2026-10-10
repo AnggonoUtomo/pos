@@ -76,7 +76,7 @@ input dinormalisasi lowercase; barcode '0' tidak diubah menjadi null. SKU dan
 barcode unik termasuk data terhapus; barcode payload distinct case-insensitive.
 Action memvalidasi satuan aktif dan ratio; base row otomatis bila belum ada.
 Error request memakai field asal; error invariant memakai units; konflik unique
-saat persistence memakai inventory. Form UI nantinya wajib menampilkan error
+saat persistence memakai inventory. Form UI menampilkan error
 umum tersebut selain error per field.
 
 Update/delete/restore tersedia pada setiap module inventory:
@@ -97,12 +97,16 @@ Semua mutation/audit atomic. Base unit tidak dapat diganti. Satuan terpakai
 Konversi yang dihapus mempertahankan barcode; tambah ulang unit yang sama dapat
 memulihkan row miliknya. Konflik DB menghasilkan 422 tanpa detail SQL.
 
-Halaman GET /inventory/warehouses dan /inventory/units tersedia dengan route
+Halaman GET /inventory/warehouses, /inventory/units dan /inventory/items tersedia dengan route
 inventory.{module}.index, permission inventory.view, response Inertia. Props
 records berisi pagination dan deleted_at, filters berisi search/status/trashed.
 Filter search maksimum 150 karakter, status all/active/inactive, trashed boolean
 (query 0/1); tab terhapus hanya menampilkan row trashed. Endpoint /data lama
 tetap tanpa filter/field tambahan untuk menjaga consumer existing.
+Barang juga dapat dicari lewat barcode relasi aktif. Props unitOptions berasal
+dari UnitLookup::listActive, maksimal 1000 satuan aktif, urut code/id. Form
+menyimpan rasio sebagai string, bukan float. Base unit terkunci saat edit.
+Barcode duplicate case-insensitive pada payload update ditolak sebelum mutation.
 
 ## Contract Lintas Module
 
@@ -123,6 +127,7 @@ Items. Model Infrastructure Units bersifat privat.
 | --- | --- | --- | --- |
 | UnitLookup | findActiveById(string id, bool lock = false) | UnitData atau null | Hanya satuan aktif, belum dihapus; lock wajib di dalam transaction connection default bersama |
 | UnitLookup | findActiveByCode(string code) | UnitData atau null | Lookup prasyarat seeder, tanpa membuat/mengubah Units |
+| UnitLookup | listActive() | list UnitData | Consumer ListItems untuk pilihan form, aktif/non-trashed, urut code/id, maksimum 1000 |
 
 UnitData memiliki id, code, name, dan symbol. Contract tersedia di
 `app/Modules/Inventory/Units/Application/Contracts/UnitLookup.php`; DTO berada

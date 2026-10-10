@@ -4,8 +4,9 @@
 
 Fondasi backend Implemented pada 9 Oktober 2026: create barang beserta satuan, audit,
 permission, demo relasional, dan konversi kuantitas ke base unit.
-Endpoint data/store internal tersedia pada Increment 5B. Belum ada UI CRUD
-lengkap, perubahan base unit, saldo stok, FIFO, atau harga.
+Endpoint data/store internal tersedia pada Increment 5B; CRUD backend dan UI
+admin tersedia pada Increment 6. Base unit immutable; saldo stok, FIFO dan harga
+belum tersedia.
 
 ## Model Data
 
@@ -98,4 +99,8 @@ ItemUnitUsage mempublikasikan pemeriksaan referensi (termasuk trashed) untuk gua
 Units. Sebelum consumer transaksi nyata dibuat, perubahan rasio/penghapusan
 barang/satuan wajib mendapat guard transaksi dan snapshot historis.
 Category/brand ditunda untuk menjaga scope foundation; pricing level berada
-pada pekerjaan Sales berikutnya. UI dan QA desktop/tablet menunggu Increment 6.
+pada pekerjaan Sales berikutnya. UI tersedia pada resources/js/pages/inventory/items:
+list/filter/barcode search, pagination, dialog multi-satuan dan lifecycle,
+permission UX, Sonner, dropdown shortcut. Pilihan satuan memakai listActive
+publik (maksimum 1000); pencarian remote diperlukan bila master melebihi batas
+tersebut. QA desktop/tablet dan dark theme lulus melalui fallback Playwright.
