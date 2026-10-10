@@ -117,11 +117,11 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
 
 ### 5A: Endpoint Gudang Dan Satuan
 
-- [ ] Tulis test HTTP permission dan validation terlebih dahulu.
+- [x] Tulis test HTTP permission dan validation terlebih dahulu.
   - Acceptance: guest/tanpa permission ditolak; view tidak dapat store; manage
     dapat store; super-system memakai Gate existing.
   - Verification: focused feature test RED sebelum implementasi.
-- [ ] Implementasikan read/create melalui Application dan adapter masing-masing.
+- [x] Implementasikan read/create melalui Application dan adapter masing-masing.
   - Acceptance: pagination terbatas; soft-deleted tersembunyi; ULID; allowlist;
     request normalisasi; unique termasuk deleted; audit actor dalam transaction.
   - Verification: feature test response, validasi, actor/subject dan rollback.
@@ -175,6 +175,11 @@ mutation stok/FIFO belum tersedia; Increment 5-6 tetap pending.
 - [ ] Risiko terbuka dicatat.
 
 ## Hasil Verifikasi
+
+5A diverifikasi pada 10 Oktober 2026: InventoryMasterHttpTest 13 test/188
+assertion PASS; full suite 113 test/489 assertion PASS; Pint source/test terkait
+PASS; route:list -v menunjukkan 4 route Inventory dengan can per action.
+Tidak ada migration atau perubahan UI; QA frontend/browser SKIPPED.
 
 | Command | Hasil | Catatan |
 | --- | --- | --- |

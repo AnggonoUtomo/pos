@@ -36,6 +36,32 @@ Route web yang mengubah data harus:
 - mengembalikan Inertia response, redirect, atau resource sesuai kebutuhan UI;
 - mencatat activity log pada mutation penting bila relevan.
 
+### Endpoint Internal Inventory
+
+Endpoint berikut memakai session web, auth, verified, dan CSRF Laravel; bukan
+API eksternal/token. Middleware verified mengikuti kemampuan User existing,
+yang belum mengimplementasikan MustVerifyEmail. GET selalu JSON; POST JSON
+menghasilkan 201 `{id}`, POST web redirect kembali dengan flash success.
+
+| Method | Path | Nama route | Permission |
+| --- | --- | --- | --- |
+| GET | /inventory/warehouses/data | inventory.warehouses.data | inventory.view |
+| POST | /inventory/warehouses | inventory.warehouses.store | inventory.manage |
+| GET | /inventory/units/data | inventory.units.data | inventory.view |
+| POST | /inventory/units | inventory.units.store | inventory.manage |
+
+Response daftar: `{data, meta}`; meta current_page/last_page/per_page/total,
+25 record per page, page integer 1..2147483647, order code lalu id. Master
+nonaktif terlihat untuk admin, soft-deleted tidak dikembalikan. Field gudang:
+id/code/name/is_active; satuan menambah symbol. Field mutation: code/name,
+symbol untuk satuan, optional is_active boolean default true. Input text di-trim;
+field lain tidak dipersist. Code unik termasuk soft-deleted row.
+
+Guest JSON 401, web redirect login; tanpa permission 403; invalid/konflik unique
+422 validation errors JSON atau web session errors. Konflik persistence unique
+dipetakan pada code; SQL/error infrastruktur tidak disertakan. Super-system
+guard web bypass permission Gate sesuai ADR-010, bukan validasi/invariant.
+
 ## Contract Lintas Module
 
 Contract lintas module tidak didokumentasikan sebagai HTTP API kecuali benar-

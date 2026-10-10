@@ -3,13 +3,16 @@
 namespace App\Modules\Inventory\Units;
 
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
+use App\Modules\Inventory\Units\Application\Contracts\UnitRepository;
 use App\Modules\Inventory\Units\Infrastructure\Persistence\Repositories\EloquentUnitLookup;
+use App\Modules\Inventory\Units\Infrastructure\Persistence\Repositories\EloquentUnitRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(UnitRepository::class, EloquentUnitRepository::class);
         $this->app->bind(UnitLookup::class, EloquentUnitLookup::class);
     }
 

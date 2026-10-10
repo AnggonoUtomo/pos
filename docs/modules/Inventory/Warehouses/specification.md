@@ -3,7 +3,7 @@
 ## Status
 
 Fondasi backend Implemented dan terverifikasi pada 9 Oktober 2026;
-CRUD aplikasi belum tersedia.
+Endpoint daftar/create internal tersedia sejak Increment 5A; CRUD UI belum tersedia.
 
 ## Scope Dan Arsitektur
 
@@ -12,9 +12,10 @@ adalah `app/Modules/Inventory/Warehouses/ServiceProvider.php`, ditemukan oleh
 loader existing. Migration, route scaffold, dan seeder berada di dalam module.
 Adapter persistence menggunakan Eloquent di Infrastructure.
 
-Belum ada Application action, port, atau Domain karena belum ada use case
-operasional yang membutuhkannya. Seeder adalah adapter provisioning. CRUD
-berikutnya wajib melalui Application dan transaction boundary untuk data/audit.
+CreateWarehouse dan ListWarehouses memakai WarehouseRepository dan DTOs di
+Application. Adapter Eloquent dibinding oleh provider. Domain belum diperlukan
+untuk CRUD sederhana. Create memakai transaction boundary untuk data/audit;
+controller hanya memanggil use case, bukan persistence.
 
 ## Data
 
@@ -27,8 +28,8 @@ berikutnya wajib melalui Application dan transaction boundary untuk data/audit.
 | `created_at`, `updated_at` | Timestamp Laravel |
 | `deleted_at` | Soft delete master |
 
-Kode diisi eksplisit, tidak memakai penomoran otomatis. Validasi input dan
-normalisasi kode akan ditetapkan saat form CRUD dibuat. Hanya gudang aktif
+Kode diisi eksplisit, tidak memakai penomoran otomatis. Code/name di-trim dan
+divalidasi panjang/wajib; kode tetap direservasi setelah soft delete. Hanya gudang aktif
 yang tidak dihapus yang boleh dipilih saat integrasi transaksi nanti.
 
 ## Seeder Demo
@@ -42,7 +43,8 @@ Permission disiapkan terpisah dan dapat di-seed tanpa memasukkan demo data.
 ## Authorization Dan Audit
 
 - Permission awal `inventory.view` dan `inventory.manage`, guard `web`.
-- Belum ada endpoint; permission middleware akan diuji ketika CRUD tersedia.
+- GET inventory/warehouses/data memakai can:inventory.view; POST inventory/warehouses
+  memakai can:inventory.manage melalui HasMiddleware. Response/QA ada di API.md.
 - Perubahan model create/update/delete/restore memakai Spatie Activitylog.
 - Prasyarat kompatibilitas: `activity_log.subject_id` existing bertipe bigint.
   Migration global memperlebarnya menjadi varchar(26) agar subject numerik lama

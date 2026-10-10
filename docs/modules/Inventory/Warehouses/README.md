@@ -4,7 +4,8 @@
 
 Active: fondasi backend selesai dan terverifikasi pada
 [Increment 2 Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).
-Endpoint HTTP, UI CRUD, dan integrasi POS belum tersedia.
+Endpoint internal data/store tersedia sejak Increment 5A. UI CRUD dan integrasi
+POS belum tersedia.
 
 ## Tujuan Dan Boundary
 
@@ -13,9 +14,10 @@ saldo stok, FIFO, lokasi rak, transfer, atau transaksi POS.
 
 ## Public Boundary
 
-Belum ada contract, DTOs, event publik, atau endpoint HTTP. `Routes/web.php`
-disiapkan oleh generator; endpoint dibuat bersama use case dan consumer UI.
-Model Infrastructure bersifat privat module.
+WarehouseRepository/CreateWarehouseData dipakai oleh CreateWarehouse dan
+ListWarehouses di dalam module. Route data/store memanggil controller pada
+Presentation, dengan permission per action. Tidak ada contract/event lintas
+module tanpa consumer. Model Infrastructure bersifat privat module.
 
 ## Dependency
 
@@ -45,6 +47,6 @@ php artisan db:seed --class="App\Modules\Inventory\Warehouses\Database\Seeders\W
 php artisan test --filter=Warehouses
 ```
 
-UI CRUD, authorization HTTP, dan pemilihan gudang POS masih menunggu increment
-berikutnya. Detail ada pada [specification](specification.md), [plan](plan.md),
+UI CRUD lengkap dan pemilihan gudang POS masih menunggu increment berikutnya.
+Detail ada pada [specification](specification.md), [plan](plan.md),
 dan [tasks](tasks.md).

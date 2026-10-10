@@ -11,7 +11,8 @@ tanpa saldo stok, konversi global, harga, barcode barang, atau transaksi POS.
 - Migration, seeder, route scaffold, dan model berada di dalam module.
 - Eloquent model Unit berada pada Infrastructure/Persistence/Models.
 - Seeder menjadi adapter provisioning dengan database transaction.
-- Tidak ada Domain atau Application action tanpa business rule nyata.
+- Tidak ada Domain tanpa business rule murni. CreateUnit/ListUnits memakai
+  UnitRepository/CreateUnitData; adapter Eloquent dibinding oleh provider.
 - UnitLookup dan UnitData menjadi public boundary dengan consumer CreateItem.
   Adapter Eloquent menyaring status aktif/soft delete; lockForUpdate hanya di
   dalam transaction connection default bersama. Base unit, konversi, dan aturan
@@ -30,7 +31,8 @@ tanpa saldo stok, konversi global, harga, barcode barang, atau transaksi POS.
 | `deleted_at` | Soft delete master mutable |
 
 Tidak ada conversion_ratio atau is_base_unit pada schema. Kode diisi eksplisit;
-validasi/normalisasi request ditetapkan bersama CRUD. Satuan nonaktif/terhapus
+normalisasi code/name/symbol memakai trim, validasi wajib/panjang pada create.
+Satuan nonaktif/terhapus
 tidak boleh dipilih untuk relasi barang baru saat Items dibuat.
 
 ## Seeder Demo
@@ -53,7 +55,8 @@ Access seeder terpisah, tidak mengubah akun/role/permission user.
 ## Authorization Dan Audit
 
 - Permission inventory.view dan inventory.manage, guard web.
-- Belum ada endpoint; backend middleware per action diuji bersama CRUD nanti.
+- Endpoint data/store memakai HasMiddleware, can:inventory.view/manage per
+  action, auth dan verified mengikuti starter kit. Detail response ada di API.md.
 - Spatie Activitylog mencatat create/update/delete/restore dan actor jika ada.
 - Atribut audit hanya code, name, symbol, is_active, deleted_at.
 - Update tanpa perubahan tidak menambah log; subject audit memakai ULID dengan
