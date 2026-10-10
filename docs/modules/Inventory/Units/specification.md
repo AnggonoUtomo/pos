@@ -68,8 +68,12 @@ Access seeder terpisah, tidak mengubah akun/role/permission user.
 
 Belum ada UI baru. Increment 6 wajib memakai Sonner, dropdown shortcut,
 permission UX, dan QA desktop/tablet. Integrasi POS dan FIFO tidak tersentuh.
-Saat CRUD mutation dilengkapi, aturan perubahan/nonaktif/soft delete satuan yang sudah
-direferensikan perlu ditetapkan; identitas dan konversi historis tidak boleh rusak.
+ManageUnit menjalankan update/delete/restore dalam transaction. Update nonaktif
+dan delete menolak satuan yang pernah dirujuk barang melalui public
+Items/Application/Contracts/ItemUnitUsage::isReferenced. Referensi mencakup
+item dan item_units soft-deleted. Lock master satuan konsisten dengan create/edit
+Items untuk mencegah satuan dinonaktifkan saat relasi baru dibuat. Tidak ada
+dependency ke model privat Items. Keputusan user: 10 Oktober 2026.
 
 ## Acceptance Criteria
 

@@ -89,8 +89,13 @@ Access seeder menyiapkan permission tanpa mengubah role/akses akun.
 - [x] ULID, unique/FK, soft delete, permission seed, dan demo idempotent terverifikasi.
 - [x] Regresi, migration/status, route inspection, dan seed MySQL lulus.
 
-Perubahan base unit/rasio barang yang sudah memiliki transaksi belum diizinkan
-melalui use case pada tahap ini. Guard perubahan/deaktivasi master yang sudah
-direferensikan dan snapshot transaksi harus ditambahkan bersama consumer nyata.
+ManageItem menyediakan update/delete/restore atomic. Base unit immutable sejak
+create sesuai keputusan user 10 Oktober 2026. Editor master dapat mengubah rasio,
+barcode dan flag satuan tambahan; relasi yang dikeluarkan di-soft-delete dan
+ditambahkan kembali memakai ID lama. Delete item hanya menghapus lunak master,
+tidak mengubah lifecycle relasi; restore mempertahankan konfigurasi satuan.
+ItemUnitUsage mempublikasikan pemeriksaan referensi (termasuk trashed) untuk guard
+Units. Sebelum consumer transaksi nyata dibuat, perubahan rasio/penghapusan
+barang/satuan wajib mendapat guard transaksi dan snapshot historis.
 Category/brand ditunda untuk menjaga scope foundation; pricing level berada
 pada pekerjaan Sales berikutnya. UI dan QA desktop/tablet menunggu Increment 6.

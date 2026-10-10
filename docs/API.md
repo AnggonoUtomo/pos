@@ -77,7 +77,25 @@ barcode unik termasuk data terhapus; barcode payload distinct case-insensitive.
 Action memvalidasi satuan aktif dan ratio; base row otomatis bila belum ada.
 Error request memakai field asal; error invariant memakai units; konflik unique
 saat persistence memakai inventory. Form UI nantinya wajib menampilkan error
-umum tersebut selain error per field. Edit/hapus/restore dan UI menunggu Increment 6.
+umum tersebut selain error per field.
+
+Update/delete/restore tersedia pada setiap module inventory:
+
+| Method | Path suffix | Nama route suffix | Permission |
+| --- | --- | --- | --- |
+| PUT | /{id} | .update | inventory.manage |
+| DELETE | /{id} | .destroy | inventory.manage |
+| POST | /{id}/restore | .restore | inventory.manage |
+
+Prefix mengikuti /inventory/{warehouses|units|items} dan inventory.{module}.
+ID route wajib ULID. Mutation JSON sukses 200 `{id}` atau web redirect dengan
+flash success. Update wajib is_active boolean dan field master lengkap; unique
+mengabaikan row sendiri saja, tetap mereservasi kode/barcode trashed. Update/delete
+row terhapus dan restore row non-terhapus menghasilkan 404 untuk payload valid.
+Semua mutation/audit atomic. Base unit tidak dapat diganti. Satuan terpakai
+(termasuk referensi trashed) menolak delete/nonaktif dengan error inventory.
+Konversi yang dihapus mempertahankan barcode; tambah ulang unit yang sama dapat
+memulihkan row miliknya. Konflik DB menghasilkan 422 tanpa detail SQL.
 
 ## Contract Lintas Module
 
@@ -103,3 +121,10 @@ UnitData memiliki id, code, name, dan symbol. Contract tersedia di
 `app/Modules/Inventory/Units/Application/Contracts/UnitLookup.php`; DTO berada
 di `Application/DTOs/UnitData.php`. Exception lock di luar transaction:
 LogicException. Boundary diuji pada UnitLookupTest dan feature test Items.
+
+### Inventory/Items
+
+ItemUnitUsage::isReferenced(string unitId): bool dipakai ManageUnit untuk guard
+delete/nonaktif. Adapter hanya membaca tabel Items miliknya; tidak ada mutation
+lintas module. Referensi items.base_unit_id dan item_units.unit_id mencakup row
+terhapus agar restore/histori tetap aman.

@@ -165,14 +165,14 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 
 ### 6A: CRUD Backend Dan Integritas Master
 
-- [ ] Tulis test gagal sebelum implementasi endpoint update/delete/restore.
+- [x] Tulis test gagal sebelum implementasi endpoint update/delete/restore.
   - Acceptance: permission per aksi, ULID, validation, soft delete dan audit.
   - Verification: focused test RED kemudian GREEN.
-- [ ] Implementasikan mutation melalui Application dan port module.
+- [x] Implementasikan mutation melalui Application dan port module.
   - Acceptance: transaction atomic; base unit immutable; referensi satuan aman;
     tidak ada model privat lintas module; uniqueness termasuk data terhapus.
   - Verification: focused test rollback, guard referensi dan lifecycle.
-- [ ] Verifikasi dan commit 6A.
+- [x] Verifikasi dan commit 6A.
   - Acceptance: test terkait, Pint, route inspection dan diff check lulus.
   - Verification: save point Git selektif.
 
@@ -242,6 +242,14 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 - [ ] Risiko terbuka dicatat.
 
 ## Hasil Verifikasi
+
+6A pada 10 Oktober 2026: RED 9 test karena endpoint belum tersedia; GREEN
+InventoryCrudTest 11 test/90 assertion. Regresi Inventory awal 100 test/579
+assertion PASS sebelum tambahan 2 test terakhir; focused test terakhir mencakup
+rollback persistence/audit dan ID invalid. Pint PASS, 15 route Inventory, diff
+check PASS. Belum ada perubahan schema/UI, sehingga QA browser 6A SKIPPED.
+Chrome DevTools MCP tidak tersedia pada daftar tool; fallback browser plugin
+juga tidak menemukan browser terhubung. QA UI akan mencoba fallback lokal.
 
 5A diverifikasi pada 10 Oktober 2026: InventoryMasterHttpTest 13 test/188
 assertion PASS; full suite 113 test/489 assertion PASS; Pint source/test terkait

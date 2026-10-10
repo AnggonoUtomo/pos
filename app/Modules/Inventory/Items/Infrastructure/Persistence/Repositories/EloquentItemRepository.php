@@ -3,11 +3,57 @@
 namespace App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Inventory\Items\Application\Contracts\ItemRepository;
+use App\Modules\Inventory\Items\Application\Contracts\ItemUnitUsage;
 use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
+use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemUnit;
 
-class EloquentItemRepository implements ItemRepository
+class EloquentItemRepository implements ItemRepository, ItemUnitUsage
 {
+    public function lock(string $id, bool $deleted = false): array
+    {
+        return ($deleted ? Item::onlyTrashed() : Item::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
+    }
+
+    public function update(string $id, CreateItemData $data): void
+    {
+        $item = Item::findOrFail($id);
+        $item->update(['sku' => $data->sku, 'name' => $data->name, 'is_active' => $data->isActive]);
+        $selected = [];
+        foreach ($data->units as $unit) {
+            $selected[] = $unit->unitId;
+            $relation = $item->units()->withTrashed()->firstOrNew(['unit_id' => $unit->unitId]);
+            $relation->fill([
+                'conversion_ratio' => $unit->conversionRatio, 'barcode' => $unit->barcode,
+                'is_sale_unit' => $unit->isSaleUnit, 'is_purchase_unit' => $unit->isPurchaseUnit,
+            ]);
+            if ($relation->exists && $relation->trashed()) {
+                $relation->restore();
+            } else {
+                $relation->save();
+            }
+        }
+        foreach ($item->units()->whereNotIn('unit_id', $selected)->get() as $relation) {
+            $relation->delete();
+        }
+    }
+
+    public function delete(string $id): void
+    {
+        Item::findOrFail($id)->delete();
+    }
+
+    public function restore(string $id): void
+    {
+        Item::onlyTrashed()->findOrFail($id)->restore();
+    }
+
+    public function isReferenced(string $unitId): bool
+    {
+        return Item::withTrashed()->where('base_unit_id', $unitId)->exists()
+            || ItemUnit::withTrashed()->where('unit_id', $unitId)->exists();
+    }
+
     public function paginate(int $page): array
     {
         $paginator = Item::query()->with(['units' => fn ($query) => $query

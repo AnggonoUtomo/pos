@@ -16,6 +16,17 @@ class CreateItem
 
     public function handle(CreateItemData $data): string
     {
+        $normalized = $this->normalize($data);
+
+        return DB::transaction(function () use ($normalized): string {
+            $this->lockUnits($normalized);
+
+            return $this->items->create($normalized);
+        });
+    }
+
+    public function normalize(CreateItemData $data): CreateItemData
+    {
         $sku = $this->text($data->sku, 64);
         $name = $this->text($data->name, 150);
         $units = [];
@@ -41,17 +52,17 @@ class CreateItem
         $units[$data->baseUnitId] ??= new ItemUnitData($data->baseUnitId, '1.000000');
         // Consistent lock order reduces deadlocks when items share multiple units.
         ksort($units);
-        $normalized = new CreateItemData($sku, $name, $data->baseUnitId, array_values($units), $data->isActive);
 
-        return DB::transaction(function () use ($normalized): string {
-            foreach ($normalized->units as $unit) {
-                if ($this->units->findActiveById($unit->unitId, lock: true) === null) {
-                    throw new InvalidArgumentException('Satuan harus tersedia, aktif, dan tidak dihapus.');
-                }
+        return new CreateItemData($sku, $name, $data->baseUnitId, array_values($units), $data->isActive);
+    }
+
+    public function lockUnits(CreateItemData $data): void
+    {
+        foreach ($data->units as $unit) {
+            if ($this->units->findActiveById($unit->unitId, lock: true) === null) {
+                throw new InvalidArgumentException('Satuan harus tersedia, aktif, dan tidak dihapus.');
             }
-
-            return $this->items->create($normalized);
-        });
+        }
     }
 
     private function text(string $value, int $maximum): string

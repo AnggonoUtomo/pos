@@ -8,6 +8,30 @@ use App\Modules\Inventory\Units\Infrastructure\Persistence\Models\Unit;
 
 class EloquentUnitRepository implements UnitRepository
 {
+    public function lock(string $id, bool $deleted = false): array
+    {
+        return ($deleted ? Unit::onlyTrashed() : Unit::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
+    }
+
+    public function update(string $id, CreateUnitData $data): void
+    {
+        Unit::findOrFail($id)->update([
+            'code' => $data->code, 'name' => $data->name,
+            'symbol' => $data->symbol,
+            'is_active' => $data->isActive,
+        ]);
+    }
+
+    public function delete(string $id): void
+    {
+        Unit::findOrFail($id)->delete();
+    }
+
+    public function restore(string $id): void
+    {
+        Unit::onlyTrashed()->findOrFail($id)->restore();
+    }
+
     public function create(CreateUnitData $data): string
     {
         return Unit::query()->create([
