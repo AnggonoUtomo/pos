@@ -28,7 +28,30 @@ minus.
 | 3 | Passed | `Inventory/Units` | Master satuan dengan ULID, kode unik, simbol, status aktif, soft delete, audit, permission, demo | 9 focused test; 58 full test; migration/status, route, seed ulang MySQL |
 | 4 | Passed | `Inventory/Items` | Item, base unit ratio 1, multi satuan per barang, barcode; core 4A dan demo 4B | 40 focused test; 98 full test; lookup public; migration/status; seed dan rollback MySQL |
 | 5 | Passed | Integrasi permission, audit, dan demo | Endpoint internal data/store master memakai can per action; demo relasional, audit, Gate super-system konsisten | 33 focused test; 131 full test; HTTP; MySQL; route/status |
-| 6 | Planned | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | `npm run lint`; `npm run build`; Chrome DevTools MCP desktop/tablet |
+| 6 | In Progress | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | Test HTTP CRUD; lint/typecheck/build; QA browser desktop/tablet |
+
+## Rincian Increment 6
+
+1. 6A: endpoint update/delete/restore melalui Application dan repository module;
+   test permission, validasi, soft delete, audit atomic, dan guard referensi.
+2. 6B: halaman Inertia gudang/satuan, pencarian dan filter server, pagination,
+   dialog CRUD, permission UX, Sonner, shortcut, sidebar dan command palette.
+3. 6C: halaman barang dengan editor barcode dan konversi per barang, lookup
+   satuan publik, serta satuan dasar terkunci.
+4. 6D: regresi penuh, QA browser desktop/tablet, dokumentasi aktual, commit dan
+   push setelah seluruh work item selesai.
+
+Keputusan user 10 Oktober 2026: satuan dasar barang tidak dapat diganti setelah
+dibuat. Master satuan yang pernah dirujuk barang (termasuk data soft-deleted)
+tidak boleh dihapus atau dinonaktifkan. Guard sinkron menggunakan public contract
+Items untuk pemeriksaan referensi, bukan model privat lintas module. UnitLookup
+menyediakan daftar pilihan satuan untuk consumer UI barang. Perubahan konversi
+hanya untuk master pada fase tanpa transaksi stok; sebelum Stock/POS real
+ditambahkan, wajib ada guard referensi transaksi dan snapshot historis.
+
+Tidak ada migration, dependency baru, perubahan theme, role/grant otomatis,
+transaksi stok/FIFO, atau QA mobile. Browser MCP dicoba dahulu; jika tidak
+tersedia, catat BLOCKED dan gunakan browser fallback yang tersedia.
 
 ## Rincian Increment 5
 

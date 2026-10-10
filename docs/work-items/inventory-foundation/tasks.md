@@ -156,6 +156,68 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 
 ## Increment 6: UI Admin Inventory
 
+### Sebelum Mulai
+
+- [x] Target Inventory/Warehouses, Units, Items diinformasikan ke user.
+- [x] Arsitektur, struktur, Quality, source dan pola UI existing diperiksa.
+- [x] User menyetujui base unit immutable dan guard master satuan terpakai.
+- [x] Scope desktop/tablet; theme, Old-docs, stok/FIFO dan grant akses tidak diubah.
+
+### 6A: CRUD Backend Dan Integritas Master
+
+- [ ] Tulis test gagal sebelum implementasi endpoint update/delete/restore.
+  - Acceptance: permission per aksi, ULID, validation, soft delete dan audit.
+  - Verification: focused test RED kemudian GREEN.
+- [ ] Implementasikan mutation melalui Application dan port module.
+  - Acceptance: transaction atomic; base unit immutable; referensi satuan aman;
+    tidak ada model privat lintas module; uniqueness termasuk data terhapus.
+  - Verification: focused test rollback, guard referensi dan lifecycle.
+- [ ] Verifikasi dan commit 6A.
+  - Acceptance: test terkait, Pint, route inspection dan diff check lulus.
+  - Verification: save point Git selektif.
+
+### 6B: Halaman Gudang Dan Satuan
+
+- [ ] Tambahkan halaman Inertia dan query filter/pagination server.
+  - Acceptance: cari kode/nama, status aktif/nonaktif dan tab data terhapus;
+    state filter di URL; route data/store lama tetap kompatibel.
+  - Verification: Inertia/HTTP focused test.
+- [ ] Implementasikan tabel, dialog tambah/edit, konfirmasi hapus/pulihkan.
+  - Acceptance: Sonner, error per field, processing, empty state, permission UX,
+    shortcut dropdown dan keyboard; navigasi sidebar/palette aktif.
+  - Verification: lint/typecheck/build dan QA browser.
+- [ ] Verifikasi dan commit 6B.
+  - Acceptance: source buildable dan operasi master berfungsi.
+  - Verification: save point Git selektif.
+
+### 6C: Halaman Barang Multi Satuan
+
+- [ ] Tambahkan pilihan satuan melalui public UnitLookup dan halaman barang.
+  - Acceptance: list mencari SKU/nama/barcode; tampil base unit dan jumlah satuan.
+  - Verification: HTTP/Inertia test lookup dan filter.
+- [ ] Implementasikan editor barang serta baris konversi/barcode jual/beli.
+  - Acceptance: rasio string exact, base unit 1 terkunci; field errors dan Sonner;
+    tambah/hapus/pulihkan satuan tambahan; permission dan shortcut konsisten.
+  - Verification: test invalid ratio/barcode, build dan QA browser CRUD.
+- [ ] Verifikasi dan commit 6C.
+  - Acceptance: CRUD barang tidak mengubah stok/FIFO/harga.
+  - Verification: save point Git selektif.
+
+### 6D: QA Dan Penutupan Work Item
+
+- [ ] QA desktop/tablet, sidebar expanded/collapsed, shortcut dan palette.
+  - Acceptance: tidak ada overlap/overflow halaman atau console error baru;
+    permission readonly, validasi dan feedback operasi terverifikasi.
+  - Verification: Chrome DevTools MCP atau BLOCKED dengan fallback browser.
+- [ ] Jalankan regresi penuh, lint/typecheck/build, route/status dan diff check.
+  - Acceptance: semua gate relevan lulus; hasil command dicatat aktual.
+  - Verification: tabel hasil verifikasi dan checklist sesudah coding.
+- [ ] Perbarui API, module docs/index, status work item; commit dan push.
+  - Acceptance: dokumentasi sesuai source; artefak user tidak ikut staging.
+  - Verification: staged diff dan status remote sesudah push.
+
+### Ringkasan Acceptance
+
 - [ ] Buat halaman list master gudang, satuan, dan item.
   - Acceptance: halaman memakai layout admin, shortcut operasi dropdown, dan
     permission UX.
