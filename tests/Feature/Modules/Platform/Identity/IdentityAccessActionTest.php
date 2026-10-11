@@ -21,6 +21,7 @@ class IdentityAccessActionTest extends TestCase
     public function test_sync_user_roles_records_identity_activity_log(): void
     {
         $actor = User::factory()->create();
+        $actor->assignRole(Role::findOrCreate('super-system', 'web'));
         $user = User::factory()->create();
         Role::findOrCreate('staff', 'web');
         Role::findOrCreate('manager', 'web');
@@ -46,6 +47,7 @@ class IdentityAccessActionTest extends TestCase
     public function test_sync_role_permissions_records_identity_activity_log(): void
     {
         $actor = User::factory()->create();
+        $actor->assignRole(Role::findOrCreate('super-system', 'web'));
         $role = Role::findOrCreate('cashier', 'web');
         Permission::findOrCreate('sales.pos.invoices.create', 'web');
         Permission::findOrCreate('sales.pos.invoices.post', 'web');

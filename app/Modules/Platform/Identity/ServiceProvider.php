@@ -3,6 +3,8 @@
 namespace App\Modules\Platform\Identity;
 
 use App\Models\User;
+use App\Modules\Platform\Identity\Application\Contracts\AccessRepository;
+use App\Modules\Platform\Identity\Infrastructure\Persistence\Repositories\SpatieAccessRepository;
 use App\Modules\Platform\Identity\Presentation\Console\Commands\MigrateLegacySuperRoleCommand;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -11,7 +13,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(AccessRepository::class, SpatieAccessRepository::class);
     }
 
     public function boot(): void
