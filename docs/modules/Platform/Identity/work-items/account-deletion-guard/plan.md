@@ -4,7 +4,7 @@
 | --- | --- | --- | --- | --- |
 | 1 | Passed | Scope dan checklist | Acceptance, boundary, seeder skip dan QA tertulis sebelum coding | Review source/docs dan diff check PASS |
 | 2 | Passed | Backend guard dan audit | Last-super, fresh state, rollback dan logout sesudah commit | 33 focused test/208 assertion, 181 full test/1055 assertion, Pint/route/diff PASS |
-| 3 | In Progress | Feedback UI, QA dan delivery | Field error/Sonner, desktop/tablet, dokumentasi aktual | UI dan browser QA berikutnya |
+| 3 | In Progress | Feedback UI, QA dan delivery | Field error/Sonner, desktop/tablet, dokumentasi aktual | UI/frontend gate, DevTools smoke, workflow Playwright dan docs PASS; delivery berikutnya |
 
 ## Urutan
 

@@ -93,8 +93,9 @@ terdaftar. Data akun/password, role, direct grants dan pivot assignment tetap
 identik (hanya boolean preservation dicetak). Seeder akun/demo tidak dijalankan.
 Save point UI: `615d6f5`. Docs module, API, module index dan Quality diperbarui.
 Tidak menyentuh Old-docs, SampleUI, theme/CSS, stok/FIFO atau CRUD akun.
-Risiko terbuka: last-super pada delete akun profil, uji konkurensi MySQL dan
-katalog remote >1000 berada di luar scope; tidak diklaim sudah terverifikasi.
+Pada penutupan UI ini, delete akun profil di luar scope; kini ditutup oleh
+[work item guard](../account-deletion-guard/README.md). Uji konkurensi MySQL dan
+katalog remote >1000 tetap berada di luar scope dan tidak diklaim terverifikasi.
 
 Review penutupan menemukan overflow route identifier menyebabkan TypeError 500.
 Test reproduksi RED kemudian parsing FILTER_VALIDATE_INT di Presentation

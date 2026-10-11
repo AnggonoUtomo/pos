@@ -9,15 +9,19 @@ Detail eksekusi berada pada [work item UI akses](work-items/access-management/RE
 
 Platform/Identity menyediakan fondasi authorization aplikasi POS. Scope saat ini
 meliputi shared auth permission, seed permission, CRUD role biasa, katalog
-permission read-only, assignment role pengguna existing dan audit mutation akses.
+permission read-only, assignment role pengguna existing, audit mutation akses
+dan hardening hapus akun pribadi dari profil starter kit.
 
 ## Arsitektur
 
 - Hexagon: `Platform/Identity`.
-- Inbound adapter: AccessController/AccessRequest dan CLI migrasi role lama.
+- Inbound adapter: AccessController/AccessRequest, CLI migrasi role lama, serta
+  ProfileController starter kit existing untuk self-delete (route dipertahankan).
 - Use case: ManageAccess dan ListAccess; helper SyncUserRoles/SyncRolePermissions
   existing menjadi wrapper kompatibel yang menerapkan authorization baru.
 - Outbound port internal: Application/Contracts/AccessRepository.
+- DeleteOwnAccount memakai port internal yang sama; jalur destroy pada
+  controller profil tidak melakukan delete/persistence langsung.
 - Outbound adapter: SpatieAccessRepository menangani persistence, audit dan cache.
 - Application tidak melakukan mutation lewat model atau adapter konkret.
 - Composition root:
@@ -79,12 +83,32 @@ Jangan menjalankan ulang seeder akun existing sebagai cara rollout UI akses.
 - Role super-system/super-admin reserved untuk CRUD dan sync permission.
 - Hanya super-system dapat mengubah user yang memiliki atau akan menerima role
   super-system; minimal satu pemegang harus tersisa. Gate bypass tidak melewati
-  invariant ini. Pengaman ini khusus assignment, bukan semua jalur CRUD akun.
+  invariant ini. Jalur self-delete profil juga menegakkan last-super secara
+  sinkron; bukan jaminan untuk CRUD akun lain yang belum dikembangkan.
 - Manager biasa hanya memberi permission/role dalam permission efektifnya;
   tidak bisa mengedit/menghapus role dengan permission melebihi miliknya.
 - Super user pada shared auth disebut `superSystem`.
 - Role super-system guard web mendapat bypass Gate::before sesuai ADR-010.
   User lain memakai permission normal; validation/invariant tidak dibypass.
+
+## Penghapusan Akun Pribadi
+
+DELETE settings/profile hanya menerima password current_password dari akun
+request; payload target id diabaikan. Tidak membutuhkan identity.manage karena
+ini self-service existing, bukan admin CRUD akun. Role fresh dibaca sesudah lock
+role web dan user; super-system terakhir ditolak dengan validation field account.
+Wrong password tetap field password. Audit identity.account_deleted dan delete
+atomic; delete yang veto atau exception membatalkan audit/pivot mutation.
+Logout/invalidate sesi hanya sesudah action berhasil. Audit menyimpan ID actor
+dan subject yang sama, before roles dan after deleted, tanpa PII/credential.
+ID audit tetap tersedia walaupun relasi User sesudah hard delete menjadi null.
+Hard delete baseline starter kit dipertahankan; tidak menambah schema/seeder.
+
+UI resources/js/components/delete-user.tsx existing menampilkan account/password
+error, Sonner, required input, processing guard, Ctrl/Cmd+Enter serta Escape.
+Password dibersihkan setelah setiap request dan cancel; dialog tidak ditutup
+ketika request masih berjalan. Detail QA:
+[work item guard](work-items/account-deletion-guard/tasks.md).
 
 ## UI
 
@@ -129,13 +153,14 @@ Detail implementasi/QA ada pada
 - [x] UI manajemen akses, permission terdaftar dan assignment pengguna tersedia.
 - [x] Audit/rollback, guest/readonly, privilege, reserved/last-super dan seed aman diuji.
 - [x] Browser workflow desktop/tablet terverifikasi melalui fallback disposable.
+- [x] Self-delete profil melindungi last-super, audited/atomic dan logout setelah sukses.
 
 ## Risiko Terbuka
 
 - Permission matrix seluruh module bisnis belum lengkap karena module bisnis
   masih planned.
-- Profil starter kit masih memiliki jalur delete akun tanpa last-super guard;
-  hardening akun merupakan pekerjaan terpisah, bukan bagian UI assignment.
+- Retained session rows/perangkat lain, deaktivasi dan ownership dokumen transaksi
+  memerlukan aturan akun terpisah sebelum module transaksi bisnis digunakan.
 - Uji konkurensi/load MySQL terpisah belum dijalankan. Test otomatis memakai
   SQLite disposable; pola locking MySQL direview, bukan diklaim diuji paralel.
 - Katalog di atas 1000 perlu pencarian remote. Ketersediaan CDN font tidak masuk

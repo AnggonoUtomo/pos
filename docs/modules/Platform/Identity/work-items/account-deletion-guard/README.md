@@ -44,3 +44,6 @@ Tidak menghapus akun nyata di MySQL. Session perangkat lain, retained session
 rows, reassign ownership dokumen bisnis, deaktivasi akun, dan retention/compliance
 akun merupakan scope terpisah sebelum akun dipakai transaksi bisnis.
 Uji konkurensi/load MySQL tidak diklaim oleh SQLite feature tests.
+Gap conformance existing: ProfileController::update masih melakukan persistence
+langsung sesuai starter kit. Jalur update profil tidak direfactor pada scope
+pengaman self-delete ini; jangan menyatakan seluruh controller sudah hexagonal.

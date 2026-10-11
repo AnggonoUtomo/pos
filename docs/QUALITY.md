@@ -191,6 +191,10 @@ bukan akun MySQL lokal. Server loopback/browser ditutup di finally.
 Coverage: CRUD role, sync permission, assignment persisted/reload, role terpakai,
 last-super, readonly/delegated manager, search/empty, Sonner, shortcut/palette,
 desktop expanded/collapsed, tablet landscape/portrait dan dark/clean.
+Script juga memverifikasi self-delete profil: password salah, last-super ditolak
+dan tetap authenticated, password/error cleared, ordinary account deletion dan
+logout, dialog light/dark/desktop/tablet serta Sonner/keyboard. Akun yang dihapus
+hanya akun fixture disposable, tidak menggunakan credential/akun MySQL nyata.
 Screenshot/report.json lokal di-ignore. CSS font Bunny eksternal distub agar QA
 tidak tergantung jaringan; font fallback dipakai dan CDN tidak termasuk gate.
 Status fallback PASS tetap terpisah dari DevTools MCP BLOCKED.

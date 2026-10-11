@@ -8,7 +8,8 @@ Active
 
 Module ini mengelola baseline akses aplikasi: role, permission, shared auth
 permission untuk Inertia, UI manajemen role/permission/akses pengguna existing,
-sinkronisasi akses audited, dan seeder permission/demo role.
+sinkronisasi akses audited, seeder permission/demo role, serta pengaman hapus
+akun pribadi dari profil starter kit.
 
 ## Boundary
 
@@ -75,8 +76,17 @@ UI memakai `platform.identity.view`; mutation memakai `platform.identity.manage`
   super-system dan tidak boleh mencabut pemegang terakhir. Manager biasa tidak
   boleh memberi permission/role di luar permission efektifnya. Direct user
   grants dan role guard lain dipertahankan.
-- CRUD akun/password dan key permission bebas tidak masuk scope. Last-super
-  guard belum melindungi jalur penghapusan akun pada profil starter kit existing.
+- CRUD akun/password baru dan key permission bebas tidak masuk scope.
+- DELETE settings/profile existing memanggil DeleteOwnAccount setelah validasi
+  current-password. Last-super dibaca fresh di backend dengan lock role yang sama
+  dengan assignment, lalu lock user. Audit/delete atomic; logout dan invalidation
+  sesi sesudah action berhasil. Failure audit/delete mempertahankan akun/sesi.
+- Audit identity.account_deleted menyimpan causer/subject ID, before roles dan
+  after deleted saja; tanpa credential/name/email. Semantik hard delete starter
+  kit dipertahankan, bukan lifecycle CRUD akun baru. Session perangkat lain dan
+  ownership transaksi bisnis memerlukan hardening terpisah.
+- Detail pengaman profil:
+  [work item penghapusan akun](work-items/account-deletion-guard/README.md).
 - Detail implementasi dan bukti QA:
   [work item UI akses](work-items/access-management/README.md).
 
@@ -86,4 +96,5 @@ UI memakai `platform.identity.view`; mutation memakai `platform.identity.manage`
 php artisan test --filter=Identity
 php artisan test --filter=PermissionBaselineTest
 php artisan test --filter=AccessManagementTest
+php artisan test --filter=AccountDeletionTest
 ```

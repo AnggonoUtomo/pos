@@ -53,9 +53,9 @@ Privilege delegation, last-super guard dan race assignment memerlukan locking
 role bersama dengan urutan tetap. Direct permission existing tetap berlaku dan
 tidak dimutasi. UI akun, deaktivasi user, force logout/session invalidation,
 stock/FIFO, company, Old-docs dan perubahan theme di luar scope.
-Guard last-super mencakup assignment role pada module ini; penghapusan akun
-melalui profil starter kit existing masih di luar scope dan perlu hardening
-terpisah. Jangan mengklaim seluruh jalur penghapusan akun sudah terlindungi.
+Scope work item UI ini melindungi assignment role saja. Penghapusan akun profil
+ditutup melalui [work item guard terpisah](../account-deletion-guard/README.md).
+Jangan mengklaim seluruh jalur CRUD akun lain yang belum dikembangkan terlindungi.
 
 ## QA
 

@@ -152,8 +152,30 @@ memodifikasi role berpermission di atas aksesnya. Hanya super-system mengubah
 assignment target super-system, dan minimal satu pemegang harus tersisa.
 Assignment web mempertahankan direct grant/role guard lain/atribut akun.
 Mutation dan audit atomic, no-op tanpa audit ganda, cache refresh sesudah commit.
-Last-super guard ini tidak meliputi delete akun dari profil starter kit existing.
+Last-super juga ditegakkan pada self-delete profil seperti contract di bawah.
 CRUD akun/password, direct grants dan key permission bebas tidak tersedia.
+
+### Penghapusan Akun Pribadi
+
+DELETE `/settings/profile`, route profile.destroy existing, auth session web dan
+CSRF. Bukan admin CRUD akun dan tidak membutuhkan platform.identity.manage.
+Input hanya password wajib/current_password; target berasal request user, bukan
+id/role dalam payload. ID akun existing tetap integer starter kit.
+
+Super-system web terakhir ditolak validation field account; password salah field
+password. JSON error 422 atau web redirect/session errors. Success tetap redirect
+`/` seperti starter kit. Application DeleteOwnAccount mengambil lock role web
+dengan urutan sama seperti assignment, lalu lock user, membaca roles fresh dan
+menegakkan invariant sebelum audit/delete. Audit failure, exception/veto delete
+rollback audit/pivot/account; operasi tersebut tidak logout atau invalidate sesi.
+Logout dan invalidation sesi dilakukan sesudah action berhasil. Semantik hard
+delete existing dipertahankan, bukan soft-delete lifecycle baru.
+
+Audit identity.account_deleted memuat causer/subject ID, before roles dan after
+deleted saja; tidak memuat nama/email/credential. Relasi User audit dapat null
+sesudah delete, ID historis tetap. Tidak ada route/permission/schema/seeder baru.
+Session perangkat lain/retention data dan ownership transaksi bisnis memerlukan
+work item terpisah sebelum ada transaksi real yang mereferensikan akun.
 
 ## Contract Lintas Module
 

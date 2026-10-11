@@ -42,14 +42,18 @@ try {
         page.on('console', (message) => { if (['error', 'warning'].includes(message.type())) failures.push(message.text()); });
         page.setDefaultTimeout(30000);
     };
-    const login = async (page, key) => {
+    const login = async (page, key, destination = '/platform/identity') => {
         await page.goto(`${url}/login`, { waitUntil: 'domcontentloaded' });
         await page.getByLabel('Email address').fill(`qa-${key}@example.test`);
         await page.getByLabel('Password', { exact: true }).fill(password);
         await page.getByRole('button', { name: 'Log in', exact: true }).click();
         await page.waitForURL('**/dashboard');
-        await page.goto(`${url}/platform/identity`);
-        await page.getByRole('heading', { name: 'Identitas & Akses', exact: true }).waitFor();
+        await page.goto(`${url}${destination}`);
+        if (destination === '/platform/identity') {
+            await page.getByRole('heading', { name: 'Identitas & Akses', exact: true }).waitFor();
+        } else {
+            await page.getByLabel('Name', { exact: true }).waitFor();
+        }
     };
     const createContext = async (viewport) => {
         const context = await browser.newContext({ viewport });
@@ -76,7 +80,7 @@ try {
             const box = await dialog.boundingBox();
             assert(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= page.viewportSize().width && box.y + box.height <= page.viewportSize().height + 1, `${label}: dialog di luar viewport`);
         }
-        await page.screenshot({ path: path.join(artifactDir, `${label}.png`), fullPage: true });
+        await page.screenshot({ path: path.join(artifactDir, `${label}.png`), fullPage: true, animations: 'disabled' });
         checks.push(`${label}: framing PASS`);
         console.log(`${label}: PASS`);
     };
@@ -185,6 +189,50 @@ try {
         await scoped.close();
     }
     checks.push('Readonly/delegated manager, search/empty, catalog readonly, palette, dark/clean PASS');
+    await page.goto(`${url}/settings/profile`);
+    await page.getByRole('button', { name: 'Tema', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Light', exact: true }).click();
+    await page.getByRole('button', { name: 'Hapus akun', exact: true }).click();
+    let dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Password', { exact: true }).fill(randomBytes(32).toString('hex'));
+    await page.keyboard.press('Control+Enter');
+    await dialog.locator('#delete-account-password[aria-invalid="true"]').waitFor();
+    await page.getByText('Akun belum dihapus.', { exact: true }).waitFor();
+    assert.equal(await dialog.getByLabel('Password', { exact: true }).inputValue(), '');
+    await dialog.getByLabel('Password', { exact: true }).fill(password);
+    await page.keyboard.press('Control+Enter');
+    await dialog.getByRole('alert').getByText('Super-system terakhir tidak dapat dihapus. Tetapkan super-system lain terlebih dahulu.', { exact: true }).waitFor();
+    assert.equal(await dialog.getByLabel('Password', { exact: true }).inputValue(), '');
+    for (const [width, height, label] of [[1440, 1000, 'desktop'], [1024, 768, 'tablet-landscape'], [768, 1024, 'tablet-portrait']]) {
+        await page.setViewportSize({ width, height });
+        await framing(`account-blocked-${label}`);
+    }
+    await page.keyboard.press('Escape');
+    await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    assert.equal((await page.goto(`${url}/dashboard`)).status(), 200);
+    await page.goto(`${url}/settings/profile`);
+    assert.equal(await page.getByLabel('Name', { exact: true }).inputValue(), 'QA Super System');
+    await page.getByRole('button', { name: 'Tema', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Dark', exact: true }).click();
+    await page.getByRole('button', { name: 'Hapus akun', exact: true }).click();
+    dialog = page.getByRole('dialog');
+    assert.equal(await dialog.getByRole('alert').count(), 0);
+    await framing('account-dialog-desktop-dark');
+    await page.keyboard.press('Escape');
+    const ordinary = await createContext({ width: 1024, height: 768 });
+    const staff = await ordinary.newPage();
+    watch(staff);
+    await login(staff, 'staff', '/settings/profile');
+    await staff.getByRole('button', { name: 'Hapus akun', exact: true }).click();
+    await staff.getByRole('dialog').getByLabel('Password', { exact: true }).fill(password);
+    await staff.keyboard.press('Control+Enter');
+    await staff.waitForURL(`${url}/`);
+    await staff.getByText('Akun berhasil dihapus.', { exact: true }).waitFor();
+    await staff.goto(`${url}/settings/profile`);
+    await staff.waitForURL('**/login');
+    await ordinary.close();
+    checks.push('Account deletion: wrong password, last-super blocked/still authenticated, cleared password/errors, ordinary delete/logout, Sonner/keyboard PASS');
     assert.deepEqual(failures, [], 'Console/page errors baru');
     const report = { status: 'PASS', checks, console: failures, externalFonts: 'Stub CSS; fallback font dipakai', artifacts: path.relative(root, artifactDir) };
     await writeFile(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
