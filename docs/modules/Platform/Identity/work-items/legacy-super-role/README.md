@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Implemented; QA dan migrasi lokal Passed. Delivery remote menunggu tasks.md.
 
 ## Kondisi Dan Keputusan
 
@@ -38,3 +38,12 @@ Sesi browser mungkin perlu refresh penuh agar shared auth terbaru terbaca.
 Test command/action: preview, preservation, audit atomic, repeat, conflict,
 guard lain, HTTP Inventory dan shared auth. Smoke MySQL hanya pada role yang
 disetujui, tidak menampilkan credential/data pribadi. Tidak reset database.
+
+## Handoff
+
+Pada 11 Oktober 2026 role lokal berhasil menjadi super-system dengan ID, seluruh
+atribut user dan pivot unchanged. Audit 1 event; Gate Inventory dan shared auth
+aktif, repeat no-op. Focused 6 test/34 assertion, regresi 156 test/887 assertion,
+Pint/help/diff PASS. MCP tidak tersedia; browser/frontend SKIPPED karena tidak
+mengubah UI, fallback HTTP dan smoke backend lulus. Refresh browser untuk props
+auth terbaru. UI manajemen akses belum dibuat; theme/Old-docs/artefak user tetap.

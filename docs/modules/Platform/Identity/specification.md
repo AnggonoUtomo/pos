@@ -57,11 +57,28 @@ pengembangan. Seeder tidak boleh memberi akses berlebih tanpa alasan.
 
 ## UI
 
+UI manajemen role/permission/user belum tersedia. Fondasi dan action akses
+tidak berarti halaman pengelolaan akses sudah diimplementasikan.
+
 - Page: belum final.
 - Komponen: bila dibuat, gunakan `resources/js/pages/platform/identity`.
 - Toast: operasi CRUD/sync memakai Sonner.
 - State: loading, empty, error, dan disabled wajib tersedia.
 - Browser QA: admin sidebar desktop dan responsive dasar bila UI dibuat.
+
+## Migrasi Role Lama
+
+Operator CLI memakai `identity:migrate-super-role` untuk preview nonmutating,
+dan `--apply` hanya setelah persetujuan rename super-admin web ke super-system.
+Application MigrateLegacySuperRole menjalankan transaction/lock/audit; command
+adalah inbound adapter terdaftar di ServiceProvider. ID/pivot/credential tetap,
+repeat no-op dan konflik kedua nama berhenti tanpa merge. Tidak ada alias bypass
+untuk super-admin, route HTTP, reset seeder akun, atau schema baru. Cache
+permission dihapus sesudah commit. Operasi administratif ini tidak dapat
+dibalik secara diam-diam; koreksi akses harus audited dan disetujui.
+
+Detail implementasi/QA ada pada
+[work item migrasi](work-items/legacy-super-role/README.md).
 
 ## Dependency
 
