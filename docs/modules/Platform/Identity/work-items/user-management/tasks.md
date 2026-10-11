@@ -56,7 +56,7 @@
   - Acceptance: status berbasis realita, tidak mengubah credential/role existing,
     risiko MySQL concurrency tertulis; artefak user tidak ikut commit.
   - Verification: full tests, route/status, diff/staged diff.
-- [ ] Selective commit/push setelah scope selesai.
+- [x] Selective commit/push setelah scope selesai.
   - Acceptance: tidak menyertakan artefak user, remote sesuai commit delivery.
   - Verification: staged diff, push dan remote status sesudah command berhasil.
 
@@ -64,7 +64,7 @@
 
 - [x] Catat hasil aktual, migration/seeder dan risiko.
 - [x] Checklist/status diisi setelah verification lulus.
-- [ ] Handoff ringkas beserta bagian yang tidak disentuh.
+- [x] Handoff ringkas beserta bagian yang tidak disentuh.
 
 ## Hasil Aktual
 
@@ -123,3 +123,10 @@ diterapkan tanpa fresh/reset; tidak membuat demo akun statis/seeder destruktif.
 Gap starter profil update/checkbox remember UI dicatat tanpa diperbaiki di luar
 scope; remember backend diverifikasi pada feature test. Risiko load/konkurensi
 MySQL, ownership transaksi dan cleanup fisik sesi masih terbuka.
+
+Delivery: save point f10d429 (dokumen), 901c16e (create/edit), 6494e40
+(status/session), daf0718 (review fixes) dan 55910a9 (UI/QA/docs). Push origin/main
+PASS sesudah scope dan seluruh gate selesai. Staged diff/18 link relatif pada
+11 dokumen PASS. SampleUI dan empat file LSP tetap untracked, tidak ikut commit.
+Catatan delivery/checklist ditutup sesudah hasil push tersedia, melalui commit
+dokumentasi terpisah. Handoff menunjuk tab Akses Pengguna dan risiko terbuka.

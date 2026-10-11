@@ -67,7 +67,8 @@ Chrome DevTools smoke PASS dan workflow Playwright disposable PASS (bukan
 klaim workflow authenticated via MCP). Detail command/artefak ada di tasks.md.
 Migration + permission-only seed MySQL lokal diterapkan dengan snapshot akun,
 credential, role dan pivot tetap identik. QA destructive hanya SQLite disposable.
-Delivery commit/push dicatat sesudah hasil Git tersedia.
+Delivery implementasi 55910a9 dan push origin/main PASS; save point serta
+catatan delivery/checklist tersedia pada tasks.md.
 
 Risiko: concurrency/load MySQL belum diuji dengan beberapa koneksi nyata; request
 in-flight tidak dibatalkan. Cleanup fisik sesi, ownership transaksi dan reset/
