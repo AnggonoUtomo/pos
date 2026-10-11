@@ -171,4 +171,13 @@ class UserManagementTest extends TestCase
         $this->expectException(AuthorizationException::class);
         app(ManageUsers::class)->create($actor->id, $this->payload());
     }
+
+    public function test_password_above_bcrypt_byte_limit_is_validation_error(): void
+    {
+        $this->actingAs($this->superUser());
+        $password = str_repeat(chr(0xC3).chr(0xA9), 40);
+        $this->postJson('/platform/identity/users', $this->payload(['password' => $password, 'password_confirmation' => $password]))
+            ->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->assertDatabaseMissing('users', ['email' => 'new@example.test']);
+    }
 }

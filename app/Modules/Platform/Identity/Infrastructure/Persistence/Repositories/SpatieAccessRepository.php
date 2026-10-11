@@ -52,7 +52,8 @@ class SpatieAccessRepository implements AccessRepository
             throw ValidationException::withMessages(['access' => 'Katalog akses melebihi 1000 pilihan; diperlukan pencarian remote.']);
         }
 
-        return ['roles' => $roles->map(fn ($role) => $this->roleData($role))->all(), 'permissions' => $permissions->all()];
+        return ['roles' => $roles->map(fn ($role) => $this->roleData($role))->all(), 'permissions' => $permissions->all(),
+            'active_super_users' => $this->superUserCount()];
     }
 
     public function lockRoles(): array
@@ -82,7 +83,8 @@ class SpatieAccessRepository implements AccessRepository
 
     public function superUserCount(): int
     {
-        return User::role('super-system', 'web')->where('is_active', true)->count();
+        return User::query()->where('is_active', true)
+            ->whereHas('roles', fn ($query) => $query->where('name', 'super-system')->where('guard_name', 'web'))->count();
     }
 
     public function roleReferences(int $id): int
@@ -166,6 +168,7 @@ class SpatieAccessRepository implements AccessRepository
         if ($user->email !== $email) {
             DB::table('password_reset_tokens')->whereIn('email', [$user->email, $email])->delete();
             $user->email_verified_at = null;
+            $user->remember_token = Str::random(60);
         }
         $user->name = $name;
         $user->email = $email;

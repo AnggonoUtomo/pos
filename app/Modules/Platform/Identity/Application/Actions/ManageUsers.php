@@ -48,7 +48,12 @@ class ManageUsers
             $this->access->lockRoles();
             $this->authorize($actorId, 'create');
             $data = $this->profile($input);
-            $credential = Validator::make($input, ['password' => ['required', 'string', 'min:12', 'max:72', 'confirmed'],
+            $credential = Validator::make($input, ['password' => ['required', 'string', 'min:12', 'max:72', 'confirmed',
+                static function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (is_string($value) && strlen($value) > 72) {
+                        $fail('Password maksimal 72 byte.');
+                    }
+                }],
                 'roles' => ['present', 'array', 'list', 'max:1000'], 'roles.*' => ['required', 'string', 'max:150', 'distinct']])->validate();
             if (in_array('super-admin', array_map('trim', $credential['roles']), true)) {
                 throw ValidationException::withMessages(['roles' => 'Role legacy tidak dapat diberikan ke akun baru.']);

@@ -5,6 +5,7 @@ namespace Tests\Feature\Modules\Platform\Identity;
 use App\Models\User;
 use App\Modules\Platform\Identity\Database\Seeders\IdentityPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -184,10 +185,51 @@ class UserStatusTest extends TestCase
         DB::table('password_reset_tokens')->insert(['email' => $user->email, 'token' => 'ephemeral', 'created_at' => now()]);
         $this->putJson('/platform/identity/users/'.$user->id, ['name' => $user->name, 'email' => 'new-email@example.test'])->assertOk();
         $this->assertDatabaseMissing('password_reset_tokens', ['email' => $user->email]);
+        $this->assertTrue($user->remember_token !== $user->fresh()->remember_token);
         User::saving(fn (User $model) => $model->id === $user->id ? false : null);
         $this->changeStatus($user->id, false)->assertServerError();
         $this->assertTrue($user->fresh()->is_active);
         $this->assertSame(0, $user->fresh()->access_version);
         $this->assertSame(0, Activity::where('event', 'identity.user_status_changed')->count());
+    }
+
+    public function test_remember_recaller_is_revoked_and_new_recaller_works_after_activation(): void
+    {
+        $admin = $this->superUser();
+        $password = bin2hex(random_bytes(16));
+        $user = User::factory()->create(['password' => Hash::make($password)]);
+        $response = $this->post('/login', ['email' => $user->email, 'password' => $password, 'remember' => true]);
+        $cookie = collect($response->headers->getCookies())->first(fn ($cookie) => str_starts_with($cookie->getName(), 'remember_web_'));
+        $this->assertTrue($cookie !== null);
+        session()->flush();
+        Auth::forgetGuards();
+        $this->withUnencryptedCookie($cookie->getName(), $cookie->getValue())->get('/dashboard')->assertOk();
+        $this->assertAuthenticatedAs($user);
+        $this->actingAs($admin);
+        $this->changeStatus($user->id, false)->assertOk();
+        $this->changeStatus($user->id, true)->assertOk();
+        session()->flush();
+        Auth::forgetGuards();
+        $this->withUnencryptedCookie($cookie->getName(), $cookie->getValue())->get('/dashboard')->assertRedirect('/login');
+        $this->assertGuest();
+        $response = $this->post('/login', ['email' => $user->email, 'password' => $password, 'remember' => true]);
+        $newCookie = collect($response->headers->getCookies())->first(fn ($value) => str_starts_with($value->getName(), 'remember_web_'));
+        $this->assertTrue($newCookie !== null);
+        session()->flush();
+        Auth::forgetGuards();
+        $this->withUnencryptedCookie($newCookie->getName(), $newCookie->getValue())->get('/dashboard')->assertOk();
+        $this->assertAuthenticatedAs($user);
+        $this->assertSame(1, session('identity.access_version'));
+    }
+
+    public function test_recaller_loaded_before_deactivation_cannot_promote_old_version(): void
+    {
+        $user = User::factory()->create()->fresh();
+        $this->actingAs($user)->withSession(['identity.access_version' => 0]);
+        (new \ReflectionProperty(Auth::guard('web'), 'viaRemember'))->setValue(Auth::guard('web'), true);
+        // Simulate a valid recall loaded before a concurrent disable/reactivate.
+        DB::table('users')->where('id', $user->id)->update(['is_active' => true, 'access_version' => 1]);
+        $this->getJson('/dashboard')->assertUnauthorized();
+        $this->assertGuest();
     }
 }

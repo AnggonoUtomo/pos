@@ -16,10 +16,14 @@ class EnsureActiveAccount
         $user = $request->user();
         if ($user) {
             $state = $this->access->sessionState((int) $user->id);
-            if ($state && $state['active'] && Auth::guard('web')->viaRemember()) {
+            $recall = Auth::guard('web')->viaRemember();
+            $recallMatches = $state && (int) $user->access_version === $state['version'];
+            // Do not promote a recall loaded before a concurrent revocation.
+            if ($state && $state['active'] && $recall && $recallMatches) {
                 $request->session()->put('identity.access_version', $state['version']);
             }
-            if (! $state || ! $state['active'] || (int) $request->session()->get('identity.access_version', 0) !== $state['version']) {
+            if (! $state || ! $state['active'] || ($recall && ! $recallMatches)
+                || (int) $request->session()->get('identity.access_version', 0) !== $state['version']) {
                 Auth::guard('web')->logoutCurrentDevice();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();

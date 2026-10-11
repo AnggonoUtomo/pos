@@ -39,6 +39,11 @@
 
 ## Increment 4: UI Dan QA
 
+- [x] Tutup edge case hasil review dengan regression test.
+  - Acceptance: count tanpa role super tidak gagal, recall stale tidak dinaikkan
+    ke version baru, email berubah mencabut remember token, password multibyte
+    tidak terpotong oleh bcrypt.
+  - Verification: RED 4 gagal, GREEN 4 test/18 assertion, full regression.
 - [ ] Tambah/edit/status dialog dan badge pada tab pengguna.
   - Acceptance: per-operation permission, role guard, processing/error/empty,
     password cleared, Sonner, shortcut dropdown dan keyboard tersedia.
@@ -79,3 +84,12 @@ akun/password/role/pivot sebelum/sesudah identik (credential tidak ditampilkan).
 migrate:status 10 migration Ran. Tidak menjalankan seeder akun/demo credential.
 Actor inactive ditolak Application juga; middleware sebelum Inertia membatalkan
 session/version lama, login active dan remember token dicabut saat deaktivasi.
+
+Review: count memakai whereHas agar zero role valid; fresh version dibandingkan
+dengan user hasil recall sebelum sesi diinisialisasi; remember token diputar
+saat email berubah. Password minimal 12 karakter/maksimal 72 byte divalidasi
+sebelum hashing (bukan truncation multibyte). RED 4 gagal lalu GREEN 4 test/18
+assertion PASS. Full suite terbaru 205 test/1213 assertion PASS; Pint PASS.
+UserStatusTest juga menguji cookie recall lama ditolak dan recall baru sesudah
+aktivasi diterima, tanpa token/credential di output. Bukti concurrency interleaving
+berupa test state terkontrol, bukan load test MySQL.
