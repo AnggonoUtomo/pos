@@ -3,6 +3,7 @@
 namespace App\Modules\Platform\Identity;
 
 use App\Models\User;
+use App\Modules\Platform\Identity\Presentation\Console\Commands\MigrateLegacySuperRoleCommand;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -16,6 +17,10 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(): void
     {
         Gate::before(fn (User $user, string $ability): ?bool => $user->hasRole('super-system', 'web') ? true : null);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([MigrateLegacySuperRoleCommand::class]);
+        }
 
         if (is_file(__DIR__.'/Routes/web.php')) {
             $this->loadRoutesFrom(__DIR__.'/Routes/web.php');

@@ -52,6 +52,14 @@ diamankan di backend; frontend hanya menyembunyikan atau menampilkan UI.
 - Gate::before memberi bypass authorization kepada role super-system guard web
   sesuai ADR-010. Tidak mengubah assignment akun, tidak memberi akses kepada
   user biasa, dan tidak melewati validation/invariant.
+- Role lama super-admin bukan alias bypass. Migrasi administratif tersedia:
+  `php artisan identity:migrate-super-role` untuk preview dan `--apply` untuk
+  rename audited setelah persetujuan operator. ID/pivot/password dipertahankan;
+  konflik dua role berhenti tanpa merge. Jangan menjalankan ulang seeder akun
+  untuk migrasi karena dapat mengganti credential. Detail ada pada
+  [work item migrasi](work-items/legacy-super-role/README.md).
+- UI manajemen role/permission/user belum dibuat; Active berarti fondasi
+  authorization, bukan UI CRUD akses lengkap.
 
 ## Verifikasi Utama
 
