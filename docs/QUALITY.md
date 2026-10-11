@@ -175,6 +175,26 @@ console. Opsi `--masters-only`, `--items-only`, `--guard-only` mempersempit QA;
 jalankan tanpa opsi untuk penutupan work item. Fallback PASS tidak berarti
 Chrome DevTools MCP PASS; catat kedua status dengan jujur.
 
+## Fallback QA Identity
+
+Dengan package Playwright Core/Chromium existing dan build terbaru, jalankan:
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/node_modules/playwright-core'
+node scripts/qa/identity-browser.mjs
+```
+
+Fixture `tests/Browser/identity-fixture.php` hanya menerima SQLite disposable
+berprefix identity-browser di storage/framework/testing. Akun manager, viewer,
+delegate dan staff dibuat sementara dengan credential random melalui stdin,
+bukan akun MySQL lokal. Server loopback/browser ditutup di finally.
+Coverage: CRUD role, sync permission, assignment persisted/reload, role terpakai,
+last-super, readonly/delegated manager, search/empty, Sonner, shortcut/palette,
+desktop expanded/collapsed, tablet landscape/portrait dan dark/clean.
+Screenshot/report.json lokal di-ignore. CSS font Bunny eksternal distub agar QA
+tidak tergantung jaringan; font fallback dipakai dan CDN tidak termasuk gate.
+Status fallback PASS tetap terpisah dari DevTools MCP BLOCKED.
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

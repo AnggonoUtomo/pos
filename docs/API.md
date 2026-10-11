@@ -109,6 +109,52 @@ dari UnitLookup::listActive, maksimal 1000 satuan aktif, urut code/id. Form
 menyimpan rasio sebagai string, bukan float. Base unit terkunci saat edit.
 Barcode duplicate case-insensitive pada payload update ditolak sebelum mutation.
 
+### Endpoint Internal Identity
+
+Session web/auth/verified/CSRF mengikuti starter kit seperti Inventory. Ini bukan
+API eksternal. Role super-system web bypass permission Gate sesuai ADR-010,
+tetapi tetap tunduk pada validasi, transaction dan invariant akses.
+
+| Method | Path | Nama route | Permission |
+| --- | --- | --- | --- |
+| GET | /platform/identity | platform.identity.index | platform.identity.view |
+| POST | /platform/identity/roles | platform.identity.roles.store | platform.identity.manage |
+| PUT | /platform/identity/roles/{id} | platform.identity.roles.update | platform.identity.manage |
+| DELETE | /platform/identity/roles/{id} | platform.identity.roles.destroy | platform.identity.manage |
+| PUT | /platform/identity/roles/{id}/permissions | platform.identity.roles.permissions | platform.identity.manage |
+| PUT | /platform/identity/users/{id}/roles | platform.identity.users.roles | platform.identity.manage |
+
+ID User/Role/Permission existing integer mengikuti starter kit/package, bukan
+migrasi ULID pada pekerjaan UI ini. Target role hanya guard web; guard lain atau
+target hilang menghasilkan 404. GET menghasilkan Inertia component
+platform/identity/index dengan records `{data, meta}`, filters `{tab, search}`,
+options `{roles, permissions}`. Tab roles/permissions/users; search maksimum 150
+karakter; page 1..2147483647, 25 record/page, order name/id.
+Role fields id/name/permissions/users_count; permission id/name/roles_count;
+user id/name/email/roles/direct_permissions_count. Tidak mengekspos credential.
+Catalog pilihan dibatasi 1000; overflow menghasilkan validation access, bukan
+pemotongan silent.
+
+POST/PUT role memakai name, di-trim/lowercase maksimum 64, pola
+`[a-z][a-z0-9_-]*` dan unik web. Mutation sync memakai permissions atau roles:
+list wajib/distinct maksimum 1000, key/nama terdaftar web, list kosong valid.
+Payload tambahan seperti guard/id tidak dipersist. JSON sukses 201 create,
+200 mutation lain dengan `{id}`; web redirect/session errors. Guest JSON 401 atau
+redirect login; tanpa permission 403, invalid/unique 422 tanpa detail SQL.
+Identifier route di luar rentang integer PHP positif ditolak 404, bukan dicast
+overflow atau menghasilkan TypeError 500.
+
+Role super-system/super-admin tidak boleh dibuat, rename, delete atau diedit
+permission melalui UI. Role terpakai tidak bisa dihapus; role biasa tanpa
+referensi memakai hard delete audited sebagai pengecualian package soft delete.
+Manager non-super tidak boleh memberi akses melampaui permission efektifnya atau
+memodifikasi role berpermission di atas aksesnya. Hanya super-system mengubah
+assignment target super-system, dan minimal satu pemegang harus tersisa.
+Assignment web mempertahankan direct grant/role guard lain/atribut akun.
+Mutation dan audit atomic, no-op tanpa audit ganda, cache refresh sesudah commit.
+Last-super guard ini tidak meliputi delete akun dari profil starter kit existing.
+CRUD akun/password, direct grants dan key permission bebas tidak tersedia.
+
 ## Contract Lintas Module
 
 Contract lintas module tidak didokumentasikan sebagai HTTP API kecuali benar-

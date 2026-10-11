@@ -7,19 +7,21 @@ Active
 ## Tujuan
 
 Module ini mengelola baseline akses aplikasi: role, permission, shared auth
-permission untuk Inertia, sinkronisasi role user, sinkronisasi permission role,
-dan demo seeder identity.
+permission untuk Inertia, UI manajemen role/permission/akses pengguna existing,
+sinkronisasi akses audited, dan seeder permission/demo role.
 
 ## Boundary
 
-- Memiliki: role/permission baseline, authorization helper backend, shared auth
-  permission, demo seeder akses.
+- Memiliki: CRUD role biasa, katalog permission terdaftar, assignment role user,
+  authorization helper backend, shared auth permission, seeder akses.
 - Tidak memiliki: registrasi publik, profil user lanjutan, multi company,
   payroll, customer/supplier identity, atau audit ledger.
 
 ## Public Boundary
 
-- Contracts: belum ada contract lintas module.
+- Contracts: `Application/Contracts/AccessRepository` adalah outbound port
+  internal Identity, bukan contract mutation untuk module lain. Belum ada
+  contract lintas module yang dipublikasikan.
 - DTOs: belum ada DTOs publik.
 - Events: belum ada event publik lintas module.
 - Routes: route module berada di
@@ -35,14 +37,23 @@ dan demo seeder identity.
 
 Permission mengikuti key English technical naming. Permission baseline harus
 diamankan di backend; frontend hanya menyembunyikan atau menampilkan UI.
+UI memakai `platform.identity.view`; mutation memakai `platform.identity.manage`.
 
 ## Data Dan Seeder
 
 - Migration: belum ada migration khusus module selain scaffold folder.
-- Seeder demo:
-  `app/Modules/Platform/Identity/Database/Seeders/IdentityDemoSeeder.php`.
-- Soft delete: tidak relevan untuk role/permission baseline saat ini; perubahan
-  akses dicatat melalui audit.
+- `IdentityPermissionsSeeder`: dua key Identity saja; aman untuk provisioning
+  tanpa mengubah akun, password, role atau assignment.
+- `IdentityRolesDemoSeeder`: cashier/inventory-manager/inventory-viewer untuk
+  local/testing; memakai permission modul yang sudah tersedia, tidak membuat
+  akun atau menimpa role existing. Prasyarat tidak tersedia menyebabkan rollback.
+- `IdentityDemoSeeder`/`IdentityAccessSeeder` existing dapat membuat atau
+  memperbarui akun demo. Jangan gunakan untuk rollout UI akses atau migrasi role.
+- Identifier User/Role/Permission existing tetap integer starter kit/package;
+  tidak ada migrasi identifier pada pekerjaan UI akses ini.
+- Role terpakai/sistem tidak dapat dihapus. Role biasa tanpa referensi memakai
+  hard delete audited sebagai pengecualian soft delete untuk tabel package;
+  tidak menambah lifecycle model Spatie paralel. Permission tidak punya CRUD UI.
 
 ## Operasi
 
@@ -58,12 +69,21 @@ diamankan di backend; frontend hanya menyembunyikan atau menampilkan UI.
   konflik dua role berhenti tanpa merge. Jangan menjalankan ulang seeder akun
   untuk migrasi karena dapat mengganti credential. Detail ada pada
   [work item migrasi](work-items/legacy-super-role/README.md).
-- UI manajemen role/permission/user belum dibuat; Active berarti fondasi
-  authorization, bukan UI CRUD akses lengkap.
+- UI tersedia di `/platform/identity`: tab role, katalog permission dan akses
+  pengguna, filter/pagination, checkbox matrix, Sonner, shortcut dan palette.
+- Role sistem dilindungi; hanya super-system dapat mengubah assignment
+  super-system dan tidak boleh mencabut pemegang terakhir. Manager biasa tidak
+  boleh memberi permission/role di luar permission efektifnya. Direct user
+  grants dan role guard lain dipertahankan.
+- CRUD akun/password dan key permission bebas tidak masuk scope. Last-super
+  guard belum melindungi jalur penghapusan akun pada profil starter kit existing.
+- Detail implementasi dan bukti QA:
+  [work item UI akses](work-items/access-management/README.md).
 
 ## Verifikasi Utama
 
 ```powershell
 php artisan test --filter=Identity
 php artisan test --filter=PermissionBaselineTest
+php artisan test --filter=AccessManagementTest
 ```

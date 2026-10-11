@@ -43,18 +43,21 @@
 - [x] QA desktop/tablet expanded/collapsed, dark/light, keyboard dan console.
   - Acceptance: CRUD/sync/guard terverifikasi tanpa overflow baru atau error.
   - Verification: DevTools MCP atau BLOCKED dengan fallback disposable.
-- [ ] Full gate, seed permission aman lokal, docs/API/module index aktual.
+- [x] Full gate, seed permission aman lokal, docs/API/module index aktual.
   - Acceptance: tidak mengubah credential/assignment user lokal.
   - Verification: full test, format/lint/typecheck/build, route/status/diff.
+- [x] Review boundary input dan tambahkan regresi identifier route overflow.
+  - Acceptance: ID di luar integer PHP positif ditolak 404 tanpa mutation/audit.
+  - Verification: RED reproduksi 500 lalu GREEN seluruh empat mutation route.
 - [ ] Commit dan push seluruh work item selesai.
   - Acceptance: remote sinkron; artefak user tetap lokal.
   - Verification: staged diff dan status remote.
 
 ## Sesudah Coding
 
-- [ ] Scope dan gate selesai, hasil command aktual dicatat.
-- [ ] Risiko terbuka/yang tidak disentuh dijelaskan.
-- [ ] Checklist diisi sesudah verifikasi, bukan sebelum hasil tersedia.
+- [x] Scope dan gate selesai, hasil command aktual dicatat.
+- [x] Risiko terbuka/yang tidak disentuh dijelaskan.
+- [x] Checklist diisi sesudah verifikasi, bukan sebelum hasil tersedia.
 
 ## Hasil Verifikasi
 
@@ -82,3 +85,24 @@ Skenario QA memakai SQLite disposable dan akun random runtime, bukan MySQL user.
 Percobaan pertama timeout login; pada rerun CSS font eksternal Bunny distub agar
 QA tidak bergantung jaringan. Font fallback dipakai; ketersediaan CDN font tidak
 termasuk klaim PASS. Screenshot desktop dan dialog tablet diperiksa visual.
+
+Increment 3: MySQL migrate:status seluruh migration Ran; tanpa schema baru.
+IdentityPermissionsSeeder dijalankan di dalam transaction lokal dengan snapshot
+akun/role/pivot sebelum-sesudah. Permission bertambah 10 ke 12; dua key Identity
+terdaftar. Data akun/password, role, direct grants dan pivot assignment tetap
+identik (hanya boolean preservation dicetak). Seeder akun/demo tidak dijalankan.
+Save point UI: `615d6f5`. Docs module, API, module index dan Quality diperbarui.
+Tidak menyentuh Old-docs, SampleUI, theme/CSS, stok/FIFO atau CRUD akun.
+Risiko terbuka: last-super pada delete akun profil, uji konkurensi MySQL dan
+katalog remote >1000 berada di luar scope; tidak diklaim sudah terverifikasi.
+
+Review penutupan menemukan overflow route identifier menyebabkan TypeError 500.
+Test reproduksi RED kemudian parsing FILTER_VALIDATE_INT di Presentation
+menghasilkan 404 sebelum use case. Focused akhir 19 test/128 assertion dan full
+suite akhir 172 test/996 assertion PASS; Pint PASS. Save point fix: `7722840`.
+Build frontend tetap artefak source UI yang sudah lulus; fix hanya PHP/tes.
+Typecheck dan lint source aktif akhir PASS. Pemeriksaan Laragon
+`http://pos.test/login`: HTTP 200, memakai asset production build dan tidak
+memuat Vite development client. Diff whitespace dan 9 link relatif dokumen
+yang diubah PASS. Review correctness, boundary, authorization, query pagination
+dan performance dilakukan; tidak ada dependency/branch baru.
