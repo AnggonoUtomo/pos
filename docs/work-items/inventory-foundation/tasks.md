@@ -224,7 +224,7 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 - [x] Perbarui API, module docs/index dan status implementasi work item.
   - Acceptance: dokumentasi sesuai source; artefak user tidak ikut staging.
   - Verification: review dokumen, diff dan staging selektif.
-- [ ] Selesaikan commit dan push delivery work item.
+- [x] Selesaikan commit dan push delivery work item.
   - Acceptance: perubahan terverifikasi tersimpan dan main sinkron origin/main.
   - Verification: git log, push, status remote; artefak user tetap lokal.
 
@@ -288,7 +288,11 @@ pengujian konkurensi MySQL, pilihan form maksimal 1000 satuan aktif, serta
 MustVerifyEmail existing. Label sidebar lama Pengaturan Perusahaan dengan badge
 Segera masih rapat; tidak diperluas menjadi perubahan layout di pekerjaan ini.
 Old-docs, SampleUI, file LSP user, theme dan data/akses pengguna tidak disentuh.
-Implementasi/QA work item selesai; delivery remote dicatat setelah push berhasil.
+Implementasi/QA work item selesai. Delivery `git push origin main` PASS pada
+11 Oktober 2026: remote maju dari 42bb156 ke ca36233, mencakup perbaikan
+typecheck terpisah a1c2854 dan finalisasi QA/dokumen ca36233. Status main
+sinkron origin/main; SampleUI dan empat file LSP tetap untracked, tidak dipush.
+Commit dokumentasi penutupan mencatat bukti pengiriman yang sudah berhasil ini.
 
 Perbaikan typecheck baseline disetujui user dan diverifikasi pada 11 Oktober
 2026: `npx tsc --noEmit`, `npx eslint resources/js`, dan `npm run build` PASS.
@@ -397,6 +401,6 @@ karena Increment 6 pending. Push belum dilakukan.
 Scope implementasi/QA keseluruhan selesai pada Increment 6. Ownership memakai
 Units/Items terpisah sesuai ADR-009; guard master sesuai ADR-011. Catatan gate
 increment terdahulu di atas merupakan hasil pada tahapnya, bukan status pending
-saat ini. Checklist delivery menunggu verifikasi remote.
+saat ini. Checklist delivery telah diverifikasi sesudah push berhasil.
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.
