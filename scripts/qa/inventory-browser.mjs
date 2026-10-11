@@ -59,6 +59,13 @@ try {
         checks.push(`${label}: framing PASS`);
     };
     await login(page, 'qa-manager@example.test');
+    await page.goto(`${url}/settings/profile`);
+    await page.getByLabel('Name', { exact: true }).fill('QA Manager Verified');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByText('Profil diperbarui', { exact: true }).waitFor();
+    await page.reload();
+    assert.equal(await page.getByLabel('Name', { exact: true }).inputValue(), 'QA Manager Verified');
+    checks.push('Authenticated profile update/reload PASS');
     for (const [module, label, withSymbol] of (process.argv.includes('--guard-only') || process.argv.includes('--items-only') ? [] : [['warehouses', 'Gudang', false], ['units', 'Satuan', true]])) {
         await page.goto(`${url}/inventory/${module}`);
         await page.getByRole('heading', { name: label, exact: true }).waitFor();
@@ -196,6 +203,7 @@ try {
         await page.getByRole('button', { name: 'Tema', exact: true }).click();
         await page.getByRole('button', { name: 'Clean Default', exact: true }).click();
         await page.keyboard.press('Escape');
+        await page.getByRole('menu').waitFor({ state: 'hidden' });
         await page.locator('html.dark[data-theme="clean"]').waitFor();
         await checkFraming('items-desktop-dark-clean');
         checks.push('Dark/clean theme integration tanpa perubahan CSS PASS');
@@ -212,7 +220,9 @@ try {
     }
     checks.push('Viewer readonly PASS');
     assert.deepEqual(failures, [], 'Console/page errors baru');
-    console.log(JSON.stringify({ status: 'PASS', checks, console: failures, artifacts: path.relative(root, artifactDir) }, null, 2));
+    const report = { status: 'PASS', checks, console: failures, artifacts: path.relative(root, artifactDir) };
+    await writeFile(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
+    console.log(JSON.stringify(report, null, 2));
 } finally {
     if (browser) await browser.close();
     server.kill();

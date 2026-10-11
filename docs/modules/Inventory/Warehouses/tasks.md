@@ -69,4 +69,16 @@ verifikasi relasi user/role. Perubahan ini diperlukan oleh schema audit baru.
 
 Gate akhir 10 Oktober 2026: 131 test/624 assertion PASS; route/status, Pint,
 dan smoke MySQL PASS. UI CRUD lengkap dan guard stok/transaksi pada mutation
-master tetap pending. Detail pada work item Inventory Foundation.
+master tetap pending pada akhir Increment 5. Detail pada work item Inventory Foundation.
+
+## Increment 6: CRUD Admin
+
+- [x] Endpoint index/update/destroy/restore melalui Application, permission backend,
+  validation, soft delete dan audit atomic.
+- [x] List/filter/pagination, dialog CRUD, Sonner, shortcut dan permission UX.
+- [x] QA desktop/tablet expanded/collapsed, lifecycle, search/empty dan palette.
+
+HTTP/permission/rollback: InventoryCrudTest dan InventoryPagesTest PASS.
+Gate lint/typecheck/build dan hasil fallback browser tercatat pada
+[tasks Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).
+Integrasi stok/POS dan guard referensi transaksi tetap di luar scope.

@@ -210,43 +210,85 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
     autentikasi; efek mix-blend-mode welcome tetap sama.
   - Verification: typecheck global, lint, build dan regresi auth/profile.
 
-- [ ] QA desktop/tablet, sidebar expanded/collapsed, shortcut dan palette.
+- [x] QA desktop/tablet, sidebar expanded/collapsed, shortcut dan palette.
   - Acceptance: tidak ada overlap/overflow halaman atau console error baru;
     permission readonly, validasi dan feedback operasi terverifikasi.
   - Verification: Chrome DevTools MCP atau BLOCKED dengan fallback browser.
-- [ ] Jalankan regresi penuh, lint/typecheck/build, route/status dan diff check.
+- [x] Lengkapi fallback QA dengan smoke profil dan laporan lokal reproducible.
+  - Acceptance: profil authenticated tetap berfungsi; screenshot dark clean
+    diambil setelah dropdown tertutup; laporan tidak memuat credential.
+  - Verification: jalankan script QA pada database disposable.
+- [x] Jalankan regresi penuh, lint/typecheck/build, route/status dan diff check.
   - Acceptance: semua gate relevan lulus; hasil command dicatat aktual.
   - Verification: tabel hasil verifikasi dan checklist sesudah coding.
-- [ ] Perbarui API, module docs/index, status work item; commit dan push.
+- [x] Perbarui API, module docs/index dan status implementasi work item.
   - Acceptance: dokumentasi sesuai source; artefak user tidak ikut staging.
-  - Verification: staged diff dan status remote sesudah push.
+  - Verification: review dokumen, diff dan staging selektif.
+- [ ] Selesaikan commit dan push delivery work item.
+  - Acceptance: perubahan terverifikasi tersimpan dan main sinkron origin/main.
+  - Verification: git log, push, status remote; artefak user tetap lokal.
 
 ### Ringkasan Acceptance
 
-- [ ] Buat halaman list master gudang, satuan, dan item.
+- [x] Buat halaman list master gudang, satuan, dan item.
   - Acceptance: halaman memakai layout admin, shortcut operasi dropdown, dan
     permission UX.
-  - Verification: `npm run lint`; `npm run build`.
-- [ ] Tambahkan form CRUD master.
+  - Verification: `npx eslint resources/js`; typecheck; `npm run build`.
+- [x] Tambahkan form CRUD master.
   - Acceptance: memakai Sonner toast success/error, loading/empty/error state,
     soft delete UI bila relevan, dan validasi user-friendly.
-  - Verification: Chrome DevTools MCP desktop/tablet.
-- [ ] Pastikan route palsu tidak dibuat.
+  - Verification: DevTools MCP BLOCKED; fallback Playwright desktop/tablet PASS.
+- [x] Pastikan route palsu tidak dibuat.
   - Acceptance: navigasi hanya mengarah ke route nyata; menu yang belum siap
     tetap controlled.
   - Verification: `php artisan route:list --except-vendor`; browser QA.
 
 ## Sesudah Coding
 
-- [ ] Scope selesai.
-- [ ] Focused test lulus atau dinyatakan tidak relevan.
-- [ ] Lint/build/typecheck lulus bila relevan.
-- [ ] Route/migration check lulus bila relevan.
-- [ ] Chrome DevTools QA PASS, atau BLOCKED/SKIPPED dengan alasan.
-- [ ] Work item dan dokumen module diperbarui.
-- [ ] Risiko terbuka dicatat.
+- [x] Scope implementasi selesai.
+- [x] Focused test lulus atau dinyatakan tidak relevan.
+- [x] Lint/build/typecheck lulus bila relevan.
+- [x] Route/migration check lulus bila relevan.
+- [x] Chrome DevTools QA BLOCKED dengan alasan dan fallback PASS.
+- [x] Work item dan dokumen module diperbarui.
+- [x] Risiko terbuka dicatat.
 
 ## Hasil Verifikasi
+
+### Penutupan Increment 6: 11 Oktober 2026
+
+| Command / pemeriksaan | Hasil | Bukti |
+| --- | --- | --- |
+| `php artisan test --compact` | PASS | 150 test/853 assertion |
+| Regresi auth/profile terfokus | PASS | 24 test/63 assertion |
+| `npx tsc --noEmit` | PASS | Typecheck global tanpa error |
+| `npx eslint resources/js` | PASS | Nonmutating; tidak membaca Old-docs/SampleUI |
+| `npm run build` | PASS | 2676 module; asset produksi lokal dibangun |
+| `php vendor/bin/pint --dirty --test` | PASS | Format PHP sesuai |
+| `php artisan route:list --path=inventory --except-vendor` | PASS | 18 route nyata: index/data/store/update/destroy/restore per module |
+| `php artisan migrate:status` | PASS | Semua 9 migration Ran; tidak mengubah schema/MySQL user pada Increment 6 |
+| `node --check scripts/qa/inventory-browser.mjs` | PASS | Syntax script QA |
+| HTTP `http://pos.test/login` | PASS | 200; asset build digunakan, bukan Vite dev server |
+| Chrome DevTools MCP / browser plugin | BLOCKED | MCP tidak diekspos; plugin sebelumnya tidak menemukan browser terhubung |
+| Fallback script Playwright + Chromium existing | PASS | CRUD, restore, ratio exact/invalid, barcode 0/search, base locked, guard referensi, readonly, keyboard, palette, profil update/reload |
+| Screenshot / console | PASS | 18 screenshot: 1440x1000, 1024x768, 768x1024, dark default/clean; console error/warning kosong |
+| Review layer/security/data | PASS | Port publik, lock order, allowlist, bounded query, audit/rollback; tidak mengimpor model privat lintas module |
+| `git diff --check` | PASS | Tidak ada whitespace error |
+
+Artefak QA final (git ignored):
+`storage/framework/testing/inventory-browser-ac32da833eb022f4/`, termasuk
+`report.json`. Screenshot form barang tablet portrait dan list dark clean
+diperiksa visual: framing konten baru benar; tidak mengubah CSS/theme settled.
+QA memakai SQLite/server/browser terisolasi, credential random runtime, dan
+menutup proses sesudah selesai. Tidak memasang dependency. Test browser
+tidak memutasi MySQL pengguna.
+
+Risiko tersisa di luar scope: snapshot/guard transaksi sebelum Stock/POS,
+pengujian konkurensi MySQL, pilihan form maksimal 1000 satuan aktif, serta
+MustVerifyEmail existing. Label sidebar lama Pengaturan Perusahaan dengan badge
+Segera masih rapat; tidak diperluas menjadi perubahan layout di pekerjaan ini.
+Old-docs, SampleUI, file LSP user, theme dan data/akses pengguna tidak disentuh.
+Implementasi/QA work item selesai; delivery remote dicatat setelah push berhasil.
 
 Perbaikan typecheck baseline disetujui user dan diverifikasi pada 11 Oktober
 2026: `npx tsc --noEmit`, `npx eslint resources/js`, dan `npm run build` PASS.
@@ -352,7 +394,9 @@ karena Increment 6 pending. Push belum dilakukan.
 | `php artisan route:list --except-vendor` | PASS | Tetap 22 route existing; belum ada endpoint barang |
 | QA browser/frontend | SKIPPED | Increment 4 backend saja; tidak ada UI baru |
 
-Scope keseluruhan belum selesai. Konflik ownership telah diselesaikan melalui
-keputusan user: Units/Items terpisah sesuai ADR-009.
+Scope implementasi/QA keseluruhan selesai pada Increment 6. Ownership memakai
+Units/Items terpisah sesuai ADR-009; guard master sesuai ADR-011. Catatan gate
+increment terdahulu di atas merupakan hasil pada tahapnya, bukan status pending
+saat ini. Checklist delivery menunggu verifikasi remote.
 
 Jangan menambahkan pekerjaan baru ke checklist ini tanpa persetujuan user.

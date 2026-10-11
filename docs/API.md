@@ -40,7 +40,8 @@ Route web yang mengubah data harus:
 
 Endpoint berikut memakai session web, auth, verified, dan CSRF Laravel; bukan
 API eksternal/token. Middleware verified mengikuti kemampuan User existing,
-yang belum mengimplementasikan MustVerifyEmail. GET selalu JSON; POST JSON
+yang belum mengimplementasikan MustVerifyEmail. GET `/data` menghasilkan JSON;
+GET index menghasilkan Inertia response. POST JSON
 menghasilkan 201 `{id}`, POST web redirect kembali dengan flash success.
 
 | Method | Path | Nama route | Permission |

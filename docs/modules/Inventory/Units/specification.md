@@ -55,7 +55,8 @@ Access seeder terpisah, tidak mengubah akun/role/permission user.
 ## Authorization Dan Audit
 
 - Permission inventory.view dan inventory.manage, guard web.
-- Endpoint data/store memakai HasMiddleware, can:inventory.view/manage per
+- Endpoint index/data dan store/update/destroy/restore memakai HasMiddleware,
+  can:inventory.view/manage per
   action, auth dan verified mengikuti starter kit. Detail response ada di API.md.
 - Spatie Activitylog mencatat create/update/delete/restore dan actor jika ada.
 - Atribut audit hanya code, name, symbol, is_active, deleted_at.
@@ -74,7 +75,7 @@ dan delete menolak satuan yang pernah dirujuk barang melalui public
 Items/Application/Contracts/ItemUnitUsage::isReferenced. Referensi mencakup
 item dan item_units soft-deleted. Lock master satuan konsisten dengan create/edit
 Items untuk mencegah satuan dinonaktifkan saat relasi baru dibuat. Tidak ada
-dependency ke model privat Items. Keputusan user: 10 Oktober 2026.
+dependency ke model privat Items. Keputusan user: 10 Oktober 2026 (ADR-011).
 
 ## Acceptance Criteria
 

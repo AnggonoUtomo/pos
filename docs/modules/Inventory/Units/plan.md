@@ -20,4 +20,13 @@ dan typecheck frontend SKIPPED selama belum ada UI/endpoint baru.
 
 Konversi positif, ratio base unit 1, dan relasi barang diuji pada Increment 4.
 Lookup contract sudah tersedia bersama consumer CreateItem. Work item global
-tetap In Progress.
+ditutup setelah CRUD dan QA Increment 6 lulus.
+
+## Increment 6: CRUD Dan Guard Referensi
+
+ManageUnit mengorkestrasi update/delete/restore atomic dan guard ItemUnitUsage
+publik termasuk data trashed (ADR-011). UnitLookup menyediakan pilihan aktif
+untuk form barang, maksimum 1000. Halaman Inertia memiliki search/filter,
+pagination, lifecycle, Sonner, permission UX, dan shortcut. QA kini mencakup
+HTTP tests, lint/typecheck/build serta browser desktop/tablet; detail aktual
+ada pada work item Inventory Foundation, bukan batas QA Increment 3 di atas.

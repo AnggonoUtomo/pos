@@ -10,7 +10,7 @@ Jangan mengklaim selesai jika command gagal atau belum dijalankan.
 | Dokumentasi | Link relatif dicek manual sesuai scope dan `git diff --check` |
 | Backend behavior | Focused feature/unit test |
 | Boundary atau module | Dry-run generator bila relevan, focused test, `route:list`, dan migration/status check bila schema berubah |
-| Frontend behavior | `npm run lint` dan `npm run build` bila menyentuh React/TS/CSS |
+| Frontend behavior | `npx eslint resources/js`, `npx tsc --noEmit` dan `npm run build` bila menyentuh React/TS/CSS |
 | UI/alur pengguna | QA browser via Chrome DevTools MCP atau catatan `SKIPPED/BLOCKED` beserta fallback |
 | Migration | `php artisan migrate:status` dan migrate pada database disposable bila migration baru berisiko |
 | API contract | Focused API test dan pembaruan `API.md` |
@@ -39,7 +39,18 @@ vendor\bin\pint --dirty
 Frontend lint:
 
 ```powershell
-npm run lint
+npx eslint resources/js
+```
+
+Gunakan lint nonmutating dengan scope source aktif. Script existing
+`npm run lint` memakai `eslint . --fix`, sehingga dapat menyentuh arsip
+`Old-docs/` atau artefak user `SampleUI/`; jangan gunakan untuk gate pekerjaan
+terfokus. Formatter dijalankan hanya pada file yang memang diubah.
+
+Frontend typecheck:
+
+```powershell
+npx tsc --noEmit
 ```
 
 Frontend build:
@@ -77,7 +88,8 @@ Full quality gate sebelum handoff besar:
 ```powershell
 vendor\bin\pint --dirty
 php artisan test
-npm run lint
+npx eslint resources/js
+npx tsc --noEmit
 npm run build
 php artisan route:list --except-vendor
 php artisan migrate:status
@@ -113,8 +125,8 @@ Urutan akses eksplisit:
 4. Cek console error, network error penting, DOM state, permission visibility,
    loading state, dan empty/error state.
 5. Ambil screenshot atau catatan visual bila halaman berubah signifikan.
-6. Untuk layout admin, cek sidebar expanded, collapsed, dan mobile drawer bila
-   relevan.
+6. Untuk layout admin, cek sidebar expanded/collapsed pada desktop dan tablet
+   landscape/portrait. QA mobile ditunda sesuai scope project saat ini.
 7. Untuk POS fullscreen, cek desktop/tablet viewport, fokus input cepat, cart,
    dialog payment, dan state stok/harga.
 
@@ -135,6 +147,33 @@ Chrome DevTools QA: BLOCKED
 - Alasan:
 - Fallback:
 ```
+
+## Fallback QA Inventory
+
+Jika Chrome DevTools MCP tidak tersedia, script
+`scripts/qa/inventory-browser.mjs` dapat memakai Playwright Core dan Chromium
+yang sudah tersedia. Jangan memasang dependency tanpa instruksi user.
+Jalankan `npm run build` dahulu dan pastikan `public/hot` tidak mengarah ke
+dev server yang mati. Contoh PowerShell, sesuaikan path package lokal:
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/node_modules/playwright-core'
+node scripts/qa/inventory-browser.mjs
+```
+
+Script memakai PHP CLI dan `tests/Browser/inventory-fixture.php` untuk membuat
+database SQLite disposable di `storage/framework/testing/`, server loopback
+sementara, akun QA/credential random runtime, dan browser terisolasi. Tidak
+memutasi MySQL pengguna, memerlukan akun produksi, atau mencetak credential.
+Browser/server ditutup sesudah QA. Screenshot dan `report.json` lokal di-ignore
+Git, bukan artefak yang ikut commit.
+
+Coverage: CRUD/restore gudang, satuan dan barang, barcode, rasio exact/invalid,
+base unit terkunci, guard referensi, readonly permission, search/empty, keyboard,
+palette, profil authenticated, framing desktop/tablet, dark/default/clean serta
+console. Opsi `--masters-only`, `--items-only`, `--guard-only` mempersempit QA;
+jalankan tanpa opsi untuk penutupan work item. Fallback PASS tidak berarti
+Chrome DevTools MCP PASS; catat kedua status dengan jujur.
 
 ## Checklist Invariant Transaksi
 

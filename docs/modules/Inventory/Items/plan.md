@@ -22,4 +22,13 @@
 
 SQLite in-memory untuk tests; MySQL lokal untuk migration dan demo relasional.
 Tidak reset/rollback database pengguna. QA browser dan frontend SKIPPED:
-belum ada perubahan UI/HTTP. Stock/FIFO/payment/tax/discount/pricing tidak dimutasi.
+belum ada perubahan UI/HTTP pada Increment 4. Stock/FIFO/payment/tax/discount/pricing tidak dimutasi.
+
+## Increment 6: CRUD Multi Satuan
+
+ManageItem mengorkestrasi update/delete/restore atomic; base unit immutable
+sesuai ADR-011. Form barang memakai public UnitLookup, rasio decimal string,
+barcode dan flag per satuan. ItemUnitUsage dipakai guard master Units. QA HTTP
+dan browser desktop/tablet meliputi CRUD, validation, permission readonly,
+shortcut, lifecycle, rasio exact dan audit rollback. Lint/typecheck/build
+frontend sekarang relevan; gate akhir ada pada work item Inventory Foundation.

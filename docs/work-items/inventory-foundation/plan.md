@@ -28,7 +28,7 @@ minus.
 | 3 | Passed | `Inventory/Units` | Master satuan dengan ULID, kode unik, simbol, status aktif, soft delete, audit, permission, demo | 9 focused test; 58 full test; migration/status, route, seed ulang MySQL |
 | 4 | Passed | `Inventory/Items` | Item, base unit ratio 1, multi satuan per barang, barcode; core 4A dan demo 4B | 40 focused test; 98 full test; lookup public; migration/status; seed dan rollback MySQL |
 | 5 | Passed | Integrasi permission, audit, dan demo | Endpoint internal data/store master memakai can per action; demo relasional, audit, Gate super-system konsisten | 33 focused test; 131 full test; HTTP; MySQL; route/status |
-| 6 | In Progress | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | Test HTTP CRUD; lint/typecheck/build; QA browser desktop/tablet |
+| 6 | Passed | UI admin desktop/tablet | CRUD master inventory memakai Sonner, shortcut dropdown, permission UX, empty/loading/error state | 150 test/853 assertion; lint/typecheck/build; fallback browser desktop/tablet |
 
 ## Rincian Increment 6
 
@@ -94,13 +94,15 @@ guest dilakukan tanpa memutasi database user.
 ## Dependency Graph
 
 ```text
-Inventory/Units --> Inventory/Items ---+
-                                     +--> Sales/POS real (planned)
-Inventory/Warehouses -----------------+
+Inventory/Items --> Units.UnitLookup (read/lock/DTO)
+Inventory/Units --> Items.ItemUnitUsage (read guard)
+Inventory/Warehouses + Items --> Stock/Sales POS real (planned)
 ```
 
-Dependency runtime Items ke Units sudah tersedia melalui UnitLookup. Warehouses
-bukan dependency runtime Items; keduanya kelak dibaca oleh transaksi POS/Stock.
+Items dan Units memakai dua public read contract dengan consumer nyata, bukan
+dependency ke model privat atau pemanggilan rekursif. Keputusan guard ada pada
+ADR-011. Warehouses bukan dependency runtime Items; keduanya kelak dibaca oleh
+transaksi POS/Stock.
 
 ## QA Automated
 
@@ -111,7 +113,8 @@ bukan dependency runtime Items; keduanya kelak dibaca oleh transaksi POS/Stock.
   - route list check;
   - migration/status check bila schema berubah.
 - Frontend:
-  - `npm run lint`;
+  - `npx eslint resources/js` (nonmutating, tidak membaca arsip/user artefact);
+  - `npx tsc --noEmit`;
   - `npm run build`;
   - Chrome DevTools MCP untuk desktop/tablet.
 - Repository:
@@ -129,8 +132,8 @@ bukan dependency runtime Items; keduanya kelak dibaca oleh transaksi POS/Stock.
 
 ## Open Questions
 
-- Kode gudang awal diisi eksplisit dan unique termasuk soft-deleted row;
-  validasi input CRUD akan ditetapkan bersama form.
+- Kode gudang diisi eksplisit dan unique termasuk soft-deleted row; validasi
+  trim/panjang serta field error tersedia pada CRUD.
 - Rasio/quantity memakai decimal(20,6), hasil harus exact tanpa rounding diam-diam.
   Rasio minimal 1 karena base unit terkecil; quantity boleh pecahan.
 - Kategori/brand ditunda dari foundation awal; tidak menghalangi master barang.

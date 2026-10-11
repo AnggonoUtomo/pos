@@ -64,7 +64,8 @@ item/unit, dan barcode tetap direservasi pada soft-deleted row.
 
 Barang, seluruh relasi satuan, dan audit harus commit atau rollback bersama.
 Model Item dan ItemUnit mencatat atribut master relevan dan lifecycle; actor
-mengikuti auth context bila ada. Audit bukan ledger. Endpoint data/store memakai
+mengikuti auth context bila ada. Audit bukan ledger. Endpoint index/data dan
+store/update/destroy/restore memakai
 HasMiddleware dengan can:inventory.view/manage per action, auth dan verified
 mengikuti starter kit existing. Super-system memakai Gate sesuai ADR-010 dan
 tetap harus lolos validasi bisnis.
@@ -91,7 +92,7 @@ Access seeder menyiapkan permission tanpa mengubah role/akses akun.
 - [x] Regresi, migration/status, route inspection, dan seed MySQL lulus.
 
 ManageItem menyediakan update/delete/restore atomic. Base unit immutable sejak
-create sesuai keputusan user 10 Oktober 2026. Editor master dapat mengubah rasio,
+create sesuai ADR-011 dan keputusan user 10 Oktober 2026. Editor master dapat mengubah rasio,
 barcode dan flag satuan tambahan; relasi yang dikeluarkan di-soft-delete dan
 ditambahkan kembali memakai ID lama. Delete item hanya menghapus lunak master,
 tidak mengubah lifecycle relasi; restore mempertahankan konfigurasi satuan.

@@ -75,4 +75,16 @@ Perubahan ini tidak menambahkan endpoint atau aturan mutation master Units.
 
 Gate akhir 10 Oktober 2026: 131 test/624 assertion PASS; route/status, Pint,
 dan smoke MySQL PASS. UI CRUD lengkap dan guard mutation master yang sudah
-direferensikan tetap scope Increment 6. Detail pada work item Inventory Foundation.
+direferensikan tetap scope Increment 6 pada titik ini. Detail pada work item Inventory Foundation.
+
+## Increment 6: CRUD Dan Satuan Terpakai
+
+- [x] Update/delete/restore atomic dan guard referensi termasuk row terhapus.
+- [x] Consumer publik ItemUnitUsage; tidak mengimpor model privat Items.
+- [x] UnitLookup::listActive untuk form barang, DTO aktif maksimal 1000.
+- [x] Halaman CRUD, filter/pagination, Sonner, permission UX dan shortcut.
+- [x] QA desktop/tablet dan penolakan hapus satuan terpakai.
+
+InventoryCrudTest, InventoryPagesTest dan UnitLookupTest PASS. Keputusan
+domain mengikuti ADR-011. Gate lint/typecheck/build serta hasil browser ada pada
+[tasks Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).

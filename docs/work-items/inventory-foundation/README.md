@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Implemented; QA Passed. Pengiriman remote menunggu checklist delivery pada tasks.md.
 
 ## Owner Dan Lokasi
 
@@ -86,21 +86,26 @@ sebelum mutation transaksi dapat aman:
 | 3 | Passed | Fondasi master `Inventory/Units`; konversi dimiliki Items | 9 focused test; full suite 58 test; route, migration dan seed MySQL |
 | 4 | Passed | Fondasi Items: core 4A dan demo 4B | 40 focused test; 98 full test; lookup public, migration, seed dan rollback MySQL |
 | 5 | Passed | Endpoint data/store dengan permission; audit/demo terintegrasi; Gate super-system sesuai ADR-010 | 33 focused test; 131 full test; HTTP, MySQL, route/status |
-| 6 | Planned | UI admin desktop/tablet untuk master inventory | lint; build; Chrome DevTools MCP |
+| 6 | Passed | CRUD backend/admin desktop/tablet untuk master inventory; guard satuan dan audit atomic | 150 test/853 assertion; lint/typecheck/build; fallback browser, 18 screenshot |
 
 ## Handoff
 
-- Perubahan: Increment 1-5 selesai; fondasi gudang, satuan, barang/multi satuan,
-  konversi exact, lookup public Units, permission seed, demo relasional, soft
-  delete, audit, serta kompatibilitas subject_id ULID tersedia. Keenam endpoint
-  data/store memakai can per action; role super-system bypass Gate sesuai ADR-010.
-- Verifikasi: 131 test/624 assertion lulus; semua 9 migration Ran, 28 route;
-  demo/seed ulang MySQL lokal dan HTTP guest/CSRF lulus pada 10 Oktober 2026.
-  Detail ada di tasks.md dan dokumen masing-masing module.
-- Chrome DevTools QA: SKIPPED karena increment ini belum mengubah UI.
-- Status keseluruhan tetap In Progress: UI CRUD lengkap pada Increment 6 belum
-  selesai. Pemisahan Units/Items disetujui
-  user dan dicatat pada ADR-009. Guard master yang telah direferensikan serta
-  snapshot transaksi masih perlu diterapkan ketika CRUD/transaksi dibuat.
-  Gudang tidak memiliki dependency CompanySettings nyata pada fondasi single
-  company ini.
+- Perubahan: Increment 1-6 selesai; CRUD gudang, satuan, barang/multi satuan,
+  konversi exact, public lookup/guard, permission, demo relasional, soft delete,
+  restore dan audit atomic tersedia. Ada 18 route Inventory dengan can per
+  action; super-system bypass Gate tidak melewati invariant (ADR-010/011).
+- Verifikasi akhir 11 Oktober 2026: 150 test/853 assertion, Pint, lint global
+  source aktif, typecheck global, build, route/status dan diff check PASS.
+  Semua 9 migration Ran; tidak menambah schema pada Increment 6. Gap typecheck
+  baseline diperbaiki dalam commit terpisah a1c2854 sesuai persetujuan user.
+- Chrome DevTools MCP: BLOCKED karena tool tidak tersedia; browser plugin juga
+  tidak menemukan browser terhubung. Fallback Playwright lokal PASS dengan
+  SQLite disposable, 18 screenshot desktop/tablet dan console kosong. MySQL
+  pengguna tidak dimutasi oleh QA browser. Detail dan bukti ada di tasks.md.
+- Tidak disentuh: theme/CSS, Old-docs, SampleUI, dependency, credential seed,
+  assignment akses user, stok/FIFO, payment dan pricing real.
+- Risiko berikutnya: guard referensi transaksi dan snapshot historis wajib
+  sebelum Stock/POS real; locking konkurensi MySQL belum disimulasikan; pilihan
+  form dibatasi 1000 satuan aktif. User existing belum mengimplementasikan
+  MustVerifyEmail; middleware verified bukan jaminan verifikasi email.
+- Tidak membuat module/transaksi baru dari handoff ini tanpa instruksi user.

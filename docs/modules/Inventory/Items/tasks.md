@@ -93,4 +93,20 @@ Work item global belum selesai; push belum dilakukan.
 ItemsHttpTest: 16 test/108 assertion PASS. Gate akhir 10 Oktober 2026: full
 suite 131 test/624 assertion PASS; 6 route Inventory memiliki auth/can; semua
 9 migration Ran; demo MySQL dan seed ulang PASS. Detail lintas module pada
-work item Inventory Foundation. Tidak ada perubahan UI atau stok/FIFO.
+work item Inventory Foundation. Tidak ada perubahan UI atau stok/FIFO pada Increment 5.
+
+## Increment 6: CRUD Barang Multi Satuan
+
+- [x] Update/delete/restore atomic; base unit immutable; audit rollback.
+- [x] Editor rasio string exact, barcode termasuk '0', flag jual/beli.
+- [x] Satuan tambahan soft-deleted dapat dipulihkan dengan ID lama; delete/restore
+  master barang mempertahankan lifecycle konfigurasi satuan.
+- [x] Search SKU/nama/barcode, status, tab terhapus, pagination dan UnitLookup.
+- [x] UI desktop/tablet, readonly permission, Sonner dan shortcut.
+- [x] Test barcode duplikat case-insensitive dan validation tanpa detail SQL.
+
+InventoryCrudTest/InventoryPagesTest/ItemsHttpTest/UnitLookupTest PASS; fallback
+browser memverifikasi CRUD, rasio 24.000001, invalid ratio dan base unit terkunci.
+Gate lint/typecheck/build dan bukti QA akhir ada pada
+[tasks Inventory Foundation](../../../work-items/inventory-foundation/tasks.md).
+Stock/FIFO, snapshot transaksi dan pricing real tetap belum dibuat.

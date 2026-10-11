@@ -48,4 +48,5 @@ php artisan test --filter="Items|UnitLookup"
 ```
 
 Detail tersedia pada [specification](specification.md), [plan](plan.md), dan
-[tasks](tasks.md). Work item global menunggu penyelesaian gap typecheck existing.
+[tasks](tasks.md). Gap typecheck baseline sudah diperbaiki pada commit terpisah
+`a1c2854`; hasil gate akhir ada pada work item Inventory Foundation.

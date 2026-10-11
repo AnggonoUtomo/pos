@@ -9,7 +9,8 @@
 5. Perbarui checklist sesuai hasil nyata dan commit Increment 2.
 
 Tahap ini mengikuti [work item lintas module](../../../work-items/inventory-foundation/plan.md).
-UI, endpoint CRUD, dan integrasi transaksi menunggu increment terkait.
+Endpoint read/create tersedia pada Increment 5; CRUD backend/UI tersedia pada
+Increment 6. Integrasi transaksi stok/POS tetap pekerjaan terpisah.
 
 ## QA
 
@@ -18,5 +19,6 @@ diterapkan pada database lokal terkonfigurasi setelah test lulus. Seeder demo
 diuji dua kali serta setelah nama/status/soft delete berubah. Tidak menjalankan
 migrate:fresh atau rollback pada database pengguna.
 
-Chrome DevTools, lint, dan build frontend tidak relevan selama belum ada UI
-atau route baru. Smoke route existing tetap diperiksa.
+QA fondasi Increment 2 tidak membutuhkan browser. Increment 6 memakai HTTP
+feature tests, lint/typecheck/build dan fallback QA browser desktop/tablet;
+hasil aktual ada pada work item Inventory Foundation.
