@@ -16,15 +16,15 @@
 
 ## Increment 2: Backend
 
-- [ ] Tambahkan failing HTTP tests.
+- [x] Tambahkan failing HTTP tests.
   - Acceptance: last-super, ordinary/super success, password, guest, stale auth,
     audit/delete failure dan veto delete diuji tanpa credential di output.
   - Verification: hasil RED sebelum perubahan implementation.
-- [ ] Implementasikan action, port/adapter dan controller.
+- [x] Implementasikan action, port/adapter dan controller.
   - Acceptance: lock role lalu user; last-super tidak di policy saja; audit/delete
     atomic; target dari auth; logout/invalidate hanya setelah action berhasil.
   - Verification: focused GREEN, regresi profil/Identity, review dependency.
-- [ ] Verifikasi dan commit backend.
+- [x] Verifikasi dan commit backend.
   - Acceptance: test/Pint/route/diff lulus dan tidak ada schema baru.
   - Verification: hasil command aktual serta commit dicatat.
 
@@ -51,3 +51,15 @@
 - [ ] Hasil aktual dan seeder skip dicatat.
 - [ ] Checklist diisi sesudah verifikasi; status increment/work item aktual.
 - [ ] Scope, risiko dan bagian yang tidak disentuh dilaporkan.
+
+## Hasil Aktual
+
+Scope/checklist dibuat sebelum coding dan disimpan melalui `9d50ede`.
+RED: 7 gagal/2 lulus, menunjukkan last-super dihapus, audit tidak ada, pivot
+tidak rollback dan logout/delete veto tidak terlindungi. Assertion helper/session
+test disesuaikan dengan API Laravel existing; bukan perubahan runtime.
+GREEN: AccountDeletionTest + ProfileUpdateTest + AccessManagementTest + helper
+akses existing 33 test/208 assertion PASS. Pint dan route inspection PASS.
+Route settings/profile GET/PATCH/DELETE dan middleware auth tetap, tanpa schema
+atau seeder baru. Tidak ada penghapusan akun MySQL nyata.
+Full regression: 181 test/1055 assertion PASS; diff whitespace PASS.

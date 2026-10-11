@@ -28,6 +28,8 @@ interface AccessRepository
 
     public function syncRoles(int $id, array $names): void;
 
+    public function deleteUser(int $id): void;
+
     public function audit(string $event, int $actorId, string $subject, int $id, array $before, array $after): void;
 
     public function clearCache(): void;

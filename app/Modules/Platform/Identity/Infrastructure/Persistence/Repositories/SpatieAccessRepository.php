@@ -122,6 +122,13 @@ class SpatieAccessRepository implements AccessRepository
             ->event($event)->withProperties(['before' => $before, 'after' => $after])->log('Identity access changed');
     }
 
+    public function deleteUser(int $id): void
+    {
+        if (! User::findOrFail($id)->delete()) {
+            throw new \RuntimeException('Penghapusan akun dibatalkan.');
+        }
+    }
+
     public function clearCache(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
