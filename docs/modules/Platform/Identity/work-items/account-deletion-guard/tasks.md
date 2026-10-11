@@ -42,7 +42,7 @@
   - Acceptance: module/API tidak lagi menyatakan profil tanpa guard; risiko
     session lain/referensi transaksi/MySQL concurrency tetap jelas.
   - Verification: focused/full test, Pint, route, lint/typecheck/build, diff/link.
-- [ ] Commit/push setelah seluruh scope selesai.
+- [x] Commit/push setelah seluruh scope selesai.
   - Acceptance: remote sinkron, artefak user tidak ikut commit.
   - Verification: staged diff, push dan status remote.
 
@@ -93,3 +93,8 @@ MySQL dan gap ProfileController::update tetap tercatat pada README, bukan
 diperluas diam-diam. Old-docs dan SampleUI/artefak user tidak disentuh.
 Pemeriksaan final: node --check script QA, 16 link relatif dari 10 dokumen yang
 diubah dan git diff --check PASS. Migrate:status semua migration existing Ran.
+
+Delivery: `d5c17d6` memuat UI/QA dan dokumentasi final; push origin/main berhasil
+sesudah seluruh scope terverifikasi. Checklist/status ditutup setelah push,
+bukan sebelum hasil tersedia. Catatan penutupan dikirim sebagai commit docs
+terpisah. SampleUI dan empat file LSP user tetap lokal/untracked, tidak ikut push.

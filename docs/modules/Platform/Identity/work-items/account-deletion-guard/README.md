@@ -2,7 +2,10 @@
 
 ## Status
 
-In Progress
+Done
+
+Backend, UI, QA dan dokumentasi selesai; source/dokumen sudah dipush ke
+origin/main. Hasil aktual dan batas verifikasi berada pada [tasks](tasks.md).
 
 ## Scope Disetujui
 
