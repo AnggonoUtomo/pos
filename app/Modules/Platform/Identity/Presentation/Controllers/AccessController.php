@@ -38,9 +38,17 @@ class AccessController implements HasMiddleware
         return $this->save($request, $action, null);
     }
 
-    public function update(AccessRequest $request, ManageAccess $action, int $id)
+    private function identifier(string $value): int
     {
-        return $this->save($request, $action, $id);
+        $id = filter_var($value, FILTER_VALIDATE_INT);
+        abort_if($id === false || $id < 1, 404);
+
+        return $id;
+    }
+
+    public function update(AccessRequest $request, ManageAccess $action, string $id)
+    {
+        return $this->save($request, $action, $this->identifier($id));
     }
 
     private function save(AccessRequest $request, ManageAccess $action, ?int $id)
@@ -54,22 +62,25 @@ class AccessController implements HasMiddleware
         return $this->response($request, $result, $id ? 200 : 201);
     }
 
-    public function destroy(Request $request, ManageAccess $action, int $id)
+    public function destroy(Request $request, ManageAccess $action, string $id)
     {
+        $id = $this->identifier($id);
         $action->deleteRole((int) $request->user()->id, $id);
 
         return $this->response($request, $id);
     }
 
-    public function permissions(AccessRequest $request, ManageAccess $action, int $id)
+    public function permissions(AccessRequest $request, ManageAccess $action, string $id)
     {
+        $id = $this->identifier($id);
         $action->syncPermissions((int) $request->user()->id, $id, $request->validated('permissions'));
 
         return $this->response($request, $id);
     }
 
-    public function roles(AccessRequest $request, ManageAccess $action, int $id)
+    public function roles(AccessRequest $request, ManageAccess $action, string $id)
     {
+        $id = $this->identifier($id);
         $action->syncRoles((int) $request->user()->id, $id, $request->validated('roles'));
 
         return $this->response($request, $id);

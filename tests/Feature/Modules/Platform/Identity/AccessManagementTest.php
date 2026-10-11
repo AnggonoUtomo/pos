@@ -233,6 +233,17 @@ class AccessManagementTest extends TestCase
         $this->getJson('/platform/identity')->assertUnprocessable()->assertJsonValidationErrors('access');
     }
 
+    public function test_route_identifier_overflow_returns_not_found_without_mutation(): void
+    {
+        $this->actingAs($this->superUser());
+        $id = '999999999999999999999999999999';
+        $this->putJson('/platform/identity/roles/'.$id, ['name' => 'staff'])->assertNotFound();
+        $this->deleteJson('/platform/identity/roles/'.$id)->assertNotFound();
+        $this->putJson('/platform/identity/roles/'.$id.'/permissions', ['permissions' => []])->assertNotFound();
+        $this->putJson('/platform/identity/users/'.$id.'/roles', ['roles' => []])->assertNotFound();
+        $this->assertDatabaseCount('activity_log', 0);
+    }
+
     public function test_demo_refuses_production_and_missing_permission_rolls_back(): void
     {
         try {
