@@ -38,6 +38,10 @@ interface AccessRepository
 
     public function updateUser(int $id, string $name, string $email): void;
 
+    public function setUserStatus(int $id, bool $active): void;
+
+    public function sessionState(int $id): ?array;
+
     public function audit(string $event, int $actorId, string $subject, int $id, array $before, array $after): void;
 
     public function clearCache(): void;

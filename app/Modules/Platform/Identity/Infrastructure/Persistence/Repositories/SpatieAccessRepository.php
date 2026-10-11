@@ -5,6 +5,7 @@ namespace App\Modules\Platform\Identity\Infrastructure\Persistence\Repositories;
 use App\Models\User;
 use App\Modules\Platform\Identity\Application\Contracts\AccessRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -21,7 +22,8 @@ class SpatieAccessRepository implements AccessRepository
     public function page(string $tab, string $search, int $page): array
     {
         $query = match ($tab) {
-            'users' => User::query()->select(['id', 'name', 'email'])->with(['roles' => fn ($q) => $q->where('guard_name', 'web')])->withCount('permissions'),
+            'users' => User::query()->select(['id', 'name', 'email', 'is_active'])
+                ->with(['roles.permissions', 'permissions'])->withCount('permissions'),
             'permissions' => Permission::query()->where('guard_name', 'web')->withCount(['roles' => fn ($q) => $q->where('guard_name', 'web')]),
             default => Role::query()->where('guard_name', 'web')->with('permissions')->withCount('users'),
         };
@@ -32,7 +34,8 @@ class SpatieAccessRepository implements AccessRepository
         $paginator = $query->orderBy('name')->orderBy('id')->paginate(25, page: $page);
         $data = $paginator->getCollection()->map(fn ($row) => match ($tab) {
             'users' => ['id' => $row->id, 'name' => $row->name, 'email' => $row->email,
-                'roles' => $row->roles->pluck('name')->sort()->values()->all(), 'direct_permissions_count' => $row->permissions_count],
+                'roles' => $row->roles->where('guard_name', 'web')->pluck('name')->sort()->values()->all(), 'direct_permissions_count' => $row->permissions_count,
+                'is_active' => $row->is_active, 'can_edit' => $this->editableByCurrentUser($row)],
             'permissions' => ['id' => $row->id, 'name' => $row->name, 'roles_count' => $row->roles_count],
             default => $this->roleData($row),
         })->all();
@@ -65,7 +68,7 @@ class SpatieAccessRepository implements AccessRepository
     {
         $user = User::findOrFail($id);
 
-        return ['super' => $user->hasRole('super-system', 'web'),
+        return ['super' => $user->is_active && $user->hasRole('super-system', 'web'), 'active' => $user->is_active,
             'permissions' => $user->getAllPermissions()->where('guard_name', 'web')->pluck('name')->all()];
     }
 
@@ -73,12 +76,13 @@ class SpatieAccessRepository implements AccessRepository
     {
         $user = User::query()->whereKey($id)->lockForUpdate()->firstOrFail();
 
-        return ['id' => $user->id, 'roles' => $user->roles()->where('guard_name', 'web')->pluck('name')->sort()->values()->all()];
+        return ['id' => $user->id, 'is_active' => $user->is_active,
+            'roles' => $user->roles()->where('guard_name', 'web')->pluck('name')->sort()->values()->all()];
     }
 
     public function superUserCount(): int
     {
-        return User::role('super-system', 'web')->count();
+        return User::role('super-system', 'web')->where('is_active', true)->count();
     }
 
     public function roleReferences(int $id): int
@@ -138,7 +142,7 @@ class SpatieAccessRepository implements AccessRepository
     {
         $user = User::findOrFail($id);
 
-        return ['name' => $user->name, 'email' => $user->email,
+        return ['name' => $user->name, 'email' => $user->email, 'is_active' => $user->is_active,
             'super' => $user->hasRole('super-system', 'web'),
             'other_guards' => $user->roles()->where('guard_name', '!=', 'web')->exists()
                 || $user->permissions()->where('guard_name', '!=', 'web')->exists(),
@@ -168,5 +172,43 @@ class SpatieAccessRepository implements AccessRepository
         if (! $user->save()) {
             throw new \RuntimeException('Perubahan akun dibatalkan.');
         }
+    }
+
+    public function setUserStatus(int $id, bool $active): void
+    {
+        $user = User::findOrFail($id);
+        $user->is_active = $active;
+        if (! $active) {
+            $user->access_version++;
+            $user->remember_token = Str::random(60);
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+        }
+        if (! $user->save()) {
+            throw new \RuntimeException('Perubahan status akun dibatalkan.');
+        }
+    }
+
+    public function sessionState(int $id): ?array
+    {
+        $user = User::query()->select(['id', 'is_active', 'access_version'])->find($id);
+
+        return $user ? ['active' => $user->is_active, 'version' => $user->access_version] : null;
+    }
+
+    private function editableByCurrentUser(User $target): bool
+    {
+        $actor = auth()->user();
+        if (! $actor) {
+            return false;
+        }
+        if ($actor->hasRole('super-system', 'web')) {
+            return true;
+        }
+
+        return ! $target->hasRole('super-system', 'web')
+            && ! $target->roles->contains(fn ($role) => $role->guard_name !== 'web')
+            && ! $target->permissions->contains(fn ($permission) => $permission->guard_name !== 'web')
+            && array_diff($target->getAllPermissions()->where('guard_name', 'web')->pluck('name')->all(),
+                $actor->getAllPermissions()->where('guard_name', 'web')->pluck('name')->all()) === [];
     }
 }

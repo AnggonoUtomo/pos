@@ -15,7 +15,7 @@ class DeleteOwnAccount
         DB::transaction(function () use ($actorId): void {
             $this->access->lockRoles();
             $user = $this->access->lockUser($actorId);
-            if (in_array('super-system', $user['roles'], true) && $this->access->superUserCount() <= 1) {
+            if ($user['is_active'] && in_array('super-system', $user['roles'], true) && $this->access->superUserCount() <= 1) {
                 throw ValidationException::withMessages([
                     'account' => 'Super-system terakhir tidak dapat dihapus. Tetapkan super-system lain terlebih dahulu.',
                 ]);

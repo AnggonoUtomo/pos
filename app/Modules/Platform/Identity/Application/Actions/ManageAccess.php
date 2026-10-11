@@ -16,7 +16,7 @@ class ManageAccess
     private function authorize(int $actorId): array
     {
         $actor = $this->access->actor($actorId);
-        if (! $actor['super'] && ! in_array('platform.identity.manage', $actor['permissions'], true)) {
+        if (! $actor['active'] || (! $actor['super'] && ! in_array('platform.identity.manage', $actor['permissions'], true))) {
             throw new AuthorizationException;
         }
 
@@ -153,7 +153,7 @@ class ManageAccess
             if (! $actor['super'] && ($hasSuper || $willSuper)) {
                 throw new AuthorizationException;
             }
-            if ($hasSuper && ! $willSuper && $this->access->superUserCount() <= 1) {
+            if ($hasSuper && $user['is_active'] && ! $willSuper && $this->access->superUserCount() <= 1) {
                 throw ValidationException::withMessages(['roles' => 'Minimal satu pengguna super-system harus tetap tersedia.']);
             }
             foreach ($roles as $role) {

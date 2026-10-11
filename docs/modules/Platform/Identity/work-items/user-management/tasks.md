@@ -28,14 +28,14 @@
 
 ## Increment 3: Status Dan Auth
 
-- [ ] Migration module dan default existing aktif.
+- [x] Migration module dan default existing aktif.
   - Acceptance: akun/password/pivot existing tidak berubah; version default 0.
   - Verification: migrate disposable, focused schema test, migrate:status.
-- [ ] Pengaman last-super aktif, self-deactivation dan session version.
+- [x] Pengaman last-super aktif, self-deactivation dan session version.
   - Acceptance: inactive login/remember/session ditolak, reaktivasi tidak
     memulihkan sesi lama; audit failure rollback status/token/version.
   - Verification: RED/GREEN auth/Identity/profile tests, route/middleware review.
-- [ ] Commit increment setelah verifikasi.
+- [x] Commit increment setelah verifikasi.
 
 ## Increment 4: UI Dan QA
 
@@ -68,3 +68,14 @@ Create/edit hanya menerima field allowlist, normalized email case-insensitive,
 password hashed dan audit tanpa PII/credential. Assignment role atomic memakai
 ManageAccess; operator tidak dapat takeover super/higher privilege/guard lain.
 Seeder permission-only diperluas; belum dijalankan terhadap MySQL lokal.
+
+Increment 3: RED 10 gagal setelah helper test diperbaiki (nama status reserved
+PHPUnit); GREEN UserStatusTest 12 test/79 assertion PASS. Assertion rollback
+membaca snapshot fresh agar default DB ikut dibandingkan, tanpa credential di
+output. Regresi Identity/auth/profil 82 test/420 assertion PASS; Pint dan
+route inspection 9 endpoint PASS. Migration down/up SQLite menjaga akun existing.
+Migration MySQL local incremental + permission-only seed PASS; snapshot internal
+akun/password/role/pivot sebelum/sesudah identik (credential tidak ditampilkan).
+migrate:status 10 migration Ran. Tidak menjalankan seeder akun/demo credential.
+Actor inactive ditolak Application juga; middleware sebelum Inertia membatalkan
+session/version lama, login active dan remember token dicabut saat deaktivasi.

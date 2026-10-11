@@ -9,6 +9,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -16,16 +17,18 @@ class AccessController implements HasMiddleware
 {
     public static function middleware(): array
     {
-        return [new Middleware('can:platform.identity.view', only: ['index']),
-            new Middleware('can:platform.identity.manage', except: ['index'])];
+        return [new Middleware('can:platform.identity.manage', except: ['index'])];
     }
 
     public function index(AccessRequest $request, ListAccess $query)
     {
         $input = $request->validated();
+        $fullAccess = $request->user()->can('platform.identity.view');
+        $tab = $input['tab'] ?? ($fullAccess ? 'roles' : 'users');
+        Gate::authorize($fullAccess || $tab !== 'users' ? 'platform.identity.view' : 'platform.identity.users.view');
 
         return Inertia::render('platform/identity/index', $query->handle([
-            'tab' => $input['tab'] ?? 'roles', 'search' => $input['search'] ?? '', 'page' => (int) ($input['page'] ?? 1)]));
+            'tab' => $tab, 'search' => $input['search'] ?? '', 'page' => (int) ($input['page'] ?? 1)]));
     }
 
     private function response(Request $request, int $id, int $status = 200)

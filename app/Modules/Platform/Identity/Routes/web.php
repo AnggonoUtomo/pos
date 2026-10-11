@@ -13,4 +13,5 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('platform/identity')->nam
     Route::put('/users/{id}/roles', [AccessController::class, 'roles'])->whereNumber('id')->name('users.roles');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{id}', [UserController::class, 'update'])->whereNumber('id')->name('users.update');
+    Route::patch('/users/{id}/status', [UserController::class, 'status'])->whereNumber('id')->name('users.status');
 });

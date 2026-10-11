@@ -15,7 +15,8 @@ class UserController implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:platform.identity.users.create', only: ['store']),
-            new Middleware('can:platform.identity.users.update', only: ['update'])];
+            new Middleware('can:platform.identity.users.update', only: ['update']),
+            new Middleware('can:platform.identity.users.manage', only: ['status'])];
     }
 
     private function identifier(string $value): int
@@ -51,6 +52,15 @@ class UserController implements HasMiddleware
         } catch (UniqueConstraintViolationException) {
             throw ValidationException::withMessages(['email' => 'Email sudah digunakan.']);
         }
+
+        return $this->response($request, $id);
+    }
+
+    public function status(Request $request, ManageUsers $action, string $id)
+    {
+        $id = $this->identifier($id);
+        $data = $request->validate(['is_active' => ['required', 'boolean']]);
+        $action->status((int) $request->user()->id, $id, (bool) $data['is_active']);
 
         return $this->response($request, $id);
     }

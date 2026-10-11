@@ -15,7 +15,7 @@ class ManageUsers
     private function authorize(int $actorId, string $operation, ?int $targetId = null): array
     {
         $actor = $this->access->actor($actorId);
-        if (! $actor['super'] && ! in_array('platform.identity.users.'.$operation, $actor['permissions'], true)) {
+        if (! $actor['active'] || (! $actor['super'] && ! in_array('platform.identity.users.'.$operation, $actor['permissions'], true))) {
             throw new AuthorizationException;
         }
         if ($targetId !== null) {
@@ -82,5 +82,28 @@ class ManageUsers
             $this->access->updateUser($id, $data['name'], $data['email']);
             $this->access->audit('identity.user_updated', $actorId, 'user', $id, [], ['changed_fields' => $changed]);
         });
+    }
+
+    public function status(int $actorId, int $id, bool $active): void
+    {
+        DB::transaction(function () use ($actorId, $id, $active): void {
+            $this->access->lockRoles();
+            $this->access->lockUser($id);
+            $this->authorize($actorId, 'manage', $id);
+            $target = $this->access->userProfile($id);
+            if ($target['is_active'] === $active) {
+                return;
+            }
+            if (! $active && $actorId === $id) {
+                throw ValidationException::withMessages(['account' => 'Akun sendiri tidak dapat dinonaktifkan.']);
+            }
+            if (! $active && $target['super'] && $this->access->superUserCount() <= 1) {
+                throw ValidationException::withMessages(['account' => 'Minimal satu super-system aktif harus tetap tersedia.']);
+            }
+            $this->access->setUserStatus($id, $active);
+            $this->access->audit('identity.user_status_changed', $actorId, 'user', $id,
+                ['is_active' => $target['is_active']], ['is_active' => $active]);
+        });
+        $this->access->clearCache();
     }
 }
