@@ -56,7 +56,7 @@ tetap dan tidak mendapat permission baru otomatis.
 | Increment | Status | Isi | Verifikasi |
 | --- | --- | --- | --- |
 | 1 | Passed | Scope, PRD, plan/checklist sebelum coding | Review dan diff |
-| 2 | Ready | Tambah/edit akun, permission dan audit | RED/GREEN focused, route, Pint |
+| 2 | Passed | Tambah/edit akun, permission dan audit | 51 test/305 assertion, route, Pint |
 | 3 | Ready | Status, sesi dan last-super aktif | Focused auth/rollback, migration |
 | 4 | Ready | UI, QA dan dokumentasi final | Lint/typecheck/build, browser, full tests |
 

@@ -16,15 +16,15 @@
 
 ## Increment 2: Tambah Dan Edit
 
-- [ ] Tulis failing feature tests.
+- [x] Tulis failing feature tests.
   - Acceptance: permission per action, duplicate email, role grant, spoof payload,
     credential allowlist dan rollback audit diuji sebelum implementation.
   - Verification: RED focused test.
-- [ ] Implementasikan action/port/adapter/request/controller/route dan seed aman.
+- [x] Implementasikan action/port/adapter/request/controller/route dan seed aman.
   - Acceptance: hanya validated payload; create password hashed, profil tanpa
     reset password, role assignment memakai pengaman existing dan atomic.
   - Verification: GREEN, regresi Identity/profil, route:list, Pint, diff.
-- [ ] Commit increment setelah verifikasi.
+- [x] Commit increment setelah verifikasi.
 
 ## Increment 3: Status Dan Auth
 
@@ -60,4 +60,11 @@
 
 ## Hasil Aktual
 
-Belum ada hasil coding. Increment 1: scope/dokumen diperiksa sebelum coding.
+Increment 1: scope/dokumen diperiksa sebelum coding; commit f10d429.
+Increment 2: RED 9 gagal (endpoint/action/seed belum ada), GREEN 9 test/56
+assertion PASS; regresi Identity + profil 51 test/305 assertion PASS. Pint dan
+route:list (8 route dengan permission per action) serta git diff --check PASS.
+Create/edit hanya menerima field allowlist, normalized email case-insensitive,
+password hashed dan audit tanpa PII/credential. Assignment role atomic memakai
+ManageAccess; operator tidak dapat takeover super/higher privilege/guard lain.
+Seeder permission-only diperluas; belum dijalankan terhadap MySQL lokal.

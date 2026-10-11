@@ -30,6 +30,14 @@ interface AccessRepository
 
     public function deleteUser(int $id): void;
 
+    public function userProfile(int $id): array;
+
+    public function emailExists(string $email, ?int $except = null): bool;
+
+    public function createUser(string $name, string $email, string $password): int;
+
+    public function updateUser(int $id, string $name, string $email): void;
+
     public function audit(string $event, int $actorId, string $subject, int $id, array $before, array $after): void;
 
     public function clearCache(): void;

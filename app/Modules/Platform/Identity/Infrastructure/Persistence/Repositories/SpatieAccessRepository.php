@@ -133,4 +133,40 @@ class SpatieAccessRepository implements AccessRepository
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
+
+    public function userProfile(int $id): array
+    {
+        $user = User::findOrFail($id);
+
+        return ['name' => $user->name, 'email' => $user->email,
+            'super' => $user->hasRole('super-system', 'web'),
+            'other_guards' => $user->roles()->where('guard_name', '!=', 'web')->exists()
+                || $user->permissions()->where('guard_name', '!=', 'web')->exists(),
+            'permissions' => $user->getAllPermissions()->where('guard_name', 'web')->pluck('name')->all()];
+    }
+
+    public function emailExists(string $email, ?int $except = null): bool
+    {
+        return User::query()->whereRaw('LOWER(email) = ?', [$email])
+            ->when($except !== null, fn ($query) => $query->where('id', '!=', $except))->exists();
+    }
+
+    public function createUser(string $name, string $email, string $password): int
+    {
+        return User::create(['name' => $name, 'email' => $email, 'password' => $password])->id;
+    }
+
+    public function updateUser(int $id, string $name, string $email): void
+    {
+        $user = User::findOrFail($id);
+        if ($user->email !== $email) {
+            DB::table('password_reset_tokens')->whereIn('email', [$user->email, $email])->delete();
+            $user->email_verified_at = null;
+        }
+        $user->name = $name;
+        $user->email = $email;
+        if (! $user->save()) {
+            throw new \RuntimeException('Perubahan akun dibatalkan.');
+        }
+    }
 }
