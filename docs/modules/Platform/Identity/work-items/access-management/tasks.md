@@ -49,7 +49,7 @@
 - [x] Review boundary input dan tambahkan regresi identifier route overflow.
   - Acceptance: ID di luar integer PHP positif ditolak 404 tanpa mutation/audit.
   - Verification: RED reproduksi 500 lalu GREEN seluruh empat mutation route.
-- [ ] Commit dan push seluruh work item selesai.
+- [x] Commit dan push seluruh work item selesai.
   - Acceptance: remote sinkron; artefak user tetap lokal.
   - Verification: staged diff dan status remote.
 
@@ -106,3 +106,9 @@ Typecheck dan lint source aktif akhir PASS. Pemeriksaan Laragon
 memuat Vite development client. Diff whitespace dan 9 link relatif dokumen
 yang diubah PASS. Review correctness, boundary, authorization, query pagination
 dan performance dilakukan; tidak ada dependency/branch baru.
+
+Delivery: source/backend/UI/fix dan dokumentasi dipush melalui save point
+`49a9eba` ke origin/main; status main sinkron. Checklist delivery ditutup
+sesudah push berhasil. SampleUI dan empat file LSP user tetap untracked lokal;
+tidak ikut staged diff/push. Catatan penutupan ini dikirim sebagai commit docs
+terpisah; verifikasi final remote dilakukan sesudah push catatan tersebut.
