@@ -31,12 +31,11 @@ const mainNavGroups: NavGroup[] = [
             },
             {
                 title: 'Identitas & Akses',
-                url: '',
+                url: '/platform/identity',
                 icon: ShieldCheck,
-                badge: 'Segera',
+                badge: 'Aktif',
                 badgeTone: 'violet',
-                comingSoon: true,
-                permission: 'identity.view',
+                permission: 'platform.identity.view',
             },
             {
                 title: 'Pengaturan Perusahaan',

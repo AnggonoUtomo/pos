@@ -3,8 +3,8 @@
 | Increment | Status | Scope | Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- |
 | 1 | Passed | Rencana dan backend | Public HTTP aman; port/adapter; audit; guard privilege/last-super; seed aman | 15 focused test/113 assertion; Pint, route, full regression |
-| 2 | Planned | UI Inertia | Tab role/permission/user; form/matrix; Sonner; shortcut; navigasi | HTTP props, lint/typecheck/build |
-| 3 | Planned | QA dan penutupan | Desktop/tablet, readonly, lifecycle, guard/error, documentation aktual | DevTools/fallback, full gate, commit/push |
+| 2 | Passed | UI Inertia | Tab role/permission/user; form/matrix; Sonner; shortcut; navigasi | HTTP props, lint/typecheck/build dan fallback browser PASS |
+| 3 | In Progress | QA dan penutupan | Desktop/tablet, readonly, lifecycle, guard/error, documentation aktual | Browser/full test PASS; seed aman dan dokumentasi final pending |
 
 ## Urutan
 

@@ -151,7 +151,7 @@ class AccessManagementTest extends TestCase
         }
         Role::findOrCreate('api-only', 'api');
         $this->actingAs($actor)->get('/platform/identity')->assertInertia(fn (Assert $page) => $page
-            ->component('platform/identity/index', false)->where('records.meta.total', 28)->has('records.data', 25));
+            ->component('platform/identity/index')->where('records.meta.total', 28)->has('records.data', 25));
         $this->get('/platform/identity?tab=roles&search=staff-27')->assertInertia(fn (Assert $page) => $page
             ->where('records.meta.total', 1)->where('records.data.0.name', 'staff-27'));
         $this->get('/platform/identity?tab=users')->assertInertia(fn (Assert $page) => $page
@@ -195,6 +195,42 @@ class AccessManagementTest extends TestCase
         Role::findOrCreate('staff', 'web');
         $this->expectException(AuthorizationException::class);
         app(SyncUserRoles::class)->handle($actor, $user, ['staff']);
+    }
+
+    public function test_role_assignment_preserves_other_guards_and_direct_permissions(): void
+    {
+        $this->actingAs($this->superUser());
+        $user = User::factory()->create();
+        $api = Role::findOrCreate('api-staff', 'api');
+        $user->roles()->attach($api);
+        $this->permission('inventory.view');
+        $user->givePermissionTo('inventory.view');
+        Role::findOrCreate('staff', 'web');
+        $this->putJson('/platform/identity/users/'.$user->id.'/roles', ['roles' => ['staff']])->assertOk();
+        $this->assertTrue($user->fresh()->roles->contains('id', $api->id));
+        $this->assertTrue($user->fresh()->hasDirectPermission('inventory.view'));
+        $this->assertTrue($user->fresh()->hasRole('staff', 'web'));
+    }
+
+    public function test_audit_failure_rolls_back_role_assignment(): void
+    {
+        $this->actingAs($this->superUser());
+        $user = User::factory()->create();
+        Role::findOrCreate('staff', 'web');
+        Activity::saving(function (): void {
+            throw new RuntimeException('Audit unavailable');
+        });
+        $this->putJson('/platform/identity/users/'.$user->id.'/roles', ['roles' => ['staff']])->assertServerError();
+        $this->assertCount(0, $user->fresh()->roles);
+        $this->assertDatabaseCount('activity_log', 0);
+    }
+
+    public function test_catalog_limit_is_explicit_not_silently_truncated(): void
+    {
+        $this->actingAs($this->superUser());
+        $rows = array_map(fn ($index) => ['name' => 'catalog.'.$index, 'guard_name' => 'web'], range(1, 1001));
+        Permission::insert($rows);
+        $this->getJson('/platform/identity')->assertUnprocessable()->assertJsonValidationErrors('access');
     }
 
     public function test_demo_refuses_production_and_missing_permission_rolls_back(): void

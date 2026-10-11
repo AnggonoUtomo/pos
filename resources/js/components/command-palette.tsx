@@ -29,9 +29,10 @@ const commandItems = [
     {
         title: 'Identitas & Akses',
         description: 'Kelola user, role, dan permission',
+        url: '/platform/identity',
+        permission: 'platform.identity.view',
         icon: ShieldCheck,
         tone: 'text-violet-600 dark:text-violet-300',
-        disabled: true,
     },
     {
         title: 'Pengaturan Perusahaan',
