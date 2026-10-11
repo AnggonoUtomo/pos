@@ -32,8 +32,8 @@ function NavBadge({ item }: { item: NavItem }) {
 
 function NavMainItem({ item }: { item: NavItem }) {
     const page = usePage();
-    const { can } = usePermission();
-    const isPermissionBlocked = item.permission ? !can(item.permission) : false;
+    const { can, canAny } = usePermission();
+    const isPermissionBlocked = item.permission ? !(typeof item.permission === 'string' ? can(item.permission) : canAny(item.permission)) : false;
     const isDisabled = item.disabled === true || item.comingSoon === true || isPermissionBlocked || item.url.length === 0;
     const isActive = item.isActive ?? (!isDisabled && isCurrentUrl(page.url, item.url));
     const tooltip = item.comingSoon ? `${item.title} segera hadir` : item.title;

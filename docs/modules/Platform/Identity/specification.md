@@ -2,7 +2,8 @@
 
 ## Status
 
-Implemented untuk fondasi authorization dan UI akses pengguna existing.
+Implemented untuk fondasi authorization, UI akses dan manajemen akun internal.
+Detail terbaru pada [work item pengguna](work-items/user-management/README.md).
 Detail eksekusi berada pada [work item UI akses](work-items/access-management/README.md).
 
 ## Tujuan Dan Scope
@@ -10,7 +11,8 @@ Detail eksekusi berada pada [work item UI akses](work-items/access-management/RE
 Platform/Identity menyediakan fondasi authorization aplikasi POS. Scope saat ini
 meliputi shared auth permission, seed permission, CRUD role biasa, katalog
 permission read-only, assignment role pengguna existing, audit mutation akses
-dan hardening hapus akun pribadi dari profil starter kit.
+dan hardening hapus akun pribadi dari profil starter kit. Capability akun internal
+mencakup create dengan password awal, edit nama/email dan aktivasi/deaktivasi.
 
 ## Arsitektur
 
@@ -23,6 +25,8 @@ dan hardening hapus akun pribadi dari profil starter kit.
 - DeleteOwnAccount memakai port internal yang sama; jalur destroy pada
   controller profil tidak melakukan delete/persistence langsung.
 - Outbound adapter: SpatieAccessRepository menangani persistence, audit dan cache.
+- ManageUsers menangani create/update/status dengan port internal yang sama.
+  UserController/UserRequest dan EnsureActiveAccount menjadi inbound adapter.
 - Application tidak melakukan mutation lewat model atau adapter konkret.
 - Composition root:
   `app/Modules/Platform/Identity/ServiceProvider.php`.
@@ -31,7 +35,8 @@ dan hardening hapus akun pribadi dari profil starter kit.
 
 - Public registration.
 - Full user profile management.
-- CRUD akun/password, key permission bebas dan direct user grants.
+- Hapus akun oleh admin, reset password admin, email invitation, key permission
+  bebas dan direct user grants.
 - Customer/supplier master.
 - Multi company authorization.
 
@@ -59,13 +64,14 @@ dan hardening hapus akun pribadi dari profil starter kit.
 - Activity log memakai tabel package Spatie.
 - Role biasa tanpa referensi memakai hard delete audited sebagai pengecualian
   soft delete package; role sistem atau terpakai tidak boleh dihapus.
-- Props pengguna hanya id/name/email/roles/direct_permissions_count. Password,
+- Props pengguna hanya id/name/email/roles/direct_permissions_count/is_active/
+  can_edit. Password, access_version,
   remember token dan credential tidak dikirim ke UI. Direct grants/guard lain
   tidak diubah oleh assignment web.
 
 ## Seeder Demo
 
-IdentityPermissionsSeeder hanya mendaftarkan dua permission Identity; tidak
+IdentityPermissionsSeeder hanya mendaftarkan enam permission Identity; tidak
 mengubah akun, password atau role assignment. IdentityRolesDemoSeeder hanya
 local/testing, membutuhkan permission modul terdaftar dan membuat role yang
 belum ada saja. Repeat tidak menimpa konfigurasi existing; tidak membuat akun.
@@ -82,9 +88,9 @@ Jangan menjalankan ulang seeder akun existing sebagai cara rollout UI akses.
   Cache permission dibersihkan setelah transaction selesai.
 - Role super-system/super-admin reserved untuk CRUD dan sync permission.
 - Hanya super-system dapat mengubah user yang memiliki atau akan menerima role
-  super-system; minimal satu pemegang harus tersisa. Gate bypass tidak melewati
+  super-system; minimal satu pemegang aktif harus tersisa. Gate bypass tidak melewati
   invariant ini. Jalur self-delete profil juga menegakkan last-super secara
-  sinkron; bukan jaminan untuk CRUD akun lain yang belum dikembangkan.
+  sinkron. Deaktivasi melindungi last-super aktif dan menolak akun sendiri.
 - Manager biasa hanya memberi permission/role dalam permission efektifnya;
   tidak bisa mengedit/menghapus role dengan permission melebihi miliknya.
 - Super user pada shared auth disebut `superSystem`.
@@ -119,6 +125,8 @@ ketika request masih berjalan. Detail QA:
   checkbox per prefix; dialog konfirmasi delete dan editor role pengguna.
 - Toast: operasi CRUD/sync memakai Sonner.
 - State: loading, empty, error, dan disabled wajib tersedia.
+- Tab pengguna menyediakan dialog tambah/edit/status, badge aktif/nonaktif dan
+  guard per operasi. users.view tanpa identity.view hanya menampilkan tab pengguna.
 - Shortcut dropdown di atas workspace: Alt+F, Ctrl/Cmd+Shift+N,
   Ctrl/Cmd+Enter dan Escape. Navigasi sidebar/palette mengarah ke route nyata.
 - Browser QA: desktop expanded/collapsed, tablet 1024x768/768x1024,
@@ -154,13 +162,36 @@ Detail implementasi/QA ada pada
 - [x] Audit/rollback, guest/readonly, privilege, reserved/last-super dan seed aman diuji.
 - [x] Browser workflow desktop/tablet terverifikasi melalui fallback disposable.
 - [x] Self-delete profil melindungi last-super, audited/atomic dan logout setelah sukses.
+- [x] Create/edit/status akun internal, active last-super/session guard, permission
+  per operasi, audit rollback dan browser desktop/tablet terverifikasi.
+
+## Akun Internal Dan Session
+
+POST users memerlukan users.create, nama/email valid/unik ternormalisasi,
+password minimal 12 karakter/maksimal 72 byte dan konfirmasi, serta roles list (boleh kosong). Role
+nonkosong juga memerlukan identity.manage; anti-escalation existing tetap berlaku.
+PUT users/{id} menerima nama/email saja; credential/roles/status payload diabaikan.
+PATCH users/{id}/status memerlukan users.manage dan is_active boolean.
+Operator non-super tidak dapat takeover target super/higher privilege/guard lain.
+Audit create menyimpan roles; edit hanya changed_fields; status before/after
+is_active, tanpa password/nama/email. Exception/veto/audit failure rollback.
+
+Migration module menambah is_active default true dan access_version default 0;
+deaktivasi mempertahankan akun/pivot, menaikkan version, mengganti remember token
+dan membuang reset token. Perubahan email juga mengganti remember token,
+menghapus reset token dan verification lama. Login baru menyimpan version; middleware web sebelum Inertia memeriksa
+state fresh. Sesi/version lama ditolak sekalipun akun sudah diaktifkan kembali.
+Recaller baru yang valid setelah login ulang menggunakan version terbaru;
+version user saat recall wajib cocok dengan state fresh sebelum inisialisasi.
+Tidak menambahkan admin delete/soft delete atau reset/invitation lifecycle.
 
 ## Risiko Terbuka
 
 - Permission matrix seluruh module bisnis belum lengkap karena module bisnis
   masih planned.
-- Retained session rows/perangkat lain, deaktivasi dan ownership dokumen transaksi
-  memerlukan aturan akun terpisah sebelum module transaksi bisnis digunakan.
+- Retained session rows/cleanup fisik dan ownership dokumen transaksi memerlukan
+  aturan akun terpisah sebelum module transaksi bisnis digunakan. Deaktivasi dan
+  version guard request berikutnya sudah tercakup, bukan cancel request in-flight.
 - Uji konkurensi/load MySQL terpisah belum dijalankan. Test otomatis memakai
   SQLite disposable; pola locking MySQL direview, bukan diklaim diuji paralel.
 - Katalog di atas 1000 perlu pencarian remote. Ketersediaan CDN font tidak masuk

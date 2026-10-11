@@ -117,21 +117,27 @@ tetapi tetap tunduk pada validasi, transaction dan invariant akses.
 
 | Method | Path | Nama route | Permission |
 | --- | --- | --- | --- |
-| GET | /platform/identity | platform.identity.index | platform.identity.view |
+| GET | /platform/identity | platform.identity.index | platform.identity.view atau users.view khusus tab users |
 | POST | /platform/identity/roles | platform.identity.roles.store | platform.identity.manage |
 | PUT | /platform/identity/roles/{id} | platform.identity.roles.update | platform.identity.manage |
 | DELETE | /platform/identity/roles/{id} | platform.identity.roles.destroy | platform.identity.manage |
 | PUT | /platform/identity/roles/{id}/permissions | platform.identity.roles.permissions | platform.identity.manage |
 | PUT | /platform/identity/users/{id}/roles | platform.identity.users.roles | platform.identity.manage |
+| POST | /platform/identity/users | platform.identity.users.store | platform.identity.users.create |
+| PUT | /platform/identity/users/{id} | platform.identity.users.update | platform.identity.users.update |
+| PATCH | /platform/identity/users/{id}/status | platform.identity.users.status | platform.identity.users.manage |
 
 ID User/Role/Permission existing integer mengikuti starter kit/package, bukan
 migrasi ULID pada pekerjaan UI ini. Target role hanya guard web; guard lain atau
 target hilang menghasilkan 404. GET menghasilkan Inertia component
 platform/identity/index dengan records `{data, meta}`, filters `{tab, search}`,
-options `{roles, permissions}`. Tab roles/permissions/users; search maksimum 150
+options `{roles, permissions, active_super_users}`. Tab roles/permissions/users; search maksimum 150
 karakter; page 1..2147483647, 25 record/page, order name/id.
 Role fields id/name/permissions/users_count; permission id/name/roles_count;
-user id/name/email/roles/direct_permissions_count. Tidak mengekspos credential.
+user id/name/email/roles/direct_permissions_count/is_active/can_edit. Tidak
+mengekspos password, remember_token atau access_version.
+users.view saja default tab users dan menolak roles/permissions; identity.view
+tetap memiliki akses tiga tab seperti sebelumnya.
 Catalog pilihan dibatasi 1000; overflow menghasilkan validation access, bukan
 pemotongan silent.
 
@@ -149,11 +155,35 @@ permission melalui UI. Role terpakai tidak bisa dihapus; role biasa tanpa
 referensi memakai hard delete audited sebagai pengecualian package soft delete.
 Manager non-super tidak boleh memberi akses melampaui permission efektifnya atau
 memodifikasi role berpermission di atas aksesnya. Hanya super-system mengubah
-assignment target super-system, dan minimal satu pemegang harus tersisa.
+assignment target super-system, dan minimal satu pemegang aktif harus tersisa.
 Assignment web mempertahankan direct grant/role guard lain/atribut akun.
 Mutation dan audit atomic, no-op tanpa audit ganda, cache refresh sesudah commit.
 Last-super juga ditegakkan pada self-delete profil seperti contract di bawah.
-CRUD akun/password, direct grants dan key permission bebas tidak tersedia.
+Direct grants dan key permission bebas tidak tersedia.
+
+Create pengguna: name/email wajib maksimum 255, trim nama dan lowercase/trim
+email unik case-insensitive; password awal minimal 12 karakter/maksimal 72 byte,
+confirmed, roles list
+distinct maksimum 1000 (boleh kosong). Role nonkosong juga memerlukan
+identity.manage; pengaman grant/reserved tetap berlaku, super-admin legacy tidak
+bisa diberikan ke akun baru. Password hashed; email_verified_at tetap null.
+PUT profil admin menerima name/email saja, tanpa password/roles/status;
+email berubah mencabut remember/reset token lama serta verification.
+PATCH status memerlukan is_active boolean; no-op tanpa audit/version ganda.
+Operator tidak dapat edit/status pengguna super/higher privilege/guard lain.
+Self-deactivation dan last-super aktif ditolak 422 account; Gate bypass tidak
+melompati invariant. Belum tersedia reset password atau hapus akun oleh admin.
+Audit user_created hanya roles, user_updated hanya changed_fields, dan
+user_status_changed hanya before/after is_active; tidak menyimpan PII/credential.
+
+Akun nonaktif tetap tersimpan beserta pivot, bukan soft delete. Deaktivasi
+menaikkan users.access_version, mengganti remember token dan menghapus reset
+token secara atomic. Aktivasi tidak menurunkan version atau mengembalikan sesi
+lama. Login menolak is_active=false dan menyimpan version terbaru; middleware
+web menolak state inactive/version lama (401 JSON atau redirect login) sebelum
+request berikutnya dilayani. Remember recaller lama tidak berlaku setelah
+deaktivasi; recaller baru valid dapat login setelah reaktivasi. Tidak mengklaim
+cancel request yang sudah berjalan atau cleanup fisik semua driver session.
 
 ### Penghapusan Akun Pribadi
 

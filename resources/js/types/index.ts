@@ -26,7 +26,7 @@ export interface NavItem {
     badgeTone?: 'neutral' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet';
     comingSoon?: boolean;
     disabled?: boolean;
-    permission?: string;
+    permission?: string | string[];
 }
 
 export interface SharedData {

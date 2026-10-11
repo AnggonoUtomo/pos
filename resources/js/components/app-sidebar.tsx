@@ -35,7 +35,7 @@ const mainNavGroups: NavGroup[] = [
                 icon: ShieldCheck,
                 badge: 'Aktif',
                 badgeTone: 'violet',
-                permission: 'platform.identity.view',
+                permission: ['platform.identity.view', 'platform.identity.users.view'],
             },
             {
                 title: 'Pengaturan Perusahaan',

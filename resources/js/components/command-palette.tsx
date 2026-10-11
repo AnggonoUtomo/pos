@@ -30,7 +30,7 @@ const commandItems = [
         title: 'Identitas & Akses',
         description: 'Kelola user, role, dan permission',
         url: '/platform/identity',
-        permission: 'platform.identity.view',
+        permission: ['platform.identity.view', 'platform.identity.users.view'],
         icon: ShieldCheck,
         tone: 'text-violet-600 dark:text-violet-300',
     },
@@ -112,7 +112,7 @@ const commandItems = [
 ];
 
 export function CommandPalette() {
-    const { can } = usePermission();
+    const { can, canAny } = usePermission();
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
 
@@ -132,13 +132,17 @@ export function CommandPalette() {
         const normalizedQuery = query.trim().toLowerCase();
 
         if (!normalizedQuery) {
-            return commandItems.filter((item) => !item.permission || can(item.permission));
+            return commandItems.filter(
+                (item) => !item.permission || (typeof item.permission === 'string' ? can(item.permission) : canAny(item.permission)),
+            );
         }
 
         return commandItems.filter(
-            (item) => (!item.permission || can(item.permission)) && `${item.title} ${item.description}`.toLowerCase().includes(normalizedQuery),
+            (item) =>
+                (!item.permission || (typeof item.permission === 'string' ? can(item.permission) : canAny(item.permission))) &&
+                `${item.title} ${item.description}`.toLowerCase().includes(normalizedQuery),
         );
-    }, [query, can]);
+    }, [query, can, canAny]);
 
     const runCommand = (item: (typeof commandItems)[number]) => {
         if (item.disabled || !item.url) {

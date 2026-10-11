@@ -15,7 +15,7 @@ Status yang digunakan:
 | Domain | Module | Tanggung jawab | Dependency utama | Status |
 | --- | --- | --- | --- | --- |
 | Platform | ModuleRuntime | Discovery, bootstrap, dan scaffolding module; source saat ini masih tersebar pada command/framework app | Laravel application container | Pending Validation |
-| Platform | Identity | Authorization, UI role/katalog permission/akses pengguna existing, sync audited dan seeder akses | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
+| Platform | Identity | Authorization, role/katalog permission, tambah/edit/status akun internal, session guard, sync audited dan seeder akses | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
 | Platform | CompanySettings | Identitas perusahaan tunggal, preference operasional, format nomor | Identity | Planned |
 | Inventory | Units | Master satuan dan UI CRUD; base unit/konversi dimiliki Items; guard satuan terpakai | Items (ItemUnitUsage read contract), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Items | Barang, SKU, barcode, base unit immutable, multi satuan/konversi dan UI CRUD; kategori/brand ditunda | Units (UnitLookup), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |

@@ -195,6 +195,11 @@ Script juga memverifikasi self-delete profil: password salah, last-super ditolak
 dan tetap authenticated, password/error cleared, ordinary account deletion dan
 logout, dialog light/dark/desktop/tablet serta Sonner/keyboard. Akun yang dihapus
 hanya akun fixture disposable, tidak menggunakan credential/akun MySQL nyata.
+Manajemen pengguna: tambah/edit, role tersimpan, duplicate email/konfirmasi
+password, password cleared, status badge, inactive login ditolak, sesi lama
+sesudah reaktivasi ditolak dan login baru berhasil, users-only navigation/palette
+serta delegated operator. Remember recaller diverifikasi lewat UserStatusTest;
+workflow browser tidak mengklaim kontrol remember UI starter kit sudah diperbaiki.
 Screenshot/report.json lokal di-ignore. CSS font Bunny eksternal distub agar QA
 tidak tergantung jaringan; font fallback dipakai dan CDN tidak termasuk gate.
 Status fallback PASS tetap terpisah dari DevTools MCP BLOCKED.

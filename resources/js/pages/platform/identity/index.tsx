@@ -4,13 +4,15 @@ import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, KeyRound, LoaderCircle, Plus, Search, ShieldCheck, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, KeyRound, LoaderCircle, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { AccessEditorDialog } from './components/access-editor-dialog';
 import { AccessTable } from './components/access-table';
 import { RoleFormDialog } from './components/role-form-dialog';
-import type { AccessEditor, AccessPageProps, AccessTab, RoleRow } from './types';
+import { UserFormDialog } from './components/user-form-dialog';
+import { UserStatusDialog } from './components/user-status-dialog';
+import type { AccessEditor, AccessPageProps, AccessTab, RoleRow, UserRow } from './types';
 
 const tabs = [
     { key: 'roles', label: 'Role', icon: ShieldCheck, tone: 'text-violet-600 dark:text-violet-300' },
@@ -19,12 +21,18 @@ const tabs = [
 ] as const;
 
 export default function IdentityIndex({ records, filters, options }: AccessPageProps) {
-    const { can, isSuperSystem } = usePermission();
+    const { can, isSuperSystem, user } = usePermission();
     const canManage = can('platform.identity.manage');
+    const canCreateUsers = can('platform.identity.users.create');
+    const canUpdateUsers = can('platform.identity.users.update');
+    const canStatusUsers = can('platform.identity.users.manage');
+    const visibleTabs = tabs.filter((tab) => tab.key === 'users' || can('platform.identity.view'));
     const [search, setSearch] = useState(filters.search);
     const [loading, setLoading] = useState(false);
     const [editor, setEditor] = useState<AccessEditor | null>(null);
     const [deleting, setDeleting] = useState<RoleRow | null>(null);
+    const [accountEditor, setAccountEditor] = useState<UserRow | null | undefined>(undefined);
+    const [statusEditor, setStatusEditor] = useState<UserRow | null>(null);
     const searchRef = useRef<HTMLInputElement>(null);
     const { meta } = records;
     useEffect(() => setSearch(filters.search), [filters.search]);
@@ -43,14 +51,15 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                 event.preventDefault();
                 searchRef.current?.focus();
             }
-            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === 'n' && canManage && filters.tab === 'roles') {
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === 'n') {
                 event.preventDefault();
-                setEditor({ kind: 'role', record: null });
+                if (canManage && filters.tab === 'roles') setEditor({ kind: 'role', record: null });
+                else if (canCreateUsers && filters.tab === 'users') setAccountEditor(null);
             }
         };
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
-    }, [canManage, filters.tab]);
+    }, [canManage, canCreateUsers, filters.tab]);
     const visit = (tab: AccessTab, query = filters.search, page = 1) =>
         router.get(
             route('platform.identity.index'),
@@ -66,12 +75,17 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                 shortcuts={[
                     { label: 'Cari', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
                     {
-                        label: 'Tambah role',
-                        description: 'Role baru',
+                        label: filters.tab === 'users' ? 'Tambah pengguna' : 'Tambah role',
+                        description: filters.tab === 'users' ? 'Pengguna baru' : 'Role baru',
                         keys: ['Ctrl/Cmd', 'Shift', 'N'],
-                        disabled: !canManage || filters.tab !== 'roles',
+                        disabled: filters.tab === 'users' ? !canCreateUsers : !canManage || filters.tab !== 'roles',
                     },
-                    { label: 'Simpan', description: 'Simpan form', keys: ['Ctrl/Cmd', 'Enter'], disabled: !canManage },
+                    {
+                        label: 'Simpan',
+                        description: 'Simpan form',
+                        keys: ['Ctrl/Cmd', 'Enter'],
+                        disabled: !(canManage || canCreateUsers || canUpdateUsers || canStatusUsers),
+                    },
                     { label: 'Tutup', description: 'Tutup dialog', keys: ['Esc'] },
                 ]}
             />
@@ -84,31 +98,37 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                             Tambah role
                         </Button>
                     )}
+                    {canCreateUsers && filters.tab === 'users' && (
+                        <Button disabled={loading} onClick={() => setAccountEditor(null)}>
+                            <UserPlus className="size-4" />
+                            Tambah pengguna
+                        </Button>
+                    )}
                 </div>
                 <div
                     className="flex flex-wrap gap-1 border-b"
                     role="tablist"
                     aria-label="Manajemen akses"
                     onKeyDown={(event) => {
-                        const index = tabs.findIndex((tab) => tab.key === filters.tab);
+                        const index = visibleTabs.findIndex((tab) => tab.key === filters.tab);
                         const next =
                             event.key === 'ArrowRight'
-                                ? (index + 1) % tabs.length
+                                ? (index + 1) % visibleTabs.length
                                 : event.key === 'ArrowLeft'
-                                  ? (index + tabs.length - 1) % tabs.length
+                                  ? (index + visibleTabs.length - 1) % visibleTabs.length
                                   : event.key === 'Home'
                                     ? 0
                                     : event.key === 'End'
-                                      ? tabs.length - 1
+                                      ? visibleTabs.length - 1
                                       : -1;
                         if (next >= 0) {
                             event.preventDefault();
                             (event.currentTarget.children[next] as HTMLElement).focus();
-                            visit(tabs[next].key, '');
+                            visit(visibleTabs[next].key, '');
                         }
                     }}
                 >
-                    {tabs.map((tab) => (
+                    {visibleTabs.map((tab) => (
                         <Button
                             key={tab.key}
                             id={`access-tab-${tab.key}`}
@@ -160,6 +180,12 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                             canGrant={can}
                             onEdit={setEditor}
                             onDelete={setDeleting}
+                            canUpdateUsers={canUpdateUsers}
+                            canStatusUsers={canStatusUsers}
+                            currentUserId={user?.id}
+                            activeSuperUsers={options.active_super_users}
+                            onAccountEdit={setAccountEditor}
+                            onStatusEdit={setStatusEditor}
                         />
                     </div>
                     <div className="flex items-center justify-between gap-3 text-sm">
@@ -204,6 +230,15 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                 {canManage && deleting && (
                     <RoleFormDialog key={`delete-${deleting.id}`} record={deleting} deleting onClose={() => setDeleting(null)} />
                 )}
+                {accountEditor !== undefined && (accountEditor ? canUpdateUsers : canCreateUsers) && (
+                    <UserFormDialog
+                        key={accountEditor?.id ?? 'new-user'}
+                        record={accountEditor}
+                        options={options}
+                        onClose={() => setAccountEditor(undefined)}
+                    />
+                )}
+                {canStatusUsers && statusEditor && <UserStatusDialog record={statusEditor} onClose={() => setStatusEditor(null)} />}
             </section>
         </AppLayout>
     );

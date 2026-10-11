@@ -7,14 +7,15 @@ Active
 ## Tujuan
 
 Module ini mengelola baseline akses aplikasi: role, permission, shared auth
-permission untuk Inertia, UI manajemen role/permission/akses pengguna existing,
-sinkronisasi akses audited, seeder permission/demo role, serta pengaman hapus
+permission untuk Inertia, UI manajemen role/permission/akses pengguna,
+tambah/edit/status akun internal, sinkronisasi akses audited, seeder permission/demo role, serta pengaman hapus
 akun pribadi dari profil starter kit.
 
 ## Boundary
 
 - Memiliki: CRUD role biasa, katalog permission terdaftar, assignment role user,
-  authorization helper backend, shared auth permission, seeder akses.
+  tambah/edit nama/email dan status aktif akun, authorization helper backend,
+  shared auth permission, seeder akses.
 - Tidak memiliki: registrasi publik, profil user lanjutan, multi company,
   payroll, customer/supplier identity, atau audit ledger.
 
@@ -39,11 +40,15 @@ akun pribadi dari profil starter kit.
 Permission mengikuti key English technical naming. Permission baseline harus
 diamankan di backend; frontend hanya menyembunyikan atau menampilkan UI.
 UI memakai `platform.identity.view`; mutation memakai `platform.identity.manage`.
+Operator akun dapat memakai users.view untuk tab pengguna saja. Tambah/edit/status
+memakai platform.identity.users.create/update/manage; assignment role tetap
+identity.manage. Permission create tanpa manage boleh membuat akun tanpa role.
 
 ## Data Dan Seeder
 
-- Migration: belum ada migration khusus module selain scaffold folder.
-- `IdentityPermissionsSeeder`: dua key Identity saja; aman untuk provisioning
+- Migration module menambah users.is_active (default true) dan access_version
+  (default 0); tidak mengganti ID/credential atau assignment existing.
+- `IdentityPermissionsSeeder`: enam key Identity; aman untuk provisioning
   tanpa mengubah akun, password, role atau assignment.
 - `IdentityRolesDemoSeeder`: cashier/inventory-manager/inventory-viewer untuk
   local/testing; memakai permission modul yang sudah tersedia, tidak membuat
@@ -76,19 +81,30 @@ UI memakai `platform.identity.view`; mutation memakai `platform.identity.manage`
   super-system dan tidak boleh mencabut pemegang terakhir. Manager biasa tidak
   boleh memberi permission/role di luar permission efektifnya. Direct user
   grants dan role guard lain dipertahankan.
-- CRUD akun/password baru dan key permission bebas tidak masuk scope.
+- Akun internal dibuat dengan password awal dan konfirmasi dari admin; edit
+  hanya nama/email. Password hashed, tidak dikirim ke UI/audit. Tanpa reset
+  password admin, hapus akun admin, email invitation atau key permission bebas.
+- Status nonaktif mempertahankan akun/pivot, menolak login dan mencabut sesi
+  lama dengan access_version serta remember token. Reaktivasi wajib login baru;
+  self-deactivation dan menghilangkan super-system aktif terakhir ditolak.
+- Operator biasa tidak bisa edit identitas/status super-system atau pengguna
+  berpermission lebih tinggi/guard lain. Audit profil mencatat field yang berubah
+  saja, tanpa PII. Semua mutation/audit atomic.
 - DELETE settings/profile existing memanggil DeleteOwnAccount setelah validasi
   current-password. Last-super dibaca fresh di backend dengan lock role yang sama
   dengan assignment, lalu lock user. Audit/delete atomic; logout dan invalidation
   sesi sesudah action berhasil. Failure audit/delete mempertahankan akun/sesi.
 - Audit identity.account_deleted menyimpan causer/subject ID, before roles dan
   after deleted saja; tanpa credential/name/email. Semantik hard delete starter
-  kit dipertahankan, bukan lifecycle CRUD akun baru. Session perangkat lain dan
-  ownership transaksi bisnis memerlukan hardening terpisah.
+  kit dipertahankan. Session akun nonaktif/version lama kini ditolak pada request
+  web berikutnya; cleanup fisik row sesi dan ownership transaksi bisnis masih
+  memerlukan aturan terpisah.
 - Detail pengaman profil:
   [work item penghapusan akun](work-items/account-deletion-guard/README.md).
 - Detail implementasi dan bukti QA:
   [work item UI akses](work-items/access-management/README.md).
+- Manajemen akun terbaru:
+  [work item pengguna](work-items/user-management/README.md).
 
 ## Verifikasi Utama
 
@@ -97,4 +113,6 @@ php artisan test --filter=Identity
 php artisan test --filter=PermissionBaselineTest
 php artisan test --filter=AccessManagementTest
 php artisan test --filter=AccountDeletionTest
+php artisan test --filter=UserManagementTest
+php artisan test --filter=UserStatusTest
 ```

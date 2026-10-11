@@ -2,7 +2,7 @@
 
 ## Status
 
-Disetujui
+Selesai
 
 ## Masalah Dan Tujuan
 
@@ -14,7 +14,8 @@ tanpa membuka registrasi publik atau menghapus riwayat operasional.
 
 - Super-system atau operator dengan permission per operasi.
 - Tambah: nama, email unik ternormalisasi, password awal minimal 12 karakter
-  beserta konfirmasi; role opsional dan membutuhkan identity.manage.
+  beserta konfirmasi, maksimal 72 byte untuk mencegah truncation bcrypt;
+  role opsional dan membutuhkan identity.manage.
 - Edit: nama/email; perubahan email membatalkan verification/reset token lama.
 - Status: aktif/nonaktif lewat konfirmasi, bukan toggle tanpa konfirmasi.
 - Assignment role memakai editor existing; direct grants tetap dipertahankan.

@@ -29,7 +29,7 @@ foreach (['inventory.view', 'inventory.manage', 'sales.pos.invoices.create'] as 
 }
 app(IdentityPermissionsSeeder::class)->run();
 app(IdentityRolesDemoSeeder::class)->run();
-foreach (['manager' => 'QA Super System', 'viewer' => 'QA Viewer', 'staff' => 'QA Staff', 'delegate' => 'QA Delegate'] as $key => $name) {
+foreach (['manager' => 'QA Super System', 'viewer' => 'QA Viewer', 'staff' => 'QA Staff', 'delegate' => 'QA Delegate', 'operator' => 'QA Account Operator'] as $key => $name) {
     $user = User::create(['name' => $name, 'email' => "qa-{$key}@example.test", 'email_verified_at' => now(), 'password' => Hash::make($input['password'])]);
     if ($key === 'manager') {
         $user->assignRole(Role::findOrCreate('super-system', 'web'));
@@ -37,6 +37,9 @@ foreach (['manager' => 'QA Super System', 'viewer' => 'QA Viewer', 'staff' => 'Q
         $user->givePermissionTo('platform.identity.view');
     } elseif ($key === 'delegate') {
         $user->givePermissionTo(['platform.identity.view', 'platform.identity.manage', 'inventory.view']);
+    } elseif ($key === 'operator') {
+        $user->givePermissionTo(['platform.identity.users.view', 'platform.identity.users.create',
+            'platform.identity.users.update', 'platform.identity.users.manage', 'platform.identity.manage', 'inventory.view']);
     }
 }
 echo 'Fixture disposable siap.';

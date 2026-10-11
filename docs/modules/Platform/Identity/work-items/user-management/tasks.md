@@ -44,23 +44,26 @@
     ke version baru, email berubah mencabut remember token, password multibyte
     tidak terpotong oleh bcrypt.
   - Verification: RED 4 gagal, GREEN 4 test/18 assertion, full regression.
-- [ ] Tambah/edit/status dialog dan badge pada tab pengguna.
+- [x] Tambah/edit/status dialog dan badge pada tab pengguna.
   - Acceptance: per-operation permission, role guard, processing/error/empty,
     password cleared, Sonner, shortcut dropdown dan keyboard tersedia.
   - Verification: lint/typecheck/build.
-- [ ] Browser QA desktop/tablet, light/dark dan privilege/auth lifecycle.
+- [x] Browser QA desktop/tablet, light/dark dan privilege/auth lifecycle.
   - Acceptance: workflow nyata disposable, screenshots, console tanpa error baru;
     mencoba Chrome DevTools lebih dulu dan fallback berstatus terpisah.
   - Verification: hasil tool/script dan pemeriksaan visual.
-- [ ] Update module/API, full tests, review dan selective commit/push.
+- [x] Update module/API, full tests dan review.
   - Acceptance: status berbasis realita, tidak mengubah credential/role existing,
     risiko MySQL concurrency tertulis; artefak user tidak ikut commit.
-  - Verification: full tests, route/status, diff/staged diff, remote status.
+  - Verification: full tests, route/status, diff/staged diff.
+- [ ] Selective commit/push setelah scope selesai.
+  - Acceptance: tidak menyertakan artefak user, remote sesuai commit delivery.
+  - Verification: staged diff, push dan remote status sesudah command berhasil.
 
 ## Sesudah Coding
 
-- [ ] Catat hasil aktual, migration/seeder dan risiko.
-- [ ] Checklist/status diisi setelah verification lulus.
+- [x] Catat hasil aktual, migration/seeder dan risiko.
+- [x] Checklist/status diisi setelah verification lulus.
 - [ ] Handoff ringkas beserta bagian yang tidak disentuh.
 
 ## Hasil Aktual
@@ -93,3 +96,30 @@ assertion PASS. Full suite terbaru 205 test/1213 assertion PASS; Pint PASS.
 UserStatusTest juga menguji cookie recall lama ditolak dan recall baru sesudah
 aktivasi diterima, tanpa token/credential di output. Bukti concurrency interleaving
 berupa test state terkontrol, bukan load test MySQL.
+
+Increment 4: npx eslint resources/js, npx tsc --noEmit, npm run build (2683
+module, Vite 6.4.3) dan node --check scripts/qa/identity-browser.mjs PASS.
+Resolved middleware dengan HTTP Kernel menunjukkan EnsureActiveAccount sebelum
+Inertia/Authorize. Route inspection 9 endpoint dan migration/status PASS.
+Review independent source: tiga Required tertutup; residual MySQL concurrency.
+
+Chrome DevTools MCP smoke PASS: context pos-users-qa terisolasi, guest route
+Identity redirect login, desktop/tablet, asset build 200 dan console kosong.
+Tab QA ditutup; tidak memakai credential akun MySQL. Workflow authenticated
+memakai script Playwright/Chromium existing pada SQLite disposable, PASS dua
+kali (terakhir sesudah perbaikan backend). Semua workflow create/edit/role,
+invalid email/confirmation, password clearing, deactivate/reactivate, badge,
+inactive login dan old-session rejection/fresh login berjalan; permission UX
+operator/users-only/readonly/delegated, palette, shortcut serta regresi akses
+dan self-delete PASS. Console error/warning kosong; server/browser ditutup.
+17 screenshot pada storage/framework/testing/identity-browser-10680acbe1570df2/;
+tablet portrait/landscape dan dialog dark diperiksa visual tanpa overlap.
+Font Bunny distub CSS sehingga bukan pengujian CDN/font eksternal.
+
+Dokumen module/API/module index diselaraskan; link relatif dan whitespace
+diperiksa sebelum delivery. Theme, Old-docs, SampleUI, artefak LSP dan akun/
+credential/assignment MySQL tidak diubah. Schema baru dan permission registration
+diterapkan tanpa fresh/reset; tidak membuat demo akun statis/seeder destruktif.
+Gap starter profil update/checkbox remember UI dicatat tanpa diperbaiki di luar
+scope; remember backend diverifikasi pada feature test. Risiko load/konkurensi
+MySQL, ownership transaksi dan cleanup fisik sesi masih terbuka.

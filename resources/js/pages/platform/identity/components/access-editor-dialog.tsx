@@ -31,8 +31,7 @@ export function AccessEditorDialog({
     const [query, setQuery] = useState('');
     const form = useForm({ permissions: isUser ? [] : editor.record.permissions, roles: isUser ? editor.record.roles : [] });
     const selected = isUser ? form.data.roles : form.data.permissions;
-    const lockedLastSuper =
-        isUser && editor.record.roles.includes('super-system') && (options.roles.find((role) => role.name === 'super-system')?.users_count ?? 0) <= 1;
+    const lockedLastSuper = isUser && editor.record.is_active && editor.record.roles.includes('super-system') && options.active_super_users <= 1;
     const choices = (isUser ? options.roles.map((role) => role.name) : options.permissions).filter((name) =>
         name.toLowerCase().includes(query.toLowerCase()),
     );
