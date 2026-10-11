@@ -205,6 +205,11 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 
 ### 6D: QA Dan Penutupan Work Item
 
+- [x] Perbaiki gap typecheck baseline dalam commit terpisah (disetujui user).
+  - Acceptance: auth nullable aman tanpa conditional hook atau perubahan alur
+    autentikasi; efek mix-blend-mode welcome tetap sama.
+  - Verification: typecheck global, lint, build dan regresi auth/profile.
+
 - [ ] QA desktop/tablet, sidebar expanded/collapsed, shortcut dan palette.
   - Acceptance: tidak ada overlap/overflow halaman atau console error baru;
     permission readonly, validasi dan feedback operasi terverifikasi.
@@ -242,6 +247,13 @@ CRUD lengkap, operasional update/delete/restore, atau mutation stok/FIFO.
 - [ ] Risiko terbuka dicatat.
 
 ## Hasil Verifikasi
+
+Perbaikan typecheck baseline disetujui user dan diverifikasi pada 11 Oktober
+2026: `npx tsc --noEmit`, `npx eslint resources/js`, dan `npm run build` PASS.
+Regresi auth/profile 24 test/63 assertion PASS; regresi penuh 150 test/853
+assertion PASS. Menu pengguna aman untuk auth null tanpa conditional hook;
+profil tetap dilindungi backend dan efek CSS welcome tidak berubah. Catatan
+BLOCKED typecheck pada hasil 6B/6C di bawah sudah terselesaikan.
 
 6C pada 10 Oktober 2026: RED 2 test index barang dan 1 test barcode duplikat
 edit; GREEN regresi CRUD/pages/ItemsHttp/UnitLookup 36 test/341 assertion,
