@@ -24,12 +24,34 @@ class PrepareOpening
     /** Must run inside the shared transaction. */
     public function handle(array $input): array
     {
+        if (is_string($input['warehouse_id'] ?? null)) {
+            $input['warehouse_id'] = strtolower($input['warehouse_id']);
+        }
+        if (is_array($input['lines'] ?? null)) {
+            foreach ($input['lines'] as &$row) {
+                if (is_array($row)) {
+                    foreach (['item_id', 'unit_id'] as $key) {
+                        if (is_string($row[$key] ?? null)) {
+                            $row[$key] = strtolower($row[$key]);
+                        }
+                    }
+                }
+            }
+            unset($row);
+        }
         $input = Validator::make($input, self::rules())->validate();
         $warehouse = $this->warehouses->findActive($input['warehouse_id'], lock: true);
         if ($warehouse === null) {
             throw new InvalidArgumentException('Gudang harus aktif dan tersedia.');
         }
-        $unitIds = array_unique(array_column($input['lines'], 'unit_id'));
+        $unitIds = array_column($input['lines'], 'unit_id');
+        // Discovery is non-locking; base_unit_id is immutable. Actual item data is re-read under lock.
+        foreach ($input['lines'] as $row) {
+            $item = $this->items->findActive($row['item_id'])
+                ?? throw new InvalidArgumentException('Barang harus aktif dan tersedia.');
+            $unitIds[] = $item->baseUnitId;
+        }
+        $unitIds = array_unique($unitIds);
         sort($unitIds);
         $units = [];
         foreach ($unitIds as $id) {

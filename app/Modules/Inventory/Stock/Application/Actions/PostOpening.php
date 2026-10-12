@@ -34,6 +34,6 @@ class PostOpening
             }
             unset($line);
             $this->stock->postOpening($id, $header, $lines, $actorId);
-        });
+        }, attempts: 3);
     }
 }

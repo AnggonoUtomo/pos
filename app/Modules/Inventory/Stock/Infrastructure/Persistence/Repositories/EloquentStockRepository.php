@@ -6,6 +6,7 @@ use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockOpening;
 use Brick\Math\BigDecimal;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -147,6 +148,9 @@ class EloquentStockRepository implements StockRepository, StockUsage
 
     private function normalizeLine(array $line): array
     {
+        if (isset($line['posted_at'])) {
+            $line['posted_at'] = Carbon::parse($line['posted_at'], config('app.timezone'))->utc()->toISOString();
+        }
         foreach (['quantity', 'conversion_ratio', 'unit_cost', 'base_quantity', 'total_value'] as $key) {
             if (isset($line[$key])) {
                 $line[$key] = (string) BigDecimal::of((string) $line[$key])->toScale(6);

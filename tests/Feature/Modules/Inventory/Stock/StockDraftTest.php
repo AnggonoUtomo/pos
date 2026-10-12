@@ -84,4 +84,17 @@ class StockDraftTest extends StockTestCase
         $this->assertSame('99999999999999.999999', $record['lines'][0]['base_quantity']);
         $this->assertSame('99999999999999.999999', $record['lines'][0]['total_value']);
     }
+
+    public function test_master_ulids_are_case_insensitive_and_duplicate_variants_are_rejected(): void
+    {
+        $payload = $this->payload();
+        $payload['warehouse_id'] = strtoupper($this->warehouse);
+        $payload['lines'][0]['item_id'] = strtoupper($this->item);
+        $payload['lines'][0]['unit_id'] = strtoupper($this->box);
+        $id = $this->postJson('/inventory/stock/openings', $payload)->assertCreated()->json('id');
+        $this->assertDatabaseHas('stock_opening_lines', ['opening_id' => $id, 'item_id' => $this->item, 'unit_id' => $this->box]);
+        $payload['lines'][] = $this->payload()['lines'][0];
+        $this->postJson('/inventory/stock/openings', $payload)->assertUnprocessable();
+        $this->assertDatabaseCount('stock_openings', 1);
+    }
 }

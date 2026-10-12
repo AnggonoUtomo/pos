@@ -12,4 +12,9 @@ class StockOpening extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return ['posted_at' => 'datetime'];
+    }
 }

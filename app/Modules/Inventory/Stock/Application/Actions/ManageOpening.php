@@ -16,7 +16,7 @@ class ManageOpening
             [$header, $lines] = $this->prepare->handle($input);
 
             return $this->stock->createDraft($header, $lines);
-        });
+        }, attempts: 3);
     }
 
     public function update(string $id, array $input): void
@@ -25,7 +25,7 @@ class ManageOpening
             $this->assertDraft($this->stock->lockDraft($id));
             [$header, $lines] = $this->prepare->handle($input);
             $this->stock->replaceDraft($id, $header, $lines);
-        });
+        }, attempts: 3);
     }
 
     public function delete(string $id): void
@@ -33,7 +33,7 @@ class ManageOpening
         DB::transaction(function () use ($id): void {
             $this->assertDraft($this->stock->lockDraft($id));
             $this->stock->deleteDraft($id);
-        });
+        }, attempts: 3);
     }
 
     public function restore(string $id): void
@@ -41,7 +41,7 @@ class ManageOpening
         DB::transaction(function () use ($id): void {
             $this->assertDraft($this->stock->lockDraft($id, deleted: true));
             $this->stock->restoreDraft($id);
-        });
+        }, attempts: 3);
     }
 
     private function assertDraft(array $record): void

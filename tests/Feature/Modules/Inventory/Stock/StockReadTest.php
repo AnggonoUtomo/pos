@@ -17,7 +17,8 @@ class StockReadTest extends StockTestCase
         $this->getJson('/inventory/stock/data?tab=balances')->assertOk()->assertJsonPath('meta.total', 0);
         $this->postJson("/inventory/stock/openings/{$id}/post")->assertOk();
         $this->getJson('/inventory/stock/data?tab=balances')->assertOk()->assertJsonPath('data.0.quantity', '24.000000')->assertJsonPath('data.0.base_unit_name', 'Buah');
-        $this->getJson('/inventory/stock/data?tab=movements')->assertOk()->assertJsonPath('data.0.type', 'opening')->assertJsonPath('data.0.number', 'SA-'.$id);
+        $movement = $this->getJson('/inventory/stock/data?tab=movements')->assertOk()->assertJsonPath('data.0.type', 'opening')->assertJsonPath('data.0.number', 'SA-'.$id);
+        $this->assertMatchesRegularExpression('/T\d{2}:\d{2}:\d{2}.*Z$/', $movement->json('data.0.posted_at'));
         $this->getJson('/inventory/stock/data?tab=movements&search=NO-MATCH')->assertOk()->assertJsonPath('meta.total', 0);
         $viewer = User::factory()->create();
         $viewer->givePermissionTo('inventory.stock.view');

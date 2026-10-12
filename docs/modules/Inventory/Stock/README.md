@@ -2,7 +2,9 @@
 
 ## Status
 
-Planned. Scope awal disetujui pada 12 Oktober 2026; implementasi belum selesai.
+In Progress. Draft/posting, saldo/kartu stok dan fondasi layer FIFO sudah
+diimplementasikan. Penutupan Increment 6 menunggu gate final dan
+[perbaikan dependency terpisah](../../../work-items/dependency-security-patch/README.md).
 
 ## Tujuan Dan Boundary
 

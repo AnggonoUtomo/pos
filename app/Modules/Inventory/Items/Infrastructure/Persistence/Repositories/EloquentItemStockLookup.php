@@ -16,8 +16,13 @@ class EloquentItemStockLookup implements ItemStockLookup
         if ($lock && DB::transactionLevel() === 0) {
             throw new LogicException('Lookup lock memerlukan transaction.');
         }
-        $item = Item::where('is_active', true)->whereKey($id)->with('units')
+        $item = Item::where('is_active', true)->whereKey($id)
             ->when($lock, fn ($query) => $query->lockForUpdate())->first();
+
+        if ($item !== null) {
+            // A current read avoids a stale REPEATABLE READ snapshot established by draft lines.
+            $item->setRelation('units', $item->units()->when($lock, fn ($query) => $query->lockForUpdate())->get());
+        }
 
         return $item ? $this->data($item) : null;
     }

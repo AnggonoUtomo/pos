@@ -54,7 +54,7 @@
 
 ## Increment 6: QA Dan Delivery
 
-- [ ] Seeder demo relasional aman/idempotent melalui action.
+- [x] Seeder demo relasional aman/idempotent melalui action.
   - Acceptance: posted tidak ditimpa; tidak membuat akun/auto-grant.
   - Verification: demo seeder test.
 - [ ] QA full backend, schema/route dan browser terisolasi.
@@ -89,9 +89,35 @@ MySQL tetap DECIMAL. Bukan bukti pengujian locking MySQL.
 Increment 4: RED 6 posting/guard test 404; GREEN posting/layer/snapshot, retry
 idempotent, pemisahan gudang, stale ratio, permission, audit rollback dua baris,
 master guard dan rename historis. Read invariant memakai locking read setelah
-lock master agar tidak menggunakan snapshot MySQL lama; race nyata belum diuji.
+lock master agar tidak menggunakan snapshot MySQL lama; verifikasi MySQL nyata
+dilanjutkan pada Increment 6.
 
 Increment 5: RED 2 read/page test; GREEN 2 test/46 assertion. UI menggunakan
 segmented Button existing, bukan memasang package tab baru. Typecheck, ESLint
 dan build 2688 module PASS setelah import tab yang belum tersedia diganti.
 Browser workflow dijalankan pada Increment 6; tidak diklaim PASS di tahap ini.
+
+Increment 6 (berjalan): demo idempotent dan focused Stock 29 test/172 assertion
+PASS. Review menemukan stale eager relation MySQL, urutan lock base/selected
+unit dan variasi case ULID; diperbaiki dengan current read, canonical lock,
+retry transaction 3 kali dan normalisasi sebelum validasi duplicate. Reproduksi
+dua koneksi MySQL REPEATABLE READ pada scripts/qa/stock-mysql.php PASS: stale
+ratio ditolak, retry idempotent, sekali per pasangan, urutan lock dan decimal
+besar exact. Ini bukan load test semua race paralel.
+
+scripts/qa/apply-stock-local.php menerapkan migration additive dan permission
+seeder saja. Fingerprint data akun/role/pivot/master sebelum/sesudah identik;
+demo Stock tidak dijalankan pada database user. Migration/status lokal PASS.
+
+Chrome DevTools MCP BLOCKED karena tool tidak diekspos. Fallback Playwright
+existing PASS pada storage/framework/testing/stock-browser-fb38785affa56f5d/report.json:
+13 screenshot, desktop 1440x1000, tablet 1024x768/768x1024, console kosong,
+CRUD/restore, invalid cost, posted immutable, balance/card, duplicate guard,
+viewer/editor, sidebar collapse, shortcut/palette dan dark. QA juga menemukan
+stale form state saat memilih item/unit; functional setData memperbaikinya.
+Waktu posting dinormalisasi ISO UTC dan browser QA memakai Asia/Jakarta.
+
+Gate penutupan dependency belum lulus: npm dua package dan Composer CommonMark
+memiliki advisory existing. User menyetujui work item terpisah
+docs/work-items/dependency-security-patch; final suite/build/browser akan diulang
+sesudah update. Belum push atau menandai keseluruhan selesai.

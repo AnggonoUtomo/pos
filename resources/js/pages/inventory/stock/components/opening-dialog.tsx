@@ -29,10 +29,7 @@ export function OpeningDialog({
     const errors = form.errors as Record<string, string>;
     const disabled = readOnly || form.processing;
     const change = (index: number, patch: Partial<ReturnType<typeof emptyLine>>) =>
-        form.setData(
-            'lines',
-            form.data.lines.map((row, i) => (i === index ? { ...row, ...patch } : row)),
-        );
+        form.setData((current) => ({ ...current, lines: current.lines.map((row, i) => (i === index ? { ...row, ...patch } : row)) }));
     return (
         <Dialog
             open
@@ -157,6 +154,7 @@ export function OpeningDialog({
                                             <Select
                                                 value={line.item_id}
                                                 onValueChange={(item_id) => {
+                                                    if (!item_id) return;
                                                     const next = options.items.find((row) => row.id === item_id);
                                                     change(index, { item_id, unit_id: next?.base_unit_id ?? '' });
                                                 }}
@@ -185,7 +183,9 @@ export function OpeningDialog({
                                             <Label htmlFor={`stock-unit-${index}`}>Satuan {index + 1}</Label>
                                             <Select
                                                 value={line.unit_id}
-                                                onValueChange={(unit_id) => change(index, { unit_id })}
+                                                onValueChange={(unit_id) => {
+                                                    if (unit_id) change(index, { unit_id });
+                                                }}
                                                 disabled={disabled || !item}
                                             >
                                                 <SelectTrigger id={`stock-unit-${index}`} className="w-full">
