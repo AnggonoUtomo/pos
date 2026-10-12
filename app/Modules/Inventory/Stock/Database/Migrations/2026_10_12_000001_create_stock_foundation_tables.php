@@ -8,6 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // SQLite NUMERIC affinity loses decimal digits; disposable QA stores exact strings.
+        $decimal = static function (Blueprint $table, string $name, int $precision): void {
+            if (Schema::getConnection()->getDriverName() === 'sqlite') {
+                $table->string($name, $precision + 1);
+            } else {
+                $table->decimal($name, $precision, 6);
+            }
+        };
         Schema::create('stock_openings', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->string('number', 32)->unique();
@@ -21,7 +29,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-        Schema::create('stock_opening_lines', function (Blueprint $table): void {
+        Schema::create('stock_opening_lines', function (Blueprint $table) use ($decimal): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('opening_id')->constrained('stock_openings')->restrictOnDelete();
             $table->foreignUlid('item_id')->constrained('items')->restrictOnDelete();
@@ -31,43 +39,42 @@ return new class extends Migration
             $table->string('item_name', 150);
             $table->string('unit_name', 150);
             $table->string('base_unit_name', 150);
-            $table->decimal('quantity', 20, 6);
-            $table->decimal('conversion_ratio', 20, 6);
-            $table->decimal('unit_cost', 20, 6);
-            $table->decimal('base_quantity', 20, 6);
-            $table->decimal('total_value', 30, 6);
+            foreach (['quantity', 'conversion_ratio', 'unit_cost', 'base_quantity'] as $name) {
+                $decimal($table, $name, 20);
+            }
+            $decimal($table, 'total_value', 30);
             $table->unique(['opening_id', 'item_id']);
         });
-        Schema::create('stock_balances', function (Blueprint $table): void {
+        Schema::create('stock_balances', function (Blueprint $table) use ($decimal): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('warehouse_id')->constrained('warehouses')->restrictOnDelete();
             $table->foreignUlid('item_id')->constrained('items')->restrictOnDelete();
             $table->foreignUlid('opening_line_id')->unique()->constrained('stock_opening_lines')->restrictOnDelete();
-            $table->decimal('quantity', 20, 6);
-            $table->decimal('total_value', 30, 6);
+            $decimal($table, 'quantity', 20);
+            $decimal($table, 'total_value', 30);
             $table->timestamps();
             $table->unique(['warehouse_id', 'item_id']);
         });
-        Schema::create('stock_movements', function (Blueprint $table): void {
+        Schema::create('stock_movements', function (Blueprint $table) use ($decimal): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('warehouse_id')->constrained('warehouses')->restrictOnDelete();
             $table->foreignUlid('item_id')->constrained('items')->restrictOnDelete();
             $table->foreignUlid('opening_line_id')->unique()->constrained('stock_opening_lines')->restrictOnDelete();
             $table->string('type', 32);
-            $table->decimal('quantity', 20, 6);
-            $table->decimal('total_value', 30, 6);
+            $decimal($table, 'quantity', 20);
+            $decimal($table, 'total_value', 30);
             $table->timestamp('posted_at');
             $table->index(['warehouse_id', 'item_id', 'posted_at', 'id'], 'stock_movements_fifo_order');
         });
-        Schema::create('fifo_layers', function (Blueprint $table): void {
+        Schema::create('fifo_layers', function (Blueprint $table) use ($decimal): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('warehouse_id')->constrained('warehouses')->restrictOnDelete();
             $table->foreignUlid('item_id')->constrained('items')->restrictOnDelete();
             $table->foreignUlid('movement_id')->unique()->constrained('stock_movements')->restrictOnDelete();
-            $table->decimal('original_quantity', 20, 6);
-            $table->decimal('remaining_quantity', 20, 6);
-            $table->decimal('original_value', 30, 6);
-            $table->decimal('remaining_value', 30, 6);
+            $decimal($table, 'original_quantity', 20);
+            $decimal($table, 'remaining_quantity', 20);
+            $decimal($table, 'original_value', 30);
+            $decimal($table, 'remaining_value', 30);
             $table->timestamp('received_at');
             $table->index(['warehouse_id', 'item_id', 'received_at', 'id'], 'fifo_layers_order');
         });

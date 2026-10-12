@@ -26,6 +26,8 @@ baris dokumen, dan stok awal hanya sekali per pasangan barang + gudang.
 
 - Decimal string, bukan float: quantity/ratio/cost maksimal enam desimal.
 - Quantity/base_quantity decimal(20,6); total nilai decimal(30,6).
+- SQLite disposable memakai string untuk kolom decimal Stock agar NUMERIC
+  affinity tidak membuang digit. MySQL tetap DECIMAL; domain memvalidasi scale/range.
 - Konversi quantity × ratio dan quantity × harga pokok harus tepat pada enam
   desimal; overflow atau kebutuhan rounding ditolak sebelum persistence.
 - Harga pokok input per satuan pilihan, bukan per satuan dasar. Contoh 2 dus,

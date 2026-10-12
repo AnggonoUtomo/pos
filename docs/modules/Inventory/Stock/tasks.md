@@ -27,10 +27,10 @@
 
 ## Increment 3: Draft
 
-- [ ] Tambah lookup publik Items/Warehouses dengan consumer Stock nyata.
+- [x] Tambah lookup publik Items/Warehouses dengan consumer Stock nyata.
   - Acceptance: tidak menggunakan adapter/model privat lintas module.
   - Verification: lookup/transaction tests dan review import.
-- [ ] Buat create/edit/delete/restore draft serta permission-only seeder.
+- [x] Buat create/edit/delete/restore draft serta permission-only seeder.
   - Acceptance: audit atomic; tanpa stok; input allowlist, master aktif, max 100.
   - Verification: HTTP/permission/validation/audit rollback tests.
 
@@ -81,3 +81,7 @@ check PASS untuk Increment 1; belum ada coding atau QA runtime Stock.
 
 Increment 2: RED 12 test gagal karena valuasi/tabel belum ada; GREEN valuasi,
 scaffold dan schema. Up/down diperiksa hanya SQLite disposable, bukan MySQL user.
+
+Increment 3: RED 4 HTTP test 404, GREEN draft/lifecycle/permission/audit rollback.
+Regresi presisi menemukan SQLite float; kolom decimal QA diganti string exact.
+MySQL tetap DECIMAL. Bukan bukti pengujian locking MySQL.

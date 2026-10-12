@@ -2,13 +2,15 @@
 
 namespace App\Modules\Inventory\Stock;
 
+use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
+use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\EloquentStockRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(StockRepository::class, EloquentStockRepository::class);
     }
 
     public function boot(): void

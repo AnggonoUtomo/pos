@@ -2,7 +2,9 @@
 
 namespace App\Modules\Inventory\Warehouses;
 
+use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseLookup;
 use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseRepository;
+use App\Modules\Inventory\Warehouses\Infrastructure\Persistence\Repositories\EloquentWarehouseLookup;
 use App\Modules\Inventory\Warehouses\Infrastructure\Persistence\Repositories\EloquentWarehouseRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -10,6 +12,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(WarehouseLookup::class, EloquentWarehouseLookup::class);
         $this->app->bind(WarehouseRepository::class, EloquentWarehouseRepository::class);
     }
 
