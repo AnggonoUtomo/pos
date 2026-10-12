@@ -1,6 +1,6 @@
 # Perbaikan Security Dependency
 
-Status: In Progress (QA lulus, delivery menunggu push). Disetujui user pada
+Status: Done (QA dan delivery lulus). Disetujui user pada
 12 Oktober 2026 sebagai pekerjaan
 terpisah dari penutupan Inventory/Stock.
 

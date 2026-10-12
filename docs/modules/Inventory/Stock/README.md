@@ -3,7 +3,7 @@
 ## Status
 
 Active. Draft/posting, saldo/kartu stok dan fondasi layer FIFO sudah
-diimplementasikan dan QA penutupan lulus. Delivery Increment 6 menunggu push;
+diimplementasikan dan QA/delivery Increment 6 selesai;
 [perbaikan dependency terpisah](../../../work-items/dependency-security-patch/README.md)
 juga telah lulus gate.
 

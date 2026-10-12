@@ -63,7 +63,7 @@
 - [x] Perbarui docs/API, MODULES, dependency master dan bukti verifikasi.
   - Acceptance: status sesuai implementasi, tidak mengklaim consumption FIFO.
   - Verification: review/link/diff, selective staging dan commit.
-- [ ] Push setelah semua scope terverifikasi.
+- [x] Push setelah semua scope terverifikasi.
   - Acceptance: remote main sesuai HEAD; artefak user tetap lokal.
   - Verification: push, git status dan remote ref.
 
@@ -97,7 +97,7 @@ segmented Button existing, bukan memasang package tab baru. Typecheck, ESLint
 dan build 2688 module PASS setelah import tab yang belum tersedia diganti.
 Browser workflow dijalankan pada Increment 6; tidak diklaim PASS di tahap ini.
 
-Increment 6 (berjalan): demo idempotent dan focused Stock 29 test/172 assertion
+Increment 6 (Passed): demo idempotent dan focused Stock 29 test/172 assertion
 PASS. Review menemukan stale eager relation MySQL, urutan lock base/selected
 unit dan variasi case ULID; diperbaiki dengan current read, canonical lock,
 retry transaction 3 kali dan normalisasi sebelum validasi duplicate. Reproduksi
@@ -140,6 +140,9 @@ emulate digunakan dan innerWidth/innerHeight dikonfirmasi. Workflow authenticate
 tetap memakai Playwright fixture disposable; tidak mengakses credential akun user.
 Smoke ini bukan klaim seluruh transaksi Stock diuji melalui DevTools.
 
-Clean dependency install/gate terakhir PASS; penutupan menunggu push. Tidak ada
+Clean dependency install/gate terakhir PASS. Push main ke origin berhasil dan
+remote ref 2fcf6e6 dikonfirmasi sesudah delivery implementasi/QA. Checklist
+penutupan disimpan sebagai commit dokumentasi berikutnya dan disinkronkan lagi.
+Tidak ada
 pengeluaran/consumption FIFO, no-negative outflow, POS/purchase/transfer/reversal
 atau perubahan theme/Old-docs yang ikut scope ini.

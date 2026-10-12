@@ -34,7 +34,7 @@
 - [x] Ulang gate integrasi backend/frontend dan Stock browser.
   - Acceptance: full test, lint/typecheck/build dan workflow desktop/tablet PASS.
   - Verification: command aktual dan report QA disposable.
-- [ ] Sinkronkan dokumen, selective commit dan push penutupan Stock.
+- [x] Sinkronkan dokumen, selective commit dan push penutupan Stock.
   - Acceptance: status dan bukti jujur; artefak user tidak ikut commit.
   - Verification: diff/staging, commit, push dan remote ref.
 
@@ -112,3 +112,8 @@ desktop/tablet dan console kosong. Tidak ada source UI/theme atau data user yang
 diubah oleh increment dependency ini. Relative link dan diff check PASS.
 Delivery commit/push dilakukan bersama penutupan Stock; tidak mengklaim CI remote
 sudah berjalan atau lulus.
+
+Delivery: fix dependency disimpan terpisah pada db8cdd7. Implementasi/QA Stock
+dan dokumen dipush ke origin/main; remote ref 2fcf6e6 diverifikasi. Commit
+checklist penutupan berikutnya juga dipush. SampleUI dan file LSP user tetap
+untracked/lokal, bukan bagian staging. Old-docs dan theme tidak diubah.
