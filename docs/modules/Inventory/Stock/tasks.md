@@ -18,10 +18,10 @@
 
 ## Increment 2: Domain Dan Persistence
 
-- [ ] Generate module dan test scaffold menggunakan generator existing.
+- [x] Generate module dan test scaffold menggunakan generator existing.
   - Acceptance: route/database/provider di module, tanpa folder paralel.
   - Verification: dry-run dan scaffold test.
-- [ ] Buat valuasi decimal exact serta schema ULID.
+- [x] Buat valuasi decimal exact serta schema ULID.
   - Acceptance: konversi dan nilai benar; nol/negatif/overflow/rounding ditolak.
   - Verification: unit RED/GREEN, migration up/down disposable.
 
@@ -78,3 +78,6 @@
 
 12 Oktober 2026: dry-run generator, review scope/link relatif dan staged diff
 check PASS untuk Increment 1; belum ada coding atau QA runtime Stock.
+
+Increment 2: RED 12 test gagal karena valuasi/tabel belum ada; GREEN valuasi,
+scaffold dan schema. Up/down diperiksa hanya SQLite disposable, bukan MySQL user.
