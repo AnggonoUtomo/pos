@@ -20,10 +20,11 @@ class UnitsDemoSeeder extends Seeder
                 ['code' => 'PCS', 'name' => 'Buah', 'symbol' => 'pcs'],
                 ['code' => 'PACK', 'name' => 'Pak', 'symbol' => 'pak'],
                 ['code' => 'BOX', 'name' => 'Dus', 'symbol' => 'dus'],
-                ['code' => 'KG', 'name' => 'Kilogram', 'symbol' => 'kg'],
-                ['code' => 'G', 'name' => 'Gram', 'symbol' => 'g'],
-                ['code' => 'L', 'name' => 'Liter', 'symbol' => 'l'],
-                ['code' => 'ML', 'name' => 'Mililiter', 'symbol' => 'ml'],
+                ['code' => 'UNIT', 'name' => 'Unit', 'symbol' => 'unit'],
+                ['code' => 'SET', 'name' => 'Set', 'symbol' => 'set'],
+                ['code' => 'PAIR', 'name' => 'Pasang', 'symbol' => 'pasang'],
+                ['code' => 'M', 'name' => 'Meter', 'symbol' => 'm'],
+                ['code' => 'ROLL', 'name' => 'Rol', 'symbol' => 'rol'],
             ] as $unit) {
                 Unit::withTrashed()->firstOrCreate(
                     ['code' => $unit['code']],

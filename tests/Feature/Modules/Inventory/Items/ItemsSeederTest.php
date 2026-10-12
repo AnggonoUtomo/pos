@@ -29,19 +29,21 @@ class ItemsSeederTest extends TestCase
         $ids = Item::query()->orderBy('sku')->pluck('id')->all();
         $this->seed(ItemsDemoSeeder::class);
         $this->assertSame($ids, Item::query()->orderBy('sku')->pluck('id')->all());
-        $this->assertDatabaseCount('items', 3);
-        $this->assertDatabaseCount('item_units', 7);
-        $this->assertDatabaseCount('activity_log', 17);
-        $this->assertSame(7, ItemUnit::query()->whereNotNull('barcode')->distinct()->count('barcode'));
+        $this->assertDatabaseCount('items', 9);
+        $this->assertDatabaseCount('item_units', 18);
+        $this->assertDatabaseCount('activity_log', 35);
+        $this->assertSame(18, ItemUnit::query()->whereNotNull('barcode')->distinct()->count('barcode'));
         $box = app(UnitLookup::class)->findActiveByCode('BOX')->id;
-        $kg = app(UnitLookup::class)->findActiveByCode('KG')->id;
-        $water = Item::query()->where('sku', 'DEMO-WATER-600')->sole();
-        $tea = Item::query()->where('sku', 'DEMO-TEA-250')->sole();
-        $rice = Item::query()->where('sku', 'DEMO-RICE')->sole();
-        $this->assertSame('12.000000', $water->units()->where('unit_id', $box)->sole()->conversion_ratio);
-        $this->assertSame('24.000000', $tea->units()->where('unit_id', $box)->sole()->conversion_ratio);
-        $ratio = $rice->units()->where('unit_id', $kg)->sole()->conversion_ratio;
-        $this->assertSame('125.000000', ConversionRatio::fromString($ratio)->toBaseQuantity('0.125'));
+        $roll = app(UnitLookup::class)->findActiveByCode('ROLL')->id;
+        $camera = Item::query()->where('sku', 'DEMO-CCTV-IP-2MP')->sole();
+        $nvr = Item::query()->where('sku', 'DEMO-CCTV-NVR-8CH')->sole();
+        $nym = Item::query()->where('sku', 'DEMO-ELEC-NYM-3X15')->sole();
+        $utp = Item::query()->where('sku', 'DEMO-CCTV-UTP-CAT6')->sole();
+        $this->assertSame('4.000000', $camera->units()->where('unit_id', $box)->sole()->conversion_ratio);
+        $this->assertSame('2.000000', $nvr->units()->where('unit_id', $box)->sole()->conversion_ratio);
+        $ratio = $nym->units()->where('unit_id', $roll)->sole()->conversion_ratio;
+        $this->assertSame('12.500000', ConversionRatio::fromString($ratio)->toBaseQuantity('0.125'));
+        $this->assertSame('305.000000', $utp->units()->where('unit_id', $roll)->sole()->conversion_ratio);
         foreach (Item::query()->get() as $item) {
             $this->assertSame('1.000000', $item->units()->where('unit_id', $item->base_unit_id)->sole()->conversion_ratio);
         }
@@ -51,10 +53,10 @@ class ItemsSeederTest extends TestCase
     {
         $this->seed(UnitsDemoSeeder::class);
         $this->seed(ItemsDemoSeeder::class);
-        $water = Item::query()->where('sku', 'DEMO-WATER-600')->sole();
+        $water = Item::query()->where('sku', 'DEMO-CCTV-IP-2MP')->sole();
         $water->update(['name' => 'Barang User', 'is_active' => false]);
         $water->units()->firstOrFail()->update(['barcode' => 'USER-BARCODE', 'is_purchase_unit' => false]);
-        $tea = Item::query()->where('sku', 'DEMO-TEA-250')->sole();
+        $tea = Item::query()->where('sku', 'DEMO-CCTV-RJ45')->sole();
         $tea->units()->firstOrFail()->delete();
         $tea->delete();
         $items = Item::withTrashed()->orderBy('id')->get()->toArray();
@@ -69,15 +71,15 @@ class ItemsSeederTest extends TestCase
     public function test_missing_unit_rolls_back_entire_demo_batch_and_audit(): void
     {
         $this->seed(UnitsDemoSeeder::class);
-        DB::table('units')->where('code', 'KG')->update(['is_active' => false]);
+        DB::table('units')->where('code', 'ROLL')->update(['is_active' => false]);
         try {
             $this->seed(ItemsDemoSeeder::class);
             $this->fail('Missing active unit must fail.');
         } catch (LogicException $exception) {
-            $this->assertStringContainsString('KG', $exception->getMessage());
+            $this->assertStringContainsString('ROLL', $exception->getMessage());
             $this->assertDatabaseCount('items', 0);
             $this->assertDatabaseCount('item_units', 0);
-            $this->assertDatabaseCount('activity_log', 7);
+            $this->assertDatabaseCount('activity_log', 8);
         }
     }
 
@@ -87,7 +89,7 @@ class ItemsSeederTest extends TestCase
             $this->seed(ItemsDemoSeeder::class);
             $this->fail('Seed must require existing Units.');
         } catch (LogicException $exception) {
-            $this->assertStringContainsString('PCS', $exception->getMessage());
+            $this->assertStringContainsString('UNIT', $exception->getMessage());
             $this->assertDatabaseCount('items', 0);
             $this->assertDatabaseCount('units', 0);
             $this->assertDatabaseCount('activity_log', 0);

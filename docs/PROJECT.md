@@ -8,6 +8,11 @@ belum dianggap final sampai work item module masing-masing selesai diverifikasi.
 
 ## Masalah
 
+Domain utama adalah toko produk CCTV dan kelistrikan, untuk retail/grosir
+serta pelanggan installer. Demo barang dan satuan mengikuti domain tersebut:
+perangkat per unit/set, konektor per buah/pak/dus, dan kabel per meter/rol.
+Isi kemasan dan harga demo adalah fiktif; konversi ditentukan per barang.
+
 Banyak operasional toko membutuhkan aplikasi POS yang tidak hanya mencatat
 penjualan, tetapi juga menjaga stok multi gudang, harga grosir, multi satuan,
 level pelanggan, pembelian, retur, pembayaran, pajak, diskon, dan laporan dasar

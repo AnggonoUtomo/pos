@@ -20,7 +20,7 @@ class StockDemoSeeder extends Seeder
         if (! app()->environment(['local', 'testing'])) {
             throw new LogicException('Demo stok hanya boleh dijalankan pada local/testing.');
         }
-        $marker = 'DEMO: opening-stock-v1';
+        $marker = 'DEMO: cctv-electrical-opening-v1';
         if (StockOpening::withTrashed()->where('notes', $marker)->exists()) {
             return;
         }
@@ -30,7 +30,13 @@ class StockDemoSeeder extends Seeder
         }
         $items = collect(app(ItemStockLookup::class)->choices())->keyBy('sku');
         $lines = [];
-        foreach ([['DEMO-WATER-600', 'BOX', '2', '120000'], ['DEMO-TEA-250', 'PACK', '3', '18000'], ['DEMO-RICE', 'KG', '5', '16000']] as [$sku, $code, $quantity, $cost]) {
+        foreach ([
+            ['DEMO-CCTV-IP-2MP', 'BOX', '2', '2000000'],
+            ['DEMO-CCTV-UTP-CAT6', 'ROLL', '1', '1100000'],
+            ['DEMO-ELEC-NYM-3X15', 'ROLL', '1.5', '1500000'],
+            ['DEMO-ELEC-MCB-6A', 'BOX', '1', '360000'],
+            ['DEMO-CCTV-RJ45', 'PACK', '1', '150000'],
+        ] as [$sku, $code, $quantity, $cost]) {
             $item = $items[$sku] ?? null;
             $unit = app(UnitLookup::class)->findActiveByCode($code);
             if ($item === null || $unit === null) {

@@ -32,7 +32,7 @@ class UnitsSeederTest extends TestCase
         $this->assertSame('bh', $pcs->fresh()->symbol);
         $this->assertFalse($pcs->fresh()->is_active);
         $this->assertSoftDeleted($box);
-        $this->assertDatabaseCount('units', 7);
+        $this->assertDatabaseCount('units', 8);
         $this->assertDatabaseCount('users', 0);
     }
 

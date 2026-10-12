@@ -43,8 +43,8 @@ class UnitsActivityTest extends TestCase
         $this->seed(UnitsDemoSeeder::class);
         $this->seed(UnitsDemoSeeder::class);
 
-        $this->assertDatabaseCount('units', 7);
-        $this->assertDatabaseCount('activity_log', 7);
+        $this->assertDatabaseCount('units', 8);
+        $this->assertDatabaseCount('activity_log', 8);
         $this->assertSame(['inventory.units'], Activity::query()->distinct()->pluck('log_name')->all());
     }
 }

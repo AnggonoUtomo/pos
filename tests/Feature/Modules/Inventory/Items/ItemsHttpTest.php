@@ -129,16 +129,16 @@ class ItemsHttpTest extends TestCase
     public function test_list_is_paginated_with_only_own_live_unit_relations(): void
     {
         $this->seed(ItemsDemoSeeder::class);
-        $item = Item::query()->where('sku', 'DEMO-WATER-600')->sole();
+        $item = Item::query()->where('sku', 'DEMO-CCTV-IP-2MP')->sole();
         $item->delete();
-        $tea = Item::query()->where('sku', 'DEMO-TEA-250')->sole();
+        $tea = Item::query()->where('sku', 'DEMO-CCTV-RJ45')->sole();
         $tea->units()->firstOrFail()->delete();
         $user = User::factory()->create();
         $user->givePermissionTo('inventory.view');
-        $this->actingAs($user)->getJson('/inventory/items/data')->assertOk()->assertJsonCount(2, 'data')
-            ->assertJsonPath('meta.total', 2)->assertJsonPath('meta.per_page', 25)
-            ->assertJsonPath('data.0.sku', 'DEMO-RICE')->assertJsonCount(2, 'data.0.units')
-            ->assertJsonCount(2, 'data.1.units')->assertJsonFragment(['conversion_ratio' => '1.000000']);
+        $response = $this->actingAs($user)->getJson('/inventory/items/data')->assertOk()->assertJsonCount(8, 'data')
+            ->assertJsonPath('meta.total', 8)->assertJsonPath('meta.per_page', 25)
+            ->assertJsonMissing(['sku' => 'DEMO-CCTV-IP-2MP'])->assertJsonFragment(['conversion_ratio' => '1.000000']);
+        $this->assertCount(2, collect($response->json('data'))->firstWhere('sku', 'DEMO-CCTV-RJ45')['units']);
         $this->getJson('/inventory/items/data?page=0')->assertUnprocessable()->assertJsonValidationErrors('page');
     }
 

@@ -68,12 +68,12 @@ class InventoryPagesTest extends TestCase
         $this->seed([UnitsDemoSeeder::class, ItemsDemoSeeder::class]);
         Unit::create(['code' => 'INACTIVE', 'name' => 'Tidak Aktif', 'symbol' => 'x', 'is_active' => false]);
         Unit::create(['code' => 'DELETED', 'name' => 'Terhapus', 'symbol' => 'x'])->delete();
-        $this->get('/inventory/items?search=DEMO-TEA-250-BOX')
+        $this->get('/inventory/items?search=DEMO-CCTV-RJ45-BOX')
             ->assertOk()->assertInertia(fn (Assert $page) => $page->component('inventory/items/index')
-            ->where('records.meta.total', 1)->where('records.data.0.sku', 'DEMO-TEA-250')
-            ->has('records.data.0.units', 3)->has('unitOptions', 7)
+            ->where('records.meta.total', 1)->where('records.data.0.sku', 'DEMO-CCTV-RJ45')
+            ->has('records.data.0.units', 3)->has('unitOptions', 8)
             ->where('unitOptions.0.code', 'BOX')->where('unitOptions.0.symbol', 'dus'));
-        $this->getJson('/inventory/items/data')->assertOk()->assertJsonPath('meta.total', 3);
+        $this->getJson('/inventory/items/data')->assertOk()->assertJsonPath('meta.total', 9);
         $this->getJson('/inventory/items?status=unknown')->assertUnprocessable();
         $this->getJson('/inventory/items?search='.str_repeat('x', 151))->assertUnprocessable();
     }
@@ -81,7 +81,7 @@ class InventoryPagesTest extends TestCase
     public function test_item_deleted_tab_and_view_only_authorization(): void
     {
         $this->seed([UnitsDemoSeeder::class, ItemsDemoSeeder::class]);
-        $id = DB::table('items')->where('sku', 'DEMO-RICE')->value('id');
+        $id = DB::table('items')->where('sku', 'DEMO-ELEC-NYM-3X15')->value('id');
         $this->deleteJson("/inventory/items/{$id}")->assertOk();
         $this->get('/inventory/items?trashed=1')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('records.meta.total', 1)->where('records.data.0.id', $id)->has('records.data.0.units', 2));

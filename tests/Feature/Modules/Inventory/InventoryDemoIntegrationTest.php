@@ -50,10 +50,10 @@ class InventoryDemoIntegrationTest extends TestCase
         $user->assignRole($role);
         $this->seedInventory();
         $this->assertDatabaseCount('warehouses', 2);
-        $this->assertDatabaseCount('units', 7);
-        $this->assertDatabaseCount('items', 3);
-        $this->assertDatabaseCount('item_units', 7);
-        $this->assertDatabaseCount('activity_log', 19);
+        $this->assertDatabaseCount('units', 8);
+        $this->assertDatabaseCount('items', 9);
+        $this->assertDatabaseCount('item_units', 18);
+        $this->assertDatabaseCount('activity_log', 37);
         $this->assertDatabaseCount('permissions', 3);
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseCount('roles', 1);
@@ -61,7 +61,7 @@ class InventoryDemoIntegrationTest extends TestCase
         $this->assertFalse($user->fresh()->can('inventory.manage'));
         $this->assertTrue(Activity::query()->get()->every(fn ($log) => Str::isUlid($log->subject_id) && $log->subject !== null));
         $this->actingAs($user);
-        foreach (['warehouses' => 2, 'units' => 7, 'items' => 3] as $module => $count) {
+        foreach (['warehouses' => 2, 'units' => 8, 'items' => 9] as $module => $count) {
             $this->getJson("/inventory/{$module}/data")->assertOk()->assertJsonPath('meta.total', $count);
             $this->postJson("/inventory/{$module}", [])->assertForbidden();
         }
@@ -77,10 +77,10 @@ class InventoryDemoIntegrationTest extends TestCase
         Warehouse::query()->where('code', 'WH-SECONDARY')->sole()->delete();
         Unit::query()->where('code', 'PCS')->sole()->update(['symbol' => 'bh', 'is_active' => false]);
         Unit::query()->where('code', 'BOX')->sole()->delete();
-        Item::query()->where('sku', 'DEMO-WATER-600')->sole()->update(['name' => 'Barang User', 'is_active' => false]);
-        Item::query()->where('sku', 'DEMO-TEA-250')->sole()->delete();
-        ItemUnit::query()->where('barcode', 'DEMO-RICE-G')->sole()->update(['barcode' => 'USER-RICE-G', 'is_sale_unit' => false]);
-        ItemUnit::query()->where('barcode', 'DEMO-RICE-KG')->sole()->delete();
+        Item::query()->where('sku', 'DEMO-CCTV-IP-2MP')->sole()->update(['name' => 'Barang User', 'is_active' => false]);
+        Item::query()->where('sku', 'DEMO-CCTV-RJ45')->sole()->delete();
+        ItemUnit::query()->where('barcode', 'DEMO-ELEC-NYM-3X15-M')->sole()->update(['barcode' => 'USER-NYM-M', 'is_sale_unit' => false]);
+        ItemUnit::query()->where('barcode', 'DEMO-ELEC-NYM-3X15-ROLL')->sole()->delete();
         $before = $this->snapshot();
         $this->seedInventory();
         $this->assertSame($before, $this->snapshot());
