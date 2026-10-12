@@ -10,7 +10,7 @@ terverifikasi; push hanya setelah keseluruhan scope selesai.
 | 1 | Passed | Scope dan checklist | Dokumen sesuai persetujuan | Review, link dan diff |
 | 2 | Passed | Scaffold, domain valuasi dan schema | Decimal exact, ULID, migration module | RED/GREEN unit, scaffold/migration test |
 | 3 | Passed | Lookup publik dan draft | Permission, aktif, audit, lifecycle | Feature HTTP dan rollback |
-| 4 | Ready | Posting, snapshot, ledger dan guard master | Sekali per pasangan, idempotent, atomic | Posting/guard/regresi tests |
+| 4 | Passed | Posting, snapshot, ledger dan guard master | Sekali per pasangan, idempotent, atomic | Posting/guard/regresi tests |
 | 5 | Ready | Query dan UI | Stok awal/saldo/kartu, dialog dan permission | Page tests, lint/typecheck/build |
 | 6 | Ready | QA dan delivery | Demo aman, browser, dokumentasi aktual | Full test, route/status, browser, review, commit/push |
 

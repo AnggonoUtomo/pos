@@ -36,10 +36,10 @@
 
 ## Increment 4: Posting Dan Guard
 
-- [ ] Posting membuat balance, movement, FIFO dan snapshot dalam satu transaksi.
+- [x] Posting membuat balance, movement, FIFO dan snapshot dalam satu transaksi.
   - Acceptance: posted immutable, duplicate/retry tidak menggandakan saldo.
   - Verification: posting, snapshot, pair uniqueness dan rollback tests.
-- [ ] Guard master berhistori melalui published StockUsage.
+- [x] Guard master berhistori melalui published StockUsage.
   - Acceptance: konversi/removal/deactivate/delete tidak merusak histori.
   - Verification: regresi master termasuk bypass super-system.
 
@@ -85,3 +85,8 @@ scaffold dan schema. Up/down diperiksa hanya SQLite disposable, bukan MySQL user
 Increment 3: RED 4 HTTP test 404, GREEN draft/lifecycle/permission/audit rollback.
 Regresi presisi menemukan SQLite float; kolom decimal QA diganti string exact.
 MySQL tetap DECIMAL. Bukan bukti pengujian locking MySQL.
+
+Increment 4: RED 6 posting/guard test 404; GREEN posting/layer/snapshot, retry
+idempotent, pemisahan gudang, stale ratio, permission, audit rollback dua baris,
+master guard dan rename historis. Read invariant memakai locking read setelah
+lock master agar tidak menggunakan snapshot MySQL lama; race nyata belum diuji.

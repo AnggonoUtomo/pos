@@ -4,6 +4,7 @@ namespace App\Modules\Inventory\Stock\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Inventory\Stock\Application\Actions\ManageOpening;
+use App\Modules\Inventory\Stock\Application\Actions\PostOpening;
 use App\Modules\Inventory\Stock\Application\Actions\PrepareOpening;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,8 @@ class StockOpeningController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
     {
-        return [new Middleware('can:inventory.stock.manage', only: ['store', 'update', 'destroy', 'restore'])];
+        return [new Middleware('can:inventory.stock.manage', only: ['store', 'update', 'destroy', 'restore']),
+            new Middleware('can:inventory.stock.post', only: ['post'])];
     }
 
     public function store(Request $request, ManageOpening $action): JsonResponse|RedirectResponse
@@ -46,6 +48,13 @@ class StockOpeningController extends Controller implements HasMiddleware
         $this->execute(fn () => $action->restore($id));
 
         return $this->completed($request, $id, 'Draft stok awal dipulihkan.');
+    }
+
+    public function post(Request $request, string $id, PostOpening $action): JsonResponse|RedirectResponse
+    {
+        $this->execute(fn () => $action->handle($id, $request->user()->id));
+
+        return $this->completed($request, $id, 'Stok awal berhasil diposting.');
     }
 
     private function execute(callable $callback): mixed

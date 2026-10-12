@@ -13,4 +13,8 @@ interface StockRepository
     public function deleteDraft(string $id): void;
 
     public function restoreDraft(string $id): void;
+
+    public function hasBalance(string $warehouseId, string $itemId): bool;
+
+    public function postOpening(string $id, array $header, array $lines, ?int $actorId): void;
 }

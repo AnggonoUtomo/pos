@@ -8,6 +8,9 @@ interface ItemRepository
 {
     public function lock(string $id, bool $deleted = false): array;
 
+    /** @return array<string, string> Active unit id => canonical conversion ratio. */
+    public function conversionRatios(string $id): array;
+
     public function update(string $id, CreateItemData $data): void;
 
     public function delete(string $id): void;

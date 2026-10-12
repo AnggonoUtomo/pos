@@ -15,6 +15,11 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
         return ($deleted ? Item::onlyTrashed() : Item::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
     }
 
+    public function conversionRatios(string $id): array
+    {
+        return ItemUnit::where('item_id', $id)->get()->pluck('conversion_ratio', 'unit_id')->all();
+    }
+
     public function update(string $id, CreateItemData $data): void
     {
         $item = Item::findOrFail($id);

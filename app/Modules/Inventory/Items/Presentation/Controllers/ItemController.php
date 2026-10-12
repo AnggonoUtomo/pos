@@ -69,7 +69,11 @@ class ItemController extends Controller implements HasMiddleware
 
     public function destroy(Request $request, string $id, ManageItem $action): JsonResponse|RedirectResponse
     {
-        $action->delete($id);
+        try {
+            $action->delete($id);
+        } catch (InvalidArgumentException $exception) {
+            throw ValidationException::withMessages(['inventory' => $exception->getMessage()]);
+        }
 
         return $this->completed($request, $id, 'Barang berhasil dihapus.');
     }
