@@ -32,6 +32,9 @@ export function MasterWorkspace({
     canManage,
     onCreate,
     searchPlaceholder = 'Cari kode atau nama...',
+    routePrefix = `inventory.${module}`,
+    areaTitle = 'Inventori',
+    controls,
     children,
 }: {
     title: string;
@@ -41,6 +44,9 @@ export function MasterWorkspace({
     canManage: boolean;
     onCreate: () => void;
     searchPlaceholder?: string;
+    routePrefix?: string;
+    areaTitle?: string;
+    controls?: ReactNode;
     children: ReactNode;
 }) {
     const [search, setSearch] = useState(filters.search);
@@ -74,7 +80,7 @@ export function MasterWorkspace({
     }, [canManage, filters.trashed, onCreate]);
     const visit = (patch: Partial<MasterFilters>, page = 1) =>
         router.get(
-            route(`inventory.${module}.index`),
+            route(`${routePrefix}.index`),
             {
                 ...filters,
                 ...patch,
@@ -87,8 +93,8 @@ export function MasterWorkspace({
     return (
         <AppLayout
             breadcrumbs={[
-                { title: 'Inventori', href: route(`inventory.${module}.index`) },
-                { title, href: route(`inventory.${module}.index`) },
+                { title: areaTitle, href: route(`${routePrefix}.index`) },
+                { title, href: route(`${routePrefix}.index`) },
             ]}
         >
             <Head title={title} />
@@ -168,6 +174,7 @@ export function MasterWorkspace({
                         </Button>
                     </div>
                 </div>
+                {controls}
                 <div className="relative min-w-0 overflow-x-auto rounded-md border bg-[var(--app-panel)]">
                     {loading && (
                         <div className="bg-background absolute top-3 right-3 z-10 rounded p-1" role="status" aria-label="Memuat data">

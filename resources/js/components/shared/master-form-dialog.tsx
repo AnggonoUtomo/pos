@@ -16,12 +16,16 @@ export function MasterFormDialog({
     record,
     onClose,
     withSymbol = false,
+    routePrefix = `inventory.${module}`,
+    errorKey = 'inventory',
 }: {
     module: string;
     title: string;
     record: (MasterRecord & { code: string; symbol?: string }) | null;
     onClose: () => void;
     withSymbol?: boolean;
+    routePrefix?: string;
+    errorKey?: string;
 }) {
     const form = useForm({ code: record?.code ?? '', name: record?.name ?? '', symbol: record?.symbol ?? '', is_active: record?.is_active ?? true });
     const submit = (event: FormEvent) => {
@@ -35,8 +39,8 @@ export function MasterFormDialog({
             },
             onError: () => toast.error('Data belum tersimpan. Periksa isian form.'),
         };
-        if (record) form.put(route(`inventory.${module}.update`, { id: record.id }), options);
-        else form.post(route(`inventory.${module}.store`), options);
+        if (record) form.put(route(`${routePrefix}.update`, { id: record.id }), options);
+        else form.post(route(`${routePrefix}.store`), options);
     };
     const errors = form.errors as Record<string, string>;
     return (
@@ -117,7 +121,7 @@ export function MasterFormDialog({
                         />
                         <Label htmlFor="master-active">Aktif</Label>
                     </div>
-                    <InputError message={errors.inventory ?? errors.is_active} />
+                    <InputError message={errors[errorKey] ?? errors.is_active} />
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={onClose} disabled={form.processing}>
                             Batal

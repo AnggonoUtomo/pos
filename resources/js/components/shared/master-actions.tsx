@@ -37,7 +37,17 @@ export function MasterActions({ record, onEdit, onLifecycle }: { record: MasterR
     );
 }
 
-export function MasterLifecycleDialog({ module, record, onClose }: { module: string; record: MasterRecord | null; onClose: () => void }) {
+export function MasterLifecycleDialog({
+    module,
+    record,
+    onClose,
+    routePrefix = `inventory.${module}`,
+}: {
+    module: string;
+    record: MasterRecord | null;
+    onClose: () => void;
+    routePrefix?: string;
+}) {
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState('');
     const deleted = Boolean(record?.deleted_at);
@@ -51,7 +61,7 @@ export function MasterLifecycleDialog({ module, record, onClose }: { module: str
         if (!record || processing) return;
         setProcessing(true);
         setError('');
-        router.visit(route(`inventory.${module}.${deleted ? 'restore' : 'destroy'}`, { id: record.id }), {
+        router.visit(route(`${routePrefix}.${deleted ? 'restore' : 'destroy'}`, { id: record.id }), {
             method: deleted ? 'post' : 'delete',
             preserveScroll: true,
             preserveState: true,

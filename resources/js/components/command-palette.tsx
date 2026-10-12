@@ -75,10 +75,19 @@ const commandItems = [
     },
     {
         title: 'Pelanggan',
-        description: 'Kelola pelanggan dan level harga',
+        description: 'Master pelanggan',
+        url: '/sales/customers',
+        permission: 'sales.parties.view',
         icon: Building2,
         tone: 'text-cyan-600 dark:text-cyan-300',
-        disabled: true,
+    },
+    {
+        title: 'Level pelanggan',
+        description: 'Eceran, grosir dan installer',
+        url: '/sales/customer-levels',
+        permission: 'sales.parties.view',
+        icon: Tags,
+        tone: 'text-violet-600 dark:text-violet-300',
     },
     {
         title: 'Retur Penjualan',

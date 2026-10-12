@@ -89,11 +89,11 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Pelanggan',
-                url: '',
+                url: '/sales/customers',
                 icon: Building2,
-                badge: 'Segera',
+                badge: 'Aktif',
                 badgeTone: 'blue',
-                comingSoon: true,
+                permission: 'sales.parties.view',
             },
             {
                 title: 'POS',

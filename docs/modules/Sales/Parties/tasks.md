@@ -26,13 +26,13 @@
 
 ## Increment 2: UI
 
-- [ ] Buat halaman level/pelanggan dan komponen lokal module.
+- [x] Buat halaman level/pelanggan dan komponen lokal module.
   - Acceptance: CRUD/restore, filter/search/pagination, Sonner, shortcut.
   - Verification: lint/typecheck/build dan Inertia page tests.
-- [ ] Hubungkan menu dan palette dengan permission UX.
+- [x] Hubungkan menu dan palette dengan permission UX.
   - Acceptance: readonly hanya melihat, unauthorized tidak mendapat menu.
   - Verification: backend permission tests dan browser QA.
-- [ ] Verifikasi regresi shared workspace Inventory dan commit increment.
+- [x] Verifikasi regresi shared workspace Inventory dan commit increment.
   - Acceptance: default route lama tidak berubah, theme tidak berubah.
   - Verification: full PHP suite, lint/typecheck/build.
 
@@ -61,4 +61,10 @@ Increment 1 Passed: module:make dry-run/actual PASS; test HTTP RED 6/6 (404)
 sebelum implementasi, seed RED 3/3 sebelum seed behavior. Setelah implementasi
 `php artisan test --compact --filter=Parties`: 14 tests/114 assertions PASS.
 Pint module/tests PASS; route:list --path=sales menampilkan 12 route. Migration
-up/down SQLite PASS; MySQL/lock QA masuk Increment 3. Increment 2/3 Planned.
+up/down SQLite PASS; MySQL/lock QA masuk Increment 3.
+Increment 2 Passed: Inertia tests PASS; php artisan test --compact 254 tests,
+1577 assertions PASS; npx tsc --noEmit PASS; npx eslint resources/js PASS;
+npm run build PASS (2694 modules). Test halaman menggunakan withoutVite agar
+tidak tergantung manifest lokal. Primitive textarea tanpa dependency baru.
+Workspace shared tetap memakai prefix inventory default; Parties memakai
+prefix eksplisit. Increment 3 In Progress.
