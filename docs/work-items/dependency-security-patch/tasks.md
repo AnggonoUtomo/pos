@@ -19,13 +19,13 @@
 
 ## Increment 2: Update Dan Regresi
 
-- [ ] Update tiga dependency transitive secara terarah.
-  - Acceptance: tidak mengganti stack/constraint langsung atau package lain.
+- [x] Update dependency awal dan dev tambahan yang disetujui secara terarah.
+  - Acceptance: tidak mengganti stack/constraint langsung atau package di luar chain terkait.
   - Verification: diff lockfile, npm ls dan composer show --locked.
-- [ ] Verifikasi trigger dan kontrol normal parser.
+- [x] Verifikasi trigger dan kontrol normal parser.
   - Acceptance: input malicious ditolak/diescape tanpa eksekusi shell/DoS.
   - Verification: regresi bounded, kontrol normal dan review kandidat read-only.
-- [ ] Audit seluruh dependency.
+- [x] Audit seluruh dependency.
   - Acceptance: npm full/production dan Composer tidak melaporkan advisory.
   - Verification: npm audit, npm audit --omit=dev, composer audit --locked.
 
@@ -60,3 +60,43 @@ entry point HTTP aplikasi yang menerima arbitrary Markdown/shell/source map.
 Regresi sebelum update: shell-quote gagal karena TypeError tidak dilempar;
 CommonMark HTML gagal karena tag script belum diescape. Tes paragraf/table
 normal lulus. Semua input kecil, tanpa eksekusi shell atau delivery email.
+
+Audit penuh tambahan: 10 high mencakup brace-expansion dan rantai
+braces/micromatch/fast-glob/typescript-eslint. Audit production nol sesudah
+tiga update awal. User menyetujui perbaikan dev kompatibel; scope diperluas
+secara eksplisit, bukan menyembunyikan dependency dev lewat omit=dev.
+
+## Hasil Perbaikan
+
+- package-lock.json: shell-quote 1.12.0 (patched mulai 1.11.0), source-map-js
+  1.2.2, typescript-eslint 8.48.0 beserta chain terkait, brace-expansion 1.1.21/2.1.7.
+- composer.lock: hanya league/commonmark 2.10.2. package.json/composer.json
+  tidak memiliki diff; tidak ada override, package baru langsung atau major stack.
+- npm audit penuh dan --omit=dev PASS, nol vulnerability; Composer audit --locked
+  PASS, tanpa advisory. Composer validate --strict --no-check-publish PASS.
+- node scripts/qa/dependency-security.mjs PASS: empat line terminator dan chain
+  parse/quote ditolak; offset invalid/nested ditolak; quoting placeholder
+  concurrently dan PostCSS prev/inline map normal tetap valid. Worker dibatasi
+  10 detik, tanpa eksekusi shell. Input indexed map besar hanya dikonstruksi,
+  tidak dikonversi menjadi string jutaan baris.
+- MarkdownDependencyTest PASS 2/14: tag script/iframe/style/textarea di akhir
+  literal diescape; table dan paragraf bounded tetap benar. NotificationMarkdownTest
+  dan auth reset/verifikasi PASS; HTML/text action URL tetap ada, tanpa email dikirim.
+- Review kandidat read-only tidak menemukan bypass named advisory. Review
+  menemukan engine regression pada tooling latest 8.71.1; dikonfirmasi lalu
+  diganti 8.48.0. Semver seluruh engine nonoptional PASS untuk Node 18.18.0,
+  20.9.0, 22.12.0 dan 24.12.0. Ini pemeriksaan constraint, bukan runtime tiap Node.
+
+Proof gap: tidak melakukan DoS/load test produksi, actual POSIX/Windows shell
+execution untuk payload, native Linux atau runtime older Node. Keamanan dependency
+dibuktikan dengan versi patched, audit nol, rejection/escaping bounded serta
+inspeksi perubahan TableStartParser; bukan klaim exploit endpoint Stock.
+
+Clean install npm ci --ignore-scripts --no-audit --no-fund PASS (407 package).
+Percobaan gate yang terlanjur dimulai saat node_modules sedang diisi ulang gagal
+karena binary belum tersedia; npx sempat memilih tool cache di luar project.
+Hasil itu tidak dipakai sebagai gate. Setelah install selesai, binary lokal
+node_modules/eslint/bin/eslint.js dan typescript/bin/tsc, parser QA, build,
+audit npm penuh/production serta Composer semuanya dijalankan ulang dan PASS.
+Tidak ada perubahan package.json/composer.json. Warning deprecated ESLint 9
+dicatat; upgrade major 10 tidak termasuk persetujuan ini.

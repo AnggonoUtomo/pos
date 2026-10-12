@@ -3,8 +3,8 @@
 | Increment | Status | Isi | Acceptance | Verification |
 | --- | --- | --- | --- | --- |
 | 1 | Passed | Scope dan boundary | Persetujuan, chain/constraint dan versi resmi jelas | Review lock/caller/advisory dan diff |
-| 2 | Ready | Update minimal dan regresi | Hanya target transitive berubah; kontrol normal tetap valid | Audit penuh, tree, regresi parser, review independen |
-| 3 | Ready | Gate integrasi dan delivery | Stock tetap berfungsi; dokumen sesuai hasil | Full test, lint/typecheck/build, QA browser, commit/push |
+| 2 | Passed | Update minimal dan regresi | Target dan dev tambahan yang disetujui; kontrol normal tetap valid | Audit penuh, tree, regresi parser, review independen |
+| 3 | In Progress | Gate integrasi dan delivery | Stock tetap berfungsi; dokumen sesuai hasil | Full test, lint/typecheck/build, QA browser, commit/push |
 
 ## Strategi
 
