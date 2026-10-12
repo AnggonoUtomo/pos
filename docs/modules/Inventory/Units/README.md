@@ -35,7 +35,7 @@ seeder hanya memastikan permission tersedia; tidak memberi akses kepada user.
 - Tabel `units`: ULID, kode unik, nama, simbol, status aktif, dan soft delete.
 - Migration berada pada `Database/Migrations/` milik module.
 - `Database/Seeders/UnitsAccessSeeder.php` menyiapkan permission.
-- `Database/Seeders/UnitsDemoSeeder.php` mengisi PCS, PACK, BOX, KG, G, L, ML
+- `Database/Seeders/UnitsDemoSeeder.php` mengisi PCS, UNIT, SET, PAIR, PACK, BOX, M, ROLL
   secara idempotent pada local/testing tanpa mengubah existing row.
 - Perubahan model diaudit sejak awal memakai log `inventory.units`.
 

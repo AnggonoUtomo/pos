@@ -45,9 +45,9 @@ try {
         app($seeder)->run();
     }
     $warehouse = collect(app(WarehouseLookup::class)->choices())->firstWhere('code', 'WH-MAIN');
-    $item = collect(app(ItemStockLookup::class)->choices())->firstWhere('sku', 'DEMO-WATER-600');
+    $item = collect(app(ItemStockLookup::class)->choices())->firstWhere('sku', 'DEMO-CCTV-IP-2MP');
     $box = app(UnitLookup::class)->findActiveByCode('BOX');
-    $input = ['warehouse_id' => $warehouse->id, 'lines' => [['item_id' => $item->id, 'unit_id' => $box->id, 'quantity' => '2', 'unit_cost' => '120000']]];
+    $input = ['warehouse_id' => $warehouse->id, 'lines' => [['item_id' => $item->id, 'unit_id' => $box->id, 'quantity' => '2', 'unit_cost' => '2000000']]];
     $id = app(ManageOpening::class)->create($input);
     $peer = DB::connection('stock_qa_peer');
     $peer->statement('SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
@@ -77,7 +77,7 @@ try {
                     $peer->table('units')->where('id', $unitId)->lockForUpdate()->first();
                 }
                 $peer->table('items')->where('id', $item->id)->lockForUpdate()->first();
-                $peer->table('item_units')->where('item_id', $item->id)->where('unit_id', $box->id)->update(['conversion_ratio' => '24']);
+                $peer->table('item_units')->where('item_id', $item->id)->where('unit_id', $box->id)->update(['conversion_ratio' => '8']);
             });
         }
     });
@@ -94,7 +94,7 @@ try {
     app(ManageOpening::class)->update($id, $input);
     app(PostOpening::class)->handle($id);
     app(PostOpening::class)->handle($id);
-    $check(DB::table('stock_balances')->value('quantity') === '48.000000' && DB::table('fifo_layers')->count() === 1, 'Draft disimpan ulang: posting/retry exact dan idempotent');
+    $check(DB::table('stock_balances')->value('quantity') === '16.000000' && DB::table('fifo_layers')->count() === 1, 'Draft disimpan ulang: posting/retry exact dan idempotent');
     $second = app(ManageOpening::class)->create($input);
     $rejected = false;
     try {

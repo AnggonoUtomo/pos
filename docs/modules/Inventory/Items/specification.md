@@ -73,10 +73,13 @@ Access seeder menyiapkan permission tanpa mengubah role/akses akun.
 
 ## Demo
 
-- DEMO-WATER-600: Air Mineral 600 ml, base PCS, BOX berisi 12 PCS.
-- DEMO-TEA-250: Teh Kemasan 250 ml, base PCS, PACK 6 PCS dan BOX 24 PCS.
-- DEMO-RICE: Beras, base G, KG berisi 1000 G; 0.125 KG menjadi 125 G.
-- Barcode demo berupa label unik {sku}-{unit}, misalnya DEMO-RICE-KG; bukan
+- Sembilan produk CCTV/kelistrikan: kamera, NVR, UTP, NYM, MCB, RJ45,
+  adaptor, balun dan paket CCTV. Delapan satuan, 18 relasi.
+- BOX kamera = 4 UNIT; BOX NVR = 2 UNIT; BOX MCB = 12 UNIT.
+- ROLL UTP = 305 M; ROLL NYM = 100 M; 0.125 ROLL NYM = 12.5 M.
+- Dataset dan biaya fiktif lengkap ada pada
+  [demo CCTV/kelistrikan](../../../work-items/cctv-electrical-demo/README.md).
+- Barcode demo berupa label unik {sku}-{unit}, misalnya DEMO-CCTV-IP-2MP-BOX; bukan
   EAN produksi.
 - Local/testing saja. Semua demo dibuat dalam transaction; unit demo yang
   diperlukan harus sudah aktif. Seeder tidak membuat/mengubah master Units.

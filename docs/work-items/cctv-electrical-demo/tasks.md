@@ -24,10 +24,21 @@ Increment 1 Passed: RED 6 gagal/4 lulus pada test seed baru; sesudah implementas
 `php artisan test --compact`: 238 tests, 1421 assertions PASS.
 `vendor/bin/pint --dirty`: PASS. Legacy posted dokumen/ledger tetap identik.
 
-- [ ] Sesuaikan spesifikasi demo dan fixture QA browser/MySQL.
+- [x] Sesuaikan spesifikasi demo dan fixture QA browser/MySQL.
   - Acceptance: tidak ada consumer aktif yang masih bergantung SKU grocery.
   - Verification: pencarian terbatas source/tests/scripts, diff check.
-- [ ] Jalankan QA disposable desktop/tablet dan MySQL.
+- [x] Jalankan QA disposable desktop/tablet dan MySQL.
   - Acceptance: posting, saldo dan FIFO tetap tepat; database user tidak direset.
   - Verification: scripts/qa/stock-browser.mjs, scripts/qa/stock-mysql.php.
-- [ ] Catat bukti, commit dan push setelah seluruh pekerjaan selesai.
+- [x] Catat bukti, commit dan push setelah seluruh pekerjaan selesai.
+
+Increment 2 Passed: `php scripts/qa/stock-mysql.php` semua pemeriksaan PASS
+(dua koneksi REPEATABLE READ, stale conversion, urutan lock, retry, unique pair,
+DECIMAL besar dan cleanup). Chrome DevTools MCP smoke login pos.test PASS,
+console bersih; authenticated CRUD tidak diuji dengan akun user.
+`node scripts/qa/stock-browser.mjs` Playwright disposable PASS, 13 screenshot,
+desktop 1440x1000, tablet 1024x768/768x1024, posting 8 Unit/Rp4.000.000,
+readonly/editor, sidebar collapse, shortcut/palette, dark dan console bersih.
+Bukti lokal: storage/framework/testing/stock-browser-6cbeb8c99d1ca9c6.
+Tidak ada perubahan frontend production; build/typecheck tidak diulang untuk
+perubahan seeder/fixture ini. `git diff --check` PASS.

@@ -1,6 +1,6 @@
 # Demo CCTV Dan Kelistrikan
 
-Status: In Progress. Target: Inventory/Units, Inventory/Items, Inventory/Stock.
+Status: Done. Target: Inventory/Units, Inventory/Items, Inventory/Stock.
 
 Demo beralih ke toko CCTV dan kelistrikan. Produk, isi kemasan, barcode dan
 harga pokok adalah contoh fiktif, bukan spesifikasi vendor atau harga pasar.

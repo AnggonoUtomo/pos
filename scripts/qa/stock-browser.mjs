@@ -83,10 +83,10 @@ try {
     };
     const fillDraft = async (warehouse = 'WH-MAIN - Gudang Utama') => {
         await choose('Gudang', warehouse);
-        await choose('Barang 1', 'DEMO-WATER-600 - Air Mineral 600 ml');
+        await choose('Barang 1', 'DEMO-CCTV-IP-2MP - Kamera IP 2MP');
         await choose('Satuan 1', 'Dus');
         await page.getByLabel('Kuantitas 1', { exact: true }).fill('2');
-        await page.getByLabel('Harga pokok 1', { exact: true }).fill('120000');
+        await page.getByLabel('Harga pokok 1', { exact: true }).fill('2000000');
     };
     await login(page, 'manager');
     await screenshot('stock-empty-desktop');
@@ -99,7 +99,7 @@ try {
     await page.getByLabel('Harga pokok 1', { exact: true }).fill('0');
     await page.getByRole('button', { name: 'Simpan draft', exact: true }).click();
     await page.getByText('Kuantitas, rasio dan harga pokok wajib lebih dari nol.', { exact: true }).waitFor();
-    await page.getByLabel('Harga pokok 1', { exact: true }).fill('120000');
+    await page.getByLabel('Harga pokok 1', { exact: true }).fill('2000000');
     await page.setViewportSize({ width: 1024, height: 768 }); await screenshot('stock-form-tablet-landscape');
     await page.setViewportSize({ width: 768, height: 1024 }); await screenshot('stock-form-tablet-portrait');
     await page.setViewportSize({ width: 1440, height: 1000 });
@@ -115,8 +115,8 @@ try {
     await page.getByRole('dialog').getByRole('button', { name: 'Pulihkan', exact: true }).click(); await settle();
     await page.getByRole('button', { name: 'Data', exact: true }).click();
     await page.getByRole('button', { name: `Detail ${number}`, exact: true }).click();
-    await page.getByRole('dialog').getByText('24 Buah', { exact: true }).waitFor();
-    await page.getByRole('dialog').getByText('Rp 240.000', { exact: true }).waitFor();
+    await page.getByRole('dialog').getByText('8 Unit', { exact: true }).waitFor();
+    await page.getByRole('dialog').getByText('Rp 4.000.000', { exact: true }).waitFor();
     await screenshot('stock-draft-detail-desktop');
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: `Posting ${number}`, exact: true }).click();
@@ -125,14 +125,14 @@ try {
     assert.equal(await page.getByRole('button', { name: `Posting ${number}`, exact: true }).count(), 0);
     await screenshot('stock-posted-desktop');
     await view('Saldo stok');
-    await page.getByText('24 Buah', { exact: true }).waitFor();
-    await page.getByText('Rp 240.000', { exact: true }).waitFor();
+    await page.getByText('8 Unit', { exact: true }).waitFor();
+    await page.getByText('Rp 4.000.000', { exact: true }).waitFor();
     await screenshot('stock-balance-desktop');
     await choose('Filter gudang', 'WH-SECONDARY - Gudang Tambahan');
     await page.getByText('Tidak ada data stok.', { exact: true }).waitFor();
     await choose('Filter gudang', 'Semua gudang');
     await view('Kartu stok');
-    await page.getByText('24 Buah', { exact: true }).waitFor();
+    await page.getByText('8 Unit', { exact: true }).waitFor();
     await page.setViewportSize({ width: 1024, height: 768 }); await screenshot('stock-card-tablet-landscape');
     await page.setViewportSize({ width: 768, height: 1024 }); await screenshot('stock-card-tablet-portrait');
     await page.setViewportSize({ width: 1440, height: 1000 });

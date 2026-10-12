@@ -42,10 +42,11 @@ tidak boleh dipilih untuk relasi barang baru saat Items dibuat.
 | PCS | Buah | pcs |
 | PACK | Pak | pak |
 | BOX | Dus | dus |
-| KG | Kilogram | kg |
-| G | Gram | g |
-| L | Liter | l |
-| ML | Mililiter | ml |
+| UNIT | Unit | unit |
+| SET | Set | set |
+| PAIR | Pasang | pasang |
+| M | Meter | m |
+| ROLL | Rol | rol |
 
 Seeder mencari existing row termasuk soft-deleted row. Pengulangan tidak
 menimpa nama/simbol/status, mengganti ULID, mengembalikan data terhapus, atau
