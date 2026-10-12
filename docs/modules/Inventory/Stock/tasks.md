@@ -45,10 +45,10 @@
 
 ## Increment 5: Query Dan UI
 
-- [ ] Buat list stok awal, saldo dan kartu stok dengan filter/pagination.
+- [x] Buat list stok awal, saldo dan kartu stok dengan filter/pagination.
   - Acceptance: server read memakai ledger dan snapshot, permission backend.
   - Verification: feature query/page tests.
-- [ ] Buat UI, dialog, shortcut, Sonner dan navigasi.
+- [x] Buat UI, dialog, shortcut, Sonner dan navigasi.
   - Acceptance: state loading/empty/error dan view/manage/post terpisah.
   - Verification: lint/typecheck/build dan browser desktop/tablet.
 
@@ -90,3 +90,8 @@ Increment 4: RED 6 posting/guard test 404; GREEN posting/layer/snapshot, retry
 idempotent, pemisahan gudang, stale ratio, permission, audit rollback dua baris,
 master guard dan rename historis. Read invariant memakai locking read setelah
 lock master agar tidak menggunakan snapshot MySQL lama; race nyata belum diuji.
+
+Increment 5: RED 2 read/page test; GREEN 2 test/46 assertion. UI menggunakan
+segmented Button existing, bukan memasang package tab baru. Typecheck, ESLint
+dan build 2688 module PASS setelah import tab yang belum tersedia diganti.
+Browser workflow dijalankan pada Increment 6; tidak diklaim PASS di tahap ini.

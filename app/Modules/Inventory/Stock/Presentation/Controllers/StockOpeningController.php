@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Modules\Inventory\Stock\Application\Actions\ManageOpening;
 use App\Modules\Inventory\Stock\Application\Actions\PostOpening;
 use App\Modules\Inventory\Stock\Application\Actions\PrepareOpening;
+use App\Modules\Inventory\Stock\Application\Queries\StockWorkspace;
+use App\Modules\Inventory\Stock\Presentation\Requests\StockListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 use InvalidArgumentException;
 
 class StockOpeningController extends Controller implements HasMiddleware
@@ -19,7 +23,21 @@ class StockOpeningController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:inventory.stock.manage', only: ['store', 'update', 'destroy', 'restore']),
-            new Middleware('can:inventory.stock.post', only: ['post'])];
+            new Middleware('can:inventory.stock.post', only: ['post']),
+            new Middleware('can:inventory.stock.view', only: ['index', 'data'])];
+    }
+
+    public function index(StockListRequest $request, StockWorkspace $query): Response
+    {
+        $filters = $request->filters();
+
+        return Inertia::render('inventory/stock/index', ['records' => $query->records($filters, (int) $request->validated('page', 1)),
+            'filters' => $filters, 'options' => $query->options()]);
+    }
+
+    public function data(StockListRequest $request, StockWorkspace $query): JsonResponse
+    {
+        return response()->json($query->records($request->filters(), (int) $request->validated('page', 1)));
     }
 
     public function store(Request $request, ManageOpening $action): JsonResponse|RedirectResponse

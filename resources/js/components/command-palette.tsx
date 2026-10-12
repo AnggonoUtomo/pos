@@ -65,7 +65,14 @@ const commandItems = [
         icon: Tags,
         tone: 'text-amber-600 dark:text-amber-300',
     },
-    { title: 'Stok', description: 'Pantau stok, FIFO layer, dan movement', icon: Boxes, tone: 'text-amber-600 dark:text-amber-300', disabled: true },
+    {
+        title: 'Stok',
+        description: 'Stok awal, saldo dan kartu stok',
+        url: '/inventory/stock',
+        permission: 'inventory.stock.view',
+        icon: Boxes,
+        tone: 'text-amber-600 dark:text-amber-300',
+    },
     {
         title: 'Pelanggan',
         description: 'Kelola pelanggan dan level harga',

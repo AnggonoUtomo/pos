@@ -17,4 +17,6 @@ interface StockRepository
     public function hasBalance(string $warehouseId, string $itemId): bool;
 
     public function postOpening(string $id, array $header, array $lines, ?int $actorId): void;
+
+    public function paginate(string $tab, int $page, array $filters): array;
 }

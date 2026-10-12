@@ -101,17 +101,59 @@ class EloquentStockRepository implements StockRepository, StockUsage
         $this->audit($opening, 'posted');
     }
 
+    public function paginate(string $tab, int $page, array $filters): array
+    {
+        if ($tab === 'openings') {
+            $query = ! empty($filters['trashed']) ? StockOpening::onlyTrashed() : StockOpening::query();
+            $query->when($filters['warehouse_id'] ?? '', fn ($q, $id) => $q->where('warehouse_id', $id))
+                ->when(($filters['status'] ?? 'all') !== 'all', fn ($q) => $q->where('status', $filters['status']))
+                ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->where('number', 'like', '%'.$search.'%')
+                    ->orWhere('warehouse_name', 'like', '%'.$search.'%')));
+            $paginator = $query->orderByDesc('id')->paginate(25, page: $page);
+            $ids = $paginator->getCollection()->pluck('id')->all();
+            $lines = DB::table('stock_opening_lines')->whereIn('opening_id', $ids)->orderBy('item_id')->get()->groupBy('opening_id');
+            $rows = $paginator->getCollection()->map(fn ($record) => $record->toArray() + [
+                'lines' => ($lines[$record->id] ?? collect())->map(fn ($line) => $this->normalizeLine((array) $line))->all(),
+            ])->all();
+        } else {
+            $table = $tab === 'balances' ? 'stock_balances' : 'stock_movements';
+            $query = DB::table($table.' as ledger')->join('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
+                ->join('stock_openings as opening', 'opening.id', '=', 'line.opening_id')
+                ->select(['ledger.*', 'line.sku', 'line.item_name', 'line.base_unit_name', 'opening.number', 'opening.warehouse_name', 'opening.warehouse_code'])
+                ->when($filters['warehouse_id'] ?? '', fn ($q, $id) => $q->where('ledger.warehouse_id', $id))
+                ->when($filters['item_id'] ?? '', fn ($q, $id) => $q->where('ledger.item_id', $id))
+                ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->where('line.sku', 'like', '%'.$search.'%')
+                    ->orWhere('line.item_name', 'like', '%'.$search.'%')->orWhere('opening.number', 'like', '%'.$search.'%')));
+            if ($tab === 'movements') {
+                $query->orderBy('ledger.posted_at')->orderBy('ledger.id');
+            } else {
+                $query->orderBy('line.sku')->orderBy('ledger.id');
+            }
+            $paginator = $query->paginate(25, page: $page);
+            $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
+        }
+
+        return ['data' => $rows, 'meta' => ['current_page' => $paginator->currentPage(), 'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(), 'total' => $paginator->total()]];
+    }
+
     protected function lines(string $id): array
     {
         return DB::table('stock_opening_lines')->where('opening_id', $id)->orderBy('item_id')->get()
             ->map(function ($line): array {
-                $line = (array) $line;
-                foreach (['quantity', 'conversion_ratio', 'unit_cost', 'base_quantity', 'total_value'] as $key) {
-                    $line[$key] = (string) BigDecimal::of((string) $line[$key])->toScale(6);
-                }
-
-                return $line;
+                return $this->normalizeLine((array) $line);
             })->all();
+    }
+
+    private function normalizeLine(array $line): array
+    {
+        foreach (['quantity', 'conversion_ratio', 'unit_cost', 'base_quantity', 'total_value'] as $key) {
+            if (isset($line[$key])) {
+                $line[$key] = (string) BigDecimal::of((string) $line[$key])->toScale(6);
+            }
+        }
+
+        return $line;
     }
 
     private function insertLines(string $id, array $lines): void
