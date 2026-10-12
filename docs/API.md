@@ -109,6 +109,48 @@ dari UnitLookup::listActive, maksimal 1000 satuan aktif, urut code/id. Form
 menyimpan rasio sebagai string, bukan float. Base unit terkunci saat edit.
 Barcode duplicate case-insensitive pada payload update ditolak sebelum mutation.
 
+### Endpoint Internal Stock
+
+Session web/auth/verified/CSRF, bukan API eksternal. Prefix `/inventory/stock`,
+nama `inventory.stock.*`. Super-system bypass permission, bukan invariant bisnis.
+
+| Method | Path suffix | Nama suffix | Permission |
+| --- | --- | --- | --- |
+| GET | / | index | inventory.stock.view |
+| GET | /data | data | inventory.stock.view |
+| POST | /openings | openings.store | inventory.stock.manage |
+| PUT | /openings/{id} | openings.update | inventory.stock.manage |
+| DELETE | /openings/{id} | openings.destroy | inventory.stock.manage |
+| POST | /openings/{id}/restore | openings.restore | inventory.stock.manage |
+| POST | /openings/{id}/post | openings.post | inventory.stock.post |
+
+ID route ULID. Index Inertia `inventory/stock/index` memiliki props records,
+filters dan options; data JSON `{data, meta}`, 25 record/page. Filter tab
+openings/balances/movements, page 1..2147483647, search maksimum 150, warehouse_id
+dan item_id ULID, status all/draft/posted, trashed boolean. Status/trashed hanya
+memengaruhi daftar dokumen. Pilihan master aktif maksimal 1000 per katalog.
+
+Payload create/update: warehouse_id, notes nullable maksimum 500, lines 1..100
+dengan item_id distinct, unit_id milik barang, quantity dan unit_cost decimal
+string positif maksimum enam desimal. ULID master dinormalisasi lowercase
+sebelum duplicate validation. Rasio diambil dari master, bukan dipercaya dari
+payload. Quantity x ratio dan quantity x unit_cost harus exact, tanpa pembulatan
+silent. Harga pokok per satuan pilihan, bukan per base unit.
+
+Create JSON 201 `{id}`, mutation lain 200 `{id}`; web redirect/flash success.
+Invalid input/invariant 422 (stock untuk invariant); guest JSON 401, permission
+403, target hilang/lifecycle invalid 404 atau invariant 422 sesuai kondisi.
+Draft delete/restore tidak mengubah stok. Posted tidak boleh edit/delete/restore;
+posting ulang id yang sama idempotent tanpa saldo/audit ganda. Pasangan barang +
+gudang yang sudah memiliki saldo/histori menolak stok awal berikutnya.
+
+Posting membuat balance, movement masuk dan FIFO layer bersama audit dalam
+satu transaction. Snapshot SKU/nama barang, unit/base unit, rasio, gudang dan
+harga pokok menjaga histori rename. Kuantitas dan nilai JSON tetap decimal
+string. Timestamp posted_at dikirim ISO UTC, ditampilkan menurut timezone
+browser. Tidak ada consumption FIFO, pengeluaran, transfer atau reversal UI.
+Permission seeder tidak memberi role/grant otomatis; demo eksplisit local/testing.
+
 ### Endpoint Internal Identity
 
 Session web/auth/verified/CSRF mengikuti starter kit seperti Inventory. Ini bukan
@@ -219,8 +261,9 @@ benar diekspos melalui endpoint. Public boundary internal tetap mengikuti
 
 ### Inventory/Units
 
-Consumer nyata: `Inventory/Items/Application/Actions/CreateItem` dan seeder demo
-Items. Model Infrastructure Units bersifat privat.
+Consumer nyata: CreateItem/ManageItem dan seeder demo Items; PrepareOpening dan
+StockWorkspace memakai validasi/lock atau pilihan satuan Stock.
+Model Infrastructure Units bersifat privat.
 
 | Contract | Method | Hasil | Ketentuan |
 | --- | --- | --- | --- |
@@ -239,3 +282,26 @@ ItemUnitUsage::isReferenced(string unitId): bool dipakai ManageUnit untuk guard
 delete/nonaktif. Adapter hanya membaca tabel Items miliknya; tidak ada mutation
 lintas module. Referensi items.base_unit_id dan item_units.unit_id mencakup row
 terhapus agar restore/histori tetap aman.
+
+ItemStockLookup::findActive(id, lock = false) menghasilkan ItemStockData atau null;
+choices() mengembalikan maksimal 1000 barang aktif/non-trashed untuk input Stock.
+DTO memiliki id, sku, name, baseUnitId, units (ItemUnitData). Lock wajib di dalam
+transaction default bersama, setelah lock selected/base Units terurut. Adapter
+memakai current read untuk relasi unit saat lock diminta. Consumer: PrepareOpening,
+StockWorkspace dan StockDemoSeeder; bukan contract laporan atau pricing.
+
+### Inventory/Warehouses
+
+WarehouseLookup::findActive(id, lock = false) menghasilkan WarehouseData atau null;
+choices() maksimal 1000 gudang aktif/non-trashed untuk consumer Stock.
+WarehouseData memiliki id/code/name. Lock memerlukan transaction default
+bersama. Consumer tidak mengimpor Eloquent model Warehouses.
+
+### Inventory/Stock
+
+StockUsage::hasItemHistory(itemId) dan hasWarehouseHistory(warehouseId) dipakai
+ManageItem/ManageWarehouse untuk guard master. Caller memegang lock master
+terkait dalam transaction default bersama; adapter Stock memakai current read.
+Riwayat saldo/movement/layer tidak boleh diputus melalui delete/nonaktif master.
+StockRepository adalah port internal, bukan public mutation lintas module.
+Belum ada port/event FIFO keluar karena belum ada consumer transaksi.

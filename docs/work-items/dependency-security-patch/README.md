@@ -1,6 +1,7 @@
 # Perbaikan Security Dependency
 
-Status: In Progress. Disetujui user pada 12 Oktober 2026 sebagai pekerjaan
+Status: In Progress (QA lulus, delivery menunggu push). Disetujui user pada
+12 Oktober 2026 sebagai pekerjaan
 terpisah dari penutupan Inventory/Stock.
 
 ## Scope
@@ -39,4 +40,4 @@ transitive terkait, tanpa mengganti konfigurasi lint atau major stack.
 ## Non-Scope
 
 Tidak mengubah fitur, schema, role, akun, tema, Old-docs atau artefak SampleUI.
-Tidak memakai audit fix --force, menghapus package, atau upgrade stack mayor.
+Tidak memakai audit fix --force, menghapus package langsung, atau upgrade stack mayor.

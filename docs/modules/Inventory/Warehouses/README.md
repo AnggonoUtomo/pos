@@ -19,9 +19,15 @@ ListWarehouses di dalam module. Route data/store memanggil controller pada
 Presentation, dengan permission per action. Tidak ada contract/event lintas
 module tanpa consumer. Model Infrastructure bersifat privat module.
 
+WarehouseLookup/WarehouseData menyediakan gudang aktif/non-trashed untuk
+consumer Stock: form serta draft/posting/demo. findActive(lock: true) memerlukan
+transaction default bersama; choices dibatasi 1000 input pilihan. ManageWarehouse
+memakai published StockUsage untuk menolak delete/nonaktif jika gudang memiliki
+histori stok. Rename tetap diperbolehkan dan tidak mengubah snapshot dokumen.
+
 ## Dependency
 
-Laravel Eloquent, Spatie Permission, dan Spatie Activitylog. CompanySettings
+Stock (StockUsage), Laravel Eloquent, Spatie Permission, dan Spatie Activitylog. CompanySettings
 belum diperlukan untuk master gudang single company tanpa konfigurasi tambahan.
 
 ## Permission

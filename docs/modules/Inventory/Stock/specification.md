@@ -2,7 +2,8 @@
 
 ## Status Dan Persetujuan
 
-Disetujui untuk scope awal pada 12 Oktober 2026. Implementasi masih pending.
+Disetujui untuk scope awal pada 12 Oktober 2026. Draft/posting, query/UI dan
+fondasi FIFO sudah diimplementasikan; verifikasi aktual ada pada tasks.md.
 User menyetujui harga pokok per satuan pilihan wajib positif, satu barang satu
 baris dokumen, dan stok awal hanya sekali per pasangan barang + gudang.
 
@@ -82,9 +83,9 @@ dibuktikan terpisah; test SQLite tidak diklaim membuktikan row locking.
 
 ## Acceptance
 
-- [ ] Draft/lifecycle tidak mengubah saldo.
-- [ ] Posting exact, snapshot, atomic dan idempotent; stok awal kedua ditolak.
-- [ ] Guard master dan permission backend teruji termasuk super-system.
-- [ ] Saldo/kartu stok menggunakan ledger, bukan activity log.
-- [ ] UI desktop/tablet dan seluruh gate relevan diverifikasi.
-- [ ] Tidak ada consumer FIFO pengeluaran palsu atau koreksi posted bebas.
+- [x] Draft/lifecycle tidak mengubah saldo.
+- [x] Posting exact, snapshot, atomic dan idempotent; stok awal kedua ditolak.
+- [x] Guard master dan permission backend teruji termasuk super-system.
+- [x] Saldo/kartu stok menggunakan ledger, bukan activity log.
+- [x] UI desktop/tablet diverifikasi; gate dependency terpisah dicatat di tasks.md.
+- [x] Tidak ada consumer FIFO pengeluaran palsu atau koreksi posted bebas.

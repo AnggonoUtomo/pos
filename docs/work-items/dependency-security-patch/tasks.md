@@ -31,7 +31,7 @@
 
 ## Increment 3: Integrasi Dan Delivery
 
-- [ ] Ulang gate integrasi backend/frontend dan Stock browser.
+- [x] Ulang gate integrasi backend/frontend dan Stock browser.
   - Acceptance: full test, lint/typecheck/build dan workflow desktop/tablet PASS.
   - Verification: command aktual dan report QA disposable.
 - [ ] Sinkronkan dokumen, selective commit dan push penutupan Stock.
@@ -40,8 +40,8 @@
 
 ## Sesudah Coding
 
-- [ ] Semua gate relevan lulus dan risiko/proof gap dicatat.
-- [ ] Tidak ada perubahan data/secret/tema/arsip/artefak user.
+- [x] Semua gate relevan lulus dan risiko/proof gap dicatat.
+- [x] Tidak ada perubahan data/secret/tema/arsip/artefak user.
 
 ## Bukti Awal
 
@@ -100,3 +100,15 @@ node_modules/eslint/bin/eslint.js dan typescript/bin/tsc, parser QA, build,
 audit npm penuh/production serta Composer semuanya dijalankan ulang dan PASS.
 Tidak ada perubahan package.json/composer.json. Warning deprecated ESLint 9
 dicatat; upgrade major 10 tidak termasuk persetujuan ini.
+
+## Gate Integrasi
+
+12 Oktober 2026: full suite 237 test/1409 assertion PASS; focused auth/Markdown
+10/38 PASS; Pint PASS; lint resources/js, typecheck dan build 2688 module PASS
+sesudah clean install. Route Stock 7, migrate:status 11 Ran dan QA MySQL dua
+koneksi disposable PASS. Workflow Stock browser sesudah clean install PASS:
+storage/framework/testing/stock-browser-7b763cd3bd928124/report.json, 13 screenshot,
+desktop/tablet dan console kosong. Tidak ada source UI/theme atau data user yang
+diubah oleh increment dependency ini. Relative link dan diff check PASS.
+Delivery commit/push dilakukan bersama penutupan Stock; tidak mengklaim CI remote
+sudah berjalan atau lulus.

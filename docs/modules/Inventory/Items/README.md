@@ -5,7 +5,8 @@
 Active: fondasi backend Increment 4A/4B selesai dan terverifikasi pada
 9 Oktober 2026; endpoint internal data/store tersedia sejak Increment 5B pada
 10 Oktober 2026. CRUD backend dan UI desktop/tablet tersedia pada Increment 6;
-integrasi transaksi belum tersedia.
+lookup barang/satuan serta guard histori stok awal tersedia melalui Stock.
+Transaksi POS/pembelian belum tersedia.
 
 ## Tujuan Dan Boundary
 
@@ -20,6 +21,14 @@ port persistence berada di Application/Contracts. Model Eloquent tetap privat.
 ItemUnitUsage memiliki consumer ManageUnit untuk guard satuan terpakai, termasuk
 referensi terhapus. Tidak membuat event/contract transaksi hipotetis. Items memakai UnitLookup dan UnitData dari
 public boundary Units untuk membaca satuan aktif, bukan model Eloquent Units.
+
+ItemStockLookup/ItemStockData memiliki consumer Stock (form, draft/posting dan
+demo). Lookup aktif memuat unit/rasio melalui adapter Items; lock memerlukan
+transaction default bersama dan satuan dikunci dahulu. Relasi unit memakai
+current locking read ketika diminta, bukan eager read snapshot lama MySQL.
+ManageItem memakai StockUsage: barang berhistori tidak boleh dihapus/nonaktif,
+unit existing tidak boleh dibuang atau rasionya berubah. Rename, barcode/flag
+dan tambahan unit tetap diperbolehkan; snapshot posted tidak ikut berubah.
 
 Domain ConversionRatio bebas framework dan memakai brick/math yang sudah
 tersedia melalui dependency Laravel. ServiceProvider menghubungkan repository

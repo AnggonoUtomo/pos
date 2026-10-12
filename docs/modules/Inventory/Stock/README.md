@@ -2,9 +2,10 @@
 
 ## Status
 
-In Progress. Draft/posting, saldo/kartu stok dan fondasi layer FIFO sudah
-diimplementasikan. Penutupan Increment 6 menunggu gate final dan
-[perbaikan dependency terpisah](../../../work-items/dependency-security-patch/README.md).
+Active. Draft/posting, saldo/kartu stok dan fondasi layer FIFO sudah
+diimplementasikan dan QA penutupan lulus. Delivery Increment 6 menunggu push;
+[perbaikan dependency terpisah](../../../work-items/dependency-security-patch/README.md)
+juga telah lulus gate.
 
 ## Tujuan Dan Boundary
 
@@ -27,6 +28,26 @@ payment, pajak, diskon, atau harga level pelanggan.
 Backend tetap authority; super-system tidak melewati invariant bisnis.
 Migration, permission seeder dan demo seeder berada di module.
 Demo hanya dijalankan eksplisit dan tidak mengubah akun/role/credential.
+
+## Operasi
+
+Halaman `/inventory/stock` memiliki Stok awal, Saldo stok dan Kartu stok.
+Migration additive dan permission seeder sudah diterapkan pada MySQL lokal;
+tidak ada demo Stock yang diposting otomatis pada data user.
+
+```powershell
+php artisan db:seed --class="App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder"
+php artisan test --filter=Stock
+```
+
+StockDemoSeeder hanya local/testing dan membutuhkan demo Warehouses, Units,
+Items yang aktif lebih dahulu. Jalankan eksplisit pada database demo/disposable,
+bukan sebagai bagian otomatis deployment. Pasangan berhistori tidak ditambah
+lagi; marker demo existing termasuk terhapus tidak ditimpa.
+
+Ledger/layer posted tidak menggunakan soft delete. Draft bisa soft delete dan
+restore. Koreksi posted memerlukan capability reversal/adjustment terpisah.
+FIFO consumption, saldo keluar dan no-negative outflow belum diimplementasikan.
 
 Lihat [specification.md](specification.md), [plan.md](plan.md), dan
 [tasks.md](tasks.md) untuk aturan dan hasil implementasi aktual.

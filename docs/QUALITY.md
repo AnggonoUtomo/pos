@@ -204,6 +204,63 @@ Screenshot/report.json lokal di-ignore. CSS font Bunny eksternal distub agar QA
 tidak tergantung jaringan; font fallback dipakai dan CDN tidak termasuk gate.
 Status fallback PASS tetap terpisah dari DevTools MCP BLOCKED.
 
+## QA Stok Awal Dan FIFO Foundation
+
+Backend: `php artisan test --filter=Stock` dan regresi Items/Warehouses. Domain
+memakai decimal string exact; test SQLite memeriksa schema/up/down dan rollback,
+bukan bukti lock MySQL. Untuk MySQL local, jalankan:
+
+```powershell
+php scripts/qa/stock-mysql.php
+```
+
+Script membuat database baru bernama generated pos_stock_qa dengan suffix random
+tervalidasi, menjalankan migration/demo di database itu, dan memakai dua koneksi
+REPEATABLE READ untuk menginterleave perubahan rasio sesudah consistent read
+draft. Memeriksa stale rejection, urutan lock base/selected unit, idempotency,
+sekali per pasangan dan DECIMAL besar exact. Database disposable dibersihkan
+di finally; bukan load test seluruh race, tidak memutasi database pengguna.
+
+QA browser terisolasi:
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/node_modules/playwright-core'
+node scripts/qa/stock-browser.mjs
+```
+
+Gunakan package existing, build terbaru dan fixture tests/Browser/stock-fixture.php.
+SQLite berprefix stock-browser, server loopback, credential random via stdin,
+timezone Asia/Jakarta; tanpa akun MySQL nyata. Coverage: draft CRUD/restore,
+cost positif, multi-satuan exact, posting immutable, duplicate pair, saldo/kartu,
+filter gudang, viewer/editor, shortcut/palette, sidebar collapse dan dark.
+Desktop 1440x1000; tablet 1024x768/768x1024. Screenshot/report lokal ignored;
+browser/server selalu ditutup. Chrome DevTools tetap dicoba dahulu; smoke login
+bukan bukti seluruh workflow Stock. Catat cakupan masing-masing alat.
+
+scripts/qa/apply-stock-local.php hanya untuk penerapan additive yang eksplisit:
+migration/permission Stock, fingerprint akun/role/pivot/master sebelum/sesudah,
+tanpa demo Stock. Jangan memakai migrate:fresh atau menjalankan demo tanpa arahan
+pada MySQL pengguna.
+
+## QA Dependency Security
+
+Untuk pembaruan dependency, gunakan update terarah tanpa audit fix --force.
+Periksa diff lockfile/constraint/engine dan audit production maupun dev:
+
+```powershell
+npm audit
+npm audit --omit=dev
+composer audit --locked --no-interaction
+node scripts/qa/dependency-security.mjs
+php artisan test --filter='MarkdownDependencyTest|NotificationMarkdownTest'
+```
+
+Script parser berjalan dalam worker 10 detik tanpa eksekusi shell; memeriksa
+line terminator sesudah comment, chain parse/quote, offset invalid/nested dan
+kontrol normal concurrently/PostCSS. Test Markdown memeriksa escaping tag
+terlarang, table/paragraf bounded, serta HTML/text email reset/verifikasi tanpa
+delivery. Tidak mengklaim simulasi DoS produksi atau uji lintas-shell penuh.
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

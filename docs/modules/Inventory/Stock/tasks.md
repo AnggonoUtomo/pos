@@ -57,10 +57,10 @@
 - [x] Seeder demo relasional aman/idempotent melalui action.
   - Acceptance: posted tidak ditimpa; tidak membuat akun/auto-grant.
   - Verification: demo seeder test.
-- [ ] QA full backend, schema/route dan browser terisolasi.
+- [x] QA full backend, schema/route dan browser terisolasi.
   - Acceptance: hasil actual PASS atau BLOCKED jujur dengan fallback.
   - Verification: full suite, Pint, frontend gates, route/status, report browser.
-- [ ] Perbarui docs/API, MODULES, dependency master dan bukti verifikasi.
+- [x] Perbarui docs/API, MODULES, dependency master dan bukti verifikasi.
   - Acceptance: status sesuai implementasi, tidak mengklaim consumption FIFO.
   - Verification: review/link/diff, selective staging dan commit.
 - [ ] Push setelah semua scope terverifikasi.
@@ -69,10 +69,10 @@
 
 ## Sesudah Coding
 
-- [ ] Scope selesai dan focused/full test lulus.
-- [ ] Frontend lint/typecheck/build dan QA desktop/tablet lulus.
-- [ ] Route/schema/status, audit dan demo terverifikasi.
-- [ ] Risiko/limit/gap serta dokumen aktual diperbarui.
+- [x] Scope selesai dan focused/full test lulus.
+- [x] Frontend lint/typecheck/build dan QA desktop/tablet lulus.
+- [x] Route/schema/status, audit dan demo terverifikasi.
+- [x] Risiko/limit/gap serta dokumen aktual diperbarui.
 
 ## Hasil Verifikasi
 
@@ -109,7 +109,7 @@ scripts/qa/apply-stock-local.php menerapkan migration additive dan permission
 seeder saja. Fingerprint data akun/role/pivot/master sebelum/sesudah identik;
 demo Stock tidak dijalankan pada database user. Migration/status lokal PASS.
 
-Chrome DevTools MCP BLOCKED karena tool tidak diekspos. Fallback Playwright
+Percobaan awal Chrome DevTools MCP BLOCKED karena tool tidak diekspos. Fallback Playwright
 existing PASS pada storage/framework/testing/stock-browser-fb38785affa56f5d/report.json:
 13 screenshot, desktop 1440x1000, tablet 1024x768/768x1024, console kosong,
 CRUD/restore, invalid cost, posted immutable, balance/card, duplicate guard,
@@ -117,7 +117,29 @@ viewer/editor, sidebar collapse, shortcut/palette dan dark. QA juga menemukan
 stale form state saat memilih item/unit; functional setData memperbaikinya.
 Waktu posting dinormalisasi ISO UTC dan browser QA memakai Asia/Jakarta.
 
-Gate penutupan dependency belum lulus: npm dua package dan Composer CommonMark
-memiliki advisory existing. User menyetujui work item terpisah
-docs/work-items/dependency-security-patch; final suite/build/browser akan diulang
-sesudah update. Belum push atau menandai keseluruhan selesai.
+Audit awal dependency menemukan advisory existing; user menyetujui work item
+terpisah docs/work-items/dependency-security-patch, termasuk tambahan dev tooling
+yang ditemukan audit penuh. Hasil penutupan dependency dicatat di work item itu.
+
+QA final Stock setelah update: full suite 237 test/1409 assertion PASS, focused
+Stock 29/172 PASS, Pint/typecheck/ESLint/build PASS. Build 2688 module. Route
+Stock 7 dan migrate:status 11 migration Ran. MySQL disposable dua koneksi PASS
+diulang setelah update Composer. Tidak memutasi database user atau seed demo lokal.
+
+Workflow browser final sesudah clean install PASS:
+storage/framework/testing/stock-browser-7b763cd3bd928124/report.json,
+13 screenshot dan console kosong, timezone Asia/Jakarta. Screenshot kartu stok
+tablet portrait dan dark desktop diinspeksi; tidak ada page overflow/dialog keluar
+viewport. Tabel lebar memakai scroll internal. Mobile tidak termasuk QA.
+
+Saat resume, DevTools MCP tersedia: smoke http://pos.test/inventory/stock
+redirect login tanpa sesi sesuai auth, asset build 200 dan console tanpa warning/error.
+Emulate viewport desktop 1440x1000 serta tablet 1024x768/768x1024 menunjukkan
+form login tanpa overflow. Resize window tidak mengubah effective viewport;
+emulate digunakan dan innerWidth/innerHeight dikonfirmasi. Workflow authenticated
+tetap memakai Playwright fixture disposable; tidak mengakses credential akun user.
+Smoke ini bukan klaim seluruh transaksi Stock diuji melalui DevTools.
+
+Clean dependency install/gate terakhir PASS; penutupan menunggu push. Tidak ada
+pengeluaran/consumption FIFO, no-negative outflow, POS/purchase/transfer/reversal
+atau perubahan theme/Old-docs yang ikut scope ini.
