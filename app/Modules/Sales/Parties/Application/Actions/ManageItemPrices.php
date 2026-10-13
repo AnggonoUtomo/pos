@@ -74,8 +74,8 @@ class ManageItemPrices implements ItemPriceCatalog
         }, 3);
     }
 
-    public function forItems(array $itemIds): array
+    public function forItems(array $itemIds, ?string $customerLevelId = null): array
     {
-        return $this->prices->forItems($itemIds);
+        return $this->prices->forItems($itemIds, $customerLevelId);
     }
 }

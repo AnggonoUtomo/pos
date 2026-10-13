@@ -12,9 +12,6 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('pos', function () {
-        return Inertia::render('sales/pos/index');
-    })->name('pos.index');
 });
 
 require __DIR__.'/settings.php';

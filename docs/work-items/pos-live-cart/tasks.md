@@ -21,11 +21,11 @@
 
 ## Increment 2: Backend Keranjang
 
-- [ ] Domain exact quantity/subtotal dan use case catalog/quote.
+- [x] Domain exact quantity/subtotal dan use case catalog/quote.
   - Acceptance: harga authoritative, stok lintas satuan agregat, no rounding silent,
     no fallback, no mutation/reservation/audit business.
   - Verification: positive/negative/tamper/stale/noop tests.
-- [ ] HTTP permission/form request/controller dan commit.
+- [x] HTTP permission/form request/controller dan commit.
   - Acceptance: auth/403/422, super-system tetap invariant, route /pos canonical.
   - Verification: focused HTTP/regression/route tests.
 
@@ -58,3 +58,10 @@ Increment 1: test boundary RED sebelum contract ada, lalu focused lookup,
 UnitLookup/Items HTTP/Stock read PASS. Generator memakai Sales/POS canonical.
 Private model tetap di adapter pemilik; DTO hanya metadata penjualan dan saldo.
 Tidak ada tabel/dokumen POS pada increment ini. Bukti akhir diperbarui saat QA.
+
+Increment 2: PosCartTest RED 404 sebelum endpoint ada, lalu POS/ItemPrice
+focused 26 tests/154 assertions PASS. Tiga route POS dimiliki module, route
+closure lama dihapus tanpa mengganti URL/name. Price catalog mendapat filter
+level opsional backward-compatible agar kasir tidak memuat semua level harga.
+Test mencakup fresh price/stock, tamper, aggregate stock, missing price,
+inactive/non-sale, permission/super-system, rounding dan fingerprint read-only.

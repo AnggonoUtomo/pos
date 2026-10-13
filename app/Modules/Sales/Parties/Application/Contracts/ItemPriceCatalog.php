@@ -14,5 +14,5 @@ interface ItemPriceCatalog
     public function saveForItem(string $itemId, array $prices): void;
 
     /** @return array<string, list<ItemPriceData>> */
-    public function forItems(array $itemIds): array;
+    public function forItems(array $itemIds, ?string $customerLevelId = null): array;
 }
