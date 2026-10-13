@@ -270,6 +270,26 @@ scripts/qa/apply-parties-local.php hanya migration additive dan permission
 catalog local, fingerprint data existing diperiksa. Tidak seed demo atau grant
 otomatis, tidak migrate:fresh.
 
+## QA Matrix Harga Barang
+
+`php artisan test --filter=ItemPrice` meliputi exact amount, matrix mandatory,
+invalid/duplicate/stale, atomic workflow/audit, no-op, lifecycle ID dan demo
+preservation. `php scripts/qa/item-prices-mysql.php` memakai database generated
+pos_prices_qa yang tervalidasi, dua koneksi REPEATABLE READ, harga maksimum
+DECIMAL(20,2) exact, current read level/unit, rollback dan cleanup. Tidak
+memutasi database user atau mengklaim load/concurrency lengkap.
+
+Fallback `node scripts/qa/inventory-browser.mjs --items-only` memakai fixture
+Inventory dengan tiga level dan demo harga. Memeriksa required/zero, input
+rupiah Indonesia, persist/reload, unit flag, permission readonly, desktop/tablet
+Light/Dark serta console. Screenshot finite animation dinonaktifkan agar bukan
+capture setengah transisi; dialog harus muat viewport. Dependency existing saja.
+
+Penerapan lokal eksplisit: `php scripts/qa/apply-prices-local.php`, hanya MySQL
+local, migration harga additive dan demo sembilan SKU yang dikenal. Fingerprint
+akun/grant/master/stok/ledger dan seluruh harga existing diperiksa; seed diulang
+tidak menimpa harga edit/trashed. Tidak ada migrate:fresh atau grant otomatis.
+
 ## QA Dependency Security
 
 Untuk pembaruan dependency, gunakan update terarah tanpa audit fix --force.

@@ -50,13 +50,55 @@ Screenshot matrix Light/Dark telah diperiksa; animasi dinonaktifkan saat capture
 
 ## Increment 3: QA Dan Delivery
 
-- [ ] PHP suite, lint/typecheck/build, route/migration dan MySQL disposable.
+- [x] PHP suite, lint/typecheck/build, route/migration dan MySQL disposable.
   - Acceptance: gate lulus, current reads dan no partial save terverifikasi.
   - Verification: automated tests/QA script, command dicatat.
-- [ ] DevTools atau fallback browser desktop/tablet.
+- [x] DevTools atau fallback browser desktop/tablet.
   - Acceptance: harga tersimpan/reload, invalid/missing/readonly, framing,
     console bersih, format rupiah; mobile tidak diuji.
   - Verification: report/screenshot lokal ignored.
-- [ ] Terapkan additive migration/demo harga lokal, isi checklist, commit/push.
+- [x] Terapkan additive migration/demo harga lokal dan isi checklist.
   - Acceptance: akun/grant/stok/ledger existing tetap, tidak reset database.
-  - Verification: fingerprint, git diff/status dan remote HEAD.
+  - Verification: fingerprint, git diff/status.
+- [ ] Commit penutupan, push dan cocokkan remote HEAD.
+  - Acceptance: hanya file scope pekerjaan terkirim, artefak user tidak ikut.
+  - Verification: staged diff/check, push dan ls-remote.
+
+## Bukti Verifikasi 14 Oktober 2026
+
+- `php artisan test --compact`: 270 tests / 1672 assertions PASS.
+- `vendor/bin/pint --dirty --test`: PASS.
+- `npx eslint resources/js`: PASS; `npx tsc --noEmit`: PASS.
+- `node scripts/qa/item-ratio-format.mjs`: PASS, termasuk maksimum harga
+  999999999999999999.99 exact dan penolakan lebih dari dua desimal.
+- `npm run build`: PASS, 2696 modules transformed. Tidak mengubah theme CSS.
+- `php scripts/qa/item-prices-mysql.php`: PASS, database generated disposable;
+  54 harga/idempotency, maksimum DECIMAL exact, current locking read level dan
+  unit setelah snapshot REPEATABLE READ, rollback katalog/harga/audit; database
+  dibersihkan. Bukan bukti seluruh interleaving/load concurrency produksi.
+- `php artisan route:list --path=inventory/items`: enam route existing PASS.
+- `php artisan migrate:status`: seluruh migration Ran termasuk item_prices.
+- Chrome DevTools MCP: BLOCKED, tidak ada tool namespace DevTools yang dapat
+  ditemukan pada sesi ini. Fallback memakai Playwright Core existing, tanpa
+  install dependency, profile/credential/database QA terisolasi.
+- `node scripts/qa/inventory-browser.mjs`: PASS full Inventory regression;
+  report ignored `storage/framework/testing/inventory-browser-23e2e820a3683e16`.
+- Re-run `--items-only`: PASS, reload harga persisted, matrix required/zero,
+  flags, CRUD/restore, readonly, shortcut/palette, sidebar expanded/collapsed,
+  Light/Dark/Clean, desktop 1440x1000 dan tablet 1024x768 / 768x1024; console
+  tanpa error/warning. Screenshot stabil diperiksa manual. Report ignored:
+  `storage/framework/testing/inventory-browser-448f6609d41e072f`.
+- `php scripts/qa/apply-prices-local.php`: PASS dua kali, 54 harga lokal;
+  fingerprint akun/grant/master/stok/ledger dan harga existing identik.
+  Migration additive sudah applied, tidak ada reset database.
+- Smoke `http://pos.test/login`: 200, built assets tersedia, tanpa Vite dev
+  client. Alur CRUD authenticated diuji di fixture disposable, bukan memakai
+  credential user lokal.
+- `git diff --check` dan staged check: PASS pada Increment 2 (`0e1a851`).
+
+## Batas Yang Tetap
+
+POS masih mock, belum memakai matrix sebagai engine transaksi. Harga pokok,
+FIFO, stok, akun/grant, theme, SampleUI dan Old-docs tidak diubah. Legacy barang
+tanpa harga harus dilengkapi saat edit; demo hanya sembilan SKU dikenal dan
+tidak menimpa item dengan harga existing/trashed. Mobile tidak diuji.
