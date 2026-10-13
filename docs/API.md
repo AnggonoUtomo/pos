@@ -14,6 +14,33 @@
 - Format error JSON: mengikuti response Laravel, lalu distandardkan ketika API
   publik pertama ditetapkan.
 
+## Endpoint Internal Pelanggan
+
+Module Sales/Parties memakai session web/auth/verified/CSRF. Bukan API token.
+Prefix `/sales/customers` (`sales.customers.*`) dan `/sales/customer-levels`
+(`sales.customer-levels.*`): GET index/data memerlukan `sales.parties.view`;
+POST store, PUT `{id}`, DELETE `{id}`, POST `{id}/restore` memerlukan
+`sales.parties.manage`. ID route ULID, super-system tetap tunduk invariant.
+
+Index Inertia `sales/parties/index` dan `sales/parties/customer-levels`;
+props records/filters, customer menambah levelOptions aktif (maksimal 1000).
+JSON data `{data,meta}` dengan current_page/last_page/per_page/total, 25 baris,
+urut code/id. Search code/nama maksimal 150, status all/active/inactive,
+trashed 0/1, page positif; customer_level_id ULID opsional pada daftar customer.
+
+Level: id/code/name/is_active/deleted_at. Customer menambah customer_level_id,
+customer_level_name, phone/email/address nullable. Mutation level: code/name,
+is_active opsional default true. Customer menambah level wajib, phone maksimal
+32, email valid maksimal 150, address maksimal 500. Code trim/uppercase dan
+unique termasuk trashed; field tak dikenal tidak disimpan.
+
+Create JSON 201/id, mutation 200/id; web redirect flash success. Invalid input,
+level invalid dan konflik kode 422 teredaksi; unknown resource 404. Level
+terpakai termasuk customer trashed tidak boleh delete/nonaktif (error parties).
+Customer create/edit/restore membutuhkan level aktif (error customer_level_id).
+Mutation/audit atomic; detail kontrak ada pada
+[specification Parties](modules/Sales/Parties/specification.md).
+
 ## Endpoint API Eksternal
 
 Belum ada endpoint API eksternal yang menjadi contract publik. Perubahan yang

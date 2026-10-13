@@ -1,5 +1,7 @@
 # Tasks: Pelanggan Dan Level Pelanggan
 
+Status: Done. Increment 1/2/3 Passed; ditutup 13 Oktober 2026.
+
 ## Sebelum Mulai
 
 - [x] AGENTS.md, docs/README.md, ARCHITECTURE, FOLDER-STRUCTURE dan QUALITY dibaca.
@@ -38,22 +40,22 @@
 
 ## Increment 3: Penutupan QA
 
-- [ ] Jalankan Chrome DevTools MCP dan workflow disposable browser.
+- [x] Jalankan Chrome DevTools MCP dan workflow disposable browser.
   - Acceptance: desktop/sidebar collapsed/tablet portrait-landscape tidak
     overflow, CRUD persisten, readonly, shortcut/palette, dark, console bersih.
   - Verification: screenshot dan report lokal, PASS/BLOCKED per alat.
-- [ ] Jalankan MySQL disposable dan pemeriksaan route/migration.
+- [x] Jalankan MySQL disposable dan pemeriksaan route/migration.
   - Acceptance: FK/unique/locking/invariant tepat; DB user tidak direset.
   - Verification: script QA, route:list, migrate:status.
-- [ ] Lengkapi API/status/bukti, commit dan push.
+- [x] Lengkapi API/status/bukti, commit dan push.
   - Acceptance: checklist sesuai hasil aktual, artefak user tidak ikut commit.
   - Verification: git diff --check, git status, remote HEAD.
 
 ## Sesudah Coding
 
-- [ ] Scope selesai dan seluruh gate relevan lulus.
-- [ ] Dokumentasi, risiko dan hasil QA diperbarui.
-- [ ] Tidak ada akun/grant/demo otomatis pada database user.
+- [x] Scope selesai dan seluruh gate relevan lulus.
+- [x] Dokumentasi, risiko dan hasil QA diperbarui.
+- [x] Tidak ada akun/grant/demo otomatis pada database user.
 
 ## Hasil Verifikasi
 
@@ -67,7 +69,7 @@ Increment 2 Passed: Inertia tests PASS; php artisan test --compact 254 tests,
 npm run build PASS (2694 modules). Test halaman menggunakan withoutVite agar
 tidak tergantung manifest lokal. Primitive textarea tanpa dependency baru.
 Workspace shared tetap memakai prefix inventory default; Parties memakai
-prefix eksplisit. Increment 3 In Progress.
+prefix eksplisit. Increment 3 Passed.
 
 Review penutupan 13 Oktober 2026: regresi MySQL RED membuktikan dirty check
 snapshot lama melewatkan deactivate. Adapter mutation kini memakai current
@@ -76,3 +78,39 @@ Test edit kontak RED membuktikan audit hilang, lalu PASS setelah audit
 changed_fields tanpa nilai kontak. Focused Parties: 17 tests/166 assertions
 PASS, Pint dan diff check PASS. Review independen tidak selesai akibat limit
 layanan; review lokal dan proof runtime digunakan, bukan klaim approval agent.
+
+## Bukti Penutupan
+
+| Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --compact | PASS | 255 tests, 1587 assertions |
+| php artisan test --compact --filter=Parties | PASS | 17 tests, 166 assertions |
+| Pint --test module/tests/QA PHP | PASS | Scope terarah, bukan arsip |
+| npx eslint resources/js | PASS | Nonmutating |
+| npx tsc --noEmit | PASS | Tidak ada error tipe |
+| npm run build | PASS | 2694 modules; production asset tersedia |
+| node --check scripts/qa/parties-browser.mjs | PASS | Sintaks script |
+| php scripts/qa/parties-mysql.php | PASS | Dua koneksi REPEATABLE READ, snapshot stale, mutation current read, unique, FK, cleanup |
+| node scripts/qa/parties-browser.mjs | PASS | CRUD/persist/reload, level terpakai/trashed, filter, empty, readonly/outsider, shortcut/palette, Inventory regression, dark |
+| Chrome DevTools MCP | PARTIAL/BLOCKED | Sebelum interupsi smoke redirect ke login PASS dan console bersih; authenticated CRUD tidak diuji. Saat resume tool tidak tersedia, workflow penuh memakai Playwright disposable |
+| php artisan route:list --path=sales --except-vendor | PASS | 12 route |
+| php scripts/qa/apply-parties-local.php | PASS | Migration additive + permission catalog; fingerprint existing identik, tanpa akun/grant/demo/reset |
+| php artisan migrate:status | PASS | Customer masters Ran batch 8 |
+| git diff --check | PASS | Tidak ada whitespace error |
+
+Artefak lokal ignored: storage/framework/testing/parties-browser-a75dd277d0ad15e0
+(report dan 10 screenshot). Desktop 1440x1000 expanded/collapsed; tablet
+1024x768/768x1024; dialog di dalam viewport, tidak ada overflow halaman,
+console/page errors kosong. Screenshot form portrait dan desktop ditinjau.
+Font CDN distub, sehingga tidak mengklaim verifikasi jaringan font eksternal.
+QA mobile tetap ditunda sesuai scope user.
+
+## Batas Dan Risiko
+
+- Pricing per barang/satuan dan transaksi POS belum diimplementasikan.
+- Level choices dibatasi 1000; remote search memerlukan pekerjaan terpisah
+  ketika katalog level melampaui batas tersebut.
+- QA MySQL menguji interleaving terarah, bukan load/race semua skenario.
+- Demo CCTV/kelistrikan dan Parties tersedia, tetapi tidak di-seed otomatis ke
+  MySQL pengguna. Demo lama/master/history existing tidak dihapus.
+- Old-docs, SampleUI, artefak LSP user dan theme tidak diubah/diikutkan commit.

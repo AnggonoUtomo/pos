@@ -242,6 +242,34 @@ migration/permission Stock, fingerprint akun/role/pivot/master sebelum/sesudah,
 tanpa demo Stock. Jangan memakai migrate:fresh atau menjalankan demo tanpa arahan
 pada MySQL pengguna.
 
+## QA Pelanggan Dan Level
+
+`php artisan test --filter=Parties` memeriksa CRUD, soft delete/restore,
+permission/super-system, level aktif/terpakai, unique termasuk trashed,
+rollback data/audit, no-op, privasi kontak dan demo idempotent.
+`php scripts/qa/parties-mysql.php` memakai database generated pos_parties_qa
+dengan suffix random tervalidasi, dua koneksi REPEATABLE READ, current read
+sesudah snapshot stale, dirty-check status, FK restrict dan cleanup. Tidak
+menguji seluruh interleaving/load concurrency produksi.
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/node_modules/playwright-core'
+node scripts/qa/parties-browser.mjs
+```
+
+Fixture tests/Browser/parties-fixture.php hanya menerima database SQLite
+disposable parties-browser di storage/framework/testing. Credential random
+via stdin, server loopback sementara, browser/profile terisolasi, font CDN
+distub dan cleanup server/browser di finally. Coverage: CRUD/persist/reload,
+guard level termasuk pelanggan terhapus, filter/empty, readonly/outsider,
+shortcut/palette, regresi route Inventory, expanded/collapsed desktop,
+tablet 1024x768/768x1024, dark dan console. Screenshot/report lokal ignored.
+Smoke DevTools redirect/login tidak diklaim sebagai QA authenticated CRUD.
+
+scripts/qa/apply-parties-local.php hanya migration additive dan permission
+catalog local, fingerprint data existing diperiksa. Tidak seed demo atau grant
+otomatis, tidak migrate:fresh.
+
 ## QA Dependency Security
 
 Untuk pembaruan dependency, gunakan update terarah tanpa audit fix --force.
