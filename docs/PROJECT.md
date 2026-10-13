@@ -76,6 +76,9 @@ arsitektur hexagonal per module, kontrol stok FIFO, dan audit trail.
 - Nama tabel, kolom, route, permission, class, namespace, DTOs, event, contract,
   dan method memakai English technical naming.
 - Dokumentasi dan UI label memakai Bahasa Indonesia.
+- Angka UI memakai format Indonesia: koma untuk pecahan, titik untuk ribuan,
+  tanpa nol desimal akhir yang tidak diperlukan. Decimal string pada API dan
+  penyimpanan tetap format teknis; lokalisasi bukan perubahan nilai/presisi.
 - Public registration dimatikan.
 
 ## Kriteria Keberhasilan

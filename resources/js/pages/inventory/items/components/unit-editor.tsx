@@ -96,7 +96,7 @@ export function UnitEditor({
                                             value={unit.conversion_ratio}
                                             readOnly={base}
                                             disabled={disabled}
-                                            maxLength={21}
+                                            maxLength={25}
                                             onChange={(event) => update(index, { conversion_ratio: event.target.value })}
                                             required
                                             aria-invalid={Boolean(errors[`units.${index}.conversion_ratio`])}

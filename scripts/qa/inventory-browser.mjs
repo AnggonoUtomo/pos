@@ -127,7 +127,7 @@ try {
         await page.getByRole('button', { name: 'Tambah satuan', exact: true }).click();
         await page.getByRole('combobox', { name: 'Satuan baris 2', exact: true }).click();
         await page.getByRole('option', { name: 'Dus (dus)', exact: true }).click();
-        await page.getByRole('textbox', { name: 'Rasio baris 2', exact: true }).fill('0.5');
+        await page.getByRole('textbox', { name: 'Rasio baris 2', exact: true }).fill('0,5');
         await page.getByRole('textbox', { name: 'Barcode baris 2', exact: true }).fill('QA-ITEM-BOX');
         await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
         await page.getByText('Rasio minimal 1 karena base unit adalah satuan terkecil.', { exact: true }).waitFor();
@@ -140,7 +140,13 @@ try {
         const baseIndex = ratioIndex === 1 ? 2 : 1;
         assert.equal(await page.getByRole('textbox', { name: `Barcode baris ${baseIndex}`, exact: true }).inputValue(), '0');
         await page.getByLabel('Nama barang', { exact: true }).fill('QA Barang Diubah');
-        await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).fill('24.000001');
+        assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${baseIndex}`, exact: true }).inputValue(), '1');
+        assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).inputValue(), '12');
+        await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).fill('1.5');
+        await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
+        await page.getByText('Gunakan format angka Indonesia, misalnya 1 atau 1,5.', { exact: true }).waitFor();
+        assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).inputValue(), '1.5');
+        await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).fill('24,000001');
         await page.getByRole('checkbox', { name: `Satuan jual baris ${ratioIndex}`, exact: true }).uncheck();
         await page.setViewportSize({ width: 1024, height: 768 });
         await checkFraming('items-form-tablet-landscape');
@@ -150,7 +156,7 @@ try {
         await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
         await settle();
         await page.getByRole('button', { name: 'Edit QA Barang Diubah', exact: true }).click();
-        assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).inputValue(), '24.000001');
+        assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).inputValue(), '24,000001');
         assert.equal(await page.getByRole('checkbox', { name: `Satuan jual baris ${ratioIndex}`, exact: true }).isChecked(), false);
         await page.keyboard.press('Escape');
         await page.getByRole('button', { name: 'Hapus QA Barang Diubah', exact: true }).click();

@@ -9,6 +9,7 @@ import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Save } from 'lucide-react';
 import { type FormEvent } from 'react';
 import { toast } from 'sonner';
+import { formatRatioInput, parseRatioInput } from '../lib/ratio-format';
 import { baseRow, type ItemRow, type ItemUnitInput, type UnitOption } from '../types';
 import { UnitEditor } from './unit-editor';
 
@@ -16,7 +17,7 @@ export function ItemFormDialog({ record, options, onClose }: { record: ItemRow |
     const initialUnits: ItemUnitInput[] =
         record?.units.map((unit) => ({
             unit_id: unit.unit_id,
-            conversion_ratio: unit.conversion_ratio,
+            conversion_ratio: formatRatioInput(unit.conversion_ratio),
             barcode: unit.barcode,
             is_sale_unit: unit.is_sale_unit,
             is_purchase_unit: unit.is_purchase_unit,
@@ -32,6 +33,23 @@ export function ItemFormDialog({ record, options, onClose }: { record: ItemRow |
     const submit = (event: FormEvent) => {
         event.preventDefault();
         if (form.processing) return;
+        form.clearErrors();
+        const units: ItemUnitInput[] = [];
+        let invalidFormat = false;
+        form.data.units.forEach((unit, index) => {
+            const ratio = parseRatioInput(unit.conversion_ratio);
+            if (ratio === null) {
+                invalidFormat = true;
+                form.setError(`units.${index}.conversion_ratio`, 'Gunakan format angka Indonesia, misalnya 1 atau 1,5.');
+            } else {
+                units.push({ ...unit, conversion_ratio: ratio });
+            }
+        });
+        if (invalidFormat) {
+            toast.error('Periksa format isi satuan dasar.');
+            return;
+        }
+        form.transform((data) => ({ ...data, units }));
         const config = {
             preserveScroll: true,
             onSuccess: () => {
