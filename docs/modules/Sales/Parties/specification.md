@@ -51,7 +51,10 @@ tampil bila berhak. Desktop dan tablet landscape/portrait; mobile ditunda.
 
 Log `sales.customer_levels` dan `sales.customers`; create/update/delete/restore
 memuat actor dan subject ULID. Hanya code/name/level/status/deleted_at diaudit;
-phone/email/address tidak disalin ke audit. No-op tidak menambah log.
+phone/email/address tidak disalin ke audit. Edit kontak saja mencatat
+`changed_fields` berupa nama field, tanpa nilai kontak. No-op tidak menambah log.
+Pembacaan model sebelum mutation juga memakai current locking read agar dirty
+check Eloquent tidak melewatkan perubahan dari snapshot REPEATABLE READ lama.
 
 Demo 3 level ECERAN/GROSIR/INSTALLER dan 3 pelanggan fiktif: Pelanggan Umum,
 Toko Listrik Demo, Installer CCTV Demo. Seeder idempotent memakai action;

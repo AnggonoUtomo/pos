@@ -68,3 +68,11 @@ npm run build PASS (2694 modules). Test halaman menggunakan withoutVite agar
 tidak tergantung manifest lokal. Primitive textarea tanpa dependency baru.
 Workspace shared tetap memakai prefix inventory default; Parties memakai
 prefix eksplisit. Increment 3 In Progress.
+
+Review penutupan 13 Oktober 2026: regresi MySQL RED membuktikan dirty check
+snapshot lama melewatkan deactivate. Adapter mutation kini memakai current
+locking read; script parties-mysql seluruh pemeriksaan PASS setelah fix.
+Test edit kontak RED membuktikan audit hilang, lalu PASS setelah audit
+changed_fields tanpa nilai kontak. Focused Parties: 17 tests/166 assertions
+PASS, Pint dan diff check PASS. Review independen tidak selesai akibat limit
+layanan; review lokal dan proof runtime digunakan, bukan klaim approval agent.

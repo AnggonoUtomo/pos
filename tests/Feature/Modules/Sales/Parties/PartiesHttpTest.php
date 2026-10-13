@@ -144,4 +144,22 @@ class PartiesHttpTest extends TestCase
         auth()->logout();
         $this->getJson('/sales/customer-levels/data')->assertUnauthorized();
     }
+
+    public function test_contact_only_edit_is_audited_without_contact_values_and_noop_is_not_logged(): void
+    {
+        $data = $this->customer($this->level());
+        $id = $this->postJson('/sales/customers', $data)->assertCreated()->json('id');
+        $count = Activity::count();
+        $data['email'] = 'updated@example.test';
+        $this->putJson('/sales/customers/'.$id, $data)->assertOk();
+        $this->assertSame($count + 1, Activity::count());
+        $log = Activity::latest('id')->first();
+        $this->assertSame('updated', $log->event);
+        $this->assertSame(['email'], $log->properties['changed_fields']);
+        $this->assertTrue($log->causer->is($this->manager));
+        $persisted = DB::table('activity_log')->where('id', $log->id)->first();
+        $this->assertStringNotContainsString('updated@example.test', json_encode($persisted));
+        $this->putJson('/sales/customers/'.$id, $data)->assertOk();
+        $this->assertSame($count + 1, Activity::count());
+    }
 }

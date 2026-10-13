@@ -32,7 +32,7 @@ class EloquentPartiesRepository implements PartiesRepository
 
     public function saveLevel(array $data, ?string $id = null): string
     {
-        $model = $id === null ? new CustomerLevel : CustomerLevel::findOrFail($id);
+        $model = $id === null ? new CustomerLevel : CustomerLevel::query()->lockForUpdate()->findOrFail($id);
         $model->fill($data)->save();
 
         return $model->id;
@@ -40,7 +40,7 @@ class EloquentPartiesRepository implements PartiesRepository
 
     public function saveCustomer(array $data, ?string $id = null): string
     {
-        $model = $id === null ? new Customer : Customer::findOrFail($id);
+        $model = $id === null ? new Customer : Customer::query()->lockForUpdate()->findOrFail($id);
         $model->fill($data)->save();
 
         return $model->id;
@@ -48,22 +48,22 @@ class EloquentPartiesRepository implements PartiesRepository
 
     public function deleteLevel(string $id): void
     {
-        CustomerLevel::findOrFail($id)->delete();
+        CustomerLevel::query()->lockForUpdate()->findOrFail($id)->delete();
     }
 
     public function restoreLevel(string $id): void
     {
-        CustomerLevel::onlyTrashed()->findOrFail($id)->restore();
+        CustomerLevel::onlyTrashed()->lockForUpdate()->findOrFail($id)->restore();
     }
 
     public function deleteCustomer(string $id): void
     {
-        Customer::findOrFail($id)->delete();
+        Customer::query()->lockForUpdate()->findOrFail($id)->delete();
     }
 
     public function restoreCustomer(string $id): void
     {
-        Customer::onlyTrashed()->findOrFail($id)->restore();
+        Customer::onlyTrashed()->lockForUpdate()->findOrFail($id)->restore();
     }
 
     public function paginateLevels(int $page, array $filters): array
