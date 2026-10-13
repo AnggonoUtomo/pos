@@ -38,6 +38,21 @@ class StoreItemRequest extends FormRequest
             unset($unit);
             $this->merge(['units' => $units]);
         }
+        if (is_array($this->input('prices'))) {
+            $prices = $this->input('prices');
+            foreach ($prices as &$price) {
+                if (! is_array($price)) {
+                    continue;
+                }
+                foreach (['unit_id', 'customer_level_id'] as $field) {
+                    if (is_string($price[$field] ?? null)) {
+                        $price[$field] = strtolower(trim($price[$field]));
+                    }
+                }
+            }
+            unset($price);
+            $this->merge(['prices' => $prices]);
+        }
     }
 
     public function rules(): array
@@ -54,6 +69,11 @@ class StoreItemRequest extends FormRequest
             'units.*.barcode' => ['nullable', 'string', 'max:64', 'distinct:ignore_case', Rule::unique('item_units', 'barcode')],
             'units.*.is_sale_unit' => ['sometimes', 'boolean'],
             'units.*.is_purchase_unit' => ['sometimes', 'boolean'],
+            'prices' => ['sometimes', 'array', 'list', 'max:5000'],
+            'prices.*' => ['array:unit_id,customer_level_id,amount'],
+            'prices.*.unit_id' => ['required', 'ulid'],
+            'prices.*.customer_level_id' => ['required', 'ulid'],
+            'prices.*.amount' => ['required', 'string', 'regex:/^\d{1,18}(?:\.\d{1,2})?$/D'],
         ];
     }
 }

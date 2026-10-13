@@ -4,6 +4,7 @@ namespace App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Inventory\Items\Application\Contracts\ItemPricingLookup;
 use App\Modules\Inventory\Items\Application\DTOs\ItemPricingData;
+use App\Modules\Inventory\Items\Application\DTOs\ItemUnitData;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemUnit;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
@@ -13,6 +14,11 @@ use LogicException;
 class EloquentItemPricingLookup implements ItemPricingLookup
 {
     public function __construct(private UnitLookup $units) {}
+
+    public function findIdBySku(string $sku): ?string
+    {
+        return Item::where('sku', $sku)->value('id');
+    }
 
     public function lock(string $itemId): ?ItemPricingData
     {
@@ -34,6 +40,9 @@ class EloquentItemPricingLookup implements ItemPricingLookup
             return null;
         }
 
-        return new ItemPricingData($item->id, $rows->where('is_sale_unit', true)->pluck('unit_id')->values()->all());
+        $sale = $rows->where('is_sale_unit', true)->values();
+
+        return new ItemPricingData($item->id, $sale->pluck('unit_id')->all(),
+            $sale->map(fn ($row) => new ItemUnitData($row->unit_id, $row->conversion_ratio))->all());
     }
 }

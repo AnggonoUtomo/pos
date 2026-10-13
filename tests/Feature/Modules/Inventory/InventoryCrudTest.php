@@ -8,6 +8,7 @@ use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories\EloquentItemRepository;
 use App\Modules\Inventory\Units\Infrastructure\Persistence\Models\Unit;
+use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\CustomerLevel;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -97,12 +98,14 @@ class InventoryCrudTest extends TestCase
             ['unit_id' => $base, 'conversion_ratio' => '1', 'barcode' => 'QA-PCS'],
             ['unit_id' => $box, 'conversion_ratio' => '24', 'barcode' => 'QA-BOX', 'is_sale_unit' => false],
         ]];
+        $payload['prices'] = [$this->price($base)];
         $this->putJson("/inventory/items/{$id}", $payload)->assertOk();
         $this->assertDatabaseHas('item_units', ['id' => $relation, 'conversion_ratio' => 24, 'is_sale_unit' => false]);
         $payload['units'] = [$payload['units'][0]];
         $this->putJson("/inventory/items/{$id}", $payload)->assertOk();
         $this->assertSoftDeleted('item_units', ['id' => $relation]);
         $payload['units'][] = ['unit_id' => $box, 'conversion_ratio' => '12', 'barcode' => 'QA-BOX'];
+        $payload['prices'][] = $this->price($box);
         $this->putJson("/inventory/items/{$id}", $payload)->assertOk();
         $this->assertDatabaseHas('item_units', ['id' => $relation, 'deleted_at' => null]);
         $this->deleteJson("/inventory/items/{$id}")->assertOk();
@@ -172,11 +175,18 @@ class InventoryCrudTest extends TestCase
 
     private function makeItem(): array
     {
+        CustomerLevel::create(['code' => 'ECERAN', 'name' => 'Eceran']);
         $base = Unit::create(['code' => 'PCS', 'name' => 'Buah', 'symbol' => 'pcs'])->id;
         $box = Unit::create(['code' => 'BOX', 'name' => 'Dus', 'symbol' => 'dus'])->id;
         $id = $this->postJson('/inventory/items', ['sku' => 'QA', 'name' => 'Barang', 'base_unit_id' => $base,
+            'prices' => [$this->price($base), $this->price($box)],
             'units' => [['unit_id' => $box, 'conversion_ratio' => '12', 'barcode' => 'QA-BOX']]])->assertCreated()->json('id');
 
         return [$id, $base, $box];
+    }
+
+    private function price(string $unit): array
+    {
+        return ['unit_id' => $unit, 'customer_level_id' => CustomerLevel::sole()->id, 'amount' => '2500'];
     }
 }

@@ -128,4 +128,36 @@ class ItemPricesTest extends TestCase
         $migration->up();
         $this->assertTrue(Schema::hasTable('item_prices'));
     }
+
+    public function test_readding_sale_unit_restores_same_price_identifiers(): void
+    {
+        $service = app(ItemPriceCatalog::class);
+        $service->saveForItem($this->item, $this->rows());
+        $ids = DB::table('item_prices')->orderBy('id')->pluck('id')->all();
+        DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->units[0])->update(['is_sale_unit' => false]);
+        $service->saveForItem($this->item, array_values(array_filter($this->rows(), fn ($row) => $row->unitId === $this->units[1])));
+        DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->units[0])->update(['is_sale_unit' => true]);
+        $service->saveForItem($this->item, $this->rows());
+        $this->assertSame($ids, DB::table('item_prices')->orderBy('id')->pluck('id')->all());
+        $this->assertSame(0, DB::table('item_prices')->whereNotNull('deleted_at')->count());
+    }
+
+    public function test_direct_call_rejects_oversized_matrix_and_no_active_levels(): void
+    {
+        $service = app(ItemPriceCatalog::class);
+        try {
+            $service->saveForItem($this->item, array_fill(0, 5001, $this->rows()[0]));
+            $this->fail('Direct callers must respect matrix bound.');
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('5.000', $exception->errors()['prices'][0]);
+        }
+        DB::table('customer_levels')->update(['is_active' => false]);
+        try {
+            $service->saveForItem($this->item, []);
+            $this->fail('Sellable item requires active levels.');
+        } catch (ValidationException $exception) {
+            $this->assertSame('Belum ada level pelanggan aktif.', $exception->errors()['prices'][0]);
+        }
+        $this->assertDatabaseCount('item_prices', 0);
+    }
 }

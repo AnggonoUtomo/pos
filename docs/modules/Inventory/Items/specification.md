@@ -5,8 +5,8 @@
 Fondasi backend Implemented pada 9 Oktober 2026: create barang beserta satuan, audit,
 permission, demo relasional, dan konversi kuantitas ke base unit.
 Endpoint data/store internal tersedia pada Increment 5B; CRUD backend dan UI
-admin tersedia pada Increment 6. Base unit immutable; saldo stok, FIFO dan harga
-belum tersedia.
+admin tersedia pada Increment 6. Base unit immutable; saldo/FIFO dimiliki Stock.
+Form matrix harga tersedia melalui public pricing boundary Sales/Parties.
 
 ## Model Data
 
@@ -73,7 +73,7 @@ API/storage tidak berubah; validasi minimal 1 dan guard histori tetap backend.
 
 ## Atomicity, Authorization, Dan Audit
 
-Barang, seluruh relasi satuan, dan audit harus commit atau rollback bersama.
+Barang, seluruh relasi satuan, harga jual, dan audit harus commit atau rollback bersama.
 Model Item dan ItemUnit mencatat atribut master relevan dan lifecycle; actor
 mengikuti auth context bila ada. Audit bukan ledger. Endpoint index/data dan
 store/update/destroy/restore memakai
@@ -114,8 +114,22 @@ ItemUnitUsage mempublikasikan pemeriksaan referensi (termasuk trashed) untuk gua
 Units. Sebelum consumer transaksi nyata dibuat, perubahan rasio/penghapusan
 barang/satuan wajib mendapat guard transaksi dan snapshot historis.
 Category/brand ditunda untuk menjaga scope foundation; pricing level berada
-pada pekerjaan Sales berikutnya. UI tersedia pada resources/js/pages/inventory/items:
+pada Sales/Parties melalui workflow SaveItemCatalog. UI tersedia pada resources/js/pages/inventory/items:
 list/filter/barcode search, pagination, dialog multi-satuan dan lifecycle,
 permission UX, Sonner, dropdown shortcut. Pilihan satuan memakai listActive
 publik (maksimum 1000); pencarian remote diperlukan bila master melebihi batas
 tersebut. QA desktop/tablet dan dark theme lulus melalui fallback Playwright.
+
+## Harga Jual Pada Workflow Barang
+
+Form matrix menampilkan satuan jual sebagai baris dan seluruh level aktif sebagai
+kolom. Nilai positif wajib lengkap, maksimal dua desimal; format Indonesia,
+canonical decimal string di API. Harga bukan HPP dan bukan fungsi rasio otomatis.
+SaveItemCatalog mengunci level sebelum mutasi katalog dan memanggil
+ItemPriceCatalog dalam outer transaction. Error matrix membatalkan katalog,
+relasi dan audit, termasuk untuk super-system. ListItems membaca harga batch.
+ItemPricingLookup mempublikasikan lookup SKU/konfigurasi satuan jual untuk
+consumer pricing; tidak mempublikasikan repository/model Items.
+Barang lama yang belum berharga harus dilengkapi saat edit. Tidak ada backfill
+harga rekaan. Menambah level membuat matrix lama perlu dilengkapi saat edit;
+belum ada consumer penjualan nyata. Restore mempertahankan konfigurasi existing.

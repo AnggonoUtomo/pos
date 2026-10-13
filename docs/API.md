@@ -36,7 +36,8 @@ unique termasuk trashed; field tak dikenal tidak disimpan.
 
 Create JSON 201/id, mutation 200/id; web redirect flash success. Invalid input,
 level invalid dan konflik kode 422 teredaksi; unknown resource 404. Level
-terpakai termasuk customer trashed tidak boleh delete/nonaktif (error parties).
+terpakai oleh customer atau harga barang, termasuk trashed, tidak boleh
+delete/nonaktif (error parties).
 Customer create/edit/restore membutuhkan level aktif (error customer_level_id).
 Mutation/audit atomic; detail kontrak ada pada
 [specification Parties](modules/Sales/Parties/specification.md).
@@ -97,6 +98,8 @@ Barang memakai pagination/metadata yang sama, order sku lalu id, dengan field
 id/sku/name/base_unit_id/is_active dan units (id/item_id/unit_id/conversion_ratio/
 barcode/is_sale_unit/is_purchase_unit). Relasi units diurutkan id dan disaring
 soft delete, di-eager-load tanpa model Units privat.
+Field additive `prices` berupa list unit_id/customer_level_id/amount; amount
+tetap decimal string canonical maksimal dua desimal, bukan float.
 Input barang: sku/name/base_unit_id ULID; optional is_active; optional units
 list maksimal 100 row. Row berisi unit_id ULID distinct, conversion_ratio
 decimal string, optional barcode nullable dan flag boolean jual/beli. ULID
@@ -106,6 +109,16 @@ Action memvalidasi satuan aktif dan ratio; base row otomatis bila belum ada.
 Error request memakai field asal; error invariant memakai units; konflik unique
 saat persistence memakai inventory. Form UI menampilkan error
 umum tersebut selain error per field.
+
+Create/update barang wajib menyertakan matrix `prices` lengkap untuk setiap
+satuan jual x seluruh level pelanggan aktif. Row berisi unit_id ULID,
+customer_level_id ULID, amount string positif maksimal 18 digit integer dan
+dua pecahan; maksimal 5.000 kombinasi. Pasangan asing/duplikat, harga nol,
+level/satuan stale dan matrix tidak lengkap menghasilkan 422. Error matrix
+memakai `prices`; amount memakai `prices.{index}.amount`. Barang tanpa satuan
+jual dapat mengirim list kosong. Permission tetap inventory.manage, termasuk
+untuk mutation harga dari workflow barang; tidak membuat endpoint harga bebas.
+Katalog, relasi, harga dan audit tersimpan dalam satu transaction.
 
 Update/delete/restore tersedia pada setiap module inventory:
 
@@ -130,11 +143,14 @@ inventory.{module}.index, permission inventory.view, response Inertia. Props
 records berisi pagination dan deleted_at, filters berisi search/status/trashed.
 Filter search maksimum 150 karakter, status all/active/inactive, trashed boolean
 (query 0/1); tab terhapus hanya menampilkan row trashed. Endpoint /data lama
-tetap tanpa filter/field tambahan untuk menjaga consumer existing.
+tetap tanpa filter; penambahan field prices tidak menghapus field existing.
 Barang juga dapat dicari lewat barcode relasi aktif. Props unitOptions berasal
 dari UnitLookup::listActive, maksimal 1000 satuan aktif, urut code/id. Form
 menyimpan rasio sebagai string, bukan float. Base unit terkunci saat edit.
 Barcode duplicate case-insensitive pada payload update ditolak sebelum mutation.
+Props `priceLevels` berisi id/code/name level aktif, urut id, maksimal 1000.
+UI menampilkan harga dengan grouping titik/koma pecahan dan mengirim canonical
+decimal string. Tidak ada harga fallback atau harga pokok pada form master ini.
 
 ### Endpoint Internal Stock
 
@@ -316,6 +332,24 @@ DTO memiliki id, sku, name, baseUnitId, units (ItemUnitData). Lock wajib di dala
 transaction default bersama, setelah lock selected/base Units terurut. Adapter
 memakai current read untuk relasi unit saat lock diminta. Consumer: PrepareOpening,
 StockWorkspace dan StockDemoSeeder; bukan contract laporan atau pricing.
+
+ItemPricingLookup::findIdBySku(sku) mengembalikan ID non-trashed atau null untuk
+demo pricing; lock(itemId) menghasilkan ItemPricingData atau null. DTO berisi
+id/saleUnitIds/saleUnits (ItemUnitData dengan rasio exact). Item nonaktif tetap
+bisa diedit, tetapi item terhapus/satuan unavailable ditolak. Lock memerlukan
+transaction default bersama, mengunci Units terurut, Item, lalu relasi current
+read. Consumer nyata: ManageItemPrices dan ItemPricesDemoSeeder; model tetap privat.
+
+### Sales/Parties Pricing
+
+ItemPriceCatalog::activeLevels(lock = false) menghasilkan PriceLevelData[]
+(id/code/name), maksimal 1000. Lock memerlukan transaction; saveForItem(itemId,
+ItemPriceData[]) memvalidasi matrix current dan menyimpan harga atomic;
+forItems(itemIds) menghasilkan map itemId ke list ItemPriceData
+(unitId/customerLevelId/amount). Consumer: SaveItemCatalog, ListItems dan demo.
+Repository harga bukan public mutation boundary. Urutan lock workflow save:
+level aktif terurut, Units terurut, Item, relasi dan harga. Tidak ada fallback
+level, float, pricing kuantitas, atau consumer transaksi POS pada scope ini.
 
 ### Inventory/Warehouses
 

@@ -9,15 +9,26 @@ import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Save } from 'lucide-react';
 import { type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { formatRatioInput, parseRatioInput } from '../lib/ratio-format';
-import { baseRow, type ItemRow, type ItemUnitInput, type UnitOption } from '../types';
+import { formatDecimalInput, parseDecimalInput } from '../lib/decimal-input';
+import { baseRow, type ItemPriceInput, type ItemRow, type ItemUnitInput, type PriceLevel, type UnitOption } from '../types';
+import { PriceEditor, priceMatrix } from './price-editor';
 import { UnitEditor } from './unit-editor';
 
-export function ItemFormDialog({ record, options, onClose }: { record: ItemRow | null; options: UnitOption[]; onClose: () => void }) {
+export function ItemFormDialog({
+    record,
+    options,
+    levels,
+    onClose,
+}: {
+    record: ItemRow | null;
+    options: UnitOption[];
+    levels: PriceLevel[];
+    onClose: () => void;
+}) {
     const initialUnits: ItemUnitInput[] =
         record?.units.map((unit) => ({
             unit_id: unit.unit_id,
-            conversion_ratio: formatRatioInput(unit.conversion_ratio),
+            conversion_ratio: formatDecimalInput(unit.conversion_ratio),
             barcode: unit.barcode,
             is_sale_unit: unit.is_sale_unit,
             is_purchase_unit: unit.is_purchase_unit,
@@ -28,6 +39,7 @@ export function ItemFormDialog({ record, options, onClose }: { record: ItemRow |
         base_unit_id: record?.base_unit_id ?? '',
         is_active: record?.is_active ?? true,
         units: initialUnits,
+        prices: record?.prices.map((price) => ({ ...price, amount: formatDecimalInput(price.amount) })) ?? ([] as ItemPriceInput[]),
     });
     const errors = form.errors as Record<string, string>;
     const submit = (event: FormEvent) => {
@@ -37,7 +49,7 @@ export function ItemFormDialog({ record, options, onClose }: { record: ItemRow |
         const units: ItemUnitInput[] = [];
         let invalidFormat = false;
         form.data.units.forEach((unit, index) => {
-            const ratio = parseRatioInput(unit.conversion_ratio);
+            const ratio = parseDecimalInput(unit.conversion_ratio);
             if (ratio === null) {
                 invalidFormat = true;
                 form.setError(`units.${index}.conversion_ratio`, 'Gunakan format angka Indonesia, misalnya 1 atau 1,5.');
@@ -45,11 +57,19 @@ export function ItemFormDialog({ record, options, onClose }: { record: ItemRow |
                 units.push({ ...unit, conversion_ratio: ratio });
             }
         });
+        const prices: ItemPriceInput[] = [];
+        priceMatrix(form.data.units, levels, form.data.prices).forEach((price, index) => {
+            const amount = parseDecimalInput(price.amount, 2);
+            if (amount === null) {
+                invalidFormat = true;
+                form.setError(`prices.${index}.amount`, 'Isi harga dengan format rupiah Indonesia, maksimal dua desimal.');
+            } else prices.push({ ...price, amount });
+        });
         if (invalidFormat) {
-            toast.error('Periksa format isi satuan dasar.');
+            toast.error('Periksa format satuan dan harga jual.');
             return;
         }
-        form.transform((data) => ({ ...data, units }));
+        form.transform((data) => ({ ...data, units, prices }));
         const config = {
             preserveScroll: true,
             onSuccess: () => {
@@ -165,6 +185,15 @@ export function ItemFormDialog({ record, options, onClose }: { record: ItemRow |
                         onChange={(units) => form.setData('units', units)}
                     />
                     <InputError message={errors.inventory ?? errors.is_active} />
+                    <PriceEditor
+                        units={form.data.units}
+                        levels={levels}
+                        prices={form.data.prices}
+                        options={options}
+                        errors={errors}
+                        disabled={form.processing}
+                        onChange={(prices) => form.setData('prices', prices)}
+                    />
                     <DialogFooter>
                         <Button variant="outline" type="button" onClick={onClose} disabled={form.processing}>
                             Batal

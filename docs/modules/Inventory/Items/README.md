@@ -11,7 +11,8 @@ Transaksi POS/pembelian belum tersedia.
 ## Tujuan Dan Boundary
 
 Memiliki barang, SKU, base unit, satuan jual/beli, barcode per satuan barang,
-dan rasio langsung ke base unit. Tidak memiliki stok, FIFO, harga level,
+dan rasio langsung ke base unit. Workflow form menyimpan matrix harga melalui
+public contract Sales/Parties, bukan memiliki persistence harga. Tidak memiliki stok, FIFO,
 payment, kategori/brand, atau transaksi POS pada increment ini.
 
 ## Public Boundary Dan Dependency
@@ -33,7 +34,7 @@ dan tambahan unit tetap diperbolehkan; snapshot posted tidak ikut berubah.
 Domain ConversionRatio bebas framework dan memakai brick/math yang sudah
 tersedia melalui dependency Laravel. ServiceProvider menghubungkan repository
 ke adapter serta memuat migration/route. Route data/store memanggil ListItems
-dan CreateItem melalui Presentation; HasMiddleware memakai can per action.
+dan SaveItemCatalog melalui Presentation; HasMiddleware memakai can per action.
 UI resources/js/pages/inventory/items memakai komponen lokal untuk tabel, form,
 dan editor konversi. Response/validation contract tersedia pada docs/API.md.
 
@@ -45,6 +46,12 @@ dan editor konversi. Response/validation contract tersedia pada docs/API.md.
 - Perubahan diaudit memakai inventory.items dan inventory.item_units.
 - ItemsDemoSeeder memerlukan Units demo terlebih dahulu; memanggil CreateItem
   dan tidak menimpa barang existing, termasuk data terhapus.
+
+Form create/edit mewajibkan semua harga satuan jual x level aktif. SaveItemCatalog
+mengorkestrasi katalog dan ItemPriceCatalog dalam satu transaction. ListItems
+membaca batch harga melalui contract yang sama. CreateItem internal tetap dapat
+dipakai fixture/provisioning tanpa harga; bukan workflow publik barang.
+Detail: [work item harga](../../../work-items/item-price-matrix/README.md).
 
 ## Operasi
 

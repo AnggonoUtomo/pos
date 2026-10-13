@@ -20,8 +20,6 @@
   - Acceptance: super-system tidak melewati invariant, harga trashed terjaga.
   - Verification: Parties regression, diff check/Pint.
 
-## Increment 2: Workflow Barang Dan UI
-
 Increment 1 Passed: Pricing RED sebelum contract ada; sesudah implementasi
 ItemPrices/Parties HTTP/Application/Seeder 19 tests/143 assertions PASS.
 Pint PASS. SQLite menyimpan amount sebagai string exact mengikuti pola Stock;
@@ -29,17 +27,26 @@ MySQL DECIMAL(20,2). Nilai maksimum tetap exact pada read DTO. Migration
 additive lokal melalui apply-parties-local PASS; akun/grant/master/ledger
 fingerprint existing identik. Belum ada harga user yang diisi otomatis.
 
-- [ ] Save/list Items memakai public pricing boundary.
+## Increment 2: Workflow Barang Dan UI
+
+- [x] Save/list Items memakai public pricing boundary.
   - Acceptance: harga + katalog + audit commit/rollback bersama; create/edit
     publik menolak harga kosong atau matrix stale.
   - Verification: HTTP authorization/validation/rollback dan regresi existing.
-- [ ] Tambahkan matrix harga dekat editor satuan dan formatter rupiah exact.
+- [x] Tambahkan matrix harga dekat editor satuan dan formatter rupiah exact.
   - Acceptance: row per satuan jual, level aktif sebagai kolom, simpan/reopen
     harga nyata; error/loading/Sonner/shortcut dan format Indonesia.
   - Verification: unit parser, lint/typecheck/build dan browser.
-- [ ] Seed harga demo tanpa menimpa existing lalu commit increment.
+- [x] Seed harga demo tanpa menimpa existing lalu commit increment.
   - Acceptance: hanya SKU demo yang dikenal, relation valid, repeat idempotent.
   - Verification: seeder tests termasuk production refusal/preservation.
+
+Increment 2 PASS: HTTP/action/seeder/regresi, formatter exact, ESLint/TS/build
+dan browser lulus. Fixture HTTP existing dilengkapi level/harga eksplisit,
+bukan melemahkan kewajiban matrix. Seeder diuji RED sebelum class ada, lalu
+GREEN untuk 54 harga, idempotency, harga edit/trashed, production refusal dan
+rollback bila prerequisite terakhir hilang. Restore harga mempertahankan ID.
+Screenshot matrix Light/Dark telah diperiksa; animasi dinonaktifkan saat capture.
 
 ## Increment 3: QA Dan Delivery
 

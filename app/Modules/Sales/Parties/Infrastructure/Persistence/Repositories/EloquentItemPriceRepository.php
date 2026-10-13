@@ -13,7 +13,7 @@ class EloquentItemPriceRepository implements ItemPriceRepository
     public function activeLevels(bool $lock): array
     {
         return CustomerLevel::where('is_active', true)->orderBy('id')->when($lock, fn ($q) => $q->lockForUpdate())
-            ->get(['id', 'code', 'name'])->map(fn ($row) => new PriceLevelData($row->id, $row->code, $row->name))->all();
+            ->limit(1001)->get(['id', 'code', 'name'])->map(fn ($row) => new PriceLevelData($row->id, $row->code, $row->name))->all();
     }
 
     public function replace(string $itemId, array $prices): void
@@ -22,7 +22,7 @@ class EloquentItemPriceRepository implements ItemPriceRepository
         $keys = [];
         foreach ($prices as $data) {
             $key = $data->unitId.':'.$data->customerLevelId;
-            $keys[] = $key;
+            $keys[$key] = true;
             $row = $existing[$key] ?? new ItemPrice;
             $row->fill(['item_id' => $itemId, 'unit_id' => $data->unitId, 'customer_level_id' => $data->customerLevelId, 'amount' => $data->amount]);
             if ($row->trashed()) {
@@ -32,7 +32,7 @@ class EloquentItemPriceRepository implements ItemPriceRepository
             }
         }
         foreach ($existing as $key => $row) {
-            if (! in_array($key, $keys, true) && ! $row->trashed()) {
+            if (! isset($keys[$key]) && ! $row->trashed()) {
                 $row->delete();
             }
         }

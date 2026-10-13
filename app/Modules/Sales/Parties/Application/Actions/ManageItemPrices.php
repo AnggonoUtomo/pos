@@ -40,10 +40,13 @@ class ManageItemPrices implements ItemPriceCatalog
             if ($item->saleUnitIds !== [] && $levels === []) {
                 throw ValidationException::withMessages(['prices' => 'Belum ada level pelanggan aktif.']);
             }
+            if (count($prices) > 5000 || count($item->saleUnitIds) * count($levels) > 5000) {
+                throw ValidationException::withMessages(['prices' => 'Matrix harga melebihi batas 5.000 kombinasi.']);
+            }
             $expected = [];
             foreach ($item->saleUnitIds as $unit) {
                 foreach ($levels as $level) {
-                    $expected[] = $unit.':'.$level->id;
+                    $expected[$unit.':'.$level->id] = true;
                 }
             }
             $seen = [];
@@ -53,7 +56,7 @@ class ManageItemPrices implements ItemPriceCatalog
                     throw ValidationException::withMessages(['prices' => 'Data harga tidak valid.']);
                 }
                 $key = strtolower($data->unitId).':'.strtolower($data->customerLevelId);
-                if (! in_array($key, $expected, true) || isset($seen[$key])) {
+                if (! isset($expected[$key]) || isset($seen[$key])) {
                     throw ValidationException::withMessages(['prices' => 'Pasangan satuan/level harga tidak valid atau berulang.']);
                 }
                 $seen[$key] = true;

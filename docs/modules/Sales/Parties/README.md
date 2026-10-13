@@ -8,9 +8,10 @@ CRUD level/pelanggan, status aktif, soft delete/restore, permission backend,
 audit, demo relasional dan UI admin desktop/tablet. Level demo Eceran, Grosir,
 Installer. Kontak/alamat opsional, level aktif wajib saat create/edit/restore.
 
-Non-scope: pricing per barang/satuan, transaksi POS, supplier, kredit limit,
-finance, nomor seri dan garansi. Tidak membuat contract/event lintas module
-sebelum ada consumer. Tidak mengubah theme atau Old-docs.
+Pricing per barang/satuan/level tersedia melalui form Inventory/Items dan
+ItemPriceCatalog. Persistence item_prices dan audit harga dimiliki Parties.
+Non-scope: transaksi POS, supplier, kredit limit, finance, nomor seri dan garansi.
+Tidak mengubah theme atau Old-docs.
 
 Composition root: app/Modules/Sales/Parties/ServiceProvider.php.
 Routes, migration dan seeder dimiliki module. Controller memakai Application;
@@ -35,8 +36,15 @@ Demo opsional local/testing, dijalankan eksplisit:
 
 ```powershell
 php artisan db:seed --class="App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder"
+php artisan db:seed --class="App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder"
 ```
 
 QA: `php artisan test --filter=Parties`, `php scripts/qa/parties-mysql.php`,
 dan `node scripts/qa/parties-browser.mjs` dengan QA_PLAYWRIGHT_MODULE mengarah
 ke package Playwright existing. Tidak memasang dependency baru.
+
+Demo harga memerlukan demo Units/Items dan tiga level aktif. Mengisi hanya
+sembilan SKU CCTV/kelistrikan, melewati seluruh item bila sudah memiliki harga
+termasuk trashed. Tidak mengubah akun, stok atau harga user. Penerapan local
+terverifikasi: `php scripts/qa/apply-prices-local.php`; QA MySQL disposable:
+`php scripts/qa/item-prices-mysql.php`. Detail [work item harga](../../../work-items/item-price-matrix/README.md).

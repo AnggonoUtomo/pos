@@ -17,11 +17,23 @@ export interface ItemRow extends MasterRecord {
     sku: string;
     base_unit_id: string;
     units: (ItemUnitInput & { id: string; item_id: string })[];
+    prices: ItemPriceInput[];
+}
+export interface ItemPriceInput {
+    unit_id: string;
+    customer_level_id: string;
+    amount: string;
+}
+export interface PriceLevel {
+    id: string;
+    code: string;
+    name: string;
 }
 export interface ItemPageProps {
     records: MasterRecords<ItemRow>;
     filters: MasterFilters;
     unitOptions: UnitOption[];
+    priceLevels: PriceLevel[];
 }
 
 export function baseRow(unitId: string): ItemUnitInput {

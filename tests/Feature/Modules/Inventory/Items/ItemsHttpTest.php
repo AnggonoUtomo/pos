@@ -9,6 +9,7 @@ use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemUnit;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
+use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\CustomerLevel;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -30,11 +31,15 @@ class ItemsHttpTest extends TestCase
             Permission::findOrCreate($permission, 'web');
         }
         $this->seed(UnitsDemoSeeder::class);
+        CustomerLevel::create(['code' => 'ECERAN', 'name' => 'Eceran']);
     }
 
     private function payload(): array
     {
-        return ['sku' => ' ITEM ', 'name' => ' Barang ', 'base_unit_id' => app(UnitLookup::class)->findActiveByCode('PCS')->id];
+        $base = app(UnitLookup::class)->findActiveByCode('PCS')->id;
+
+        return ['sku' => ' ITEM ', 'name' => ' Barang ', 'base_unit_id' => $base,
+            'prices' => [['unit_id' => $base, 'customer_level_id' => CustomerLevel::sole()->id, 'amount' => '2500.25']]];
     }
 
     public function test_guest_and_permission_matrix_are_enforced(): void

@@ -55,7 +55,14 @@ try {
     };
     const checkFraming = async (label) => {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${label}: overflow halaman`);
-        await page.screenshot({ path: path.join(artifactDir, `${label}.png`), fullPage: true });
+        const dialog = page.getByRole('dialog');
+        if (await dialog.count()) {
+            const bounds = await dialog.boundingBox();
+            const viewport = page.viewportSize();
+            assert(bounds && bounds.x >= 0 && bounds.y >= 0 && bounds.x + bounds.width <= viewport.width + 1
+                && bounds.y + bounds.height <= viewport.height + 1, `${label}: dialog keluar viewport`);
+        }
+        await page.screenshot({ path: path.join(artifactDir, `${label}.png`), fullPage: !(await dialog.count()), animations: 'disabled' });
         checks.push(`${label}: framing PASS`);
     };
     await login(page, 'qa-manager@example.test');
@@ -129,12 +136,26 @@ try {
         await page.getByRole('option', { name: 'Dus (dus)', exact: true }).click();
         await page.getByRole('textbox', { name: 'Rasio baris 2', exact: true }).fill('0,5');
         await page.getByRole('textbox', { name: 'Barcode baris 2', exact: true }).fill('QA-ITEM-BOX');
+        const priceFields = page.getByRole('textbox', { name: /^Harga / });
+        assert.equal(await priceFields.count(), 6);
+        for (const field of await priceFields.all()) await field.fill('100.000,25');
+        await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).fill('');
+        await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
+        assert.equal(await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).evaluate((el) => el.validity.valueMissing), true);
+        await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).fill('100.000,25');
         await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
         await page.getByText('Rasio minimal 1 karena base unit adalah satuan terkecil.', { exact: true }).waitFor();
         await page.getByRole('textbox', { name: 'Rasio baris 2', exact: true }).fill('12');
+        await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).fill('0');
+        await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
+        await page.getByText('Harga wajib positif dengan maksimal dua angka desimal.', { exact: true }).waitFor();
+        await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).fill('100.000,25');
         await page.keyboard.press('Control+Enter');
         await settle();
+        await page.reload();
         await page.getByRole('button', { name: 'Edit QA Barang', exact: true }).click();
+        assert.equal(await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).inputValue(), '100.000,25');
+        await checkFraming('items-prices-desktop');
         assert(await page.getByLabel('Satuan dasar', { exact: true }).isDisabled());
         const ratioIndex = (await page.getByRole('textbox', { name: 'Barcode baris 1', exact: true }).inputValue()) === 'QA-ITEM-BOX' ? 1 : 2;
         const baseIndex = ratioIndex === 1 ? 2 : 1;
@@ -156,6 +177,8 @@ try {
         await page.getByRole('dialog').getByRole('button', { name: 'Simpan', exact: true }).click();
         await settle();
         await page.getByRole('button', { name: 'Edit QA Barang Diubah', exact: true }).click();
+        assert.equal(await priceFields.count(), 3);
+        assert.equal(await page.getByRole('textbox', { name: 'Harga Buah Eceran', exact: true }).inputValue(), '100.000,25');
         assert.equal(await page.getByRole('textbox', { name: `Rasio baris ${ratioIndex}`, exact: true }).inputValue(), '24,000001');
         assert.equal(await page.getByRole('checkbox', { name: `Satuan jual baris ${ratioIndex}`, exact: true }).isChecked(), false);
         await page.keyboard.press('Escape');
@@ -180,6 +203,7 @@ try {
         await checkFraming('items-tablet-portrait');
         await page.setViewportSize({ width: 1440, height: 1000 });
         checks.push('Items: CRUD/restore, barcode 0/search, exact ratio, flags, base locked, invalid ratio PASS');
+        checks.push('Harga: required matrix, zero rejection, save/reopen exact rupiah, removal of non-sale prices PASS');
     }
     await page.goto(`${url}/inventory/units`);
     await page.getByRole('button', { name: 'Hapus Buah', exact: true }).click();
@@ -212,6 +236,9 @@ try {
         await page.getByRole('menu').waitFor({ state: 'hidden' });
         await page.locator('html.dark[data-theme="clean"]').waitFor();
         await checkFraming('items-desktop-dark-clean');
+        await page.getByRole('button', { name: 'Edit QA Barang Diubah', exact: true }).click();
+        await checkFraming('items-prices-dark-clean');
+        await page.keyboard.press('Escape');
         checks.push('Dark/clean theme integration tanpa perubahan CSS PASS');
     }
     const readonly = await browser.newContext({ viewport: { width: 1024, height: 768 } });

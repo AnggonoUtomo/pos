@@ -17,14 +17,14 @@ Field tak dikenal tidak dipersistensikan. ID route ULID dinormalisasi.
 - Pelanggan wajib menunjuk satu level aktif dan tidak terhapus, termasuk
   pada update atau restore. Nonaktif/soft-deleted pelanggan tetap boleh
   merujuk level, tetapi bukan pilihan transaksi nanti.
-- Level yang dirujuk pelanggan, termasuk nonaktif/trashed, tidak boleh
+- Level yang dirujuk pelanggan atau harga barang, termasuk nonaktif/trashed, tidak boleh
   dihapus atau dinonaktifkan. Nama/kode tetap dapat diedit.
 - Invariant dijalankan Application, bukan hanya middleware atau UI.
 - Create/update/restore pelanggan mengunci level terlebih dahulu lalu
   pelanggan. Delete/deactivate level mengunci level yang sama sebelum cek
   referensi; current locking read dipakai untuk pemeriksaan MySQL.
 - Mutable master memakai soft delete. Restore tidak mengubah status aktif.
-- Tidak ada mutasi stok, FIFO, pricing atau finance dari module ini.
+- Tidak ada mutasi stok, FIFO atau finance dari module ini.
 
 ## HTTP Dan UI
 
@@ -60,3 +60,27 @@ Demo 3 level ECERAN/GROSIR/INSTALLER dan 3 pelanggan fiktif: Pelanggan Umum,
 Toko Listrik Demo, Installer CCTV Demo. Seeder idempotent memakai action;
 existing code including trashed dilewati. Level missing/nonaktif pada pelanggan
 baru membatalkan seluruh batch dan audit. Tidak seed otomatis ke database user.
+
+## Harga Barang Per Satuan Dan Level
+
+item_prices: ULID id, item_id/unit_id/customer_level_id FK restrict, amount
+DECIMAL(20,2) MySQL, timestamp/soft delete. Composite FK ke pasangan item_units;
+unique item/unit/level tetap direservasi termasuk trashed. SQLite test memakai
+string exact agar tidak kehilangan presisi NUMERIC. Audit sales.item_prices
+memuat ID/amount/lifecycle, actor bila authenticated; no-op tanpa log tambahan.
+
+ItemPriceCatalog adalah public contract untuk SaveItemCatalog/ListItems.
+Validasi matrix lengkap untuk semua satuan jual x level aktif, amount positif
+scale2, tanpa float atau fallback. Maksimal 1000 level dan 5000 kombinasi.
+Unit tambahan yang bukan satuan jual tidak memerlukan harga. Penghapusan
+konfigurasi jual men-soft-delete harga, re-add memulihkan ID yang sama.
+Level yang pernah dirujuk harga tidak boleh delete/nonaktif, termasuk harga
+trashed. Lock workflow: level terurut -> Units terurut -> Item -> relasi/harga.
+Query locking memakai current read; mutation harga/katalog/audit atomic.
+
+Demo harga: 54 kombinasi dari 18 satuan jual sembilan produk x tiga level.
+Harga fiktif Eceran dasar per item, Grosir faktor 0.90 dan Installer 0.95 hanya
+untuk seed awal; bukan aturan pricing aplikasi. Rasio unit memakai DTO Items.
+Jika item telah memiliki harga apa pun (termasuk trashed), seluruh item dilewati
+agar edit user tidak tertimpa. Prasyarat hilang/level tak dikenal membatalkan
+batch; local/testing saja. Harga real user selalu diisi eksplisit.

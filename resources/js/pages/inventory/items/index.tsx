@@ -6,7 +6,7 @@ import { DataTable } from './components/data-table';
 import { ItemFormDialog } from './components/item-form-dialog';
 import type { ItemPageProps, ItemRow } from './types';
 
-export default function ItemIndex({ records, filters, unitOptions }: ItemPageProps) {
+export default function ItemIndex({ records, filters, unitOptions, priceLevels }: ItemPageProps) {
     const { can } = usePermission();
     const canManage = can('inventory.manage');
     const [form, setForm] = useState<{ record: ItemRow | null } | null>(null);
@@ -30,7 +30,13 @@ export default function ItemIndex({ records, filters, unitOptions }: ItemPagePro
                 onLifecycle={setLifecycle}
             />
             {canManage && form && (
-                <ItemFormDialog key={form.record?.id ?? 'new'} record={form.record} options={unitOptions} onClose={() => setForm(null)} />
+                <ItemFormDialog
+                    key={form.record?.id ?? 'new'}
+                    record={form.record}
+                    options={unitOptions}
+                    levels={priceLevels}
+                    onClose={() => setForm(null)}
+                />
             )}
             {canManage && <MasterLifecycleDialog module="items" record={lifecycle} onClose={() => setLifecycle(null)} />}
         </MasterWorkspace>
