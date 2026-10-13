@@ -38,5 +38,10 @@ UnitsDemoSeeder, ItemsDemoSeeder, StockDemoSeeder, dengan
 `php artisan db:seed --class="App\Modules\Inventory\{Module}\Database\Seeders\{Module}DemoSeeder"`.
 Tidak otomatis menjalankan demo pada database operasional user.
 
+Pada 13 Oktober 2026 user meminta penerapan lokal dan penyelarasan mock POS.
+Demo kemudian dijalankan eksplisit tanpa reset melalui
+[aktivasi demo lokal](../demo-local-activation/README.md). Ini bukan seed
+otomatis deployment; data lama dan posted history tetap dipertahankan.
+
 Langkah berikutnya yang disetujui: Sales/Parties, master pelanggan dan level
 Eceran/Grosir/Installer. Harga barang/satuan dan transaksi POS terpisah.

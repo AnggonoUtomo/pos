@@ -2,7 +2,11 @@
 
 use App\Models\User;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsAccessSeeder;
+use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
+use App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder;
+use App\Modules\Inventory\Stock\Database\Seeders\StockDemoSeeder;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
+use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesAccessSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use Illuminate\Contracts\Console\Kernel;
@@ -25,6 +29,11 @@ if (! is_string($input['password'] ?? null) || strlen($input['password']) < 24) 
 Artisan::call('migrate', ['--force' => true]);
 foreach ([PartiesAccessSeeder::class, PartiesDemoSeeder::class, ItemsAccessSeeder::class, UnitsDemoSeeder::class] as $seeder) {
     app($seeder)->run();
+}
+if (($input['inventory_demo'] ?? false) === true) {
+    foreach ([WarehousesDemoSeeder::class, ItemsDemoSeeder::class, StockAccessSeeder::class, StockDemoSeeder::class] as $seeder) {
+        app($seeder)->run();
+    }
 }
 foreach (['manager', 'viewer', 'outsider'] as $role) {
     $user = User::create(['name' => 'QA '.$role, 'email' => "qa-{$role}@example.test", 'password' => $input['password']]);

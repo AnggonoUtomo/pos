@@ -1,6 +1,6 @@
 # Aktivasi Demo Lokal Dan Katalog POS
 
-Status: In Progress. Target: Inventory/Units, Items, Warehouses, Stock,
+Status: Done. Target: Inventory/Units, Items, Warehouses, Stock,
 Sales/Parties dan mock UI POS. User mengonfirmasi master dan layar POS masih
 memakai demo lama pada 13 Oktober 2026.
 
@@ -12,3 +12,7 @@ satuan, gudang dan level mock, lalu build dan verifikasi layar.
 Tidak reset database, menghapus demo lama, mengubah akun/password/role/grant,
 mengganti theme atau mengimplementasikan pricing/penjualan live. Nilai stok dan
 harga mock fiktif; mock tidak membaca saldo/harga/gudang per transaksi dari DB.
+
+Demo sudah dijalankan eksplisit pada MySQL lokal pos. Katalog baru dan level
+tersedia, stok awal CCTV/kelistrikan posted; repeat tidak menambah data/audit.
+Data lama tetap ada. Asset POS sudah dibuild ulang untuk virtual host pos.test.
