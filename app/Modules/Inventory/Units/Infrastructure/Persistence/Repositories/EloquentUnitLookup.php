@@ -10,6 +10,16 @@ use LogicException;
 
 class EloquentUnitLookup implements UnitLookup
 {
+    public function findManyActive(array $ids): array
+    {
+        if (count($ids) > 11000) {
+            throw new \InvalidArgumentException('Batch satuan melebihi batas.');
+        }
+
+        return Unit::whereIn('id', $ids)->where('is_active', true)->get()
+            ->mapWithKeys(fn (Unit $unit) => [$unit->id => $this->toData($unit)])->all();
+    }
+
     public function listActive(): array
     {
         return Unit::query()->where('is_active', true)->orderBy('code')->orderBy('id')

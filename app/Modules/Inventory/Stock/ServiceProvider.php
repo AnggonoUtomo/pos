@@ -2,8 +2,10 @@
 
 namespace App\Modules\Inventory\Stock;
 
+use App\Modules\Inventory\Stock\Application\Contracts\StockAvailability;
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
+use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseStockAvailability;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\EloquentStockRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -11,6 +13,8 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(StockAvailability::class,
+            DatabaseStockAvailability::class);
         $this->app->bind(StockRepository::class, EloquentStockRepository::class);
         $this->app->bind(StockUsage::class, EloquentStockRepository::class);
     }

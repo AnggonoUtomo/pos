@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories;
+
+use App\Modules\Inventory\Items\Application\Contracts\SaleItemCatalog;
+use App\Modules\Inventory\Items\Application\DTOs\SaleItemData;
+use App\Modules\Inventory\Items\Application\DTOs\SaleUnitData;
+use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
+use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use InvalidArgumentException;
+
+class EloquentSaleItemCatalog implements SaleItemCatalog
+{
+    public function __construct(private UnitLookup $units) {}
+
+    private function query(): Builder
+    {
+        return Item::where('is_active', true)->whereHas('units', fn ($q) => $q->where('is_sale_unit', true))
+            ->with(['units' => fn ($q) => $q->where('is_sale_unit', true)->orderBy('id')]);
+    }
+
+    public function search(string $query, int $page): array
+    {
+        if ($page < 1 || $page > 100000 || mb_strlen($query) > 150) {
+            throw new InvalidArgumentException('Pencarian katalog tidak valid.');
+        }
+        $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], mb_strtolower(trim($query))).'%';
+        $rows = $this->query()->where(fn ($q) => $q->whereRaw("LOWER(sku) LIKE ? ESCAPE '!'", [$pattern])
+            ->orWhereRaw("LOWER(name) LIKE ? ESCAPE '!'", [$pattern])
+            ->orWhereHas('units', fn ($u) => $u->where('is_sale_unit', true)->whereRaw("LOWER(barcode) LIKE ? ESCAPE '!'", [$pattern])))
+            ->orderBy('sku')->orderBy('id')->offset(($page - 1) * 25)->limit(26)->get();
+
+        return ['data' => array_values($this->map($rows->take(25))), 'has_more' => $rows->count() > 25];
+    }
+
+    public function findMany(array $ids): array
+    {
+        if (count($ids) > 100) {
+            throw new InvalidArgumentException('Batch barang melebihi batas.');
+        }
+
+        return $this->map($this->query()->whereIn('id', $ids)->get());
+    }
+
+    private function map(Collection $rows): array
+    {
+        $ids = $rows->flatMap(fn ($item) => [$item->base_unit_id, ...$item->units->pluck('unit_id')->all()])->unique()->values()->all();
+        $units = $this->units->findManyActive($ids);
+        $result = [];
+        foreach ($rows as $item) {
+            $base = $units[$item->base_unit_id] ?? null;
+            if ($base === null) {
+                continue;
+            }
+            $sale = [];
+            foreach ($item->units as $row) {
+                $unit = $units[$row->unit_id] ?? null;
+                if ($unit !== null) {
+                    $sale[] = new SaleUnitData($unit->id, $unit->code, $unit->name, $row->conversion_ratio, $row->barcode);
+                }
+            }
+            if ($sale !== []) {
+                $result[$item->id] = new SaleItemData($item->id, $item->sku, $item->name, $base->id, $base->name, $sale);
+            }
+        }
+
+        return $result;
+    }
+}
