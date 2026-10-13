@@ -60,7 +60,7 @@ Screenshot matrix Light/Dark telah diperiksa; animasi dinonaktifkan saat capture
 - [x] Terapkan additive migration/demo harga lokal dan isi checklist.
   - Acceptance: akun/grant/stok/ledger existing tetap, tidak reset database.
   - Verification: fingerprint, git diff/status.
-- [ ] Commit penutupan, push dan cocokkan remote HEAD.
+- [x] Commit penutupan, push dan cocokkan remote HEAD.
   - Acceptance: hanya file scope pekerjaan terkirim, artefak user tidak ikut.
   - Verification: staged diff/check, push dan ls-remote.
 
@@ -95,6 +95,10 @@ Screenshot matrix Light/Dark telah diperiksa; animasi dinonaktifkan saat capture
   client. Alur CRUD authenticated diuji di fixture disposable, bukan memakai
   credential user lokal.
 - `git diff --check` dan staged check: PASS pada Increment 2 (`0e1a851`).
+- Delivery fitur/QA `e5e8732` telah di-push ke origin/main dan dikonfirmasi
+  `git ls-remote` cocok dengan HEAD lokal; divergence 0/0. Catatan penutupan
+  checklist dikirim sebagai commit dokumentasi sesudah verifikasi tersebut.
+  SampleUI dan empat artefak LSP user tetap untracked, tidak ikut commit.
 
 ## Batas Yang Tetap
 

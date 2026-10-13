@@ -1,6 +1,6 @@
 # Harga Jual Langsung Pada Form Barang
 
-Status: implementasi dan QA selesai, menunggu verifikasi delivery remote.
+Status: selesai, implementasi/QA dan delivery remote terverifikasi.
 Owner: Inventory/Items (workflow barang/UI) dan
 Sales/Parties (harga per level pelanggan). Disetujui user 13 Oktober 2026:
 semua kombinasi satuan jual dan level aktif wajib terisi sebelum simpan barang.
