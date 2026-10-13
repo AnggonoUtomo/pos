@@ -14,6 +14,10 @@ Non-scope: transaksi POS, supplier, kredit limit, finance, nomor seri dan garans
 Tidak mengubah theme atau Old-docs.
 
 Composition root: app/Modules/Sales/Parties/ServiceProvider.php.
+
+CustomerSalesLookup mempublikasikan pelanggan dengan level aktif/non-trashed
+untuk POS (tanpa kontak). ItemPriceCatalog mendukung filter level opsional pada
+forItems untuk katalog/quote kasir; default editor Items tetap tidak berubah.
 Routes, migration dan seeder dimiliki module. Controller memakai Application;
 repository mengisolasi Eloquent. Data dan audit commit/rollback bersama.
 

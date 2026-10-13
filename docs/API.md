@@ -42,6 +42,45 @@ Customer create/edit/restore membutuhkan level aktif (error customer_level_id).
 Mutation/audit atomic; detail kontrak ada pada
 [specification Parties](modules/Sales/Parties/specification.md).
 
+## Endpoint Internal POS
+
+Route module Sales/POS, session web/auth/CSRF. URL/name existing /pos (pos.index)
+dipertahankan; kini semua endpoint memerlukan sales.pos.invoices.create.
+Gate super-system tidak melewati validasi bisnis. Tidak perlu permission admin
+Inventory/Parties agar kasir dapat membaca data penjualan terbatas ini.
+
+| Method | Path | Nama | Hasil |
+| --- | --- | --- | --- |
+| GET | /pos | pos.index | Inertia sales/pos/index, warehouses/customers aktif |
+| GET | /pos/catalog | pos.catalog | items, has_more, customer |
+| POST | /pos/quote | pos.quote | lines, subtotal, customer, checked_at |
+
+Catalog: warehouse_id/customer_id wajib ULID; search optional maksimal 150,
+page 1..100000. 25 kandidat/page, has_more; query SKU/nama/barcode unit jual
+aktif. Master nonaktif/trashed tidak dipublikasikan. Unit dengan price null
+tidak boleh dijual, tanpa fallback. Saldo base unit per gudang, default nol.
+Payload item memiliki id/sku/name/base_unit_id/base_unit_name/stock/units;
+unit id/code/name/ratio/barcode/price nullable. Tidak memuat HPP atau nilai FIFO.
+Customer DTO id/code/name/levelId/levelName, tanpa data kontak.
+
+Quote: warehouse_id/customer_id, lines list 1..100 dengan item_id/unit_id/quantity.
+Quantity decimal string positif maksimal 14 integer/enam pecahan; unknown
+row field atau root price/level/tax/payment ditolak. Pasangan item/unit unik;
+stok yang dibutuhkan dijumlah per item lintas unit. Backend membaca ulang
+pelanggan/level, barang/unit jual, harga dan stok dalam read transaction.
+Price, conversion ratio, subtotal tidak dipercaya dari browser.
+
+Response line: item_id/unit_id/sku/name/unit_name, quantity/base_quantity,
+conversion_ratio/unit_price/subtotal; semua nilai decimal berupa string.
+Base quantity harus tepat scale6/muat20,6; nilai uang tepat scale2/muat30,2,
+bukan pembulatan silent. Invalid/master tidak tersedia/stok kurang/harga kosong
+422; error per baris lines.{index}.quantity atau unit_id; root error cart/lines.
+Guest JSON 401, web redirect login, permission 403, CSRF invalid 419.
+
+Quote tidak disimpan, tidak reservasi stok, tidak membuat ledger/audit mutation,
+dan bukan dasar mempercayai harga/stok saat posting nanti. Tidak ada endpoint
+payment/posting pada scope ini. Detail [specification POS](modules/Sales/POS/specification.md).
+
 ## Endpoint API Eksternal
 
 Belum ada endpoint API eksternal yang menjadi contract publik. Perubahan yang
@@ -345,11 +384,35 @@ read. Consumer nyata: ManageItemPrices dan ItemPricesDemoSeeder; model tetap pri
 ItemPriceCatalog::activeLevels(lock = false) menghasilkan PriceLevelData[]
 (id/code/name), maksimal 1000. Lock memerlukan transaction; saveForItem(itemId,
 ItemPriceData[]) memvalidasi matrix current dan menyimpan harga atomic;
-forItems(itemIds) menghasilkan map itemId ke list ItemPriceData
+forItems(itemIds, customerLevelId = null) menghasilkan map itemId ke list ItemPriceData
 (unitId/customerLevelId/amount). Consumer: SaveItemCatalog, ListItems dan demo.
 Repository harga bukan public mutation boundary. Urutan lock workflow save:
 level aktif terurut, Units terurut, Item, relasi dan harga. Tidak ada fallback
-level, float, pricing kuantitas, atau consumer transaksi POS pada scope ini.
+level, float, atau pricing kuantitas. Consumer transaksi posted POS belum tersedia.
+
+Filter level opsional dipakai SaleCatalog/CheckCart POS agar hanya mengambil
+harga level pelanggan terpilih. Default null mempertahankan behavior editor
+Items dan provisioning existing. POS tidak mengakses repository harga privat.
+
+### Published Read Boundary Untuk POS
+
+- Items/SaleItemCatalog::search(query, page): data SaleItemData dan has_more,
+  25 kandidat/page; findMany(ids) map maksimal 100 barang. DTO item:
+  id/sku/name/baseUnitId/baseUnitName/units; SaleUnitData:
+  id/code/name/ratio/barcode. Aktif/non-trashed dan flag jual wajib; barcode
+  satuan nonaktif tidak boleh menjadi hasil pencarian. Filter active unit lewat
+  UnitLookup, bukan model/SQL privat Units. Filtering sesudah kandidat dapat
+  membuat jumlah hasil halaman kurang dari 25; has_more tetap pada kandidat.
+- Units/UnitLookup::findManyActive(ids): map id ke UnitData, maksimal 11000 ID
+  untuk batch metadata item/unit tanpa N+1 atau batas choices 1000.
+- Parties/CustomerSalesLookup::choices(): maksimal 1000 SaleCustomerData;
+  findActive(id): DTO atau null. Customer dan level harus aktif/non-trashed;
+  kontak tidak dipublikasikan. Consumer SaleContext pada POS.
+- Stock/StockAvailability::forItems(warehouseId, itemIds): map maksimal 100 ID
+  ke quantity base unit canonical scale6, nol jika tanpa saldo. Hanya membaca
+  stock_balances; tidak lock/reservasi atau memuat nilai stok/FIFO.
+- WarehouseLookup dipakai SaleContext untuk pilihan dan validasi gudang POS,
+  di samping consumer Stock existing.
 
 ### Inventory/Warehouses
 

@@ -1,6 +1,7 @@
 # Data POS Dan Keranjang Nyata
 
-Status: In Progress. Persetujuan user 14 Oktober 2026.
+Status: implementasi/QA selesai, menunggu penutupan delivery remote.
+Persetujuan user 14 Oktober 2026.
 Owner Sales/POS, consumer read boundary Inventory dan Sales/Parties.
 
 Mengganti katalog/stok/pengali harga mock dengan data nyata. Gudang dan pelanggan

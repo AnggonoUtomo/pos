@@ -270,6 +270,37 @@ scripts/qa/apply-parties-local.php hanya migration additive dan permission
 catalog local, fingerprint data existing diperiksa. Tidak seed demo atau grant
 otomatis, tidak migrate:fresh.
 
+## QA POS Data Dan Keranjang
+
+`php artisan test --filter='PosCartTest|PosReadBoundaryTest|PosRouteTest|LineAmountsTest'`
+memeriksa metadata active/non-trashed, pagination/barcode, level harga nyata,
+batch read, aggregate stock lintas satuan, precision/rounding/overflow, tamper,
+permission/super-system dan fingerprint tanpa mutation. Tidak membuktikan posting
+atau reservasi stok; quote read-only harus diperiksa ulang saat posting kelak.
+
+`php scripts/qa/pos-live-local.php` hanya local MySQL, menyiapkan permission key
+existing tanpa grant dan memeriksa katalog/quote demo existing. Tidak seed
+master/harga/stock ulang. Fingerprint akun/grant/master/harga/stok/ledger/audit
+harus identik; tidak mengklaim load/concurrency test. Demo CCTV/level/harga harus
+sudah tersedia; script tidak membuat default transaksi.
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/existing/playwright-core'
+node scripts/qa/pos-demo.mjs
+node scripts/qa/pos-demo-browser.mjs
+```
+
+Nama script pos-demo dipertahankan untuk command QA existing, tetapi sekarang
+menguji integrasi data nyata pada fixture SQLite disposable, bukan mock catalog.
+Coverage: barcode unit jual, matrix level, backend quote/CSRF, stock error,
+context change, subtotal invalidation, delayed real response, controlled 503
+dan retry, empty, reset confirmation, shortcuts, cashier-only permission dan
+Inventory admin regression. Desktop 1440x1000/tablet 1024x768 Light, tablet
+768x1024 Light/Dark. Known console422 validation dan controlled503 diabaikan;
+unexpected console/page errors gagal. Screenshot setelah toast habis/animasi
+nonaktif, report ignored. Server/browser ditutup; mobile tidak diuji.
+Chrome DevTools tetap dicoba dahulu sesuai urutan di atas.
+
 ## QA Matrix Harga Barang
 
 `php artisan test --filter=ItemPrice` meliputi exact amount, matrix mandatory,

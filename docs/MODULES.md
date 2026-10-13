@@ -19,10 +19,10 @@ Status yang digunakan:
 | Platform | CompanySettings | Identitas perusahaan tunggal, preference operasional, format nomor | Identity | Planned |
 | Inventory | Units | Master satuan dan UI CRUD; base unit/konversi dimiliki Items; guard satuan terpakai | Items (ItemUnitUsage read contract), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Items | Barang, SKU, barcode, base unit immutable, multi satuan/konversi, form matrix harga dan lookup stok/pricing; kategori/brand ditunda | Units (UnitLookup), Stock (StockUsage), Parties (ItemPriceCatalog), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Inventory | Warehouses | Master gudang, UI CRUD dan lookup pilihan stok awal; pemilihan POS belum tersedia | Stock (StockUsage), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Inventory | Warehouses | Master gudang, UI CRUD dan pilihan gudang untuk stok awal/POS | Stock (StockUsage), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Stock | Draft/posting stok awal, saldo/kartu stok, movement masuk dan fondasi layer FIFO; consumption/pengeluaran belum tersedia | Items (ItemStockLookup), Warehouses (WarehouseLookup), Units (UnitLookup) | Active |
 | Sales | Parties | CRUD pelanggan/level, harga barang per satuan/level melalui workflow Items, audit dan demo | Items (ItemPricingLookup), Laravel auth, Spatie Permission, Spatie Activitylog | Active |
-| Sales | POS | Transaksi POS fullscreen, cart, pricing, discount, tax, payment | Parties, Items, Warehouses, Stock, Finance Payments | Planned |
+| Sales | POS | POS fullscreen dengan katalog/barcode, context pelanggan/gudang, matrix harga dan pemeriksaan keranjang nyata; posting/diskon/pajak/payment belum tersedia | Parties (CustomerSalesLookup, ItemPriceCatalog), Items (SaleItemCatalog), Warehouses (WarehouseLookup), Stock (StockAvailability) | Active |
 | Sales | Returns | Retur penjualan dan koreksi transaksi posted | POS, Stock, Finance Payments | Planned |
 | Purchasing | Suppliers | Supplier master | Identity | Planned |
 | Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Items, Warehouses, Stock | Planned |

@@ -66,3 +66,8 @@ php artisan test --filter="Items|UnitLookup"
 Detail tersedia pada [specification](specification.md), [plan](plan.md), dan
 [tasks](tasks.md). Gap typecheck baseline sudah diperbaiki pada commit terpisah
 `a1c2854`; hasil gate akhir ada pada work item Inventory Foundation.
+
+SaleItemCatalog menyediakan katalog penjualan untuk Sales/POS: metadata barang
+dan unit jual aktif, search/barcode paginated serta batch lookup. Adapter Items
+memakai UnitLookup batch, bukan model privat Units; tanpa stok/HPP/pricing di
+DTO ini. Contract lengkap pada docs/API.md.

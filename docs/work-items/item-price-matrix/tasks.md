@@ -102,7 +102,8 @@ Screenshot matrix Light/Dark telah diperiksa; animasi dinonaktifkan saat capture
 
 ## Batas Yang Tetap
 
-POS masih mock, belum memakai matrix sebagai engine transaksi. Harga pokok,
+Transaksi posted POS belum tersedia. Integrasi katalog/keranjang nyata menjadi
+work item terpisah pos-live-cart, bukan bagian perubahan master harga. Harga pokok,
 FIFO, stok, akun/grant, theme, SampleUI dan Old-docs tidak diubah. Legacy barang
 tanpa harga harus dilengkapi saat edit; demo hanya sembilan SKU dikenal dan
 tidak menimpa item dengan harga existing/trashed. Mobile tidak diuji.

@@ -1,6 +1,7 @@
 # Sales/POS
 
-Status: In Progress. Scope awal disetujui 14 Oktober 2026: katalog/barcode,
+Status: Active, scope data/keranjang telah diimplementasikan dan diverifikasi.
+Scope awal disetujui 14 Oktober 2026: katalog/barcode,
 gudang, pelanggan, harga matrix nyata dan validasi keranjang backend.
 
 POS memiliki komposisi workspace kasir dan pemeriksaan keranjang sementara.

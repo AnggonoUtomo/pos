@@ -10,7 +10,9 @@ permission existing inventory.view/manage, audit atomic dan demo relasional.
 Harga positif, rupiah dengan maksimum dua desimal, format UI Indonesia.
 Tidak memakai fallback Eceran atau persentase otomatis untuk harga user.
 Harga pokok/HPP tetap Stock/FIFO. Posting POS/pembelian tetap di luar scope;
-POS existing masih mock dan belum menggunakan matrix sebagai engine transaksi.
+Pada penutupan pekerjaan harga, POS masih mock. Integrasi katalog/keranjang
+nyata berikutnya dicatat pada [pos-live-cart](../pos-live-cart/README.md),
+tetap tanpa posting transaksi.
 
 Barang existing tanpa harga tidak diisi harga rekaan secara otomatis. Harga
 demo fiktif hanya diisi pada SKU demo CCTV/kelistrikan yang dikenal, tanpa

@@ -42,15 +42,18 @@
 
 ## Increment 4: Penutupan
 
-- [ ] Full backend, lint/TS/build, route/migration dan MySQL read-only QA.
+- [x] Full backend, lint/TS/build, route/migration dan MySQL read-only QA.
   - Acceptance: gates PASS dan fingerprint master/stock/ledger/audit tidak berubah.
   - Verification: command/ringkasan aktual dicatat.
-- [ ] DevTools dicoba; fallback browser jika unavailable.
+- [x] DevTools dicoba; fallback browser jika unavailable.
   - Acceptance: desktop/tablet light/dark, console tanpa error; mobile ditunda.
   - Verification: report/screenshot ignored, bukan credential user.
-- [ ] Local activation, docs/checklist, commit/push dan remote verification.
+- [x] Local activation dan docs/checklist sesuai hasil aktual.
   - Acceptance: pos.test memakai build baru, data/akun/grant tidak direset.
-  - Verification: fingerprints, scoped staged diff, push dan ls-remote.
+  - Verification: fingerprints dan scoped diff.
+- [ ] Commit penutupan, push dan remote verification.
+  - Acceptance: seluruh perubahan scope terkirim, tanpa artefak user.
+  - Verification: staged diff/check, push dan ls-remote.
 
 ## Hasil
 
@@ -76,3 +79,32 @@ only, desktop/tablet Light/Dark terverifikasi. Screenshot stabil diperiksa.
 Expected console HTTP422/controlled503 disaring; unexpected console/page errors
 kosong. Tidak mengklaim DevTools PASS: namespace DevTools tidak tersedia pada
 sesi ini (BLOCKED), fallback Playwright Core existing dipakai tanpa install.
+
+## Verifikasi Akhir 14 Oktober 2026
+
+- `php artisan test --compact`: 282 tests / 1748 assertions PASS.
+- `npx tsc --noEmit`, `npx eslint resources/js`, `npm run build`: PASS.
+- `vendor/bin/pint --dirty --test`: PASS.
+- `node scripts/qa/pos-demo.mjs`: PASS, local number/maximum exact dan tidak
+  ada mock import, price modifier atau fake payment handler.
+- `php scripts/qa/pos-live-local.php`: PASS dua kali, MySQL asli local read;
+  price/level/base quantity nyata, seluruh fingerprint existing identik.
+- `php artisan route:list --path=pos`: tiga route POS canonical tersedia
+  (command juga mencocokkan route Stock post existing).
+- `php artisan migrate:status`: seluruh migration Ran, tidak ada schema baru.
+- `pos.test/login`: 200, memakai built assets dan tidak memuat Vite dev client.
+- QA authenticated memakai fixture disposable dan credential random runtime,
+  bukan akun MySQL pengguna. Screenshot desktop/tablet sudah dilihat manual.
+- Regression `inventory-browser.mjs --items-only`: PASS, report ignored
+  storage/framework/testing/inventory-browser-7b472291b35a604b/report.json;
+  CRUD/matrix harga, sidebar expanded/collapsed, Light/Dark/Clean, tablet,
+  readonly, shortcut/palette dan console bersih.
+
+## Batas Dan Risiko
+
+Quote read-only, bukan reservasi/harga terkunci atau dokumen penjualan. Data
+ditampilkan dari transaksi baca saat request; stok/harga dapat berubah sesudah
+itu. Posting/FIFO keluar, rounding transaksi, diskon/pajak/payment/reversal belum
+dibuat. Memilih context membatalkan quote tetapi mempertahankan input cart;
+backend wajib memeriksa ulang. Header/dashboard hanya diubah pada guard link
+POS, bukan mengubah dashboard mock lain. Theme/Old-docs/SampleUI tidak disentuh.

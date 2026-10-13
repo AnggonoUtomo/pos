@@ -1,5 +1,9 @@
 # Inventory/Stock
 
+StockAvailability adalah published read boundary POS untuk saldo base unit per
+gudang. Tidak mengunci/mereservasi stok, memuat nilai FIFO, atau melakukan
+pengeluaran. Consumer quote wajib memvalidasi ulang ketika posting dibuat nanti.
+
 ## Status
 
 Active. Draft/posting, saldo/kartu stok dan fondasi layer FIFO sudah
