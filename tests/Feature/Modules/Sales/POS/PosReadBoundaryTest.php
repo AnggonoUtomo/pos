@@ -99,4 +99,13 @@ class PosReadBoundaryTest extends TestCase
         DB::table('items')->where('sku', 'QA-PAGE-25')->update(['deleted_at' => now()]);
         $this->assertSame([], $catalog->search('QA-PAGE', 2)['data']);
     }
+
+    public function test_barcode_of_inactive_or_deleted_unit_does_not_match_catalog(): void
+    {
+        $catalog = app(SaleItemCatalog::class);
+        $box = DB::table('units')->where('code', 'BOX')->value('id');
+        DB::table('units')->where('id', $box)->update(['is_active' => false]);
+        $this->assertSame([], $catalog->search('DEMO-CCTV-IP-2MP-BOX', 1)['data']);
+        $this->assertCount(1, $catalog->search('DEMO-CCTV-IP-2MP', 1)['data']);
+    }
 }

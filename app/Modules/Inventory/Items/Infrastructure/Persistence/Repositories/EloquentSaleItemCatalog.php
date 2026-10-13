@@ -32,7 +32,21 @@ class EloquentSaleItemCatalog implements SaleItemCatalog
             ->orWhereHas('units', fn ($u) => $u->where('is_sale_unit', true)->whereRaw("LOWER(barcode) LIKE ? ESCAPE '!'", [$pattern])))
             ->orderBy('sku')->orderBy('id')->offset(($page - 1) * 25)->limit(26)->get();
 
-        return ['data' => array_values($this->map($rows->take(25))), 'has_more' => $rows->count() > 25];
+        $needle = mb_strtolower(trim($query));
+        $visible = array_filter($this->map($rows->take(25)), static function (SaleItemData $item) use ($needle): bool {
+            if (str_contains(mb_strtolower($item->sku), $needle) || str_contains(mb_strtolower($item->name), $needle)) {
+                return true;
+            }
+            foreach ($item->units as $unit) {
+                if ($unit->barcode !== null && str_contains(mb_strtolower($unit->barcode), $needle)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return ['data' => array_values($visible), 'has_more' => $rows->count() > 25];
     }
 
     public function findMany(array $ids): array
