@@ -49,7 +49,7 @@ class ManageCustomerLevel
     private function assertUnused(string $id): void
     {
         if ($this->repository->isLevelReferenced($id)) {
-            throw new InvalidArgumentException('Level sudah digunakan pelanggan dan tidak boleh dihapus atau dinonaktifkan.');
+            throw new InvalidArgumentException('Level sudah digunakan pelanggan atau harga barang dan tidak boleh dihapus atau dinonaktifkan.');
         }
     }
 }

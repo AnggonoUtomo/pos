@@ -5,6 +5,7 @@ namespace App\Modules\Sales\Parties\Infrastructure\Persistence\Repositories;
 use App\Modules\Sales\Parties\Application\Contracts\PartiesRepository;
 use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\Customer;
 use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\CustomerLevel;
+use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\ItemPrice;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentPartiesRepository implements PartiesRepository
@@ -27,7 +28,8 @@ class EloquentPartiesRepository implements PartiesRepository
     public function isLevelReferenced(string $id): bool
     {
         // A current read sees committed assignments even after an earlier consistent read.
-        return Customer::withTrashed()->where('customer_level_id', $id)->lockForUpdate()->first(['id']) !== null;
+        return Customer::withTrashed()->where('customer_level_id', $id)->lockForUpdate()->first(['id']) !== null
+            || ItemPrice::withTrashed()->where('customer_level_id', $id)->lockForUpdate()->first(['id']) !== null;
     }
 
     public function saveLevel(array $data, ?string $id = null): string

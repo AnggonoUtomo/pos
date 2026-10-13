@@ -123,7 +123,7 @@ try {
     await page.getByRole('button', { name: 'Edit Level QA', exact: true }).click();
     await page.getByLabel('Aktif', { exact: true }).click();
     await page.getByRole('button', { name: 'Simpan', exact: true }).click();
-    await page.getByText('Level sudah digunakan pelanggan dan tidak boleh dihapus atau dinonaktifkan.', { exact: true }).first().waitFor();
+    await page.getByText('Level sudah digunakan pelanggan atau harga barang dan tidak boleh dihapus atau dinonaktifkan.', { exact: true }).first().waitFor();
     await page.keyboard.press('Escape');
     await customerPage();
     await page.getByRole('button', { name: 'Terhapus', exact: true }).click();
