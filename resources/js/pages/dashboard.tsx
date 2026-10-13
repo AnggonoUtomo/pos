@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { WorkspaceShortcutDropdown, type WorkspaceShortcut } from '@/components/workspace-shortcuts';
+import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
@@ -111,6 +112,7 @@ function ToneBadge({ children, tone }: { children: ReactNode; tone: string }) {
 }
 
 export default function Dashboard() {
+    const { can } = usePermission();
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dasbor" />
@@ -125,18 +127,22 @@ export default function Dashboard() {
                 <section className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                            <h1 className="text-2xl font-semibold tracking-normal text-primary">Dasbor Operasional</h1>
+                            <h1 className="text-primary text-2xl font-semibold tracking-normal">Dasbor Operasional</h1>
                             <ToneBadge tone="emerald">Shift aktif</ToneBadge>
                         </div>
-                        <p className="text-muted-foreground mt-1 text-sm">Ringkasan awal untuk penjualan, gudang, harga level pelanggan, dan Finance Lite.</p>
+                        <p className="text-muted-foreground mt-1 text-sm">
+                            Ringkasan awal untuk penjualan, gudang, harga level pelanggan, dan Finance Lite.
+                        </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                        <Button asChild variant="outline" size="sm" className="border-[var(--app-border)] bg-[var(--app-panel)] text-primary">
-                            <Link href="/pos" prefetch>
-                                <ShoppingCart className="size-4 text-[var(--chart-3)]" />
-                                Buka POS
-                            </Link>
-                        </Button>
+                        {can('sales.pos.invoices.create') && (
+                            <Button asChild variant="outline" size="sm" className="text-primary border-[var(--app-border)] bg-[var(--app-panel)]">
+                                <Link href="/pos" prefetch>
+                                    <ShoppingCart className="size-4 text-[var(--chart-3)]" />
+                                    Buka POS
+                                </Link>
+                            </Button>
+                        )}
                         <Button size="sm" disabled>
                             <ReceiptText className="size-4" />
                             Rekap Hari Ini
@@ -179,7 +185,7 @@ export default function Dashboard() {
                         <CardContent className="p-0">
                             <div className="overflow-x-auto">
                                 <table className="w-full min-w-[680px] text-sm">
-                                    <thead className="bg-[var(--app-panel-strong)] text-muted-foreground">
+                                    <thead className="text-muted-foreground bg-[var(--app-panel-strong)]">
                                         <tr className="border-y">
                                             <th className="px-4 py-3 text-left font-medium">Nomor</th>
                                             <th className="px-4 py-3 text-left font-medium">Pelanggan</th>
@@ -222,7 +228,10 @@ export default function Dashboard() {
                                             <ToneBadge tone={warehouse.tone}>{warehouse.value}</ToneBadge>
                                         </div>
                                         <div className="h-2 overflow-hidden rounded-full bg-[var(--app-panel-strong)]">
-                                            <div className={cn('h-full rounded-full', toneClasses[warehouse.tone].split(' ')[1])} style={{ width: warehouse.value }} />
+                                            <div
+                                                className={cn('h-full rounded-full', toneClasses[warehouse.tone].split(' ')[1])}
+                                                style={{ width: warehouse.value }}
+                                            />
                                         </div>
                                     </div>
                                 ))}

@@ -25,7 +25,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
     { title: 'Dasbor', description: 'Ringkasan operasional admin', url: '/dashboard', icon: LayoutGrid, tone: 'text-sky-600 dark:text-sky-300' },
-    { title: 'POS', description: 'Buka layar kasir fullscreen', url: '/pos', icon: ShoppingCart, tone: 'text-emerald-600 dark:text-emerald-300' },
+    {
+        title: 'POS',
+        description: 'Buka layar kasir fullscreen',
+        url: '/pos',
+        permission: 'sales.pos.invoices.create',
+        icon: ShoppingCart,
+        tone: 'text-emerald-600 dark:text-emerald-300',
+    },
     {
         title: 'Identitas & Akses',
         description: 'Kelola user, role, dan permission',

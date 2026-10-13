@@ -1,40 +1,20 @@
-export type UnitOption = {
-    code: string;
-    label: string;
-    ratio: number;
-    price: number;
-};
-
-export type PosItem = {
-    id: string;
+export type WarehouseOption = { id: string; code: string; name: string };
+export type CustomerOption = { id: string; code: string; name: string; levelId: string; levelName: string };
+export type UnitOption = { id: string; code: string; name: string; ratio: string; barcode: string | null; price: string | null };
+export type PosItem = { id: string; sku: string; name: string; base_unit_id: string; base_unit_name: string; stock: string; units: UnitOption[] };
+export type CartLine = { item: PosItem; unitId: string; quantity: string };
+export type CatalogResult = { items: PosItem[]; has_more: boolean; customer: CustomerOption };
+export type QuoteLine = {
+    item_id: string;
+    unit_id: string;
     sku: string;
     name: string;
-    category: string;
-    stock: number;
-    baseUnit: string;
-    units: UnitOption[];
+    unit_name: string;
+    quantity: string;
+    base_quantity: string;
+    conversion_ratio: string;
+    unit_price: string;
+    subtotal: string;
 };
-
-export type CartLine = {
-    item: PosItem;
-    unitCode: string;
-    qty: number;
-    discount: number;
-};
-
-export type WarehouseOption = {
-    id: string;
-    name: string;
-};
-
-export type CustomerLevelOption = {
-    id: string;
-    name: string;
-    priceModifier: number;
-};
-
-export type PaymentLine = {
-    id: string;
-    method: string;
-    amount: number;
-};
+export type CartQuote = { lines: QuoteLine[]; subtotal: string; checked_at: string; customer: CustomerOption };
+export type PosPageProps = { warehouses: WarehouseOption[]; customers: CustomerOption[] };

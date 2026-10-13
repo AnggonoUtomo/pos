@@ -31,11 +31,11 @@
 
 ## Increment 3: UI Kasir
 
-- [ ] Ganti mock ke context/catalog/quote backend.
+- [x] Ganti mock ke context/catalog/quote backend.
   - Acceptance: format Indonesia, zero/missing-price disabled, context change
     menghapus quote stale, loading/error/race guard, tidak ada payment sukses palsu.
   - Verification: lint/TS/build dan QA browser interaksi desktop/tablet.
-- [ ] Shortcut/permission link dan commit.
+- [x] Shortcut/permission link dan commit.
   - Acceptance: dropdown shortcut operasional dan semua entry POS mengikuti
     permission; theme tidak diubah.
   - Verification: browser cashier/outsider, keyboard/palette/visual.
@@ -65,3 +65,14 @@ closure lama dihapus tanpa mengganti URL/name. Price catalog mendapat filter
 level opsional backward-compatible agar kasir tidak memuat semua level harga.
 Test mencakup fresh price/stock, tamper, aggregate stock, missing price,
 inactive/non-sale, permission/super-system, rounding dan fingerprint read-only.
+
+Increment 3: mock-data, pengali level dan fake payment handler telah dihapus;
+consumer script QA juga dialihkan. Format POS exact via BigInt/string (subtotal
+tetap authoritative backend). Lint/TS/build PASS. Browser terakhir PASS:
+storage/framework/testing/parties-browser-794f975027289899/pos-demo-report.json.
+Barcode, CSRF quote nyata, per-gudang, ganti pelanggan/harga, invalid stock,
+response lama sesudah edit, controlled 503/retry, empty, keyboard/reset, cashier
+only, desktop/tablet Light/Dark terverifikasi. Screenshot stabil diperiksa.
+Expected console HTTP422/controlled503 disaring; unexpected console/page errors
+kosong. Tidak mengklaim DevTools PASS: namespace DevTools tidak tersedia pada
+sesi ini (BLOCKED), fallback Playwright Core existing dipakai tanpa install.

@@ -1,212 +1,249 @@
 import AppLogoIcon from '@/components/app-logo-icon';
+import { CommandPalette } from '@/components/command-palette';
 import { ThemeMenu } from '@/components/theme-menu';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, BadgeDollarSign, RotateCcw } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { CartPanel } from './components/cart-panel';
 import { ItemSearch } from './components/item-search';
 import { OrderSummary } from './components/order-summary';
-import { PaymentDrawer } from './components/payment-drawer';
-import { levelPrice, lineSubtotal, selectedUnit } from './components/pos-format';
 import { SaleContextBar } from './components/sale-context-bar';
-import { catalogItems, customerLevels, initialPayments, warehouses } from './mock-data';
-import { type CartLine } from './types';
+import { useCatalog } from './hooks/use-catalog';
+import { parseQuantity } from './lib/decimal';
+import { PosRequestError, posRequest } from './lib/request';
+import type { CartLine, CartQuote, PosItem, PosPageProps } from './types';
 
-export default function PosIndex() {
-    const [warehouseId, setWarehouseId] = useState(warehouses[0].id);
-    const [customerLevelId, setCustomerLevelId] = useState(customerLevels[0].id);
+export default function PosIndex({ warehouses, customers }: PosPageProps) {
+    const [warehouseId, setWarehouseId] = useState('');
+    const [customerId, setCustomerId] = useState('');
     const [query, setQuery] = useState('');
-    const [category, setCategory] = useState('Semua');
-    const [cartLines, setCartLines] = useState<CartLine[]>([]);
-    const [payments, setPayments] = useState(initialPayments);
-    const [paymentOpen, setPaymentOpen] = useState(false);
+    const [page, setPage] = useState(1);
+    const [catalogVersion, setCatalogVersion] = useState(0);
+    const [lines, setLines] = useState<CartLine[]>([]);
+    const [quote, setQuote] = useState<CartQuote | null>(null);
+    const [busy, setBusy] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [error, setError] = useState('');
+    const [resetOpen, setResetOpen] = useState(false);
+    const request = useRef<AbortController | null>(null);
+    const { result, loading, error: catalogError } = useCatalog(warehouseId, customerId, query, page, catalogVersion);
+    const ready = Boolean(warehouseId && customerId);
 
-    const customerLevel = customerLevels.find((level) => level.id === customerLevelId) ?? customerLevels[0];
-    const selectedWarehouse = warehouses.find((warehouse) => warehouse.id === warehouseId) ?? warehouses[0];
+    const invalidate = useCallback(() => {
+        request.current?.abort();
+        setQuote(null);
+        setErrors({});
+        setError('');
+        setBusy(false);
+    }, []);
+    useEffect(() => () => request.current?.abort(), []);
 
-    const subtotal = useMemo(
-        () => cartLines.reduce((sum, line) => sum + line.qty * levelPrice(selectedUnit(line), customerLevel), 0),
-        [cartLines, customerLevel],
-    );
-    const discount = cartLines.reduce((sum, line) => sum + line.discount, 0);
-    const taxableAmount = cartLines.reduce((sum, line) => sum + lineSubtotal(line, customerLevel), 0);
-    const tax = Math.round(taxableAmount * 0.11);
-    const total = taxableAmount + tax;
-
-    const addItem = (itemId: string): void => {
-        const item = catalogItems.find((catalogItem) => catalogItem.id === itemId);
-
-        if (!item) {
+    const check = useCallback(async () => {
+        if (!ready || !lines.length) return;
+        invalidate();
+        const quantities = lines.map((line) => parseQuantity(line.quantity));
+        if (quantities.some((value) => value === null)) {
+            const errors: Record<string, string[]> = {};
+            quantities.forEach((value, index) => {
+                if (value === null) errors[`lines.${index}.quantity`] = ['Gunakan angka Indonesia, misalnya 1 atau 1,5.'];
+            });
+            setErrors(errors);
+            toast.error('Periksa format kuantitas.');
             return;
         }
-
-        setCartLines((currentLines) => {
-            const existingLine = currentLines.find((line) => line.item.id === item.id);
-
-            if (existingLine) {
-                return currentLines.map((line) => (line.item.id === item.id ? { ...line, qty: Math.min(line.qty + 1, item.stock) } : line));
+        const controller = new AbortController();
+        request.current = controller;
+        setBusy(true);
+        try {
+            const data = await posRequest<CartQuote>(route('pos.quote'), controller.signal, {
+                warehouse_id: warehouseId,
+                customer_id: customerId,
+                lines: lines.map((line, index) => ({ item_id: line.item.id, unit_id: line.unitId, quantity: quantities[index] })),
+            });
+            if (!controller.signal.aborted) {
+                setQuote(data);
+                toast.success('Keranjang berhasil diperiksa.');
             }
+        } catch (error) {
+            if (!controller.signal.aborted) {
+                const message = error instanceof Error ? error.message : 'Keranjang belum dapat diperiksa.';
+                setError(message);
+                if (error instanceof PosRequestError) setErrors(error.fields);
+                toast.error(message);
+            }
+        } finally {
+            if (!controller.signal.aborted) setBusy(false);
+        }
+    }, [ready, lines, warehouseId, customerId, invalidate]);
 
-            return [...currentLines, { item, unitCode: item.units[0].code, qty: 1, discount: 0 }];
-        });
+    useEffect(() => {
+        const key = (event: KeyboardEvent) => {
+            if (document.querySelector('[role="dialog"]')) return;
+            if (event.altKey && event.key.toLowerCase() === 'f') {
+                event.preventDefault();
+                document.getElementById('pos-search')?.focus();
+            }
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter' && !busy) {
+                event.preventDefault();
+                void check();
+            }
+        };
+        window.addEventListener('keydown', key);
+        return () => window.removeEventListener('keydown', key);
+    }, [check, busy]);
+
+    const add = (item: PosItem, unitId: string) => {
+        if (lines.some((line) => line.item.id === item.id && line.unitId === unitId)) {
+            toast.error('Barang dan satuan sudah ada di keranjang.');
+            return;
+        }
+        if (lines.length >= 100) {
+            toast.error('Maksimal 100 baris keranjang.');
+            return;
+        }
+        invalidate();
+        setLines([...lines, { item, unitId, quantity: '1' }]);
     };
-
-    const updateLine = (itemId: string, updater: (line: CartLine) => CartLine): void => {
-        setCartLines((currentLines) => currentLines.map((line) => (line.item.id === itemId ? updater(line) : line)));
+    const barcode = () => {
+        if (loading) return;
+        const text = query.trim().toLowerCase();
+        if (!text) return;
+        for (const item of result?.items ?? []) {
+            const unit =
+                item.units.find((unit) => unit.barcode?.toLowerCase() === text) ??
+                (item.sku.toLowerCase() === text ? (item.units.find((unit) => unit.id === item.base_unit_id) ?? item.units[0]) : undefined);
+            if (unit?.price && /[1-9]/.test(item.stock)) {
+                add(item, unit.id);
+                return;
+            }
+        }
+        toast.error('Barcode atau SKU belum tersedia untuk penjualan.');
     };
-
-    const handleQtyChange = (itemId: string, qty: number): void => {
-        updateLine(itemId, (line) => {
-            const maxQty = Math.max(1, Math.floor(line.item.stock / selectedUnit(line).ratio));
-
-            return { ...line, qty: Math.min(Math.max(1, Number.isFinite(qty) ? qty : 1), maxQty) };
-        });
-    };
-
-    const handleUnitChange = (itemId: string, unitCode: string): void => {
-        updateLine(itemId, (line) => {
-            const nextUnit = line.item.units.find((unit) => unit.code === unitCode) ?? line.item.units[0];
-            const maxQty = Math.max(1, Math.floor(line.item.stock / nextUnit.ratio));
-
-            return { ...line, unitCode, qty: Math.min(line.qty, maxQty) };
-        });
-    };
-
-    const handleDiscountChange = (itemId: string, value: number): void => {
-        updateLine(itemId, (line) => ({ ...line, discount: Math.max(0, Number.isFinite(value) ? value : 0) }));
-    };
-
-    const handleRemove = (itemId: string): void => {
-        setCartLines((currentLines) => currentLines.filter((line) => line.item.id !== itemId));
-    };
-
-    const handlePaymentChange = (id: string, amount: number): void => {
-        setPayments((currentPayments) =>
-            currentPayments.map((payment) =>
-                payment.id === id ? { ...payment, amount: Math.max(0, Number.isFinite(amount) ? amount : 0) } : payment,
-            ),
-        );
-    };
-
-    const resetSale = (): void => {
-        setCartLines([]);
-        setPayments(initialPayments);
-        setPaymentOpen(false);
-        toast.success('Transaksi mock dikosongkan.');
-    };
-
-    const submitPayment = (): void => {
-        toast.success('Pembayaran mock tersimpan. Belum ada posting transaksi backend.');
-        setPaymentOpen(false);
+    const changeUnit = (index: number, unitId: string) => {
+        if (lines.some((line, i) => i !== index && line.item.id === lines[index].item.id && line.unitId === unitId)) {
+            toast.error('Pasangan barang dan satuan sudah ada.');
+            return;
+        }
+        invalidate();
+        setLines(lines.map((line, i) => (i === index ? { ...line, unitId } : line)));
     };
 
     return (
         <>
             <Head title="POS" />
-            <main className="text-foreground flex h-screen min-h-[720px] flex-col bg-[var(--app-workspace)]">
-                <header className="flex shrink-0 items-center justify-between border-b border-[var(--app-border)] bg-[var(--app-topbar)] px-5 py-3 shadow-none">
+            <main className="text-foreground flex h-dvh min-h-[44rem] flex-col overflow-hidden bg-[var(--app-workspace)]">
+                <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] bg-[var(--app-topbar)] px-5 py-3">
                     <div className="flex items-center gap-3">
                         <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
                             <AppLogoIcon className="size-5 fill-current" />
                         </div>
-                        <div>
-                            <h1 className="text-primary text-lg leading-none font-semibold">POS</h1>
-                            <p className="text-muted-foreground mt-1 text-sm">
-                                {selectedWarehouse.name} / {customerLevel.name}
-                            </p>
-                        </div>
+                        <h1 className="text-lg font-semibold">POS</h1>
                     </div>
                     <div className="flex items-center gap-2">
+                        <CommandPalette />
                         <ThemeMenu />
-                        <Button variant="outline" className="text-primary border-[var(--app-border)] bg-[var(--app-panel)]" asChild>
+                        <Button variant="outline" size="sm" asChild>
                             <Link href="/dashboard">
-                                <ArrowLeft className="text-[var(--chart-2)]" />
+                                <ArrowLeft className="text-sky-600 dark:text-sky-300" />
                                 Admin
                             </Link>
                         </Button>
-                        <Button
-                            variant="outline"
-                            className="border-[var(--app-border)] bg-[var(--app-panel)]"
-                            onClick={resetSale}
-                            disabled={cartLines.length === 0}
-                        >
-                            <RotateCcw className="text-[var(--chart-5)]" />
+                        <Button variant="outline" size="sm" disabled={!lines.length} onClick={() => setResetOpen(true)}>
+                            <RotateCcw className="text-amber-600 dark:text-amber-300" />
                             Reset
                         </Button>
                     </div>
                 </header>
-
-                <div className="grid min-h-0 flex-1 gap-4 p-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(25rem,0.75fr)]">
-                    <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4">
-                        <SaleContext
-                            warehouseId={warehouseId}
-                            customerLevelId={customerLevelId}
-                            onWarehouseChange={setWarehouseId}
-                            onCustomerLevelChange={setCustomerLevelId}
-                        />
-                        <ItemSearch
-                            items={catalogItems}
-                            query={query}
-                            category={category}
-                            customerLevel={customerLevel}
-                            onQueryChange={setQuery}
-                            onCategoryChange={setCategory}
-                            onAddItem={(item) => addItem(item.id)}
-                        />
-                    </div>
-
-                    <div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-4">
+                <WorkspaceShortcutDropdown
+                    title="Operasi POS"
+                    description="Belum diposting"
+                    shortcuts={[
+                        { label: 'Cari barang', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
+                        { label: 'Periksa keranjang', description: 'Validasi stok dan harga', keys: ['Ctrl', 'Enter'] },
+                        { label: 'Command palette', description: 'Navigasi', keys: ['Ctrl', 'K'] },
+                    ]}
+                />
+                <SaleContextBar
+                    warehouses={warehouses}
+                    customers={customers}
+                    warehouseId={warehouseId}
+                    customerId={customerId}
+                    activeCustomer={quote?.customer ?? result?.customer}
+                    onWarehouseChange={(id) => {
+                        invalidate();
+                        setWarehouseId(id);
+                        setPage(1);
+                    }}
+                    onCustomerChange={(id) => {
+                        invalidate();
+                        setCustomerId(id);
+                        setPage(1);
+                    }}
+                />
+                <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:grid-rows-1">
+                    <ItemSearch
+                        items={result?.items ?? []}
+                        query={query}
+                        page={page}
+                        hasMore={result?.has_more ?? false}
+                        loading={loading}
+                        error={catalogError}
+                        ready={ready}
+                        onQuery={(query) => {
+                            setQuery(query);
+                            setPage(1);
+                        }}
+                        onPage={setPage}
+                        onAdd={add}
+                        onBarcode={barcode}
+                        onRetry={() => setCatalogVersion((value) => value + 1)}
+                    />
+                    <div className="flex min-h-0 min-w-0 flex-col bg-[var(--app-panel)]">
                         <CartPanel
-                            lines={cartLines}
-                            customerLevel={customerLevel}
-                            onQtyChange={handleQtyChange}
-                            onUnitChange={handleUnitChange}
-                            onDiscountChange={handleDiscountChange}
-                            onRemove={handleRemove}
+                            lines={lines}
+                            quote={quote}
+                            errors={errors}
+                            onQuantity={(index, quantity) => {
+                                invalidate();
+                                setLines(lines.map((line, i) => (i === index ? { ...line, quantity } : line)));
+                            }}
+                            onUnit={changeUnit}
+                            onRemove={(index) => {
+                                invalidate();
+                                setLines(lines.filter((_, i) => i !== index));
+                            }}
                         />
-                        <OrderSummary subtotal={subtotal} discount={discount} tax={tax} total={total} onOpenPayment={() => setPaymentOpen(true)} />
+                        <OrderSummary quote={quote} loading={busy} disabled={!ready || !lines.length} error={error} onCheck={() => void check()} />
                     </div>
                 </div>
             </main>
-            <PaymentDrawer
-                open={paymentOpen}
-                total={total}
-                payments={payments}
-                onOpenChange={setPaymentOpen}
-                onPaymentChange={handlePaymentChange}
-                onSubmit={submitPayment}
-            />
+            <Dialog open={resetOpen} onOpenChange={setResetOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Kosongkan keranjang?</DialogTitle>
+                        <DialogDescription>Seluruh baris keranjang akan dibuang.</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setResetOpen(false)}>
+                            Batal
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                invalidate();
+                                setLines([]);
+                                setResetOpen(false);
+                                toast.success('Keranjang dikosongkan.');
+                            }}
+                        >
+                            Kosongkan
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
-    );
-}
-
-function SaleContext({
-    warehouseId,
-    customerLevelId,
-    onWarehouseChange,
-    onCustomerLevelChange,
-}: {
-    warehouseId: string;
-    customerLevelId: string;
-    onWarehouseChange: (value: string) => void;
-    onCustomerLevelChange: (value: string) => void;
-}) {
-    return (
-        <section className="rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] p-4">
-            <div className="text-primary mb-3 flex items-center gap-2 text-sm font-medium">
-                <BadgeDollarSign className="size-4 text-[var(--chart-1)]" />
-                Konteks Transaksi
-            </div>
-            <SaleContextBar
-                warehouses={warehouses}
-                customerLevels={customerLevels}
-                warehouseId={warehouseId}
-                customerLevelId={customerLevelId}
-                onWarehouseChange={onWarehouseChange}
-                onCustomerLevelChange={onCustomerLevelChange}
-            />
-        </section>
     );
 }

@@ -1,126 +1,90 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Minus, Plus, ShoppingBasket, Trash2 } from 'lucide-react';
-import { type CartLine, type CustomerLevelOption } from '../types';
-import { levelPrice, lineSubtotal, money, selectedUnit } from './pos-format';
+import { ShoppingBasket, Trash2 } from 'lucide-react';
+import { money } from '../lib/decimal';
+import type { CartLine, CartQuote } from '../types';
 
-type CartPanelProps = {
+export function CartPanel({
+    lines,
+    quote,
+    errors,
+    onQuantity,
+    onUnit,
+    onRemove,
+}: {
     lines: CartLine[];
-    customerLevel: CustomerLevelOption;
-    onQtyChange: (itemId: string, qty: number) => void;
-    onUnitChange: (itemId: string, unitCode: string) => void;
-    onDiscountChange: (itemId: string, discount: number) => void;
-    onRemove: (itemId: string) => void;
-};
-
-export function CartPanel({ lines, customerLevel, onQtyChange, onUnitChange, onDiscountChange, onRemove }: CartPanelProps) {
+    quote: CartQuote | null;
+    errors: Record<string, string[]>;
+    onQuantity: (index: number, quantity: string) => void;
+    onUnit: (index: number, unitId: string) => void;
+    onRemove: (index: number) => void;
+}) {
     return (
-        <section className="flex min-h-0 flex-col rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)]">
-            <div className="flex items-center justify-between border-b border-[var(--app-border)] bg-[var(--app-panel-strong)] p-4">
-                <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)]">
-                        <ShoppingBasket className="size-4 text-[var(--chart-1)]" />
-                    </div>
-                    <div>
-                        <h2 className="text-base font-semibold">Keranjang</h2>
-                        <p className="text-muted-foreground text-sm">{lines.length} item aktif</p>
-                    </div>
-                </div>
+        <section className="flex min-h-0 flex-1 flex-col" aria-label="Keranjang">
+            <div className="flex items-center gap-3 border-b border-[var(--app-border)] p-4">
+                <ShoppingBasket className="size-5 text-violet-600 dark:text-violet-300" />
+                <h2 className="text-base font-semibold">Keranjang</h2>
+                <span className="text-muted-foreground ml-auto text-sm">{lines.length} baris</span>
             </div>
-
             <div className="min-h-0 flex-1 overflow-auto">
                 {lines.length === 0 ? (
-                    <div className="text-muted-foreground flex h-full min-h-72 items-center justify-center p-6 text-center text-sm">
-                        Keranjang masih kosong.
-                    </div>
+                    <p className="text-muted-foreground py-10 text-center text-sm">Keranjang masih kosong.</p>
                 ) : (
-                    <div className="divide-y">
-                        {lines.map((line) => {
-                            const unit = selectedUnit(line);
-                            const price = levelPrice(unit, customerLevel);
-
-                            return (
-                                <div key={line.item.id} className="grid gap-3 p-4">
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div className="min-w-0">
-                                            <p className="truncate text-sm font-semibold">{line.item.name}</p>
-                                            <p className="text-muted-foreground text-xs">
-                                                {line.item.sku} / {money(price)}
-                                            </p>
-                                        </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Hapus ${line.item.name}`}
-                                            onClick={() => onRemove(line.item.id)}
-                                        >
-                                            <Trash2 className="text-[var(--chart-5)]" />
-                                        </Button>
+                    lines.map((line, index) => {
+                        const checked = quote?.lines[index];
+                        const error = errors[`lines.${index}.quantity`]?.[0] ?? errors[`lines.${index}.unit_id`]?.[0];
+                        return (
+                            <div key={line.item.id + ':' + index} className="space-y-3 border-b border-[var(--app-border)] p-4">
+                                <div className="flex items-start justify-between gap-2">
+                                    <div className="min-w-0">
+                                        <h3 className="truncate text-sm font-medium">{checked?.name ?? line.item.name}</h3>
+                                        <p className="text-muted-foreground text-xs">{checked?.sku ?? line.item.sku}</p>
                                     </div>
-
-                                    <div className="grid grid-cols-[minmax(0,1fr)_7rem_6rem] gap-2">
-                                        <Select value={line.unitCode} onValueChange={(value) => onUnitChange(line.item.id, value)}>
-                                            <SelectTrigger aria-label={`Satuan ${line.item.name}`}>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {line.item.units.map((itemUnit) => (
-                                                    <SelectItem key={itemUnit.code} value={itemUnit.code}>
-                                                        {itemUnit.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-
-                                        <div className="grid grid-cols-[2rem_1fr_2rem] rounded-md border border-[var(--app-border)] bg-[var(--app-panel-strong)]">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-10 w-8 rounded-r-none"
-                                                aria-label={`Kurangi ${line.item.name}`}
-                                                onClick={() => onQtyChange(line.item.id, line.qty - 1)}
-                                            >
-                                                <Minus className="text-[var(--chart-4)]" />
-                                            </Button>
-                                            <Input
-                                                id={`qty-${line.item.id}`}
-                                                name={`qty_${line.item.id}`}
-                                                aria-label={`Qty ${line.item.name}`}
-                                                value={line.qty}
-                                                onChange={(event) => onQtyChange(line.item.id, Number(event.target.value))}
-                                                className="h-10 rounded-none border-0 px-1 text-center focus-visible:ring-0"
-                                                inputMode="numeric"
-                                            />
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-10 w-8 rounded-l-none"
-                                                aria-label={`Tambah ${line.item.name}`}
-                                                onClick={() => onQtyChange(line.item.id, line.qty + 1)}
-                                            >
-                                                <Plus className="text-[var(--chart-3)]" />
-                                            </Button>
-                                        </div>
-
-                                        <Input
-                                            id={`discount-${line.item.id}`}
-                                            name={`discount_${line.item.id}`}
-                                            aria-label={`Diskon ${line.item.name}`}
-                                            value={line.discount}
-                                            onChange={(event) => onDiscountChange(line.item.id, Number(event.target.value))}
-                                            inputMode="numeric"
-                                        />
-                                    </div>
-
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">Subtotal</span>
-                                        <span className="font-semibold">{money(lineSubtotal(line, customerLevel))}</span>
-                                    </div>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        aria-label={`Hapus ${line.item.name}`}
+                                        title="Hapus baris"
+                                        onClick={() => onRemove(index)}
+                                    >
+                                        <Trash2 className="text-rose-600 dark:text-rose-300" />
+                                    </Button>
                                 </div>
-                            );
-                        })}
-                    </div>
+                                <div className="grid grid-cols-[minmax(0,1fr)_8rem] gap-3">
+                                    <Select value={line.unitId} onValueChange={(id) => onUnit(index, id)}>
+                                        <SelectTrigger aria-label={`Satuan ${line.item.name}`}>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {line.item.units.map((unit) => (
+                                                <SelectItem key={unit.id} value={unit.id}>
+                                                    {unit.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <Input
+                                        aria-label={`Kuantitas ${line.item.name}`}
+                                        value={line.quantity}
+                                        inputMode="decimal"
+                                        maxLength={27}
+                                        aria-invalid={Boolean(error)}
+                                        onChange={(event) => onQuantity(index, event.target.value)}
+                                    />
+                                </div>
+                                {error && (
+                                    <p role="alert" className="text-destructive text-sm">
+                                        {error}
+                                    </p>
+                                )}
+                                <div className="flex justify-between gap-3 text-sm">
+                                    <span className="text-muted-foreground max-w-[48%] break-all">{checked ? money(checked.unit_price) : '-'}</span>
+                                    <span className="max-w-[48%] text-right font-semibold break-all">{checked ? money(checked.subtotal) : '-'}</span>
+                                </div>
+                            </div>
+                        );
+                    })
                 )}
             </div>
         </section>
