@@ -69,3 +69,9 @@ SQLite disposable PASS. Request whitelist, metadata conditional/leading zeros,
 permission/guest/super-system, CRUD/restore, kode terhapus reserved, filter dan
 error guard terverifikasi. PUT memerlukan is_active eksplisit. MySQL/local
 migration status menunggu Increment 4; belum dinyatakan sudah diterapkan.
+
+Penguatan HTTP sesudah QA UI: pesan code.unique dua form disamakan dengan
+error conflict Indonesia. Test tambahan mencakup delapan mutation viewer 403,
+Inertia props/choices aktif tanpa metadata rekening, kode metode terhapus dan
+akun tidak ditemukan. Suite keseluruhan 300 tests/1912 assertions PASS;
+Pint scope Finance PASS. Pemisahan commit menjaga perbaikan backend terfokus.

@@ -7,6 +7,7 @@ use App\Modules\Finance\Payments\Database\Seeders\PaymentsAccessSeeder;
 use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -44,7 +45,8 @@ class PaymentsHttpTest extends TestCase
         $this->assertDatabaseHas('payment_accounts', ['id' => $id, 'code' => 'QA', 'name' => 'Kas QA']);
         $this->putJson('/finance/payment-accounts/'.$id, ['code' => 'QA', 'name' => 'Kas Ubah', 'type' => 'cash', 'is_active' => false])->assertOk();
         $this->deleteJson('/finance/payment-accounts/'.$id)->assertOk();
-        $this->postJson('/finance/payment-accounts', $payload)->assertUnprocessable()->assertJsonValidationErrors('code');
+        $this->postJson('/finance/payment-accounts', $payload)->assertUnprocessable()->assertJsonValidationErrors('code')
+            ->assertJsonPath('errors.code.0', 'Kode sudah digunakan, termasuk pada data terhapus.');
         $this->putJson('/finance/payment-accounts/'.$id, $payload)->assertNotFound();
         $this->postJson('/finance/payment-accounts/'.$id.'/restore')->assertOk();
         $this->assertDatabaseHas('payment_accounts', ['id' => $id, 'is_active' => false, 'deleted_at' => null]);
@@ -99,5 +101,49 @@ class PaymentsHttpTest extends TestCase
         $this->getJson('/finance/payment-accounts/data?type=debit')->assertUnprocessable();
         $this->deleteJson('/finance/payment-accounts/not-ulid')->assertNotFound();
         $this->deleteJson('/finance/payment-methods/01arz3ndektsv4rrffq69g5fav')->assertNotFound();
+    }
+
+    public function test_all_mutations_reject_viewer_without_changing_data_or_audit(): void
+    {
+        $this->actingAs(User::factory()->create()->givePermissionTo('finance.payments.view'));
+        $before = DB::table('activity_log')->count();
+        foreach (['payment-accounts' => 'payment_accounts', 'payment-methods' => 'payment_methods'] as $path => $table) {
+            $id = DB::table($table)->value('id');
+            $this->postJson('/finance/'.$path, [])->assertForbidden();
+            $this->putJson('/finance/'.$path.'/'.$id, [])->assertForbidden();
+            $this->deleteJson('/finance/'.$path.'/'.$id)->assertForbidden();
+            $this->postJson('/finance/'.$path.'/'.$id.'/restore')->assertForbidden();
+            $this->assertDatabaseHas($table, ['id' => $id, 'deleted_at' => null]);
+        }
+        $this->assertSame($before, DB::table('activity_log')->count());
+    }
+
+    public function test_inertia_pages_publish_scoped_filters_and_only_active_account_choices(): void
+    {
+        $this->postJson('/finance/payment-accounts', ['code' => 'OFF', 'name' => 'Kas nonaktif', 'type' => 'cash', 'is_active' => false])->assertCreated();
+        $deleted = $this->postJson('/finance/payment-accounts', ['code' => 'DEL', 'name' => 'Kas terhapus', 'type' => 'cash'])->assertCreated()->json('id');
+        $this->deleteJson('/finance/payment-accounts/'.$deleted)->assertOk();
+        $this->get('/finance/payment-accounts?type=bank')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('finance/payments/accounts')->where('filters.type', 'bank')->has('records.data', 1));
+        $this->get('/finance/payment-methods')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('finance/payments/methods')->has('records.data', 3)->has('accountOptions', 2)
+            ->where('accountOptions.0.code', 'BANK-DEMO')->missing('accountOptions.0.account_number'));
+        $this->putJson('/finance/payment-accounts/'.$deleted, ['code' => 'DEL', 'name' => 'Nama', 'type' => 'cash'])
+            ->assertUnprocessable()->assertJsonValidationErrors('is_active');
+    }
+
+    public function test_method_deleted_code_is_reserved_and_unknown_accounts_are_validation_errors(): void
+    {
+        $cash = DB::table('payment_accounts')->where('type', 'cash')->value('id');
+        $payload = ['code' => 'RESERVED', 'name' => 'Tunai QA', 'type' => 'cash', 'payment_account_id' => $cash];
+        $id = $this->postJson('/finance/payment-methods', $payload)->assertCreated()->json('id');
+        $this->deleteJson('/finance/payment-methods/'.$id)->assertOk();
+        $before = DB::table('activity_log')->count();
+        $this->postJson('/finance/payment-methods', $payload)->assertUnprocessable()->assertJsonValidationErrors('code')
+            ->assertJsonPath('errors.code.0', 'Kode sudah digunakan, termasuk pada data terhapus.');
+        $payload['code'] = 'UNKNOWN';
+        $payload['payment_account_id'] = '01arz3ndektsv4rrffq69g5fav';
+        $this->postJson('/finance/payment-methods', $payload)->assertUnprocessable()->assertJsonValidationErrors('payment_account_id');
+        $this->assertSame($before, DB::table('activity_log')->count());
     }
 }

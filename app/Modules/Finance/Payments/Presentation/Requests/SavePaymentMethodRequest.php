@@ -24,6 +24,11 @@ class SavePaymentMethodRequest extends FormRequest
         }
     }
 
+    public function messages(): array
+    {
+        return ['code.unique' => 'Kode sudah digunakan, termasuk pada data terhapus.'];
+    }
+
     public function rules(): array
     {
         return ['code' => ['required', 'string', 'max:32', Rule::unique('payment_methods', 'code')->ignore(strtolower((string) $this->route('id')))],

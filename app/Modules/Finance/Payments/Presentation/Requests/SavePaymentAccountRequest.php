@@ -31,4 +31,9 @@ class SavePaymentAccountRequest extends FormRequest
             'account_number' => ['nullable', 'string', 'max:64', 'prohibited_unless:type,bank'],
             'account_holder' => ['nullable', 'string', 'max:150', 'prohibited_unless:type,bank']];
     }
+
+    public function messages(): array
+    {
+        return ['code.unique' => 'Kode sudah digunakan, termasuk pada data terhapus.'];
+    }
 }

@@ -70,6 +70,6 @@ class PaymentAccountController extends Controller implements HasMiddleware
     {
         $action->restore(strtolower($id));
 
-        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success','Akun berhasil dipulihkan.');
+        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Akun berhasil dipulihkan.');
     }
 }

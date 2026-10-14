@@ -70,6 +70,6 @@ class PaymentMethodController extends Controller implements HasMiddleware
     {
         $action->restore(strtolower($id));
 
-        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success','Metode berhasil dipulihkan.');
+        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Metode berhasil dipulihkan.');
     }
 }
