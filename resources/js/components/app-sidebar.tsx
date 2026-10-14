@@ -7,6 +7,7 @@ import {
     Boxes,
     Building2,
     CreditCard,
+    Landmark,
     LayoutGrid,
     Package,
     ReceiptText,
@@ -137,6 +138,22 @@ const mainNavGroups: NavGroup[] = [
     {
         title: 'Keuangan',
         items: [
+            {
+                title: 'Kas dan bank',
+                url: '/finance/payment-accounts',
+                icon: Landmark,
+                badge: 'Aktif',
+                badgeTone: 'emerald',
+                permission: 'finance.payments.view',
+            },
+            {
+                title: 'Metode pembayaran',
+                url: '/finance/payment-methods',
+                icon: CreditCard,
+                badge: 'Aktif',
+                badgeTone: 'violet',
+                permission: 'finance.payments.view',
+            },
             {
                 title: 'Pembayaran',
                 url: '',

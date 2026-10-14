@@ -34,11 +34,11 @@
 
 ## Increment 3: UI Admin
 
-- [ ] Form/tabel dua halaman modular, navigasi/palette dan permission UX.
+- [x] Form/tabel dua halaman modular, navigasi/palette dan permission UX.
   - Acceptance: shadcn/Sonner, metadata bank conditional/masked, CRUD/restore,
     readonly, empty/error/loading, shortcut dropdown, type/account pilihan jelas.
   - Verification: lint/TS/build dan browser desktop/tablet Light/Dark.
-- [ ] Guard/error/shortcut dan commit.
+- [x] Guard/error/shortcut dan commit.
   - Acceptance: account terpakai ditolak, edit/reload relasi tersimpan,
     sidebar expanded/collapsed, tanpa perubahan theme/POS payment.
   - Verification: QA automated dan screenshot/report ignored.
@@ -75,3 +75,15 @@ error conflict Indonesia. Test tambahan mencakup delapan mutation viewer 403,
 Inertia props/choices aktif tanpa metadata rekening, kode metode terhapus dan
 akun tidak ditemukan. Suite keseluruhan 300 tests/1912 assertions PASS;
 Pint scope Finance PASS. Pemisahan commit menjaga perbaikan backend terfokus.
+
+Increment 3: TypeScript, ESLint resources/js dan Vite build 2704 modules PASS.
+DevTools MCP BLOCKED: discovery tool sesi tidak menyediakan namespace DevTools.
+Fallback Playwright existing PASS dengan database/profile/credential disposable;
+report storage/framework/testing/payments-browser-0b70b4eaaf091df0/report.json
+dan screenshot lokal ignored. CRUD/restore dua master, relasi reload/jenis,
+metadata conditional/leading zero/masked, guard account termasuk metode terhapus,
+duplicate error, filter/search/empty, shortcut/palette, viewer/outsider dan
+console kosong terverifikasi. Desktop1440x1000, tablet1024x768/768x1024,
+Light/Dark dan sidebar expanded/collapsed; tidak QA mobile. Screenshot diperiksa
+visual, dialog/body tanpa overflow; tabel tablet scroll dalam panel agar kode
+tidak dimampatkan. Theme dan POS payment tidak diubah.
