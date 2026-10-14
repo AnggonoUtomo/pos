@@ -23,3 +23,8 @@ ulang. Tidak membuat tabel baru atau audit read-only sebagai transaksi palsu.
 
 Detail: [specification](specification.md), [plan](plan.md), [tasks](tasks.md),
 [work item](../../../work-items/pos-live-cart/README.md).
+
+Tahap [checkout lunas/multi-payment](../../../work-items/pos-paid-checkout/README.md)
+sudah disetujui. Increment 1 dokumen/Domain Finance dan Stock selesai;
+posting/idempotency/payment/UI transaksi belum aktif. Status data/keranjang
+di atas tidak berarti checkout sudah tersedia.

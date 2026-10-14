@@ -3,7 +3,7 @@
 ## Status
 
 In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
-Increment 1 mengunci dokumen dan perhitungan Domain saja; checkout belum aktif.
+Increment 1 selesai: dokumen dan perhitungan Domain teruji; checkout belum aktif.
 
 ## Owner Dan Lokasi
 
@@ -83,6 +83,10 @@ lengkap. Tidak mengubah theme, grant/akun/password atau dependency.
    perubahan saldo. Port/event baru hanya dibuat saat consumer nyata terpasang.
 
 ## Handoff Saat Ini
+
+Full suite Increment 1: 363 tests/2835 assertions PASS. Domain modules juga lulus
+92 tests/967 assertions tanpa bootstrap Laravel. Increment 2..6 masih Planned.
+Belum push karena keseluruhan work item belum selesai.
 
 Rincian hasil increment dan command ada di tasks.md. Data pengguna, Old-docs,
 SampleUI dan LSP tidak boleh disentuh. Work item belum selesai hanya karena

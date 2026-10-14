@@ -53,5 +53,10 @@ Ledger/layer posted tidak menggunakan soft delete. Draft bisa soft delete dan
 restore. Koreksi posted memerlukan capability reversal/adjustment terpisah.
 FIFO consumption, saldo keluar dan no-negative outflow belum diimplementasikan.
 
+Pekerjaan lanjutan [checkout lunas](../../../work-items/pos-paid-checkout/README.md):
+Increment 1 sudah menambahkan Domain FifoAllocation dengan preservasi residual
+yang teruji. Belum ada adapter/consumer atau mutation saldo keluar; perhitungan
+murni ini bukan bukti locking atau pengeluaran stok nyata.
+
 Lihat [specification.md](specification.md), [plan.md](plan.md), dan
 [tasks.md](tasks.md) untuk aturan dan hasil implementasi aktual.

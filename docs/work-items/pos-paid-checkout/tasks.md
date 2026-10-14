@@ -26,7 +26,7 @@
     quantity/value scale6, sisa tidak minus, residual terkuras tepat, layer
     invalid/duplikat/stok kurang/overflow ditolak. Tidak mengklaim lock DB.
   - Verification: FifoAllocationTest, beberapa layer dan pengurasan berulang.
-- [ ] Jalankan regresi/full suite, review, update status dan commit.
+- [x] Jalankan regresi/full suite, review, update status dan commit.
   - Acceptance: Domain bebas framework/layer luar, runtime existing tetap,
     tidak ada port/event/schema/route/UI/database lokal berubah.
   - Verification: focused/full test, Pint scoped, import/diff/staging review.
@@ -101,10 +101,10 @@
 
 ## Sesudah Increment 1
 
-- [ ] Seluruh task Increment 1 lulus dan status diperbarui.
-- [ ] Focused/full test dan Pint scope lulus, runtime/schema unchanged.
-- [ ] UI/build/migration/DevTools dinyatakan tidak relevan dengan alasan.
-- [ ] Risiko integrasi tertulis; commit otomatis dibuat, belum push.
+- [x] Seluruh task Increment 1 lulus dan status diperbarui.
+- [x] Focused/full test dan Pint scope lulus, runtime/schema unchanged.
+- [x] UI/build/migration/DevTools dinyatakan tidak relevan dengan alasan.
+- [x] Risiko integrasi tertulis; commit otomatis dibuat, belum push.
 
 ## Hasil Verifikasi
 
@@ -124,3 +124,23 @@ overflow dan conservation tiap pengeluaran berulang (qty2..20) terverifikasi.
 ID layer input tetap dipertahankan, input tidak dimutasi. Pint dua file PASS.
 Tidak membaca/mengunci/mengurutkan layer dari database; caller integrasi kelak
 wajib memfilter satu item/gudang serta lock/order received_at lalu id.
+
+Penutupan Increment 1:
+
+| Command/Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --filter='PaymentSettlementTest\|FifoAllocationTest' --compact | PASS | 63 tests/923 assertions |
+| php vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php tests/Unit/Modules | PASS | 92 tests/967 assertions; tanpa Laravel bootstrap/application |
+| php artisan test --compact | PASS | 363 tests/2835 assertions, termasuk regresi master/Stock/POS/Identity |
+| vendor/bin/pint --test pada empat file Domain/test baru | PASS | Tidak memformat file lain |
+| Pemeriksaan import dan scope | PASS | Domain tidak mengimpor Laravel/layer luar/module privat; tidak ada mutation I/O |
+| Review correctness/precision/architecture/security/performance | PASS | Batas integrasi belum selesai tetap eksplisit |
+| Link lokal dan git diff --check | PASS | Scope docs/Domain/tests saja |
+| TS/lint/build/UI/DevTools/MySQL/migration | SKIPPED | Tidak ada frontend, route, schema, adapter atau runtime consumer berubah; bukan bukti checkout/concurrency |
+
+Commit save point: fb5abf4 dokumen, 601745f settlement, 8657192 FIFO.
+Tidak ada perubahan database lokal, grant, credential, seeder, theme atau
+Old-docs/SampleUI/LSP. Tidak ada public port/event/adapter baru tanpa consumer.
+Increment 2..6 belum dikerjakan; tidak push sampai work item selesai atau
+instruksi eksplisit user. Langkah berikutnya: Stock outflow dan query kartu
+stok dengan traceability sumber, locking dan rollback yang teruji.

@@ -7,7 +7,7 @@ lulus. Saat ini jalankan Increment 1; jangan mengaktifkan UI posting parsial.
 
 | No | Status | Nama | Perubahan Dan Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- |
-| 1 | In Progress | Aturan dan presisi | Dokumen/ADR, Domain settlement dan alokasi FIFO murni, no I/O | RED/GREEN unit, Pint, regresi/full suite, diff |
+| 1 | Passed | Aturan dan presisi | Dokumen/ADR, Domain settlement dan alokasi FIFO murni, no I/O | RED/GREEN unit, Pint, regresi/full suite, diff |
 | 2 | Planned | Pengeluaran Stock | Schema additive movement/alokasi, mutation no-negative current lock, query kartu/saldo keluar tanpa join privat POS | SQLite up/down, action/query/audit rollback, MySQL FK/current read |
 | 3 | Planned | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
 | 4 | Planned | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |

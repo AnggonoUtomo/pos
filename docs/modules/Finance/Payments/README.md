@@ -25,3 +25,7 @@ fallback Playwright existing; DevTools MCP tidak tersedia pada sesi pengerjaan.
 Detail bukti dan delivery pada work item, bukan klaim bahwa Finance penuh selesai.
 
 Detail [specification](specification.md), [plan](plan.md), [tasks](tasks.md).
+
+Pekerjaan lanjutan [checkout lunas](../../../work-items/pos-paid-checkout/README.md):
+Increment 1 selesai pada Domain PaymentSettlement untuk uang exact/kembalian.
+Belum terhubung ke route/payment record atau mengubah kemampuan runtime di atas.
