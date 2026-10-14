@@ -27,7 +27,7 @@ Status yang digunakan:
 | Purchasing | Suppliers | Supplier master | Identity | Planned |
 | Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Items, Warehouses, Stock | Planned |
 | Purchasing | Returns | Retur pembelian dan koreksi stok/payment | PurchaseOrders, Stock, Finance Payments | Planned |
-| Finance | Payments | Finance Lite: kas/bank, payment method, payment record, piutang/utang dasar | Sales POS, Purchasing PurchaseOrders | Planned |
+| Finance | Payments | CRUD kas/bank dan metode pembayaran relasional; saldo/mutasi, payment record dan piutang/utang belum tersedia | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Reporting | OperationalReports | Laporan stok, penjualan, pembelian, margin, kas sederhana | Inventory, Sales, Purchasing, Finance | Planned |
 
 ## Aturan Penambahan Module

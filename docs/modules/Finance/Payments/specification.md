@@ -15,7 +15,7 @@ account bank. Account wajib aktif/non-trashed pada create/edit/restore metode,
 termasuk ketika metode akan disimpan nonaktif. Tidak ada mapping tersembunyi.
 
 Kode trim/uppercase, nama trim, metadata trim/empty->null. Unik termasuk trashed.
-Account yang pernah dirujuk metode tidak boleh delete/nonaktif atau ganti type,
+Account yang dirujuk metode tidak boleh delete/nonaktif atau ganti type,
 termasuk metode nonaktif/trashed. Nama/kode/metadata boleh diedit. Restore account
 tidak mengaktifkan otomatis; restore metode tetap memerlukan account valid.
 Jenis metode/account belum memiliki histori payment; perubahan konfigurasi saat

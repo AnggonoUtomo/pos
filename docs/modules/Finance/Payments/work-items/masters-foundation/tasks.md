@@ -45,10 +45,10 @@
 
 ## Increment 4: Penutupan
 
-- [ ] Full gates dan QA MySQL current read/FK.
+- [x] Full gates dan QA MySQL current read/FK.
   - Acceptance: semua gates PASS, tidak mengklaim SQLite sebagai row-lock proof.
   - Verification: PHP suite, Pint, lint/TS/build, route/migration dan MySQL QA.
-- [ ] Aktivasi migration/demo lokal additive dan docs/status.
+- [x] Aktivasi migration/demo lokal additive dan docs/status.
   - Acceptance: data user lama/account/grant/stock/ledger identik, no reset.
   - Verification: fingerprints sebelum/sesudah dan command dicatat.
 - [ ] Commit/push dan cocokkan remote HEAD.
@@ -87,3 +87,23 @@ console kosong terverifikasi. Desktop1440x1000, tablet1024x768/768x1024,
 Light/Dark dan sidebar expanded/collapsed; tidak QA mobile. Screenshot diperiksa
 visual, dialog/body tanpa overflow; tabel tablet scroll dalam panel agar kode
 tidak dimampatkan. Theme dan POS payment tidak diubah.
+
+Increment 4: `php artisan test --compact` 300 tests/1912 assertions PASS,
+termasuk 18 tests/164 assertions Finance. Pint scope module/test/QA, ESLint
+resources/js, TypeScript noEmit, Prettier frontend dan Vite build PASS.
+`php artisan route:list --path=finance` menunjukkan 12 route. Migration up/down
+SQLite disposable PASS; `php artisan migrate:status
+--path=app/Modules/Finance/Payments/Database/Migrations` pada MySQL local Ran
+batch10. `php scripts/qa/payments-mysql.php` PASS: demo idempotent, current
+reference guard sesudah snapshot, assignment menolak account nonaktif terbaru,
+dirty check current, restore assignment stale ditolak dan FK RESTRICT.
+Database generated dibersihkan; bukan load test semua interleaving.
+
+`php scripts/qa/apply-payments-local.php` diterapkan lalu diulang PASS:
+2 akun/3 metode, existing account/permission/audit row dan fingerprint data
+user/role/grant/master/harga/stok/ledger terjaga. Tidak reset password, tidak
+membuat saldo/mutasi/payment/penjualan. docs/API, QUALITY, MODULES dan dokumen
+module diselaraskan. Tidak ada dependency/branch baru, perubahan theme,
+Old-docs, SampleUI atau LSP. DevTools tetap BLOCKED dengan fallback PASS,
+bukan klaim DevTools sudah menguji CRUD. Delivery remote masih menunggu langkah
+commit/push di atas.

@@ -331,6 +331,42 @@ sesudah delete, ID historis tetap. Tidak ada route/permission/schema/seeder baru
 Session perangkat lain/retention data dan ownership transaksi bisnis memerlukan
 work item terpisah sebelum ada transaksi real yang mereferensikan akun.
 
+## Master Finance/Payments
+
+Master kas/bank pada `/finance/payment-accounts` dan metode pembayaran pada
+`/finance/payment-methods`. Nama route `finance.payment-accounts.*` dan
+`finance.payment-methods.*`. Masing-masing memiliki GET index, GET `/data`,
+POST store, PUT `/{id}`, DELETE `/{id}`, POST `/{id}/restore`. Route web memakai
+auth/verified/CSRF; middleware controller `can:finance.payments.view` untuk baca
+dan `can:finance.payments.manage` untuk mutation. Super-system hanya bypass
+permission, bukan validasi atau invariant relasi.
+
+JSON create menghasilkan 201 `{id}`, mutation lain 200 `{id}`; form Inertia
+redirect dengan error bag atau success. Validasi 422; resource valid namun
+tidak ditemukan 404; unauthorized 401/403 sesuai konteks JSON. Kode unique
+termasuk terhapus, trim/uppercase. PUT mewajibkan `is_active` eksplisit. Payload
+unknown tidak dipersist, termasuk nilai saldo buatan client.
+
+Account: code/name/type cash|bank/is_active, metadata bank opsional
+bank_name/account_number/account_holder. Nomor rekening string; metadata hanya
+boleh terisi untuk bank. Metode: code/name/type cash|debit|transfer,
+payment_account_id/is_active. Cash menunjuk cash; debit/transfer menunjuk bank.
+Akun harus aktif/non-trashed saat simpan atau restore metode. Akun yang dirujuk
+metode, termasuk metode nonaktif/terhapus, tidak boleh dihapus/nonaktif/ganti
+jenis. Field error relasi `payment_account_id`; guard akun `payments`.
+
+Index Inertia `records/filters`; metode menambah `accountOptions` aktif maksimal
+1000, tanpa metadata rekening. JSON data `{data,meta}`, 25/baris urutcode/id.
+Filter page positif, search code/nama maksimal150, status all|active|inactive,
+trashed0|1, type sesuai master dan payment_account_id pada metode. Baca metadata
+account membutuhkan permission view; UI daftar menyamarkan nomor rekening.
+
+Log `finance.payment_accounts`/`finance.payment_methods` atomic dengan mutation.
+Nilai metadata bank tidak masuk audit; perubahan metadata-only mencatat nama
+field saja. No-op tanpa audit. PaymentsRepository adalah port internal, bukan
+published payment boundary. Belum ada consumer payment lintas module, saldo,
+mutasi, payment record atau integrasi checkout POS.
+
 ## Contract Lintas Module
 
 Contract lintas module tidak didokumentasikan sebagai HTTP API kecuali benar-

@@ -321,6 +321,45 @@ local, migration harga additive dan demo sembilan SKU yang dikenal. Fingerprint
 akun/grant/master/stok/ledger dan seluruh harga existing diperiksa; seed diulang
 tidak menimpa harga edit/trashed. Tidak ada migrate:fresh atau grant otomatis.
 
+## QA Master Finance/Payments
+
+`php artisan test --filter=Payments` mencakup ULID, permission tiap mutation,
+CRUD/restore, unique termasuk trashed, kompatibilitas/akun aktif, guard referensi
+termasuk metode terhapus, no-op, privasi audit, rollback, filter/choices dan demo
+idempotent tanpa grant. Migration up/down memakai database test disposable.
+
+`php scripts/qa/payments-mysql.php` membuat database generated
+pos_payments_qa dengan suffix random tervalidasi. Dua koneksi REPEATABLE READ
+menguji reference current read sesudah snapshot lama, akun terbaru saat
+assignment, dirty check, assignment berubah saat restore, FK RESTRICT dan demo
+idempotent. Cleanup database disposable pada finally; bukan load test atau
+bukti semua interleaving concurrency produksi.
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/existing/playwright-core'
+node scripts/qa/payments-browser.mjs
+```
+
+Coba discovery Chrome DevTools MCP dahulu. Jika tool tidak tersedia, catat
+BLOCKED dan gunakan fallback existing di atas tanpa memasang dependency.
+Fixture `tests/Browser/payments-fixture.php` hanya SQLite disposable
+payments-browser pada storage/framework/testing. Credential random via stdin,
+server loopback/profile terisolasi, font CDN distub, browser/server ditutup pada
+finally. Screenshot/report ignored, bukan data pengguna.
+
+Coverage browser: CRUD/restore dua master, relasi persist/reload, pilihan akun
+sesuai jenis dan reset saat jenis berubah, metadata conditional/masked, kode
+duplikat/error, guard akun terpakai termasuk metode terhapus, filter/search/empty,
+readonly/outsider, shortcut/palette, sidebar expanded/collapsed, Light/Dark,
+desktop1440x1000 dan tablet1024x768/768x1024. Mobile tidak diuji. Console/page
+error tidak terduga harus gagal; screenshot diperiksa visual dan overflow.
+
+`php scripts/qa/apply-payments-local.php` hanya MySQL local: migration Finance
+additive, katalog permission tanpa grant dan demo dua akun/tiga metode yang
+idempotent. Fingerprint data existing user/role/pivot/master/harga/stok/ledger
+serta row Finance/audit/permission existing harus identik. Tidak migrate:fresh,
+reset password, membuat saldo/payment record, atau mengaktifkan pembayaran POS.
+
 ## QA Dependency Security
 
 Untuk pembaruan dependency, gunakan update terarah tanpa audit fix --force.

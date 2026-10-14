@@ -1,6 +1,6 @@
 # Finance/Payments
 
-Status: In Progress. Scope fondasi master disetujui 15 Oktober 2026.
+Status: Active. Fondasi master selesai/diverifikasi 15 Oktober 2026.
 Memiliki master kas/bank dan metode pembayaran relasional sebagai prasyarat
 pembayaran POS berikutnya. Belum memiliki saldo/mutasi atau payment record.
 
@@ -18,5 +18,10 @@ UI admin: /finance/payment-accounts dan /finance/payment-methods, shadcn/Sonner,
 shortcut/palette dan desktop/tablet. Theme dan POS payment tidak diubah.
 Demo hanya local/testing: Kas Toko Demo, Bank Operasional Demo, Tunai/Debit/
 Transfer. Tidak menimpa master existing, tidak membuat akun login/grant/saldo.
+
+Migration dan demo sudah diterapkan pada MySQL local tanpa reset data.
+QA mencakup feature tests, dua koneksi MySQL dan browser desktop/tablet melalui
+fallback Playwright existing; DevTools MCP tidak tersedia pada sesi pengerjaan.
+Detail bukti dan delivery pada work item, bukan klaim bahwa Finance penuh selesai.
 
 Detail [specification](specification.md), [plan](plan.md), [tasks](tasks.md).
