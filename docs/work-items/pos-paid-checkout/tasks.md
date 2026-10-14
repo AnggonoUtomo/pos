@@ -16,7 +16,7 @@
   - Acceptance: aturan lunas, cash bersih, presisi/residual, scope/non-scope
     dan status implementasi dibedakan; checklist increment berikutnya tersedia.
   - Verification: review source/dokumen, link lokal dan git diff --check.
-- [ ] Implementasikan PaymentSettlement pada Domain Finance melalui test RED.
+- [x] Implementasikan PaymentSettlement pada Domain Finance melalui test RED.
   - Acceptance: money scale2 exact, satu cash, unique metode, kurang bayar/
     non-cash berlebih/tunai tanpa kontribusi ditolak, output net benar dan
     urutan input tidak mengubah hasil. Belum membaca/menulis payment master.
@@ -110,3 +110,9 @@
 
 Review source/schema/quote dan dokumen PASS. Pemeriksaan tautan lokal pada
 sembilan dokumen scope serta git diff --check PASS. Domain tests masih pending.
+
+PaymentSettlementTest: RED 34 tests karena class belum ada, lalu GREEN
+34 tests/44 assertions. Contoh multi-payment/kembalian, urutan cash, decimal
+besar, 10 metode, duplicate/invalid/kurang bayar/non-cash berlebih dan cash
+tanpa kontribusi terverifikasi. Pint dua file PASS. Domain belum menjadi
+permission authority atau lookup master; consumer transaksi belum dipasang.
