@@ -1,6 +1,7 @@
 # Data POS Dan Keranjang Nyata
 
-Status: implementasi/QA selesai, menunggu penutupan delivery remote.
+Status: Done. Implementasi, QA dan delivery remote terverifikasi;
+checklist ditutup 15 Oktober 2026.
 Persetujuan user 14 Oktober 2026.
 Owner Sales/POS, consumer read boundary Inventory dan Sales/Parties.
 
