@@ -21,7 +21,7 @@
     non-cash berlebih/tunai tanpa kontribusi ditolak, output net benar dan
     urutan input tidak mengubah hasil. Belum membaca/menulis payment master.
   - Verification: PaymentSettlementTest, termasuk overflow/invalid input.
-- [ ] Implementasikan FifoAllocation pada Domain Stock melalui test RED.
+- [x] Implementasikan FifoAllocation pada Domain Stock melalui test RED.
   - Acceptance: lapisan oldest-first yang sudah disiapkan caller dialokasi,
     quantity/value scale6, sisa tidak minus, residual terkuras tepat, layer
     invalid/duplikat/stok kurang/overflow ditolak. Tidak mengklaim lock DB.
@@ -109,10 +109,18 @@
 ## Hasil Verifikasi
 
 Review source/schema/quote dan dokumen PASS. Pemeriksaan tautan lokal pada
-sembilan dokumen scope serta git diff --check PASS. Domain tests masih pending.
+sembilan dokumen scope serta git diff --check PASS.
 
 PaymentSettlementTest: RED 34 tests karena class belum ada, lalu GREEN
 34 tests/44 assertions. Contoh multi-payment/kembalian, urutan cash, decimal
 besar, 10 metode, duplicate/invalid/kurang bayar/non-cash berlebih dan cash
 tanpa kontribusi terverifikasi. Pint dua file PASS. Domain belum menjadi
 permission authority atau lookup master; consumer transaksi belum dipasang.
+
+FifoAllocationTest: RED 29 tests karena class belum ada, lalu GREEN
+29 tests/879 assertions. Layer berurutan, exhausted, fractional base quantity,
+thirds/residual, partial cost mikro nol, batas decimal, input invalid/shortage/
+overflow dan conservation tiap pengeluaran berulang (qty2..20) terverifikasi.
+ID layer input tetap dipertahankan, input tidak dimutasi. Pint dua file PASS.
+Tidak membaca/mengunci/mengurutkan layer dari database; caller integrasi kelak
+wajib memfilter satu item/gudang serta lock/order received_at lalu id.
