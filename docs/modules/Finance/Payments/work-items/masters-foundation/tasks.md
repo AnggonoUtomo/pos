@@ -24,11 +24,11 @@
 
 ## Increment 2: HTTP
 
-- [ ] Route/controller/request/query dua master dan filter/choices.
+- [x] Route/controller/request/query dua master dan filter/choices.
   - Acceptance: auth/403/422/404, CSRF, payload whitelist, unique teredaksi,
     pagination25 dan account options aktif max1000.
   - Verification: HTTP permission/validation/CRUD/restore/filter tests.
-- [ ] Route/migration regression dan commit.
+- [x] Route/migration regression dan commit.
   - Acceptance: route/migration module nyata, no runtime gap pada scaffold.
   - Verification: route:list, migration disposable/status dan focused tests.
 
@@ -62,3 +62,10 @@ PaymentsFoundationTest 9 tests/44 assertions PASS; Pint PASS. Audit/no-op,
 metadata-only redacted, guard termasuk trashed, invalid relation/type, restore,
 rollback persistence, demo idempotent/preservation/production refusal dan
 prerequisite rollback serta migration up/down terverifikasi.
+
+Increment 2: HTTP RED 404 sebelum endpoint tersedia, lalu Foundation/HTTP
+15 tests/105 assertions PASS; 12 route finance nyata; migration up/down pada
+SQLite disposable PASS. Request whitelist, metadata conditional/leading zeros,
+permission/guest/super-system, CRUD/restore, kode terhapus reserved, filter dan
+error guard terverifikasi. PUT memerlukan is_active eksplisit. MySQL/local
+migration status menunggu Increment 4; belum dinyatakan sudah diterapkan.
