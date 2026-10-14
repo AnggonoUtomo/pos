@@ -51,7 +51,7 @@
 - [x] Aktivasi migration/demo lokal additive dan docs/status.
   - Acceptance: data user lama/account/grant/stock/ledger identik, no reset.
   - Verification: fingerprints sebelum/sesudah dan command dicatat.
-- [ ] Commit/push dan cocokkan remote HEAD.
+- [x] Commit/push dan cocokkan remote HEAD.
   - Acceptance: hanya file scope terkirim; SampleUI/LSP/Old-docs tidak disentuh.
   - Verification: staged scope/check, push/ls-remote dan divergence.
 
@@ -105,5 +105,12 @@ user/role/grant/master/harga/stok/ledger terjaga. Tidak reset password, tidak
 membuat saldo/mutasi/payment/penjualan. docs/API, QUALITY, MODULES dan dokumen
 module diselaraskan. Tidak ada dependency/branch baru, perubahan theme,
 Old-docs, SampleUI atau LSP. DevTools tetap BLOCKED dengan fallback PASS,
-bukan klaim DevTools sudah menguji CRUD. Delivery remote masih menunggu langkah
-commit/push di atas.
+bukan klaim DevTools sudah menguji CRUD.
+
+Delivery: commit fondasi 8896d0a, HTTP b7ccd6d, penguatan validasi e706c16,
+UI/QA dfdb3d1, MySQL/local/docs 0e62e63 telah dipush ke origin/main.
+`git ls-remote origin refs/heads/main` sama dengan HEAD 0e62e63 dan divergence
+0/0. Staging/diff whitespace dan pemeriksaan pola secret terarah PASS.
+Hanya SampleUI dan empat LSP user yang tetap untracked; tidak ikut commit.
+HTTP pos.test terjangkau (200 setelah redirect login); QA authenticated CRUD
+memakai fixture disposable, bukan akun pengguna lokal.

@@ -1,6 +1,6 @@
 # Fondasi Kas/Bank Dan Metode Pembayaran
 
-Status: In Progress. Disetujui 15 Oktober 2026. Owner Finance/Payments.
+Status: Done. Disetujui dan selesai 15 Oktober 2026. Owner Finance/Payments.
 CRUD dua master relasional, soft delete/restore, permission, audit privacy,
 demo dan UI admin. Mengikuti pola Parties, tanpa mengimpor module privat.
 
