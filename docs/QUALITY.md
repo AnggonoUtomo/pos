@@ -242,6 +242,37 @@ migration/permission Stock, fingerprint akun/role/pivot/master sebelum/sesudah,
 tanpa demo Stock. Jangan memakai migrate:fresh atau menjalankan demo tanpa arahan
 pada MySQL pengguna.
 
+## QA Pengeluaran Stock
+
+`php artisan test --filter=StockIssue` mencakup schema legacy-preserving,
+no-negative/agregat, replay/payload conflict, source line unique, multigudang,
+snapshot signed ledger, FIFO order/residual, inactive master, corruption guard,
+rollback persistence/audit exception/veto dan larangan down berisi posted data.
+
+`php scripts/qa/stock-issues-mysql.php` memakai database generated disposable
+pos_stock_issues_qa dan dua koneksi RR. Memeriksa stale/current balance dan replay
+header/lines, native migration up/down, FK RESTRICT, transaction boundary dan
+worker proses lain yang terbukti LOCK WAIT lalu ditolak saat stok terakhir
+habis. Perlu akses metadata innodb_trx pada MySQL local. Cleanup finally;
+gagal menghasilkan exit1 tanpa menampilkan payload/credential. Bukan load test
+seluruh interleaving atau bukti checkout/payment end-to-end.
+
+`node scripts/qa/stock-quantity-format.mjs` memeriksa 11 kasus angka Indonesia,
+termasuk -0,5/-0,000001 dan nilai besar tanpa float. Node24 existing mendukung
+import erasable TypeScript source; tidak memasang runner/dependency baru.
+
+`node scripts/qa/stock-issues-browser.mjs` dengan QA_PLAYWRIGHT_MODULE existing
+memakai fixture stock-fixture --issues pada SQLite/profile terisolasi.
+Demo kabel CCTV keluar0,5m hanya di disposable, memeriksa signed ledger,
+saldo9,5, filter dokumen, readonly, desktop/tablet Light/Dark dan console.
+Screenshot/report ignored. DevTools tetap dicoba; smoke redirect/login bukan
+klaim authenticated CRUD. Mobile tidak diuji, theme tidak diubah.
+
+`php scripts/qa/apply-stock-issues-local.php` hanya MySQL local: migration
+additive tanpa seeder/grant/reset atau pengeluaran pengguna. Fingerprint semua
+kolom yang sudah ada sebelum migration dipertahankan; kolom snapshot nullable
+baru tidak dianggap mutation historis. Tabel issue baru harus kosong.
+
 ## QA Pelanggan Dan Level
 
 `php artisan test --filter=Parties` memeriksa CRUD, soft delete/restore,

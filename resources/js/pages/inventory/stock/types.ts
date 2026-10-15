@@ -51,5 +51,7 @@ export function decimal(value: string | undefined) {
     if (value === undefined) return '-';
     const [whole, fraction = ''] = value.split('.');
     const digits = fraction.replace(/0+$/, '');
-    return new Intl.NumberFormat('id-ID').format(BigInt(whole)) + (digits ? `,${digits}` : '');
+    const integer = BigInt(whole);
+    const sign = whole.startsWith('-') && integer === 0n && digits ? '-' : '';
+    return sign + new Intl.NumberFormat('id-ID').format(integer) + (digits ? `,${digits}` : '');
 }

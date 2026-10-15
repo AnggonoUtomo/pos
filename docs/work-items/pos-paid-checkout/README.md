@@ -3,7 +3,8 @@
 ## Status
 
 In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
-Increment 1 selesai: dokumen dan perhitungan Domain teruji; checkout belum aktif.
+Increment 1 dan 2 selesai: presisi dan outflow internal Stock teruji;
+checkout belum aktif.
 
 ## Owner Dan Lokasi
 
@@ -82,8 +83,6 @@ lengkap. Tidak mengubah theme, grant/akun/password atau dependency.
 5. Increment 1 belum mengklaim row lock, migration, idempotency HTTP atau
    perubahan saldo. Port/event baru hanya dibuat saat consumer nyata terpasang.
 
-## Handoff Saat Ini
-
 ## Desain Increment 2
 
 Stock memiliki stock_issues (sumber sale/ULID/nomor/gudang/hash/actor/waktu),
@@ -106,11 +105,17 @@ base units terurut, items terurut, balance lalu layer received_at/id; gudang
 menserialisasi mutation setempat mengikuti posting opening existing. Balance
 quantity/value harus sama dengan sisa layer sebelum setiap consumption.
 Atomic data/audit, no-negative, actor eksplisit dan waktu server. Fixture demo
-transaksi hanya disposable; database lokal belum dimigrasikan pada increment ini.
+transaksi hanya disposable. Schema lokal diterapkan additive pada increment ini
+setelah QA MySQL agar query kartu tetap berjalan, dengan fingerprint seluruh
+kolom existing; tidak membuat pengeluaran pada database pengguna.
 Down migration menolak bila pengeluaran nyata ada, bukan menghapus histori.
 
-Full suite Increment 1: 363 tests/2835 assertions PASS. Domain modules juga lulus
-92 tests/967 assertions tanpa bootstrap Laravel. Increment 2..6 masih Planned.
+## Handoff Saat Ini
+
+Increment 2 full suite: 378 tests/2942 assertions PASS; MySQL current read,
+native migration, worker last-stock dan QA browser desktop/tablet PASS.
+Lint/TS/build/Pint PASS. Local Stock migration Ran tanpa pengeluaran pengguna.
+Increment 3..6 masih Planned.
 Belum push karena keseluruhan work item belum selesai.
 
 Rincian hasil increment dan command ada di tasks.md. Data pengguna, Old-docs,

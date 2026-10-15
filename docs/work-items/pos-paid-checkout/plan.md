@@ -3,12 +3,13 @@
 ## Scope
 
 Sesuai README/PRD. Kerjakan risk-first, commit setiap increment yang benar-benar
-lulus. Saat ini jalankan Increment 2; jangan mengaktifkan UI posting parsial.
+lulus. Increment 1 dan 2 selesai; berikutnya Increment 3. Jangan mengaktifkan
+UI posting parsial.
 
 | No | Status | Nama | Perubahan Dan Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- |
 | 1 | Passed | Aturan dan presisi | Dokumen/ADR, Domain settlement dan alokasi FIFO murni, no I/O | RED/GREEN unit, Pint, regresi/full suite, diff |
-| 2 | In Progress | Pengeluaran Stock | Schema additive movement/alokasi, mutation no-negative current lock, query kartu/saldo keluar tanpa join privat POS | SQLite up/down, action/query/audit rollback, MySQL FK/current read |
+| 2 | Passed | Pengeluaran Stock | Schema additive movement/alokasi, mutation no-negative current lock, query kartu/saldo keluar tanpa join privat POS | SQLite up/down, action/query/audit rollback, MySQL FK/current read |
 | 3 | Planned | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
 | 4 | Planned | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
 | 5 | Planned | Checkout UI | Dialog multi-bayar, quote stale/retry, success/bukti snapshot, shortcut dan permission | TS/lint/build, DevTools atau fallback desktop/tablet |
@@ -43,8 +44,9 @@ kontak/rekening sensitif atau seluruh request mentah.
 
 ## Batas Berhenti Dan Rollback
 
-Increment 1 berhenti pada Domain yang teruji dan dokumen, tanpa route/schema/
-provider/UI atau data lokal berubah. Checkout tetap belum tersedia. Berikutnya
+Increment 2 berhenti pada action internal dan query Stock yang teruji, termasuk
+migration lokal additive tanpa pengeluaran pengguna. Belum ada port/route
+pengeluaran publik. Checkout tetap belum tersedia. Berikutnya
 urut sesuai dependency; scope baru harus mendapat persetujuan user.
 
 Sebelum ada schema/data baru, rollback kode melalui commit terpisah sesuai

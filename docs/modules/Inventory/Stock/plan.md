@@ -38,7 +38,8 @@ produksi yang berisi posting memerlukan rencana preservasi data.
 
 Pengeluaran FIFO untuk penjualan disetujui dalam work item terpisah
 [pos-paid-checkout](../../../work-items/pos-paid-checkout/README.md).
-Increment 1 pekerjaan itu hanya Domain alokasi; mutation saldo belum aktif.
+Increment 2 pekerjaan itu selesai: pengeluaran dan query internal Stock teruji,
+belum dihubungkan ke posting POS atau endpoint mutation publik.
 Checklist stok awal di atas tetap selesai dalam batas scope awalnya.
 
 Tidak membuat sales/purchasing/transfer/adjustment/reversal/payment/pricing.

@@ -1,12 +1,18 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Inventory\Items\Application\Contracts\ItemStockLookup;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
+use App\Modules\Inventory\Stock\Application\Actions\IssueStock;
+use App\Modules\Inventory\Stock\Application\Actions\ManageOpening;
+use App\Modules\Inventory\Stock\Application\Actions\PostOpening;
 use App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
+use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseLookup;
 use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 require __DIR__.'/../../vendor/autoload.php';
@@ -35,4 +41,16 @@ foreach (['manager', 'viewer', 'editor'] as $role) {
         $user->givePermissionTo($role === 'viewer' ? ['inventory.stock.view'] : ['inventory.stock.view', 'inventory.stock.manage']);
     }
 }
+if (in_array('--issues', $argv, true)) {
+    $warehouse = collect(app(WarehouseLookup::class)->choices())->firstWhere('code', 'WH-MAIN');
+    $item = collect(app(ItemStockLookup::class)->choices())->firstWhere('sku', 'DEMO-CCTV-UTP-CAT6');
+    $opening = app(ManageOpening::class)->create(['warehouse_id' => $warehouse->id, 'lines' => [
+        ['item_id' => $item->id, 'unit_id' => $item->baseUnitId, 'quantity' => '10', 'unit_cost' => '1000'],
+    ]]);
+    app(PostOpening::class)->handle($opening);
+    app(IssueStock::class)->handle(['warehouse_id' => $warehouse->id, 'source_id' => strtolower((string) Str::ulid()), 'source_number' => 'POS-QA-ISSUE', 'lines' => [
+        ['source_line_id' => strtolower((string) Str::ulid()), 'item_id' => $item->id, 'base_quantity' => '0.5'],
+    ]]);
+}
+
 echo 'Fixture stok siap.';

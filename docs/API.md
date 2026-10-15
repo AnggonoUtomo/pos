@@ -465,3 +465,11 @@ terkait dalam transaction default bersama; adapter Stock memakai current read.
 Riwayat saldo/movement/layer tidak boleh diputus melalui delete/nonaktif master.
 StockRepository adalah port internal, bukan public mutation lintas module.
 Belum ada port/event FIFO keluar karena belum ada consumer transaksi.
+
+IssueStock kini action internal Stock, bukan published service untuk POS atau
+endpoint baru. StockRepository tetap port internal; outflow dipakai IssueStock.
+`inventory.stock.data?tab=movements` tetap route existing dengan permission
+inventory.stock.view, tetapi quantity/total_value dapat signed negatif untuk
+sale. Snapshot sumber menghasilkan number/SKU/item/base-unit/gudang tanpa join
+privat POS. Opening legacy tetap terlihat; filter/pagination existing berlaku.
+Tidak ada route store/delete pengeluaran atau bypass permission melalui UI.

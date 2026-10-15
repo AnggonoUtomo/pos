@@ -20,8 +20,10 @@ baris dokumen, dan stok awal hanya sekali per pasangan barang + gudang.
 6. Pasangan barang + gudang yang sudah mempunyai saldo/histori tidak boleh
    menerima stok awal kedua. Unique constraint dan lock master melindungi race.
 7. Kuantitas/harga pokok positif, maksimum 100 baris, item tidak berulang.
-8. Urutan layer kelak berdasarkan waktu posting lalu ULID, per item + warehouse.
-   Pengeluaran/consumption FIFO belum dibuat karena belum ada consumer nyata.
+8. Urutan layer berdasarkan received_at lalu ULID, per item + warehouse.
+   Pengeluaran internal tersedia melalui IssueStock pada work item
+   [checkout lunas](../../../work-items/pos-paid-checkout/README.md), belum
+   consumer checkout POS atau endpoint pengeluaran publik.
 
 ## Presisi Dan Snapshot
 
@@ -35,7 +37,8 @@ baris dokumen, dan stok awal hanya sekali per pasangan barang + gudang.
   ratio 12, Rp120000/dus: 24 pcs dan total nilai Rp240000.
 - Original/remaining quantity dan original/remaining value menjadi sumber FIFO.
   Nilai dibagi quantity hanya representasi biaya dasar; pembagian berulang
-  tidak boleh membuang residual nilai ketika consumer FIFO kelak dibuat.
+  tidak boleh membuang residual nilai. FifoAllocation membulatkan turun partial
+  scale6 dan menguras seluruh remaining_value pada full drain sesuai ADR-012.
 - Snapshot SKU/nama barang, satuan/base unit, rasio, nama/kode gudang dan harga
   pokok disimpan pada posting. Rename master tidak mengubah histori.
 - Tanggal posting berasal dari server; backdating/nomor dokumen custom ditunda.
@@ -49,13 +52,32 @@ Application memakai port repository serta lookup publik; adapter DB milik Stock
 tidak mengimpor model privat module lain.
 
 Tabel ULID: stock_openings, stock_opening_lines, stock_balances,
-stock_movements, fifo_layers. Hanya stock_openings draft menggunakan soft delete.
+stock_movements, fifo_layers, stock_issues, stock_issue_lines dan
+fifo_consumptions. Hanya stock_openings draft menggunakan soft delete.
 Lines draft diganti dalam transaksi saat edit; lines posted, balance, movement,
 layer tidak menyediakan delete bebas. FK restrict menjaga referensi master.
 Audit created/updated/deleted/restored/posted atomic dengan mutation.
 Lock order: dokumen existing, gudang, satuan terurut, barang terurut; posting
 pasangan kosong diserialisasi melalui lock gudang. Guard master memeriksa
 histori setelah lock master yang sama, bukan query tanpa lock.
+
+IssueStock memvalidasi source_id/source_number dan 1..100 source_line_id unik,
+item_id serta base_quantity decimal string positif. Konversi satuan authoritative
+menjadi tanggung jawab consumer POS kelak; tidak menerima harga atau rasio bebas.
+Action internal mengunci gudang, base units terurut, items terurut, balance dan
+layers current read. Gudang menserialisasi pengeluaran setempat. Quantity/value
+saldo harus sama dengan sisa layer sebelum mengeluarkan setiap baris.
+
+Satu source sale hanya sekali: payload normal sama replay tanpa data/audit baru,
+beda ditolak. Source_line_id unique lintas issue mencegah pemakaian ulang baris.
+Saldo nol tetap ada, original layer tidak diubah. Movement sale negatif,
+issue line/consumption positif. Audit wajib tersimpan (termasuk menolak veto),
+actor eksplisit/null anonymous; posted tanpa edit/soft delete. Down migration
+menolak jika stock_issues berisi data, bukan shortcut menghapus histori.
+
+Kartu stok menampilkan snapshot movement sale dan fallback legacy opening lewat
+left join tabel Stock sendiri. Field quantity/value dapat negatif. Pembayaran,
+otorisasi HTTP posting dan atomicity lintas POS/Finance belum tersedia.
 
 ## Guard Master Dan Public Boundary
 

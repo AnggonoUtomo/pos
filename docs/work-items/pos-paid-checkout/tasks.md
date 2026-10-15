@@ -44,7 +44,12 @@
   - Acceptance: saldo serta layer current-read terlock per item/gudang, HPP
     residual benar, query menampilkan sale dan opening tanpa model privat POS.
   - Verification: action/query/rollback tests, MySQL current-read/concurrency.
-- [ ] Verifikasi dan commit.
+- [x] UI signed quantity dan migration lokal additive terverifikasi.
+  - Acceptance: -0,5 tetap negatif, kartu memuat opening/sale dan readonly;
+    fingerprint existing identik, tabel issue pengguna kosong.
+  - Verification: format test, TS/lint/build, DevTools smoke/Playwright terisolasi
+    desktop/tablet dan apply-stock-issues-local yang diulang.
+- [x] Verifikasi dan commit.
   - Acceptance: tidak ada port publik tanpa consumer yang terpasang.
   - Verification: boundary review, focused/regresi dan diff check.
 
@@ -109,13 +114,21 @@
 - [x] UI/build/migration/DevTools dinyatakan tidak relevan dengan alasan.
 - [x] Risiko integrasi tertulis; commit otomatis dibuat, belum push.
 
-## Hasil Verifikasi
+## Sesudah Increment 2
+
+- [x] Schema/action internal, snapshot/signed query, audit dan replay selesai.
+- [x] Focused/full tests, MySQL native/current read/worker, Pint dan diff PASS.
+- [x] Node format, TS/lint/build, browser desktop/tablet PASS; mobile tidak diuji.
+- [x] Local migration Ran, fingerprint kolom existing terjaga, no demo/grant/reset.
+- [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
+
+## Bukti Command
 
 Increment 2 schema: RED sebelum tabel tersedia. StockIssueSchemaTest dan
 StockSchemaTest 3 tests/28 assertions PASS; up/down disposable mempertahankan
 movement opening dan tidak memberi soft delete pada ledger. SQLite alter-table
 dengan data diuji di luar wrapping transaction test memakai DatabaseMigrations;
-MySQL native alter/current read masih menunggu QA increment ini. Pint PASS.
+MySQL native alter/current read kemudian lulus pada QA di bawah. Pint PASS.
 
 Increment 2 backend: IssueStock RED sebelum action tersedia, lalu focused
 Stock 77 tests/1191 assertions PASS. Kasus mencakup signed movement, actor/
@@ -131,6 +144,37 @@ worker proses terpisah terbukti LOCK WAIT lalu kalah pada stok terakhir,
 tanpa duplicate header/alokasi/audit, FK RESTRICT dan guard transaction.
 Database generated dibersihkan. Bukan load test semua interleaving. Down
 migration melepas FK sebelum index agar compatible MySQL, diuji ulang SQLite.
+
+Penutupan Increment 2 (16 Oktober 2026):
+
+| Command/Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --compact | PASS | 378 tests/2942 assertions |
+| php artisan test --filter=Stock --compact | PASS | 77 tests/1191 assertions |
+| php scripts/qa/stock-issues-mysql.php | PASS | Native up/down, current read/replay, proses worker LOCK WAIT lalu kalah, FK/cleanup |
+| Pint scoped Stock/test/QA | PASS | Tidak memformat SampleUI/LSP/arsip |
+| node scripts/qa/stock-quantity-format.mjs | PASS | 11 kasus, RED -0,5 menjadi positif sebelum fix |
+| npx tsc --noEmit; npx eslint resources/js; npm run build | PASS | Build 2704 modules, tanpa perubahan theme |
+| DevTools MCP list_pages/new_page/evaluate_script | PASS smoke | Konteks terisolasi, pos.test/inventory/stock redirect login, 21 asset, no body overflow; bukan authenticated CRUD |
+| node scripts/qa/stock-issues-browser.mjs | PASS | Fixture kabel UTP CCTV, 0,5m keluar/9,5m sisa, search sumber, readonly, console kosong |
+| php scripts/qa/apply-stock-issues-local.php (dua kali) | PASS | Ran batch11; seluruh kolom existing, akun/grant/stok/harga/audit/Finance identik; tidak seed pengeluaran |
+| route:list --path=inventory/stock dan migrate:status path Stock | PASS | 7 route unchanged; migration foundation dan issue Ran |
+
+Screenshot/report ignored: storage/framework/testing/
+stock-browser-7d9c064b8ee3e1b4/report.json. Desktop1440x1000, tablet1024x768/
+768x1024, Light/Dark, sidebar expanded/collapsed; gambar diperiksa visual.
+Artefak fixture tidak mencerminkan transaksi database user. Tidak ada port
+mutation publik, payment record atau posting invoice/POS yang diaktifkan.
+
+Gap existing di luar scope: tombol Tema kehilangan accessible name di bawah xl
+karena label hidden. QA memilih mode di desktop lalu memeriksa tablet Dark;
+komponen/theme global tidak diubah. Guard/action Stock bukan authorization
+publik; consumer POS harus memasang permission dan transaction boundary pada
+Increment 4. Sampel/source_line_id belum FK ke tabel POS yang belum tersedia.
+
+Save point Increment 2: d47eb92 schema, 7550ed4 action/MySQL. Seluruh commit
+masih lokal sampai work item selesai atau user meminta push. Old-docs,
+SampleUI, empat LSP user, grant/password dan konfigurasi lingkungan tidak disentuh.
 
 Review source/schema/quote dan dokumen PASS. Pemeriksaan tautan lokal pada
 sembilan dokumen scope serta git diff --check PASS.
@@ -163,8 +207,8 @@ Penutupan Increment 1:
 | TS/lint/build/UI/DevTools/MySQL/migration | SKIPPED | Tidak ada frontend, route, schema, adapter atau runtime consumer berubah; bukan bukti checkout/concurrency |
 
 Commit save point: fb5abf4 dokumen, 601745f settlement, 8657192 FIFO.
-Tidak ada perubahan database lokal, grant, credential, seeder, theme atau
+Pada Increment 1 tidak ada perubahan database lokal, grant, credential, seeder, theme atau
 Old-docs/SampleUI/LSP. Tidak ada public port/event/adapter baru tanpa consumer.
-Increment 2..6 belum dikerjakan; tidak push sampai work item selesai atau
-instruksi eksplisit user. Langkah berikutnya: Stock outflow dan query kartu
-stok dengan traceability sumber, locking dan rollback yang teruji.
+Status terkini: Increment 1 dan 2 Passed; Increment 3..6 belum dikerjakan.
+Tidak push sampai work item selesai atau instruksi eksplisit user.
+Langkah berikutnya: payment record dan guard histori Finance/Payments.

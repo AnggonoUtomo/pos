@@ -38,7 +38,7 @@ export function DataTable({
             ? ['Dokumen', 'Gudang', 'Status', 'Baris', 'Operasi']
             : tab === 'balances'
               ? ['Barang', 'Gudang', 'Saldo dasar', 'Nilai stok']
-              : ['Waktu', 'Dokumen', 'Barang', 'Gudang', 'Masuk', 'Nilai'];
+              : ['Waktu', 'Dokumen', 'Barang', 'Gudang', 'Masuk / keluar', 'Nilai'];
     return (
         <table className="w-full min-w-[650px] text-sm">
             <thead className="bg-muted/40">

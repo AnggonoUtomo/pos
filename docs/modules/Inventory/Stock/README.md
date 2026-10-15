@@ -51,12 +51,16 @@ lagi; marker demo existing termasuk terhapus tidak ditimpa.
 
 Ledger/layer posted tidak menggunakan soft delete. Draft bisa soft delete dan
 restore. Koreksi posted memerlukan capability reversal/adjustment terpisah.
-FIFO consumption, saldo keluar dan no-negative outflow belum diimplementasikan.
+Pengeluaran internal melalui IssueStock sudah menyimpan saldo/movement keluar,
+consumption FIFO, snapshot dan audit secara atomic. Belum ada route pengeluaran
+publik atau consumer checkout POS. Referensi source dan line opaque ULID milik
+penjualan kelak; bukan FK ke model POS privat.
 
 Pekerjaan lanjutan [checkout lunas](../../../work-items/pos-paid-checkout/README.md):
-Increment 1 sudah menambahkan Domain FifoAllocation dengan preservasi residual
-yang teruji. Belum ada adapter/consumer atau mutation saldo keluar; perhitungan
-murni ini bukan bukti locking atau pengeluaran stok nyata.
+Domain FifoAllocation dipakai action internal IssueStock. MySQL disposable
+menguji current read dan worker simultan berebut stok terakhir. Ledger memakai
+quantity/nilai signed; issue line dan alokasi tetap positif. Local migration
+additive sudah diterapkan tanpa pengeluaran demo, grant atau reset data.
 
 Lihat [specification.md](specification.md), [plan.md](plan.md), dan
 [tasks.md](tasks.md) untuk aturan dan hasil implementasi aktual.
