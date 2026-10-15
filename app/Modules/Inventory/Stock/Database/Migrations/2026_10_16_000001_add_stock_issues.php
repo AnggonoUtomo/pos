@@ -70,8 +70,9 @@ return new class extends Migration
         }
         Schema::dropIfExists('fifo_consumptions');
         Schema::table('stock_movements', function (Blueprint $table): void {
+            $table->dropForeign(['issue_line_id']);
             $table->dropUnique(['issue_line_id']);
-            $table->dropConstrainedForeignId('issue_line_id');
+            $table->dropColumn('issue_line_id');
             $table->dropColumn(['source_number', 'sku', 'item_name', 'base_unit_name', 'warehouse_code', 'warehouse_name']);
         });
         Schema::table('stock_movements', fn (Blueprint $table) => $table->foreignUlid('opening_line_id')->nullable(false)->change());

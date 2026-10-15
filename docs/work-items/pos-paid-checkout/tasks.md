@@ -40,7 +40,7 @@
   - Acceptance: opening existing tidak diubah; posted tidak soft delete,
     traceability sumber dan uniqueness mencegah consumption ganda.
   - Verification: migration up/down disposable, persistence/FK tests.
-- [ ] Mutation pengeluaran, kartu/saldo dan audit atomic.
+- [x] Mutation pengeluaran, kartu/saldo dan audit atomic.
   - Acceptance: saldo serta layer current-read terlock per item/gudang, HPP
     residual benar, query menampilkan sale dan opening tanpa model privat POS.
   - Verification: action/query/rollback tests, MySQL current-read/concurrency.
@@ -116,6 +116,21 @@ StockSchemaTest 3 tests/28 assertions PASS; up/down disposable mempertahankan
 movement opening dan tidak memberi soft delete pada ledger. SQLite alter-table
 dengan data diuji di luar wrapping transaction test memakai DatabaseMigrations;
 MySQL native alter/current read masih menunggu QA increment ini. Pint PASS.
+
+Increment 2 backend: IssueStock RED sebelum action tersedia, lalu focused
+Stock 77 tests/1191 assertions PASS. Kasus mencakup signed movement, actor/
+snapshot, replay canonical/payload conflict, agregat dua baris, multigudang,
+referensi source line unique, inactive master, corruption guard, dua layer
+received_at/id, residual persisted dan rollback sesudah persist/audit gagal.
+Test audit veto RED lalu GREEN setelah activity.exists wajib diperiksa.
+Full suite 378 tests/2942 assertions PASS.
+
+php scripts/qa/stock-issues-mysql.php PASS: native up/down legacy-preserving,
+RR stale balance/source current read, replay lines fresh, pecahan exact,
+worker proses terpisah terbukti LOCK WAIT lalu kalah pada stok terakhir,
+tanpa duplicate header/alokasi/audit, FK RESTRICT dan guard transaction.
+Database generated dibersihkan. Bukan load test semua interleaving. Down
+migration melepas FK sebelum index agar compatible MySQL, diuji ulang SQLite.
 
 Review source/schema/quote dan dokumen PASS. Pemeriksaan tautan lokal pada
 sembilan dokumen scope serta git diff --check PASS.

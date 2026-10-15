@@ -4,6 +4,8 @@ namespace App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
+use App\Modules\Inventory\Stock\Domain\ValueObjects\FifoAllocation;
+use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockIssue;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockOpening;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Carbon;
@@ -116,20 +118,33 @@ class EloquentStockRepository implements StockRepository, StockUsage
             $rows = $paginator->getCollection()->map(fn ($record) => $record->toArray() + [
                 'lines' => ($lines[$record->id] ?? collect())->map(fn ($line) => $this->normalizeLine((array) $line))->all(),
             ])->all();
+        } elseif ($tab === 'movements') {
+            $fields = ['sku' => 'line.sku', 'item_name' => 'line.item_name', 'base_unit_name' => 'line.base_unit_name',
+                'number' => 'opening.number', 'warehouse_name' => 'opening.warehouse_name', 'warehouse_code' => 'opening.warehouse_code'];
+            $expressions = [];
+            $query = DB::table('stock_movements as ledger')->leftJoin('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
+                ->leftJoin('stock_openings as opening', 'opening.id', '=', 'line.opening_id')->select('ledger.*');
+            foreach ($fields as $alias => $fallback) {
+                $column = $alias === 'number' ? 'source_number' : $alias;
+                $expressions[$alias] = 'COALESCE(ledger.'.$column.', '.$fallback.')';
+                $query->addSelect(DB::raw($expressions[$alias].' as '.$alias));
+            }
+            $query->when($filters['warehouse_id'] ?? '', fn ($q, $id) => $q->where('ledger.warehouse_id', $id))
+                ->when($filters['item_id'] ?? '', fn ($q, $id) => $q->where('ledger.item_id', $id))
+                ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row
+                    ->whereRaw($expressions['sku'].' like ?', ['%'.$search.'%'])->orWhereRaw($expressions['item_name'].' like ?', ['%'.$search.'%'])
+                    ->orWhereRaw($expressions['number'].' like ?', ['%'.$search.'%'])));
+            $paginator = $query->orderBy('ledger.posted_at')->orderBy('ledger.id')->paginate(25, page: $page);
+            $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
         } else {
-            $table = $tab === 'balances' ? 'stock_balances' : 'stock_movements';
-            $query = DB::table($table.' as ledger')->join('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
+            $query = DB::table('stock_balances as ledger')->join('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
                 ->join('stock_openings as opening', 'opening.id', '=', 'line.opening_id')
                 ->select(['ledger.*', 'line.sku', 'line.item_name', 'line.base_unit_name', 'opening.number', 'opening.warehouse_name', 'opening.warehouse_code'])
                 ->when($filters['warehouse_id'] ?? '', fn ($q, $id) => $q->where('ledger.warehouse_id', $id))
                 ->when($filters['item_id'] ?? '', fn ($q, $id) => $q->where('ledger.item_id', $id))
                 ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->where('line.sku', 'like', '%'.$search.'%')
                     ->orWhere('line.item_name', 'like', '%'.$search.'%')->orWhere('opening.number', 'like', '%'.$search.'%')));
-            if ($tab === 'movements') {
-                $query->orderBy('ledger.posted_at')->orderBy('ledger.id');
-            } else {
-                $query->orderBy('line.sku')->orderBy('ledger.id');
-            }
+            $query->orderBy('line.sku')->orderBy('ledger.id');
             $paginator = $query->paginate(25, page: $page);
             $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
         }
@@ -144,6 +159,88 @@ class EloquentStockRepository implements StockRepository, StockUsage
             ->map(function ($line): array {
                 return $this->normalizeLine((array) $line);
             })->all();
+    }
+
+    public function lockIssueBySource(string $sourceId): ?array
+    {
+        $this->assertTransaction();
+        $row = DB::table('stock_issues')->where('source_type', 'sale')->where('source_id', $sourceId)->lockForUpdate()->first();
+        if ($row === null) {
+            return null;
+        }
+        $result = (array) $row;
+        $result['lines'] = DB::table('stock_issue_lines')->where('issue_id', $row->id)->orderBy('line_number')->lockForUpdate()->get()
+            ->map(fn ($line) => $this->normalizeLine((array) $line))->all();
+
+        return $result;
+    }
+
+    public function createIssue(array $header): string
+    {
+        $this->assertTransaction();
+        $issue = StockIssue::create($header);
+        if (! $issue->exists) {
+            throw new \RuntimeException('Dokumen pengeluaran tidak tersimpan.');
+        }
+
+        return $issue->id;
+    }
+
+    public function lockIssueInventory(string $warehouseId, string $itemId): array
+    {
+        $this->assertTransaction();
+        $balance = DB::table('stock_balances')->where('warehouse_id', $warehouseId)->where('item_id', $itemId)->lockForUpdate()->first();
+        $layers = DB::table('fifo_layers')->where('warehouse_id', $warehouseId)->where('item_id', $itemId)
+            ->orderBy('received_at')->orderBy('id')->lockForUpdate()->get()->map(fn ($row) => (array) $row)->all();
+
+        return [$balance === null ? null : (array) $balance, $layers];
+    }
+
+    public function postIssueLine(string $issueId, array $header, array $line, FifoAllocation $allocation, array $balance): void
+    {
+        $this->assertTransaction();
+        $lineId = (string) Str::ulid();
+        DB::table('stock_issue_lines')->insert($line + ['id' => $lineId, 'issue_id' => $issueId, 'quantity' => $allocation->quantity, 'total_value' => $allocation->value]);
+        $movementId = (string) Str::ulid();
+        DB::table('stock_movements')->insert(['id' => $movementId, 'warehouse_id' => $header['warehouse_id'], 'item_id' => $line['item_id'],
+            'issue_line_id' => $lineId, 'type' => 'sale', 'quantity' => (string) BigDecimal::of($allocation->quantity)->negated(),
+            'total_value' => (string) BigDecimal::of($allocation->value)->negated(), 'posted_at' => $header['posted_at'],
+            'source_number' => $header['source_number'], 'sku' => $line['sku'], 'item_name' => $line['item_name'],
+            'base_unit_name' => $line['base_unit_name'], 'warehouse_name' => $header['warehouse_name'], 'warehouse_code' => $header['warehouse_code']]);
+        foreach ($allocation->allocations as $row) {
+            DB::table('fifo_consumptions')->insert(['id' => (string) Str::ulid(), 'movement_id' => $movementId, 'fifo_layer_id' => $row['layer_id'],
+                'quantity' => $row['quantity'], 'total_value' => $row['value']]);
+            if (DB::table('fifo_layers')->where('id', $row['layer_id'])->update(['remaining_quantity' => $row['remaining_quantity'], 'remaining_value' => $row['remaining_value']]) !== 1) {
+                throw new \RuntimeException('Layer FIFO tidak diperbarui.');
+            }
+        }
+        if (DB::table('stock_balances')->where('warehouse_id', $header['warehouse_id'])->where('item_id', $line['item_id'])->update($balance + ['updated_at' => now()]) !== 1) {
+            throw new \RuntimeException('Saldo stok tidak diperbarui.');
+        }
+    }
+
+    public function auditIssue(string $id, ?int $actorId): void
+    {
+        $this->assertTransaction();
+        $issue = StockIssue::findOrFail($id);
+        $logger = activity('inventory.stock')->performedOn($issue)->event('issued')
+            ->withProperties(['source_type' => $issue->source_type, 'source_id' => $issue->source_id, 'number' => $issue->source_number, 'warehouse_id' => $issue->warehouse_id]);
+        if ($actorId === null) {
+            $logger->causedByAnonymous();
+        } else {
+            $logger->causedBy($actorId);
+        }
+        $activity = $logger->log('Pengeluaran stok penjualan');
+        if ($activity === null || ! $activity->exists) {
+            throw new \RuntimeException('Audit pengeluaran stok tidak tersimpan.');
+        }
+    }
+
+    private function assertTransaction(): void
+    {
+        if (DB::transactionLevel() === 0) {
+            throw new \LogicException('Mutation/locking pengeluaran memerlukan transaction default.');
+        }
     }
 
     private function normalizeLine(array $line): array

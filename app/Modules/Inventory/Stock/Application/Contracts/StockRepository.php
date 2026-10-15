@@ -2,6 +2,8 @@
 
 namespace App\Modules\Inventory\Stock\Application\Contracts;
 
+use App\Modules\Inventory\Stock\Domain\ValueObjects\FifoAllocation;
+
 interface StockRepository
 {
     public function createDraft(array $header, array $lines): string;
@@ -19,4 +21,14 @@ interface StockRepository
     public function postOpening(string $id, array $header, array $lines, ?int $actorId): void;
 
     public function paginate(string $tab, int $page, array $filters): array;
+
+    public function lockIssueBySource(string $sourceId): ?array;
+
+    public function createIssue(array $header): string;
+
+    public function lockIssueInventory(string $warehouseId, string $itemId): array;
+
+    public function postIssueLine(string $issueId, array $header, array $line, FifoAllocation $allocation, array $balance): void;
+
+    public function auditIssue(string $id, ?int $actorId): void;
 }
