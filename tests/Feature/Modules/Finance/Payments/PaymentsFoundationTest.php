@@ -174,10 +174,13 @@ class PaymentsFoundationTest extends TestCase
 
     public function test_migration_can_roll_back_and_reapply(): void
     {
+        $receipts = require app_path('Modules/Finance/Payments/Database/Migrations/2026_10_16_000002_create_payment_receipts.php');
+        $receipts->down();
         $migration = require app_path('Modules/Finance/Payments/Database/Migrations/2026_10_15_000001_create_payment_masters.php');
         $migration->down();
         $this->assertFalse(Schema::hasTable('payment_accounts'));
         $migration->up();
+        $receipts->up();
         $this->assertTrue(Schema::hasTable('payment_methods'));
     }
 }

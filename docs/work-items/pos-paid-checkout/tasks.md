@@ -55,6 +55,14 @@
 
 ## Increment 3: Payment Record
 
+- [x] Rencana schema, locking, replay dan batas histori dijelaskan sebelum coding.
+  - Acceptance: action internal Finance, tanpa route posting/port lintas module
+    prematur; metadata rekening tidak disalin ke snapshot atau audit.
+  - Verification: review source master, ADR-012 dan rencana di bawah.
+- [x] Schema additive payment_receipts/payment_records dan test migration.
+  - Acceptance: ULID, uang decimal30,2, sumber sale unik, FK RESTRICT,
+    tanpa soft delete; down ditolak jika sudah berisi penerimaan posted.
+  - Verification: RED/GREEN schema/up/down dan regresi migration master.
 - [ ] Schema/action penerimaan penjualan, snapshot dan guard master.
   - Acceptance: applied_amount net, tendered/change tersimpan terpisah; record
     immutable, metode/akun aktif/type cocok dan histori tidak terputus.
@@ -62,6 +70,34 @@
 - [ ] Verifikasi dan commit.
   - Acceptance: belum membuat saldo awal bank, grant atau payment gateway.
   - Verification: focused/regresi/MySQL dan diff check.
+
+### Rencana Teknis Increment 3
+
+RecordSalePayment menerima source_id/source_number, total dan daftar method_id/
+amount berupa decimal string. Jenis metode dan akun hanya diambil dari master,
+bukan input caller. Header payment_receipts memiliki sumber sale unik, hash
+payload canonical termasuk actor, total/tendered/change dan waktu posting.
+payment_records menyimpan urutan, FK metode/akun, snapshot code/name/type dan
+tendered_amount/applied_amount/change_amount. Applied adalah penerimaan bersih;
+bukan running balance atau jurnal accounting. Tidak menyalin metadata rekening.
+
+Urutan lock: discovery assignment metode, akun unik terurut, metode unik terurut,
+lalu receipt sumber dan barisnya (current read). Assignment yang berubah setelah
+discovery ditolak; master harus aktif dan type kompatibel untuk posting baru.
+Replay hash sama mengembalikan snapshot tersimpan tanpa audit/record baru;
+perubahan nama master tidak mengganti snapshot. Hash beda ditolak. Unique sumber
+tetap menjadi pengaman DB; transaksi retry terbatas untuk deadlock.
+
+Metode yang memiliki payment_records tidak boleh dihapus, dinonaktifkan, diganti
+type atau dipindah akun. Nama/kode boleh diedit. Akun mempertahankan guard metode
+existing dan menambah guard histori langsung; histori tetap melindungi akun bila
+assignment diubah di luar aplikasi. Guard memakai current read di bawah lock
+master, bukan snapshot RR. Audit wajib berhasil dalam transaction yang sama.
+
+Demo transaksi hanya fixture disposable, bukan seeder posted pada database user.
+Aktivasi lokal hanya migration additive dengan fingerprint existing, tanpa
+grant/password/reset. QA MySQL meliputi precision, FK, stale master/assignment,
+histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkout.
 
 ## Increment 4: Posting POS Atomic
 
@@ -123,6 +159,12 @@
 - [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
 
 ## Bukti Command
+
+Increment 3 schema: PaymentReceiptSchemaTest RED sebelum tabel tersedia,
+lalu GREEN bersama PaymentsFoundationTest (10 tests/51 assertions). Up/down
+empty additive dan regresi migration master PASS; Pint tiga file PASS.
+FK/native MySQL dan larangan down data posted diverifikasi pada task action.
+Schema belum diaktifkan pada database lokal dalam save point ini.
 
 Increment 2 schema: RED sebelum tabel tersedia. StockIssueSchemaTest dan
 StockSchemaTest 3 tests/28 assertions PASS; up/down disposable mempertahankan
