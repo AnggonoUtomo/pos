@@ -33,7 +33,10 @@
 
 ## Increment 2: Pengeluaran Stock
 
-- [ ] Migration additive movement sumber sale dan alokasi layer.
+- [x] Scope/action internal, signing movement, schema/snapshot, lock order dan
+  QA/replay/rollback dijelaskan sebelum coding pada README work item.
+
+- [x] Migration additive movement sumber sale dan alokasi layer.
   - Acceptance: opening existing tidak diubah; posted tidak soft delete,
     traceability sumber dan uniqueness mencegah consumption ganda.
   - Verification: migration up/down disposable, persistence/FK tests.
@@ -107,6 +110,12 @@
 - [x] Risiko integrasi tertulis; commit otomatis dibuat, belum push.
 
 ## Hasil Verifikasi
+
+Increment 2 schema: RED sebelum tabel tersedia. StockIssueSchemaTest dan
+StockSchemaTest 3 tests/28 assertions PASS; up/down disposable mempertahankan
+movement opening dan tidak memberi soft delete pada ledger. SQLite alter-table
+dengan data diuji di luar wrapping transaction test memakai DatabaseMigrations;
+MySQL native alter/current read masih menunggu QA increment ini. Pint PASS.
 
 Review source/schema/quote dan dokumen PASS. Pemeriksaan tautan lokal pada
 sembilan dokumen scope serta git diff --check PASS.

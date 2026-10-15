@@ -21,11 +21,14 @@ class StockSchemaTest extends TestCase
 
     public function test_migration_down_up_is_reversible_on_disposable_database(): void
     {
+        $issues = require app_path('Modules/Inventory/Stock/Database/Migrations/2026_10_16_000001_add_stock_issues.php');
+        $issues->down();
         $migration = require app_path('Modules/Inventory/Stock/Database/Migrations/2026_10_12_000001_create_stock_foundation_tables.php');
         $migration->down();
         $this->assertFalse(Schema::hasTable('stock_openings'));
         $this->assertTrue(Schema::hasTable('items'));
         $migration->up();
+        $issues->up();
         $this->assertTrue(Schema::hasTable('fifo_layers'));
     }
 }

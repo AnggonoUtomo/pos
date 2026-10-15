@@ -84,6 +84,31 @@ lengkap. Tidak mengubah theme, grant/akun/password atau dependency.
 
 ## Handoff Saat Ini
 
+## Desain Increment 2
+
+Stock memiliki stock_issues (sumber sale/ULID/nomor/gudang/hash/actor/waktu),
+stock_issue_lines (source_line_id/item/base unit/snapshot/quantity/nilai) dan
+fifo_consumptions (movement/layer/quantity/nilai). Tidak ada soft delete.
+Referensi sale/line opaque tervalidasi ULID, belum FK ke tabel POS yang belum
+ada. Semua FK internal Stock restrict; source_type/source_id dan line source
+unik. Source sama/payload normal sama replay tanpa mutation; payload beda ditolak.
+
+stock_movements.opening_line_id menjadi nullable, tambah issue_line_id unique
+dan snapshot sumber untuk pengeluaran. Opening existing tidak dibackfill/diubah.
+Movement sale quantity/nilai signed negatif; issue line/consumption positif.
+Query movement memakai snapshot sendiri dan fallback left join opening lama.
+Balance tetap memakai identitas opening existing; saldo nol tidak dihapus.
+
+IssueStock adalah action internal, belum published contract atau route publik.
+Input base_quantity berasal dari konversi authoritative POS kelak, bukan input
+harga/rasio bebas. Memakai lookup publik Warehouse/Units/Items. Lock gudang,
+base units terurut, items terurut, balance lalu layer received_at/id; gudang
+menserialisasi mutation setempat mengikuti posting opening existing. Balance
+quantity/value harus sama dengan sisa layer sebelum setiap consumption.
+Atomic data/audit, no-negative, actor eksplisit dan waktu server. Fixture demo
+transaksi hanya disposable; database lokal belum dimigrasikan pada increment ini.
+Down migration menolak bila pengeluaran nyata ada, bukan menghapus histori.
+
 Full suite Increment 1: 363 tests/2835 assertions PASS. Domain modules juga lulus
 92 tests/967 assertions tanpa bootstrap Laravel. Increment 2..6 masih Planned.
 Belum push karena keseluruhan work item belum selesai.
