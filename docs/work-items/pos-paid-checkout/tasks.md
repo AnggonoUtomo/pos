@@ -63,11 +63,11 @@
   - Acceptance: ULID, uang decimal30,2, sumber sale unik, FK RESTRICT,
     tanpa soft delete; down ditolak jika sudah berisi penerimaan posted.
   - Verification: RED/GREEN schema/up/down dan regresi migration master.
-- [ ] Schema/action penerimaan penjualan, snapshot dan guard master.
+- [x] Schema/action penerimaan penjualan, snapshot dan guard master.
   - Acceptance: applied_amount net, tendered/change tersimpan terpisah; record
     immutable, metode/akun aktif/type cocok dan histori tidak terputus.
   - Verification: action/HTTP bila tersedia, migration/rollback/privacy tests.
-- [ ] Verifikasi dan commit.
+- [x] Verifikasi dan commit.
   - Acceptance: belum membuat saldo awal bank, grant atau payment gateway.
   - Verification: focused/regresi/MySQL dan diff check.
 
@@ -160,6 +160,15 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 
 ## Bukti Command
 
+### Sesudah Increment 3
+
+- [x] Schema/action internal, snapshot/net cash, audit dan guard histori selesai.
+- [x] Full/focused tests, MySQL current read/worker/precision, Pint dan diff PASS.
+- [x] DevTools smoke dan regresi browser desktop/tablet PASS; cakupan dibedakan.
+- [x] Migration lokal Ran, fingerprint existing identik, tanpa seeder/grant/reset.
+- [x] Review correctness/arsitektur/privacy/performance dan dokumen aktual PASS.
+- [x] Save point otomatis; belum push, checkout tetap belum aktif.
+
 Increment 3 schema: PaymentReceiptSchemaTest RED sebelum tabel tersedia,
 lalu GREEN bersama PaymentsFoundationTest (10 tests/51 assertions). Up/down
 empty additive dan regresi migration master PASS; Pint tiga file PASS.
@@ -173,6 +182,37 @@ canonical retry, source conflict, inactive/deleted/type, whitelist, history HTTP
 termasuk super-system, rollback audit/veto, FK dan populated down terverifikasi.
 Presisi besar di atas integer aman JS dan batas decimal30,2 diuji native MySQL,
 bukan dianggap terbukti oleh storage decimal SQLite yang memiliki batas berbeda.
+
+Penutupan Increment 3 (16 Oktober 2026):
+
+| Command/Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --compact | PASS | 390 tests/3045 assertions |
+| php artisan test --filter=RecordSalePaymentTest --compact | PASS | 11 tests/96 assertions, termasuk HTTP guard super-system |
+| php scripts/qa/payment-records-mysql.php | PASS | Native empty up/down, RR stale account/method/assignment, replay fresh, guard histori current, nominal besar/max, worker LOCK WAIT/replay, FK dan cleanup |
+| Pint scoped Finance/test/QA | PASS | Tidak memformat file user/arsip |
+| DevTools list_pages/new_page/evaluate_script/console/network | PASS smoke | Finance redirect login, 21 asset build/200, console kosong/no overflow; bukan authenticated CRUD |
+| node scripts/qa/payments-browser.mjs | PASS | CRUD/restore master, relasi/guard existing, shortcut/palette, viewer/outsider, desktop/tablet Light/Dark |
+| php scripts/qa/apply-payment-records-local.php | PASS | Ran batch12, fingerprint semua tabel existing selain metadata migrations identik; no demo/grant/reset |
+| route:list --path=finance dan migrate:status path Finance | PASS | 12 route unchanged, dua migration Ran |
+| TS/lint/build | SKIPPED | Tidak ada frontend berubah; browser menggunakan build existing yang telah lulus Increment 2 |
+
+Screenshot/report ignored: storage/framework/testing/
+payments-browser-7783b021c052a2bb/report.json. Desktop1440x1000, tablet1024x768/
+768x1024, Light/Dark, expanded/collapsed; screenshot desktop dan form portrait
+diperiksa visual. Guard histori baru diuji HTTP/action/MySQL; browser menjalankan
+regresi master existing, bukan UI checkout atau klaim test guard histori baru.
+Server/browser fixture ditutup. Mobile tidak diuji.
+
+Percobaan awal fingerprint berhenti sebelum migration karena getTableListing
+tanpa schema mengembalikan tabel lintas database. Diperbaiki dengan schema
+database aktif eksplisit; error output helper kini teredaksi dan exit1. Aktivasi
+kemudian lulus. Tidak ada demo transaksi atau data aplikasi existing diubah.
+
+Save point Increment 3: a33e27e schema, bcaa1f0 action/snapshot/guard.
+Action tetap internal Finance; belum menjadi permission authority atau public
+payment endpoint. Port lintas module/orkestrasi invoice belum tersedia. Unique
+sumber bukan bukti atomic checkout Stock+Finance sebelum Increment 4 selesai.
 
 Increment 2 schema: RED sebelum tabel tersedia. StockIssueSchemaTest dan
 StockSchemaTest 3 tests/28 assertions PASS; up/down disposable mempertahankan
@@ -259,6 +299,6 @@ Penutupan Increment 1:
 Commit save point: fb5abf4 dokumen, 601745f settlement, 8657192 FIFO.
 Pada Increment 1 tidak ada perubahan database lokal, grant, credential, seeder, theme atau
 Old-docs/SampleUI/LSP. Tidak ada public port/event/adapter baru tanpa consumer.
-Status terkini: Increment 1 dan 2 Passed; Increment 3..6 belum dikerjakan.
+Status terkini: Increment 1..3 Passed; Increment 4..6 belum dikerjakan.
 Tidak push sampai work item selesai atau instruksi eksplisit user.
-Langkah berikutnya: payment record dan guard histori Finance/Payments.
+Langkah berikutnya: posting POS atomic melalui published boundary berconsumer nyata.

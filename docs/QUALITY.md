@@ -352,6 +352,29 @@ local, migration harga additive dan demo sembilan SKU yang dikenal. Fingerprint
 akun/grant/master/stok/ledger dan seluruh harga existing diperiksa; seed diulang
 tidak menimpa harga edit/trashed. Tidak ada migrate:fresh atau grant otomatis.
 
+## QA Penerimaan Internal Finance
+
+`php artisan test --filter=RecordSalePaymentTest --compact` mencakup net cash,
+snapshot/privacy/actor, replay canonical/conflict, validasi master, history HTTP
+guard termasuk super-system, assignment recheck, audit veto/rollback dan FK.
+PaymentReceiptSchemaTest mencakup empty up/down additive. SQLite bukan bukti
+row lock atau precision nominal besar native MySQL.
+
+`php scripts/qa/payment-records-mysql.php` hanya membuat database generated
+pos_payment_records_qa_[16hex], tidak menulis transaksi database pengguna.
+Mencakup native migration, RR stale status/assignment, replay/current history,
+nominal di atas integer aman JS dan batas decimal30,2, worker proses terpisah
+terbukti LOCK WAIT lalu replay receipt yang sama, FK RESTRICT serta guard down.
+Database generated dibersihkan, error teredaksi/exit1. Bukan load test seluruh
+interleaving invoice+Stock+Finance sebelum integrasi POS selesai.
+
+`php scripts/qa/apply-payment-records-local.php` hanya migration Finance local
+additive, fingerprint seluruh kolom/tabel pada schema project aktif (kecuali
+metadata migrations). Tidak seed/grant/reset atau membuat transaksi pengguna.
+Tabel baru harus kosong. Jangan down migration yang sudah berisi penerimaan.
+Browser regresi master memakai helper di bawah; guard histori baru diperiksa
+HTTP/action/MySQL, bukan mengklaim UI checkout tersedia.
+
 ## QA Master Finance/Payments
 
 `php artisan test --filter=Payments` mencakup ULID, permission tiap mutation,

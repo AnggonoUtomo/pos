@@ -364,8 +364,13 @@ account membutuhkan permission view; UI daftar menyamarkan nomor rekening.
 Log `finance.payment_accounts`/`finance.payment_methods` atomic dengan mutation.
 Nilai metadata bank tidak masuk audit; perubahan metadata-only mencatat nama
 field saja. No-op tanpa audit. PaymentsRepository adalah port internal, bukan
-published payment boundary. Belum ada consumer payment lintas module, saldo,
-mutasi, payment record atau integrasi checkout POS.
+published payment boundary. RecordSalePayment internal sudah menyimpan
+payment_receipts/payment_records snapshot, applied net, tendered/change dan
+audit received atomic. Tidak ada route penerimaan publik atau consumer lintas
+module sampai Increment 4 checkout. Metode berhistori tidak boleh dihapus,
+dinonaktifkan, diganti type atau pindah akun (422 field payments), termasuk
+super-system; nama/kode tetap boleh berubah. Akun memiliki guard histori langsung.
+Belum ada running balance uang, piutang atau integrasi checkout POS.
 
 ## Contract Lintas Module
 

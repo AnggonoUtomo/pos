@@ -3,7 +3,7 @@
 ## Status
 
 In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
-Increment 1 dan 2 selesai: presisi dan outflow internal Stock teruji;
+Increment 1..3 selesai: presisi, outflow internal Stock dan penerimaan internal Finance teruji;
 checkout belum aktif.
 
 ## Owner Dan Lokasi
@@ -112,10 +112,13 @@ Down migration menolak bila pengeluaran nyata ada, bukan menghapus histori.
 
 ## Handoff Saat Ini
 
-Increment 2 full suite: 378 tests/2942 assertions PASS; MySQL current read,
-native migration, worker last-stock dan QA browser desktop/tablet PASS.
-Lint/TS/build/Pint PASS. Local Stock migration Ran tanpa pengeluaran pengguna.
-Increment 3..6 masih Planned.
+Increment 3 full suite: 390 tests/3045 assertions PASS. RecordSalePayment
+menyimpan receipt/record/snapshot dan audit atomic, kas bersih serta guard histori.
+MySQL native up/down/current read, nominal besar exact, worker retry sumber sama
+dan FK PASS. Browser regresi master desktop/tablet PASS; DevTools smoke login
+PASS, bukan authenticated CRUD. Frontend/theme tidak diubah pada increment ini.
+Migration Finance receipt Ran batch12; fingerprint semua data existing identik,
+tanpa pembayaran pengguna, grant atau reset. Increment 4..6 masih Planned.
 Belum push karena keseluruhan work item belum selesai.
 
 Rincian hasil increment dan command ada di tasks.md. Data pengguna, Old-docs,
