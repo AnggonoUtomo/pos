@@ -25,7 +25,10 @@ class ManagePaymentMethod
         return DB::transaction(function () use ($input, $id): string {
             $this->assertAccount($input['payment_account_id'], $input['type']);
             if ($id !== null) {
-                $this->repository->lockMethod($id);
+                $current = $this->repository->lockMethod($id);
+                if (! $input['is_active'] || $input['type'] !== $current['type'] || $input['payment_account_id'] !== $current['payment_account_id']) {
+                    $this->assertNoHistory($id);
+                }
             }
 
             return $this->repository->saveMethod($input, $id);
@@ -36,6 +39,7 @@ class ManagePaymentMethod
     {
         DB::transaction(function () use ($id): void {
             $this->repository->lockMethod($id);
+            $this->assertNoHistory($id);
             $this->repository->deleteMethod($id);
         }, 3);
     }
@@ -58,6 +62,13 @@ class ManagePaymentMethod
         $account = $this->lockActiveAccount($id);
         if ($account['type'] !== PaymentMethodType::from($type)->accountType()->value) {
             throw ValidationException::withMessages(['payment_account_id' => 'Jenis akun tidak cocok dengan metode pembayaran.']);
+        }
+    }
+
+    private function assertNoHistory(string $id): void
+    {
+        if ($this->repository->hasMethodHistory($id)) {
+            throw ValidationException::withMessages(['payments' => 'Metode memiliki histori pembayaran dan tidak boleh dihapus, dinonaktifkan, diganti jenis atau dipindah akun.']);
         }
     }
 

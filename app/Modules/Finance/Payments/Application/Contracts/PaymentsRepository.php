@@ -12,6 +12,14 @@ interface PaymentsRepository
 
     public function isAccountReferenced(string $id): bool;
 
+    public function hasMethodHistory(string $id): bool;
+
+    public function lockReceiptBySource(string $sourceId): ?array;
+
+    public function createReceipt(array $header, array $lines): string;
+
+    public function auditReceipt(string $id, ?int $actorId): void;
+
     public function saveAccount(array $data, ?string $id = null): string;
 
     public function saveMethod(array $data, ?string $id = null): string;

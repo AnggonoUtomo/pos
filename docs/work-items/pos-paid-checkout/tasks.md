@@ -166,6 +166,14 @@ empty additive dan regresi migration master PASS; Pint tiga file PASS.
 FK/native MySQL dan larangan down data posted diverifikasi pada task action.
 Schema belum diaktifkan pada database lokal dalam save point ini.
 
+Increment 3 backend: RecordSalePaymentTest RED 10 tests sebelum action tersedia,
+lalu GREEN 11 tests/96 assertions setelah penambahan recheck assignment.
+Full suite 390 tests/3045 assertions PASS. Snapshot/actor/privacy, net cash,
+canonical retry, source conflict, inactive/deleted/type, whitelist, history HTTP
+termasuk super-system, rollback audit/veto, FK dan populated down terverifikasi.
+Presisi besar di atas integer aman JS dan batas decimal30,2 diuji native MySQL,
+bukan dianggap terbukti oleh storage decimal SQLite yang memiliki batas berbeda.
+
 Increment 2 schema: RED sebelum tabel tersedia. StockIssueSchemaTest dan
 StockSchemaTest 3 tests/28 assertions PASS; up/down disposable mempertahankan
 movement opening dan tidak memberi soft delete pada ledger. SQLite alter-table

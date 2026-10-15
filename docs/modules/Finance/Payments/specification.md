@@ -18,8 +18,9 @@ Kode trim/uppercase, nama trim, metadata trim/empty->null. Unik termasuk trashed
 Account yang dirujuk metode tidak boleh delete/nonaktif atau ganti type,
 termasuk metode nonaktif/trashed. Nama/kode/metadata boleh diedit. Restore account
 tidak mengaktifkan otomatis; restore metode tetap memerlukan account valid.
-Jenis metode/account belum memiliki histori payment; perubahan konfigurasi saat
-ini audited. Consumer payment kelak wajib menambah guard/snapshot historis.
+Metode dengan histori payment_records tidak boleh delete/nonaktif/ganti type
+atau pindah akun. Nama/kode boleh berubah tanpa menulis ulang snapshot. Akun
+juga dilindungi referensi histori langsung, bukan hanya relasi metode saat ini.
 
 ## Layer Dan Consistency
 
@@ -34,6 +35,37 @@ status change memegang lock account yang sama sebelum reference current read.
 Pembacaan sebelum mutation memakai current locking read MySQL, bukan dirty check
 snapshot lama. Data dan activity log commit/rollback bersama; no-op tanpa audit.
 Tidak menambah event/port payment tanpa consumer atau abstraction global baru.
+
+## Penerimaan Penjualan Internal
+
+RecordSalePayment memakai PaymentsRepository internal; belum ada route posting
+atau consumer lintas module. Input source_id ULID/source_number maksimal32,
+total decimal string scale2 dan 1..10 pasangan method_id/amount unik. Jenis dan
+akun dibaca dari master, bukan caller. Urutan metode di-canonical berdasarkan
+ID, angka scale2, actor masuk hash. Retry identik mengembalikan snapshot tanpa
+menambah record/audit; payload/actor berbeda pada sumber sama ditolak.
+
+payment_receipts: ULID, source_type sale/source_id unik, source_number, hash,
+total/tendered/change decimal30,2, posted_at server dan posted_by nullable.
+payment_records: ULID, receipt_id/line_number unik, receipt_id/method_id unik,
+FK RESTRICT metode/akun/header, snapshot code/name/type metode/akun dan
+tendered_amount/applied_amount/change_amount decimal30,2. Tidak ada soft delete,
+update/delete action, bank metadata, running balance atau jurnal accounting.
+Down migration menolak header posted, bukan menghapus histori.
+
+PaymentSettlement menghitung lunas, maksimal satu cash, kembalian hanya dari
+cash, noncash tidak berlebih dan setiap baris berkontribusi positif. Applied
+adalah kas/bank masuk bersih: tagihan100000, transfer60000, tunai50000 memberi
+change10000 dan applied cash40000/bank60000. Belum ada fee/gateway/piutang.
+
+Discovery assignment kemudian lock akun unik terurut, metode unik terurut,
+receipt dan records current read pada transaction default. Assignment berubah
+ditolak; posting baru membutuhkan master aktif/non-trashed/type cocok.
+Replay memakai snapshot tersimpan; guard histori mencegah konfigurasi penting
+berubah lewat aplikasi. Unique sumber dan retry deadlock terbatas melindungi
+persistensi. Belum membuktikan orkestrasi invoice/FIFO lintas module (Increment4).
+Audit finance.payments event received wajib tersimpan atomic, termasuk penolakan
+veto/disabled logger. Audit hanya source/number/actor, bukan payload rekening.
 
 ## HTTP Dan UI
 
@@ -70,6 +102,6 @@ akun/grant/master/stok/ledger/harga existing wajib terjaga.
 
 ## Non-Scope
 
-Saldo awal, mutasi kas/bank, payment record, settlement/fee, rekonsiliasi, utang/
+Saldo awal, running balance kas/bank, settlement/fee, rekonsiliasi, utang/
 piutang, jurnal/full accounting, payment gateway, QRIS, integrasi rekening nyata,
 posting POS/FIFO dan diskon/pajak. Tidak mengaktifkan tombol pembayaran POS.

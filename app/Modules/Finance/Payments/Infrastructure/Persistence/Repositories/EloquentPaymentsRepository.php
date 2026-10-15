@@ -5,7 +5,12 @@ namespace App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentAccount;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentMethod;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentReceipt;
+use Brick\Math\BigDecimal;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class EloquentPaymentsRepository implements PaymentsRepository
 {
@@ -26,7 +31,78 @@ class EloquentPaymentsRepository implements PaymentsRepository
 
     public function isAccountReferenced(string $id): bool
     {
-        return PaymentMethod::withTrashed()->where('payment_account_id', $id)->lockForUpdate()->first(['id']) !== null;
+        return PaymentMethod::withTrashed()->where('payment_account_id', $id)->lockForUpdate()->first(['id']) !== null
+            || DB::table('payment_records')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null;
+    }
+
+    public function hasMethodHistory(string $id): bool
+    {
+        $this->assertTransaction();
+
+        return DB::table('payment_records')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null;
+    }
+
+    public function lockReceiptBySource(string $sourceId): ?array
+    {
+        $this->assertTransaction();
+        $row = DB::table('payment_receipts')->where('source_type', 'sale')->where('source_id', $sourceId)->lockForUpdate()->first();
+        if ($row === null) {
+            return null;
+        }
+        $result = (array) $row;
+        $result['posted_by'] = $row->posted_by === null ? null : (int) $row->posted_by;
+        $result['posted_at'] = Carbon::parse($row->posted_at, config('app.timezone'))->utc()->toISOString();
+        foreach (['total', 'tendered', 'change'] as $key) {
+            $result[$key] = (string) BigDecimal::of((string) $result[$key])->toScale(2);
+        }
+        $result['payments'] = DB::table('payment_records')->where('receipt_id', $row->id)->orderBy('line_number')->lockForUpdate()->get()->map(function ($line): array {
+            $line = (array) $line;
+            foreach (['tendered_amount', 'applied_amount', 'change_amount'] as $key) {
+                $line[$key] = (string) BigDecimal::of((string) $line[$key])->toScale(2);
+            }
+
+            return $line;
+        })->all();
+
+        return $result;
+    }
+
+    public function createReceipt(array $header, array $lines): string
+    {
+        $this->assertTransaction();
+        $receipt = PaymentReceipt::create($header);
+        if (! $receipt->exists) {
+            throw new \RuntimeException('Penerimaan pembayaran tidak tersimpan.');
+        }
+        foreach ($lines as $line) {
+            DB::table('payment_records')->insert($line + ['id' => strtolower((string) Str::ulid()), 'receipt_id' => $receipt->id]);
+        }
+
+        return $receipt->id;
+    }
+
+    public function auditReceipt(string $id, ?int $actorId): void
+    {
+        $this->assertTransaction();
+        $receipt = PaymentReceipt::findOrFail($id);
+        $logger = activity('finance.payments')->performedOn($receipt)->event('received')
+            ->withProperties(['source_type' => $receipt->source_type, 'source_id' => $receipt->source_id, 'number' => $receipt->source_number]);
+        if ($actorId === null) {
+            $logger->causedByAnonymous();
+        } else {
+            $logger->causedBy($actorId);
+        }
+        $audit = $logger->log('Penerimaan pembayaran penjualan');
+        if ($audit === null || ! $audit->exists) {
+            throw new \RuntimeException('Audit penerimaan pembayaran tidak tersimpan.');
+        }
+    }
+
+    private function assertTransaction(): void
+    {
+        if (DB::transactionLevel() === 0) {
+            throw new \LogicException('Pencatatan/locking pembayaran memerlukan transaction default.');
+        }
     }
 
     public function saveAccount(array $data, ?string $id = null): string
