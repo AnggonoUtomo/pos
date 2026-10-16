@@ -112,6 +112,48 @@ Down migration menolak bila pengeluaran nyata ada, bukan menghapus histori.
 
 ## Handoff Saat Ini
 
+### Rencana Increment 4
+
+POST /pos/invoices menerima idempotency_key ULID, warehouse_id/customer_id,
+lines item_id/unit_id/quantity, quote_fingerprint dan payments method_id/amount.
+Input tidak menerima harga/rasio/HPP/tax/discount/status/actor/nomor invoice.
+CheckCart menambah fingerprint deterministic (tanpa checked_at), bukan reservasi.
+Posting menghitung ulang metadata/harga/stock dengan current locks; fingerprint
+berubah ditolak422 dan perlu quote ulang. Snapshot diskon/pajak eksplisit nol.
+
+Tabel sales_invoices dan sales_invoice_lines memakai ULID, tanpa soft delete.
+Header menyimpan nomor POS-ULID, snapshot gudang/pelanggan/level, total/HPP,
+payment snapshot aman dan referensi opaque Stock issue/Finance receipt.
+Line menyimpan snapshot SKU/nama/satuan/base/ratio/quantity/harga/subtotal/HPP.
+FK master RESTRICT; source Stock/Finance tetap opaque agar tidak circular FK.
+Down ditolak jika invoice posted ada. Tidak ada edit/delete/reversal endpoint.
+
+Unique actor_id/idempotency_key dan hash payload canonical mengikat retry.
+Lock gudang mendahului lookup retry current; replay dikembalikan dari snapshot
+sebelum membaca master lain. Race lintas gudang ditutup unique dan lookup ulang
+sesudah rollback collision. Retry dengan payload beda ditolak, actor berbeda
+memiliki ruang key sendiri. Nomor berasal server, bukan sequence bebas client.
+
+Lock order transaksi: gudang -> active levels terurut -> customer level/customer
+(discovery assignment diperiksa ulang) -> unit terurut -> item/item_units terurut
+-> harga -> balance/layer -> akun/metode -> invoice/audit. Urutan selaras mutation
+master existing (level -> unit -> item -> price dan account -> method). Discovery
+unit/base dan customer level tidak authoritative; current recheck menolak drift.
+Stock dan Payments dipanggil melalui published contracts/DTOs yang langsung
+memiliki consumer PostInvoice; tidak mengakses model/repository privat.
+
+Create dan post dibedakan: sales.pos.invoices.create tetap untuk workspace/quote,
+posting/choices wajib create+sales.pos.invoices.post. Detail JSON boleh pemilik
+dengan post atau staff sales.pos.invoices.view; frontend tidak menerima HPP,
+hash/request mentah, kontak pelanggan atau metadata rekening. Tidak grant/reset
+akun. GET /pos/payment-methods hanya pilihan aman, bukan CRUD Finance.
+
+QA action/HTTP menginjeksi gagal pada Stock/Finance/persistence/audit, retry,
+harga/master/stok berubah, exact/multi-satuan dan permission. MySQL disposable
+menguji RR current reads serta worker checkout bersamaan. Local hanya additive
+migration/permission catalog dan fingerprint, tanpa posted/demo transaksi user.
+UI checkout tetap disabled sampai Increment 5, theme tidak diubah.
+
 Increment 3 full suite: 390 tests/3045 assertions PASS. RecordSalePayment
 menyimpan receipt/record/snapshot dan audit atomic, kas bersih serta guard histori.
 MySQL native up/down/current read, nominal besar exact, worker retry sumber sama

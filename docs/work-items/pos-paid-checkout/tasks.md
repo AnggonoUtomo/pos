@@ -101,6 +101,9 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 
 ## Increment 4: Posting POS Atomic
 
+- [x] Audit ownership, mutation master dan rencana locking dilakukan sebelum coding.
+  - Acceptance: detail implementasi di bawah; endpoint/UI lama tetap kompatibel.
+  - Verification: source CheckCart/SaveItemCatalog/ManageCustomer/Stock/Finance.
 - [ ] Invoice/snapshot dan idempotency dengan fingerprint payload.
   - Acceptance: retry identik satu invoice; payload beda ditolak; snapshot
     harga/rasio/HPP/payment tetap dan diskon/pajak eksplisit nol.
