@@ -19,11 +19,11 @@
 
 ## Increment 2: Domain Dan Application
 
-- [ ] Test RED math/CRUD/audit/no-ledger lalu implementasi.
+- [x] Test RED math/CRUD/audit/no-ledger lalu implementasi.
   - Acceptance: decimal exact positif/per satuan, overflow/rounding ditolak;
     total backend, snapshot, status/version server, inactive/unit nonpurchase ditolak.
   - Verification: unit/feature tests RED/GREEN, rollback/veto, no-op/stale.
-- [ ] Schema ULID/FK/soft-delete dan supplier lookup publik.
+- [x] Schema ULID/FK/soft-delete dan supplier lookup publik.
   - Acceptance: tidak memakai model/domain privat module lain; lock current read;
     Domain murni, composition root binding, tidak ada integrasi Stock/Finance.
   - Verification: migration disposable up/down, boundary review/Pint/commit.
@@ -77,3 +77,7 @@
 - Increment1: review scope/boundary/relative links PASS, generator dry-run
   menampilkan provider/routes/migration directory/demo seeder canonical;
   git diff --check PASS. Runtime belum berubah pada checkpoint ini.
+- Increment2: RED 7 test class/action/schema belum ada; GREEN 7 test/55 assertion.
+  Math exact/overflow/rounding, audit veto create/update/delete/restore, stale/
+  no-op, no-ledger, lookup supplier redacted dan disposable SQLite up/down PASS.
+  Pint PASS. Native MySQL dan HTTP/UI masih menunggu increment berikutnya.

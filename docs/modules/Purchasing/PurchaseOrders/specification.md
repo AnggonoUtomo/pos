@@ -15,7 +15,8 @@ Penambahan tahap tersebut memerlukan work item tersendiri.
 
 purchase_orders: ULID, number unique max32, supplier_id/warehouse_id FK restrict,
 snapshot code/name supplier/gudang, status draft, version integer mulai1,
-notes nullable, total_value decimal(30,6), timestamps/softDeletes.
+notes nullable, demo_key nullable unique internal seeder, total_value
+decimal(30,6), timestamps/softDeletes. demo_key tidak diterima dari request.
 purchase_order_lines: ULID, purchase_order_id/item_id/unit_id/base_unit_id FK
 restrict, snapshot SKU/nama/satuan/base unit, quantity/conversion_ratio/unit_cost/
 base_quantity decimal(20,6), total_value decimal(30,6), unique order/item.
@@ -79,8 +80,9 @@ expanded/collapsed; mobile ditunda. Tidak menampilkan tombol posting palsu.
 Seeder access catalog saja. Demo local/testing melalui Application, memakai
 master supplier/gudang/satuan/barang CCTV/kelistrikan existing, tidak men-seed
 ulang module lain atau mengubah master. Lookup public digunakan mencari kode/SKU
-di pilihan aktif. Catatan demo marker tetap, seeder memeriksa semua draft termasuk
-trashed sebelum menambah; idempotent, tidak menghidupkan ulang user-edit/trashed.
+di pilihan aktif. demo_key internal tetap, seeder memeriksa semua draft termasuk
+trashed sebelum menambah; idempotent, tidak menghidupkan ulang user-edit/trashed
+bahkan bila catatan diubah pengguna.
 Demo tidak otomatis dimasukkan database bisnis lokal karena merupakan dokumen
 operasional; dijalankan pada QA disposable atau eksplisit oleh developer.
 Aktivasi lokal hanya migration dan catalog permission, tanpa grant/draft user.
