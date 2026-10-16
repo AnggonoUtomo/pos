@@ -147,3 +147,41 @@ Recovery ini bukan offline queue, histori penjualan atau recovery lintas perangk
 Tab ditutup/storage dihapus dapat kehilangan pointer/key; jangan mengulang dengan
 key baru tanpa rekonsiliasi operasional. Storage corrupt/unavailable saat recovery
 mengunci transaksi baru. SessionStorage bukan tempat credential atau data kontak.
+
+## Riwayat Penjualan Readonly
+
+Halaman admin GET /sales/invoices (sales.invoices.index) dan JSON
+GET /sales/invoices/data (sales.invoices.data) disediakan module POS. Middleware
+authorization menerima post ATAU view; post hanya actor sendiri, view lintas
+actor termasuk super-system. Scope ditentukan server, bukan input actor/viewAll.
+Detail/reprint memakai endpoint receipt existing dengan hak yang sama.
+
+Filter query: search string maksimal150 (nomor invoice substring literal,
+case-insensitive ASCII), date_from/date_to YYYY-MM-DD rentang1900..9998,
+warehouse_id/customer_id ULID opsional dan page integer positif. Field query
+lain ditolak422; tanggal akhir sebelum awal ditolak. Kosong berarti semua.
+Tanggal memakai Asia/Jakarta; batas awal inklusif dan akhir eksklusif awal hari
+berikutnya dikonversi ke timezone penyimpanan aplikasi, tanpa fungsi date SQL.
+Tanggal UI daftar selalu WIB. Pagination25, urut posted_at desc/id desc.
+
+Output records.data hanya id/number/posted_at, nama snapshot gudang/pelanggan/
+level dan total decimal string scale2; meta current_page/last_page/per_page/total.
+filters canonical, viewAll dan warehouseOptions/customerOptions hanya data
+dalam scope authorized. Opsi snapshot grouped ID, MAX nama deterministic dan
+limit1000 tiap jenis; tidak join master aktif atau membuka daftar pelanggan
+kasir lain. Baris/detail selalu snapshot masing-masing, bukan label MAX opsi.
+Tidak memuat HPP, actor, idempotency key/hash, kontak atau metadata rekening.
+
+Frontend resources/js/pages/sales/pos/history menggunakan filter URL, pagination,
+loading/validation error/empty/reset, receipt GET dengan AbortController dan
+error/reload/cetak. Sidebar dan palette memakai canAny post/view; POS menyediakan
+tautan Riwayat yang dikunci selama pending checkout. Alt+F cari, Ctrl/Cmd+Enter
+terapkan, Esc tutup receipt dan Ctrl/Cmd+P cetak pada receipt. Komponen receipt
+dan CSS print yang sama dipakai tanpa membuat versi paralel.
+
+Read/print tidak menulis activity log atau ledger; tidak membuat seeder posted,
+schema/permission baru, export, edit/delete/void/retur atau laporan margin.
+Histori bukan pemulihan otomatis pembayaran ambigu: key hilang tetap memerlukan
+rekonsiliasi sebelum mengulang dengan key baru. Index/performance volume besar
+dan pagination panjang receipt belum diuji. Detail QA pada
+[work item riwayat](work-items/invoice-history/README.md).

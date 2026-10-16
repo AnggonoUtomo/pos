@@ -12,3 +12,6 @@
 - [x] Penutupan/delivery keseluruhan checkout (Increment 6).
 
 Input diskon/pajak, piutang dan koreksi posted di luar scope pekerjaan ini.
+
+- [x] Backend dan UI [riwayat readonly](work-items/invoice-history/tasks.md).
+- [ ] QA akhir/delivery riwayat dan patch dependency terkait.

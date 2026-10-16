@@ -33,3 +33,9 @@ Schema lokal Ran batch13, permission catalog additive tanpa grant/reset dan tanp
 invoice pengguna. UI /pos mengaktifkan Pembayaran setelah quote valid bagi user
 dengan create+post; admin perlu memberi permission post pada role kasir yang sesuai.
 QA dan delivery remote terverifikasi; bukti rinci ada pada work item.
+
+[Riwayat penjualan](work-items/invoice-history/README.md) tersedia di
+/sales/invoices: filter nomor/tanggal WIB/gudang/pelanggan, pagination,
+detail snapshot dan cetak ulang. Post melihat miliknya, view melihat semua;
+tanpa grant baru, edit/hapus/void/retur atau HPP. QA akhir/delivery riwayat
+dicatat pada work item terpisah, bukan mengubah bukti checkout terdahulu.

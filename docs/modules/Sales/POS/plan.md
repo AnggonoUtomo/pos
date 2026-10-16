@@ -5,6 +5,9 @@
    [pos-paid-checkout](../../../work-items/pos-paid-checkout/README.md).
    Increment 1..6 selesai: backend atomic/idempotency/FIFO/payment, UI
    multi-payment/recovery/receipt serta QA penutupan/delivery.
-3. Kredit, input diskon/pajak dan reversal memerlukan pekerjaan terpisah.
+3. Riwayat readonly/filter/detail/cetak ulang pada
+   [invoice-history](work-items/invoice-history/README.md); implementasi tersedia,
+   QA akhir/delivery berjalan, termasuk patch dependency terpisah yang disetujui.
+4. Kredit, input diskon/pajak dan reversal memerlukan pekerjaan terpisah.
 
 Jangan membuat implementasi tahap kedua dari checklist tahap pertama.

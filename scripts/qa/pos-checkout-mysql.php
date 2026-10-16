@@ -12,6 +12,8 @@ use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use App\Modules\Sales\POS\Application\Actions\PostInvoice;
 use App\Modules\Sales\POS\Application\DTOs\CartLineData;
 use App\Modules\Sales\POS\Application\Queries\CheckCart;
+use App\Modules\Sales\POS\Application\Queries\ListInvoiceHistory;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
@@ -198,6 +200,21 @@ try {
         DB::rollBack();
     }
     $invoice = DB::table('sales_invoices')->first();
+    $filters = ['search' => '', 'date_from' => null, 'date_to' => null, 'warehouse_id' => null, 'customer_id' => null];
+    $history = app(ListInvoiceHistory::class);
+    $beforeRead = DB::table('activity_log')->count();
+    $all = $history->handle(1, $filters, $actor, true);
+    $check($all['records']['meta']['total'] === DB::table('sales_invoices')->count() && count($all['warehouseOptions']) === 1,
+        'Riwayat MySQL: pagination/group snapshot pilihan dan jumlah header sesuai');
+    $own = $history->handle(1, $filters, $actor + 10000, false);
+    $check($own['records']['meta']['total'] === 0 && $own['warehouseOptions'] === [] && $own['customerOptions'] === [],
+        'Riwayat MySQL: scope pemilik membatasi jumlah/baris/pilihan');
+    $date = CarbonImmutable::parse($invoice->posted_at, config('app.timezone'))->setTimezone('Asia/Jakarta')->format('Y-m-d');
+    $filtered = $history->handle(1, array_replace($filters, ['search' => strtolower($invoice->number), 'date_from' => $date, 'date_to' => $date]), $actor, true);
+    $check($filtered['records']['meta']['total'] === 1 && $filtered['records']['data'][0]['id'] === $invoice->id
+        && is_string($filtered['records']['data'][0]['total']), 'Riwayat MySQL: literal nomor, tanggal WIB dan decimal string');
+    $check($history->handle(1, array_replace($filters, ['search' => '%']), $actor, true)['records']['meta']['total'] === 0
+        && DB::table('activity_log')->count() === $beforeRead, 'Riwayat MySQL: wildcard literal, read tanpa audit palsu');
     $restricted = false;
     try {
         DB::table('sales_invoices')->where('id', $invoice->id)->delete();

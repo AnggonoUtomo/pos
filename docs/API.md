@@ -103,6 +103,25 @@ Finance. UI multi-payment/recovery/receipt memakai endpoint ini sejak Increment 
 Retry pending mempertahankan key/payload; recovery browser bukan offline queue. Detail
 [specification POS](modules/Sales/POS/specification.md).
 
+## Riwayat Internal POS
+
+GET /sales/invoices (sales.invoices.index) merender Inertia
+sales/pos/history/index; GET /sales/invoices/data (sales.invoices.data) memberi
+props JSON yang sama. Keduanya auth + authorization post ATAU view. Post hanya
+pemilik; view lintas pemilik. Tidak ada parameter client untuk mengatur scope.
+Create-only ditolak403; guest login/401. Receipt tetap GET /pos/invoices/{id},
+tanpa mengubah contract/ownership existing.
+
+Filter opsional search substring nomor literal (max150, tanpa wildcard bebas),
+date_from/date_to YYYY-MM-DD inklusif WIB, warehouse_id/customer_id ULID,
+page positif; field lain atau rentang invalid422. Null/kosong berarti semua.
+Response records {data,meta}, filters canonical, viewAll, warehouseOptions dan
+customerOptions. Pagination25 order posted_at desc/id desc. List/total/options
+semua ter-scope; opsi dari snapshot authorized bounded1000 per jenis termasuk
+master tidak aktif/terhapus. Tidak membuka HPP/key/hash/actor/kontak/rekening.
+Read dan reprint tidak menulis ledger/audit. Detail
+[riwayat](modules/Sales/POS/work-items/invoice-history/README.md).
+
 ## Endpoint API Eksternal
 
 Belum ada endpoint API eksternal yang menjadi contract publik. Perubahan yang

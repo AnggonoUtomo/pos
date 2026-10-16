@@ -76,6 +76,9 @@ try {
     await choose('Pelanggan', 'Installer CCTV Demo'); await choose('Gudang', 'Gudang Utama'); await apply();
     await page.getByText('1 penjualan - Halaman 1 dari 1', { exact: true }).waitFor();
     assert(!(await page.getByTestId('invoice-row').innerText()).includes('Master changed'));
+    await page.getByLabel('Tanggal awal (WIB)', { exact: true }).fill('2026-10-17'); await apply();
+    await page.getByRole('alert').filter({ hasText: 'Tanggal akhir harus sama atau sesudah tanggal awal.' }).waitFor();
+    await reset();
     await page.getByLabel('Nomor invoice', { exact: true }).fill('not-an-invoice'); await apply(); await page.getByText('Tidak ada penjualan ditemukan.', { exact: true }).waitFor();
     await reset(); checks.push('Own scope/count/options, pagination/reload, search/shortcuts, WIB dates, historical filters and empty/reset PASS');
     await page.keyboard.press('Control+k'); await page.getByRole('dialog', { name: 'Command Palette' }).waitFor();

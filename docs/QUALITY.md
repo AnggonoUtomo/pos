@@ -416,6 +416,37 @@ checkout. Bukti row lock/concurrency tetap melalui helper MySQL di atas, tidak
 dianggap terbukti oleh SQLite/browser. Recovery hanya per user/tab; hilang tab/
 storage memerlukan rekonsiliasi sebelum membuat pembayaran baru dengan key baru.
 
+## QA Riwayat Penjualan
+
+`php artisan test --filter=InvoiceHistoryTest --compact` memeriksa guest/outsider/
+create-only, post own scope pada rows/count/options/detail, view dan super-system,
+filter WIB tepat midnight/end-day, literal wildcard/SQL-like text, master changed/
+deleted snapshot, pagination stable, nominal besar exact, whitelist/tamper dan
+read tidak mengubah invoice/Stock/Finance/activity. Inertia backend test memakai
+withoutVite; validasi asset nyata dilakukan pada build/browser terpisah.
+
+`php scripts/qa/pos-checkout-mysql.php` juga memeriksa read history native:
+grouped snapshot choices, scope, LIKE escape, batas tanggal WIB dan decimal string;
+tetap hanya database generated/cleanup, bukan database bisnis pengguna.
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/existing/playwright-core'
+node scripts/qa/invoice-history-browser.mjs
+```
+
+DevTools discovery dahulu; BLOCKED jika tool tidak tersedia, fallback existing
+dicatat terpisah. Fixture parties-browser SQLite guarded memakai seed master
+module CCTV/kelistrikan dan PostInvoice nyata:28 invoice, dua kasir/dua gudang.
+tests/Browser/invoice-history-data.php hanya menerima path/environment disposable,
+credential via stdin dan menolak seed jika invoice sudah ada. Fingerprint
+invoice/Stock/Finance/activity sebelum/sesudah browser harus identik.
+Browser: own/view/outsider/create-only, filters/URL/reload/pagination, shortcut/
+palette, historical master, receipt error/reload/stale cancel/print dan readonly.
+Desktop1440x1000, tablet1024x768/768x1024, Light/Dark, expanded/collapsed;
+console unexpected kosong,503 yang diinjeksi terpisah. Browser/server ditutup
+pada finally, report/screenshot ignored dan diperiksa visual. Bukan mobile,
+printer fisik, load test atau rekonsiliasi otomatis transaksi ambigu.
+
 ## QA Penerimaan Internal Finance
 
 `php artisan test --filter=RecordSalePaymentTest --compact` mencakup net cash,
@@ -496,6 +527,18 @@ line terminator sesudah comment, chain parse/quote, offset invalid/nested dan
 kontrol normal concurrently/PostCSS. Test Markdown memeriksa escaping tag
 terlarang, table/paragraf bounded, serta HTML/text email reset/verifikasi tanpa
 delivery. Tidak mengklaim simulasi DoS produksi atau uji lintas-shell penuh.
+
+## QA Patch HTTP Foundation
+
+`php vendor/bin/phpunit tests/Unit/HttpFoundationHeaderTest.php` mereproduksi
+Cache-Control whitespace space/tab/mixed melalui Request/HeaderBag dengan
+pcre.backtrack_limit10000 yang dipulihkan pada finally. Directive max-age dan
+no-cache tidak boleh hilang; header normal/quoted dan split separator space/tab
+tetap kompatibel. RED7.4.18 dan GREEN7.4.21 dicatat pada
+[work item patch](work-items/http-foundation-security-patch/README.md).
+Jalankan composer audit --locked/validate --strict dan full backend/browser
+setelah perubahan package HTTP. Test bounded in-memory, bukan DoS server hidup
+atau klaim benchmark seluruh regex/input. Tidak patch vendor manual.
 
 ## Checklist Invariant Transaksi
 

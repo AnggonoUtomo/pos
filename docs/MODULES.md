@@ -22,7 +22,7 @@ Status yang digunakan:
 | Inventory | Warehouses | Master gudang, UI CRUD dan pilihan gudang untuk stok awal/POS | Stock (StockUsage), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Stock | Stok awal, saldo/kartu stok dan pengeluaran FIFO/no-negative dengan snapshot/alokasi; SaleStockWriter dikonsumsi posting POS | Items (ItemStockLookup), Warehouses (WarehouseLookup), Units (UnitLookup) | Active |
 | Sales | Parties | CRUD pelanggan/level, harga barang per satuan/level melalui workflow Items, audit dan demo | Items (ItemPricingLookup), Laravel auth, Spatie Permission, Spatie Activitylog | Active |
-| Sales | POS | Katalog/keranjang nyata, posting lunas atomic/FIFO dan UI multi-payment/recovery/receipt cetak; input diskon/pajak ditunda | Parties (CustomerSalesLookup, ItemPriceCatalog), Items (SaleItemCatalog), Warehouses (WarehouseLookup), Stock (StockAvailability, SaleStockWriter), Payments (SalePaymentWriter, SalePaymentMethods) | Active |
+| Sales | POS | Katalog/keranjang, checkout lunas atomic/FIFO/multi-payment/recovery, receipt cetak dan riwayat readonly berizin/filter snapshot; input diskon/pajak ditunda | Parties (CustomerSalesLookup, ItemPriceCatalog), Items (SaleItemCatalog), Warehouses (WarehouseLookup), Stock (StockAvailability, SaleStockWriter), Payments (SalePaymentWriter, SalePaymentMethods) | Active |
 | Sales | Returns | Retur penjualan dan koreksi transaksi posted | POS, Stock, Finance Payments | Planned |
 | Purchasing | Suppliers | Supplier master | Identity | Planned |
 | Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Items, Warehouses, Stock | Planned |

@@ -24,7 +24,7 @@
 
 ## Increment 3: Penutupan
 
-- [ ] Full backend/browser checkout dan history setelah patch.
+- [x] Full backend/browser checkout dan history setelah patch.
   - Acceptance: auth/CSRF/validation/request/receipt tidak regresi.
   - Verification: full test, frontend gates existing, browser/report.
 - [ ] Dokumen/status/audit dan delivery remote cocok.
@@ -44,4 +44,17 @@ PASS, composer audit --locked bersih. npm audit --omit=dev juga bersih.
 Review ulang shared boundary HeaderBag/Request/HeaderUtils memastikan token
 tidak lagi mengonsumsi whitespace terminal/backtrack, separator whitespace
 tetap dikecualikan dan quoted directive kompatibel. Bukan benchmark DoS server.
-Full regression/browser sesudah patch masih pending pada Increment 3.
+Pada save point patch, full regression/browser masih pending; hasil final di bawah.
+
+Increment 3 QA: full suite423 tests/3316 assertions PASS. Browser history dan
+checkout sesudah patch PASS (report pada work item invoice-history), native
+MySQL checkout/history PASS. Typecheck/ESLint/build2715 tetap berlaku karena
+tidak ada frontend berubah saat patch. npm audit penuh/production bersih,
+composer audit --locked/validate --strict PASS. Schema/status dan aktivasi lokal
+Nothing to migrate; fingerprint/grant/business data identik. Review independen
+candidate terpisah selesai17 Oktober2026 tanpa bypass/regresi konkret. Reviewer
+read-only mengonfirmasi shared boundary Request/HeaderBag/HeaderUtils dan
+lock/vendor7.4.21 konsisten. Focused4/15 diulang; tambahan9 parsing controls dan
+60 bounded cases termasuk JIT on/off lulus. Batas: bukan exhaustive malformed
+input, live attack atau benchmark produksi. Tidak ada file diubah oleh reviewer.
+Delivery remote masih pending, ditutup setelah ref cocok.

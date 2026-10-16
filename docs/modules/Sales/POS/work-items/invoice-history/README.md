@@ -3,7 +3,8 @@
 ## Status
 
 In Progress. Scope readonly disetujui user 16 Oktober 2026.
-Owner Sales/POS; baseline checkout selesai pada40f1c53.
+Owner Sales/POS; baseline checkout selesai pada40f1c53. Requirement:
+[PRD](PRD.md). Implementasi/query/UI selesai; QA akhir lulus, delivery pending.
 
 ## Tujuan Dan Scope
 
@@ -49,10 +50,10 @@ Tidak mengubah endpoint receipt/checkout publik existing.
 
 ## Acceptance
 
-- [ ] Daftar/filter/pagination exact dan snapshot historis benar.
-- [ ] Hak sendiri/lintas kasir berlaku pada list/count/options/detail.
-- [ ] UI readonly, detail/reload/cetak, shortcut/palette dan state lengkap.
-- [ ] QA desktop/tablet Light/Dark dan checkout regression lulus.
+- [x] Daftar/filter/pagination exact dan snapshot historis benar.
+- [x] Hak sendiri/lintas kasir berlaku pada list/count/options/detail.
+- [x] UI readonly, detail/reload/cetak, shortcut/palette dan state lengkap.
+- [x] QA desktop/tablet Light/Dark dan checkout regression lulus.
 - [ ] Data lokal aman, dokumen aktual dan commit/push terverifikasi.
 
 Urutan dan checklist: [plan](plan.md), [tasks](tasks.md).
