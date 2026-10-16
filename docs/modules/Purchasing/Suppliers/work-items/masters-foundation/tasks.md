@@ -31,11 +31,11 @@
 
 ## Increment 3: HTTP, Query Dan Seeder
 
-- [ ] Tulis test HTTP/query/permission/seeder RED lalu implementasi.
+- [x] Tulis test HTTP/query/permission/seeder RED lalu implementasi.
   - Acceptance: guest/outsider/viewer/manage/super benar, CSRF/validasi/duplikat,
     pagination/status/trashed/search literal, privacy/read-only.
   - Verification: feature tests dan route:list.
-- [ ] Implementasikan akses catalog dan demo module.
+- [x] Implementasikan akses catalog dan demo module.
   - Acceptance: hanya dua key web tanpa grant, demo lokal/testing relevan,
     idempotent/skip existing/trashed; tidak membuat login/transaction/saldo.
   - Verification: seed tests termasuk production ditolak, Pint dan commit.
@@ -80,3 +80,7 @@
 - Increment 2: RED 6 test class/action belum ada; GREEN 7 test/33 assertion,
   termasuk migration down/up SQLite disposable. Pint PASS. Native MySQL
   dan HTTP/UI belum diverifikasi pada checkpoint ini.
+- Increment 3: HTTP/seeder RED 5 test (route/catalog/demo belum tersedia);
+  GREEN total Suppliers 13 test/114 assertion. Enam route auth/verified/can
+  PASS; CSRF 419 semua mutation tanpa token PASS, Pint PASS. Assertion
+  Inertia menguji nama component tanpa pemeriksaan file sampai Increment 4.
