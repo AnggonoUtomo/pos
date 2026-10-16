@@ -2,7 +2,8 @@
 
 ## Status Dan Owner
 
-QA selesai, menunggu delivery remote. Purchasing/Suppliers, 17 Oktober 2026.
+Done. Purchasing/Suppliers, 17 Oktober 2026. Implementasi/QA dipush sampai
+9de8e8c, HEAD/remote identik dan divergence0/0 sebelum penutupan checklist.
 Baseline 15464e9. Requirement [PRD](PRD.md); contract [specification](../../specification.md).
 Urutan [plan](plan.md), checklist/bukti [tasks](tasks.md).
 
@@ -24,7 +25,7 @@ transaksi supplier, lookup/event tanpa consumer, theme, dependency atau auth bar
 - [x] Audit wajib atomic, no-op tanpa audit, kontak tidak bocor.
 - [x] Demo relevan/idempotent, mempertahankan existing/trashed dan tidak grant.
 - [x] UI/shortcut/palette dan QA desktop/tablet Light/Dark lulus.
-- [ ] Migration/aktivasi aman, docs/checklist/commit/push terverifikasi.
+- [x] Migration/aktivasi aman, docs/checklist/commit/push terverifikasi.
 
 Risiko: kode tetap terreservasi sesudah hapus; manage-only bukan view;
 guard supplier terpakai belum ada karena belum ada dokumen purchasing.

@@ -60,10 +60,10 @@
   - Acceptance: schema/catalog/demo baru boleh ditambah; akun/grant/master/ledger
     lama tetap, audit lama tidak berubah, tidak reset/seed transaksi user.
   - Verification: helper guarded/status/fingerprint dan ulang idempotency.
-- [ ] Selaraskan API/MODULES/QUALITY/dokumen dan commit.
+- [x] Selaraskan API/MODULES/QUALITY/dokumen dan commit.
   - Acceptance: capability/risiko aktual, checklist hanya sesudah verifikasi.
   - Verification: review/link/diff/staged/secret exclusions.
-- [ ] Push dan cocokkan GitHub.
+- [x] Push dan cocokkan GitHub.
   - Verification: push/ls-remote/divergence0/0, artefak user tidak ikut.
 
 ## Sesudah Coding
@@ -71,7 +71,7 @@
 - [x] Scope/acceptance terverifikasi.
 - [x] Full/backend/frontend/browser dan status migration sesuai hasil aktual.
 - [x] Aktivasi/demo/audit/privacy dan data pengguna aman.
-- [ ] Dokumen/checklist/risiko/commit/remote terverifikasi.
+- [x] Dokumen/checklist/risiko/commit/remote terverifikasi.
 
 ## Bukti Command
 
@@ -109,3 +109,8 @@
   field persistence whitelist, audit redacted/atomic. Theme/dependency/auth,
   Old-docs/SampleUI/LSP pengguna tidak disentuh. Guard histori supplier ditunda
   sampai ada consumer purchasing. Mobile di luar scope.
+- Delivery: scope/staged/diff/secret-pattern review PASS. Commit 3db40e3,
+  37f919a, 2cc4791, e26fb5f dan 9de8e8c dipush ke origin/main. ls-remote cocok
+  HEAD9de8e8c9120bb41d4abccadae7a41c92e5cd9b2c, divergence0/0. Hanya SampleUI
+  dan empat file LSP user tetap untracked, tidak di-stage atau diubah.
+  Commit penutupan checklist mengikuti checkpoint delivery terverifikasi ini.

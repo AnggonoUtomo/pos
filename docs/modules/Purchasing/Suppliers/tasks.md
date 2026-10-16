@@ -5,6 +5,6 @@
 - [x] Scaffold/schema, CRUD/audit/permission/demo terverifikasi.
 - [x] UI/admin navigation dan QA desktop/tablet lulus.
 - [x] Aktivasi lokal additive dan dokumen aktual terverifikasi.
-- [ ] Commit/push keseluruhan cocok dengan remote.
+- [x] Commit/push keseluruhan cocok dengan remote.
 
 Bukti dan checklist increment pada [masters-foundation](work-items/masters-foundation/tasks.md).
