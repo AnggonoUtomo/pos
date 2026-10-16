@@ -3,6 +3,13 @@
 }
 
 @media print {
+    html body:has(> .pos-receipt-print) {
+        overflow: visible !important;
+        height: auto !important;
+        color: #111 !important;
+        background: #fff !important;
+    }
+
     body:has(> .pos-receipt-print) > :not(.pos-receipt-print) {
         display: none !important;
     }

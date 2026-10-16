@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsAccessSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
 use App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder;
@@ -13,6 +14,7 @@ use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 require __DIR__.'/../../vendor/autoload.php';
@@ -40,6 +42,13 @@ if (($input['inventory_demo'] ?? false) === true) {
     app(POSAccessSeeder::class)->run();
     $cashier = User::create(['name' => 'QA cashier', 'email' => 'qa-cashier@example.test', 'password' => $input['password']]);
     $cashier->givePermissionTo('sales.pos.invoices.create');
+    if (($input['checkout_demo'] ?? false) === true) {
+        app(PaymentsDemoSeeder::class)->run();
+        $operator = User::create(['name' => 'QA checkout', 'email' => 'qa-checkout@example.test', 'password' => $input['password']]);
+        $operator->givePermissionTo(['sales.pos.invoices.create', 'sales.pos.invoices.post']);
+        $itemId = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->value('id');
+        DB::table('item_prices')->where('item_id', $itemId)->update(['amount' => '50000']);
+    }
 }
 foreach (['manager', 'viewer', 'outsider'] as $role) {
     $user = User::create(['name' => 'QA '.$role, 'email' => "qa-{$role}@example.test", 'password' => $input['password']]);
