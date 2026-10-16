@@ -27,7 +27,7 @@
 - [x] Full backend/browser checkout dan history setelah patch.
   - Acceptance: auth/CSRF/validation/request/receipt tidak regresi.
   - Verification: full test, frontend gates existing, browser/report.
-- [ ] Dokumen/status/audit dan delivery remote cocok.
+- [x] Dokumen/status/audit dan delivery remote cocok.
   - Verification: scoped commit, push/ls-remote/divergence0/0.
 
 ## Bukti
@@ -57,4 +57,7 @@ read-only mengonfirmasi shared boundary Request/HeaderBag/HeaderUtils dan
 lock/vendor7.4.21 konsisten. Focused4/15 diulang; tambahan9 parsing controls dan
 60 bounded cases termasuk JIT on/off lulus. Batas: bukan exhaustive malformed
 input, live attack atau benchmark produksi. Tidak ada file diubah oleh reviewer.
-Delivery remote masih pending, ditutup setelah ref cocok.
+Delivery main b6ebcd9 dikonfirmasi17 Oktober2026 melalui git ls-remote dan
+divergence0/0; patch/test commit874b4f3 ikut range. Audit ulang17 Oktober2026:
+composer audit --locked dan npm audit kembali bersih. Commit penutup checklist
+disinkronkan setelah bukti delivery ini; tidak ada file user/arsip/secret ikut.

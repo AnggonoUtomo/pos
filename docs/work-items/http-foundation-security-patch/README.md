@@ -2,7 +2,7 @@
 
 ## Status Dan Scope
 
-In Progress. User menyetujui patch terpisah saat QA riwayat penjualan,
+Done. Ditutup pada 17 Oktober 2026. User menyetujui patch terpisah saat QA riwayat penjualan,
 16 Oktober 2026. Composer audit menemukan CVE-2026-108082 pada
 symfony/http-foundation7.4.18. Update hanya package ini dalam seri7.4;
 composer.json/stack/framework/permission/feature bisnis tidak diubah.
@@ -28,3 +28,10 @@ backtrack budget terbatas, bukan DoS request nyata atau benchmark produksi.
 Tidak mengubah konfigurasi security/server, menambah dependency, atau mengerjakan
 advisory lain tanpa persetujuan. Old-docs/SampleUI/LSP/env tidak disentuh.
 Tahapan: [plan](plan.md), [tasks](tasks.md).
+
+Outcome: fixed untuk advisory yang diuji. Trigger bounded RED sebelum update
+menjadi GREEN, legitimate controls tetap lulus,423 test dan browser checkout/
+riwayat lulus; composer/npm audit bersih. Review independen tanpa temuan konkret.
+Patch commit874b4f3 sudah termasuk push main b6ebcd9 dengan ref remote cocok;
+commit penutup checklist disinkronkan sesudah bukti ini. Tidak mengklaim load
+test produksi atau exhaustive malformed-input coverage.

@@ -14,4 +14,4 @@
 Input diskon/pajak, piutang dan koreksi posted di luar scope pekerjaan ini.
 
 - [x] Backend dan UI [riwayat readonly](work-items/invoice-history/tasks.md).
-- [ ] QA akhir/delivery riwayat dan patch dependency terkait.
+- [x] QA akhir/delivery riwayat dan patch dependency terkait.

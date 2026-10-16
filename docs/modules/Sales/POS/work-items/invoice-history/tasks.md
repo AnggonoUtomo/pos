@@ -50,16 +50,16 @@
 - [x] Update module/API/MODULES/QUALITY dan checklist.
   - Acceptance: sesuai kemampuan aktual, risiko/non-scope tertulis.
   - Verification: review boundary/privacy, link, diff/staging/secret scope check.
-- [ ] Commit/push dan cocokkan HEAD dengan GitHub.
+- [x] Commit/push dan cocokkan HEAD dengan GitHub.
   - Acceptance: Old-docs/SampleUI/LSP/env/artefak QA tidak ikut.
   - Verification: git push, ls-remote dan divergence0/0.
 
 ## Sesudah Coding
 
-- [x] Semua acceptance implementasi/QA lulus; delivery masih pending.
+- [x] Semua acceptance implementasi/QA/delivery lulus.
 - [x] Full test/frontend gates dan browser desktop/tablet lulus.
 - [x] Schema tidak berubah, read/print tidak mengubah ledger/audit.
-- [ ] Bukti/risiko/dokumen dan remote terverifikasi.
+- [x] Bukti/risiko/dokumen dan remote terverifikasi.
 
 ## Hasil Verifikasi
 
@@ -90,7 +90,7 @@ disesuaikan ke label existing, bukan mengubah aplikasi, kemudian PASS.
 
 Audit npm production bersih; Composer menemukan advisory existing HTTP Foundation.
 User menyetujui [patch terpisah](../../../../../work-items/http-foundation-security-patch/README.md).
-Regresi akhir/delivery menunggu patch dan pengulangan gate terkait.
+Pada save point UI tersebut, regresi/delivery menunggu patch; hasil final di bawah.
 
 ## Penutupan QA Increment 4
 
@@ -123,7 +123,11 @@ dengan budget PCRE terbatas tidak lagi mereproduksi directive hilang; kontrol
 header normal/quoted dan separator space/tab tetap lulus. Ini bukan load test
 produksi. Risiko tersisa: index volume besar/choices1000, retention akun,
 recovery lintas perangkat, printer fisik/receipt panjang belum scope.
-Delivery pending; baru ditutup sesudah push dan ref GitHub cocok.
+Delivery selesai17 Oktober2026: git push origin main40f1c53 ke b6ebcd9;
+git ls-remote mengonfirmasi b6ebcd9fd95ebdd2a9d64e693245f4f181931739 sama dengan
+HEAD dan git rev-list --left-right --count HEAD...origin/main menghasilkan0/0.
+Semua36 file delivery sesuai scope, tanpa Old-docs/SampleUI/LSP/env/artefak QA.
+Commit penutup checklist dibuat setelah bukti ini lalu disinkronkan kembali.
 
 Resume penutupan17 Oktober2026: DevTools MCP kembali tersedia. Smoke pada
 isolated context ke http://pos.test/sales/invoices sempat500 karena MySQL lokal

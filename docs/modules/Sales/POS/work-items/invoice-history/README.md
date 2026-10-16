@@ -2,9 +2,9 @@
 
 ## Status
 
-In Progress. Scope readonly disetujui user 16 Oktober 2026.
+Done. Ditutup pada 17 Oktober 2026. Scope readonly disetujui user pada 16 Oktober 2026.
 Owner Sales/POS; baseline checkout selesai pada40f1c53. Requirement:
-[PRD](PRD.md). Implementasi/query/UI selesai; QA akhir lulus, delivery pending.
+[PRD](PRD.md). Implementasi/query/UI, QA akhir dan delivery remote terverifikasi.
 
 ## Tujuan Dan Scope
 
@@ -54,6 +54,9 @@ Tidak mengubah endpoint receipt/checkout publik existing.
 - [x] Hak sendiri/lintas kasir berlaku pada list/count/options/detail.
 - [x] UI readonly, detail/reload/cetak, shortcut/palette dan state lengkap.
 - [x] QA desktop/tablet Light/Dark dan checkout regression lulus.
-- [ ] Data lokal aman, dokumen aktual dan commit/push terverifikasi.
+- [x] Data lokal aman, dokumen aktual dan commit/push terverifikasi.
 
 Urutan dan checklist: [plan](plan.md), [tasks](tasks.md).
+
+Push main b6ebcd9 dikonfirmasi melalui ls-remote dan divergence0/0.
+Commit penutup checklist disinkronkan sesudah bukti delivery tersebut.

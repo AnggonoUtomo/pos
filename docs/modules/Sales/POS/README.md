@@ -37,5 +37,5 @@ QA dan delivery remote terverifikasi; bukti rinci ada pada work item.
 [Riwayat penjualan](work-items/invoice-history/README.md) tersedia di
 /sales/invoices: filter nomor/tanggal WIB/gudang/pelanggan, pagination,
 detail snapshot dan cetak ulang. Post melihat miliknya, view melihat semua;
-tanpa grant baru, edit/hapus/void/retur atau HPP. QA akhir/delivery riwayat
-dicatat pada work item terpisah, bukan mengubah bukti checkout terdahulu.
+tanpa grant baru, edit/hapus/void/retur atau HPP. QA akhir/delivery riwayat lulus
+17 Oktober2026, dicatat pada work item terpisah dari bukti checkout terdahulu.
