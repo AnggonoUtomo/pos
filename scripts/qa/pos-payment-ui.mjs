@@ -13,6 +13,7 @@ assert.equal(summary.valid, true);
 assert.equal(summary.change, '10000.00');
 assert.equal(summary.remaining, '0.00');
 assert.equal(summary.tendered, '110000.00');
+assert.equal(paymentSummary('100000.00', [{ methodId: 'bank', amount: '100.001' }], methods).change, '0.00');
 assert.deepEqual(summary, paymentSummary('100000.00', [...rows].reverse(), methods));
 for (const invalid of [[], [{ methodId: 'cash', amount: '1' }], [...rows, { methodId: 'cash2', amount: '1' }], [...rows, rows[0]], [{ methodId: 'bank', amount: '100.001' }], [{ methodId: 'bank', amount: '100.000' }, { methodId: 'cash', amount: '1' }], [{ methodId: 'unknown', amount: '100.000' }]]) {
     assert.equal(paymentSummary('100000.00', invalid, methods).valid, false);

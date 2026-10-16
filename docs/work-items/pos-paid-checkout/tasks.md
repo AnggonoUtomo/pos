@@ -130,17 +130,17 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
   - Acceptance: rupiah Indonesia scale2 tanpa float, satu cash/unique/lunas,
     key ULID crypto, retry mempertahankan payload.
   - Verification: Node assertions tanpa memasang dependency.
-- [ ] State checkout tahan double submit/respons ambigu dan reload.
+- [x] State checkout tahan double submit/respons ambigu dan reload.
   - Acceptance: sessionStorage per user/tab berisi pending attempt sebelum POST;
     pending mengunci edit/context/reset; network/5xx mempertahankan key/payload,
     422 definitif meminta quote ulang tanpa menghapus keranjang.
   - Verification: browser timeout sesudah commit, reload/retry satu invoice,
     storage unavailable tidak mengirim POST, permission create-only readonly.
-- [ ] Receipt snapshot reload/cetak dan transaksi berikutnya.
+- [x] Receipt snapshot reload/cetak dan transaksi berikutnya.
   - Acceptance: receipt dari server, pointer ID per user/tab, cetak browser
     terisolasi tanpa HPP/kontak/rekening; keberhasilan baru sesudah response valid.
   - Verification: browser GET receipt/reload/print media desktop/tablet.
-- [ ] Dialog multi-payment dan receipt snapshot.
+- [x] Dialog multi-payment dan receipt snapshot.
   - Acceptance: angka Indonesia, satu cash, metode/account nyata, sisa/kembalian,
     Sonner, loading/error/retry, double submit terjaga, quote stale invalidated.
   - Verification: typecheck/lint/build dan browser desktop/tablet Light/Dark.
@@ -179,6 +179,15 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 - [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
 
 ## Bukti Command
+
+Increment 5 UI save point: typecheck/ESLint global dan build2711 PASS.
+pos-checkout-browser.mjs PASS pada fixture terisolasi: kombinasi60000 transfer/
+50000 tunai untuk100000, duplicate submit, receipt reload/print, response hilang
+sesudah commit lalu reload/retry identik, quote stale422, readonly create-only
+dan storage unavailable. Hasil tepat dua invoice/issue/receipt, tiga payment
+records dan sisa kamera5 unit dari8. Console unexpected kosong;503/ERR_FAILED/
+422 berasal injeksi QA. Screenshot payment desktop, receipt portrait/print dan
+dark landscape diperiksa visual. Regresi/full QA penutupan menyusul.
 
 Increment 5 helper: pos-payment-ui.mjs RED sebelum helper tersedia, kemudian
 GREEN untuk format Indonesia, settlement multi-payment/satu cash, duplicate/

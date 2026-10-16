@@ -38,7 +38,11 @@ export function paymentSummary(
         if (method.type === 'cash') cash++;
         else noncash += minor;
     }
-    const result = { remaining: decimal(due > paid ? due - paid : 0n), change: decimal(paid > due ? paid - due : 0n), tendered: decimal(paid) };
+    const result = {
+        remaining: decimal(due > paid ? due - paid : 0n),
+        change: decimal(cash === 1 && noncash < due && paid > due ? paid - due : 0n),
+        tendered: decimal(paid),
+    };
     let message = '';
     if (cash > 1) message = 'Maksimal satu metode tunai.';
     else if (paid > maxMinor) message = 'Total pembayaran melebihi batas.';

@@ -10,12 +10,18 @@ export function OrderSummary({
     disabled,
     error,
     onCheck,
+    onPay,
+    canPay,
+    locked,
 }: {
     quote: CartQuote | null;
     loading: boolean;
     disabled: boolean;
     error: string;
     onCheck: () => void;
+    onPay: () => void;
+    canPay: boolean;
+    locked: boolean;
 }) {
     return (
         <section className="space-y-3 border-t border-[var(--app-border)] bg-[var(--app-panel-strong)] p-4">
@@ -37,15 +43,13 @@ export function OrderSummary({
                 <span className="text-muted-foreground text-xs">Belum diposting</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-                <Button onClick={onCheck} disabled={disabled || loading}>
+                <Button onClick={onCheck} disabled={disabled || loading || locked}>
                     {loading ? <LoaderCircle className="size-4 animate-spin" /> : <CheckCheck className="size-4" />}Periksa keranjang
                 </Button>
-                <span title="Posting dan pembayaran belum tersedia">
-                    <Button className="w-full" variant="outline" disabled>
-                        <CreditCard className="size-4" />
-                        Pembayaran
-                    </Button>
-                </span>
+                <Button className="w-full" variant="outline" onClick={onPay} disabled={!quote || loading || disabled || locked || !canPay}>
+                    <CreditCard className="size-4" />
+                    Pembayaran
+                </Button>
             </div>
         </section>
     );
