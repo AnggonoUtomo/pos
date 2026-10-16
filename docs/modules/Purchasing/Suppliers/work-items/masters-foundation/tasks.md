@@ -53,10 +53,10 @@
 
 ## Increment 5: QA Dan Delivery
 
-- [ ] Full/backend/native MySQL dan browser QA.
+- [x] Full/backend/native MySQL dan browser QA.
   - Acceptance: audit/unique/current read native teruji, bukan klaim SQLite lock.
   - Verification: full/Pint/TS/lint/build, MySQL disposable, DevTools/fallback.
-- [ ] Aktifkan lokal additive dengan fingerprint existing.
+- [x] Aktifkan lokal additive dengan fingerprint existing.
   - Acceptance: schema/catalog/demo baru boleh ditambah; akun/grant/master/ledger
     lama tetap, audit lama tidak berubah, tidak reset/seed transaksi user.
   - Verification: helper guarded/status/fingerprint dan ulang idempotency.
@@ -68,9 +68,9 @@
 
 ## Sesudah Coding
 
-- [ ] Scope/acceptance terverifikasi.
-- [ ] Full/backend/frontend/browser dan status migration sesuai hasil aktual.
-- [ ] Aktivasi/demo/audit/privacy dan data pengguna aman.
+- [x] Scope/acceptance terverifikasi.
+- [x] Full/backend/frontend/browser dan status migration sesuai hasil aktual.
+- [x] Aktivasi/demo/audit/privacy dan data pengguna aman.
 - [ ] Dokumen/checklist/risiko/commit/remote terverifikasi.
 
 ## Bukti Command
@@ -93,3 +93,19 @@
   shortcut/palette dan audit privacy PASS; console/page error nol.
   Run awal gagal selector Tema pada tablet (label hidden); selector QA diperbaiki
   dengan memilih mode pada desktop, lalu seluruh matriks diulang PASS.
+- Increment 5: full php artisan test --compact 436 test/3430 assertion PASS;
+  scoped Pint --test PASS; TS/lint/build PASS. npm audit 0 vulnerabilities,
+  composer audit --locked --no-interaction tidak ada advisory.
+- php scripts/qa/suppliers-mysql.php PASS: migrate lengkap/disposable down-up,
+  demo idempotent, unique case-insensitive/trashed, locked current read sesudah
+  peer commit dan audit veto rollback. Database QA dibersihkan pada finally;
+  tidak mengklaim semua skenario concurrency telah diuji.
+- php scripts/qa/apply-suppliers-local.php dua kali PASS: batch14 Ran, tiga
+  supplier baru, dua permission tanpa grant; fingerprint semua baris lama
+  master/akun/grant/stock/finance/penjualan/audit identik. Run kedua tidak ada
+  migration atau perubahan existing. Tidak ada reset atau seed transaksi.
+- Review correctness/security/architecture: tidak ada dependency konkret lintas
+  module, query terparameterisasi/pagination25, middleware per action/CSRF,
+  field persistence whitelist, audit redacted/atomic. Theme/dependency/auth,
+  Old-docs/SampleUI/LSP pengguna tidak disentuh. Guard histori supplier ditunda
+  sampai ada consumer purchasing. Mobile di luar scope.

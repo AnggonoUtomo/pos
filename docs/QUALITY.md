@@ -148,6 +148,32 @@ Chrome DevTools QA: BLOCKED
 - Fallback:
 ```
 
+## QA Master Supplier
+
+Sesudah build, jalankan `php artisan test --filter=Suppliers` dan
+`php scripts/qa/suppliers-mysql.php` untuk database MySQL disposable (guard
+local/mysql, nama random, dihapus pada finally). Native QA menguji unique
+case-insensitive termasuk trashed, locked current read, audit veto rollback,
+demo idempotent dan migration up/down. Tidak mengklaim seluruh race sudah diuji.
+
+Chrome DevTools dicoba dahulu. Untuk alur authenticated tanpa credential user,
+gunakan Playwright existing dengan `QA_PLAYWRIGHT_MODULE` lalu
+`node scripts/qa/suppliers-browser.mjs`. Fixture di
+`tests/Browser/suppliers-fixture.php` hanya menerima SQLite disposable di lokasi
+testing dengan prefix guarded. Credential random via stdin; browser/server
+ditutup pada finally. Memverifikasi CRUD/reload/restore nonaktif, error duplikat,
+filter/empty, shortcut/palette, permission UX/backend, persistence dan audit
+redacted. Screenshot Light/Dark desktop/tablet expanded/collapsed dan report
+disimpan ignored di storage/framework/testing, tidak ikut commit.
+
+Aktivasi lokal eksplisit: `php scripts/qa/apply-suppliers-local.php`.
+Hanya schema module/katalog permission/demo baru; fingerprint seluruh tabel
+existing (kecuali cache/cache_locks/migrations) dan setiap baris lama pada
+suppliers/permissions/activity_log harus identik. Script tidak memberi grant,
+reset akun, mengubah master lama atau membuat transaksi. Jalankan ulang untuk
+memastikan additive/idempotent. Migration DDL terpisah dari transaksi seed;
+seeder gagal tidak otomatis menurunkan schema.
+
 ## Fallback QA Inventory
 
 Jika Chrome DevTools MCP tidak tersedia, script

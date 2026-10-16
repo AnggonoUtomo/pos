@@ -2,7 +2,7 @@
 
 ## Status Dan Owner
 
-In Progress. Purchasing/Suppliers, disetujui 17 Oktober 2026.
+QA selesai, menunggu delivery remote. Purchasing/Suppliers, 17 Oktober 2026.
 Baseline 15464e9. Requirement [PRD](PRD.md); contract [specification](../../specification.md).
 Urutan [plan](plan.md), checklist/bukti [tasks](tasks.md).
 
@@ -20,10 +20,10 @@ transaksi supplier, lookup/event tanpa consumer, theme, dependency atau auth bar
 
 ## Acceptance Dan Risiko
 
-- [ ] CRUD/restore, normalisasi/unique/validasi, status dan permission benar.
-- [ ] Audit wajib atomic, no-op tanpa audit, kontak tidak bocor.
-- [ ] Demo relevan/idempotent, mempertahankan existing/trashed dan tidak grant.
-- [ ] UI/shortcut/palette dan QA desktop/tablet Light/Dark lulus.
+- [x] CRUD/restore, normalisasi/unique/validasi, status dan permission benar.
+- [x] Audit wajib atomic, no-op tanpa audit, kontak tidak bocor.
+- [x] Demo relevan/idempotent, mempertahankan existing/trashed dan tidak grant.
+- [x] UI/shortcut/palette dan QA desktop/tablet Light/Dark lulus.
 - [ ] Migration/aktivasi aman, docs/checklist/commit/push terverifikasi.
 
 Risiko: kode tetap terreservasi sesudah hapus; manage-only bukan view;

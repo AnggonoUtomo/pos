@@ -42,6 +42,36 @@ Customer create/edit/restore membutuhkan level aktif (error customer_level_id).
 Mutation/audit atomic; detail kontrak ada pada
 [specification Parties](modules/Sales/Parties/specification.md).
 
+## Endpoint Internal Supplier
+
+Module Purchasing/Suppliers, session web/auth/verified/CSRF; bukan API token.
+Prefix `/purchasing/suppliers`, nama `purchasing.suppliers.*`:
+
+| Method | Path relatif | Nama | Permission |
+| --- | --- | --- | --- |
+| GET | / | index | purchasing.suppliers.view |
+| GET | /data | data | purchasing.suppliers.view |
+| POST | / | store | purchasing.suppliers.manage |
+| PUT | /{id} | update | purchasing.suppliers.manage |
+| DELETE | /{id} | destroy | purchasing.suppliers.manage |
+| POST | /{id}/restore | restore | purchasing.suppliers.manage |
+
+Index Inertia `purchasing/suppliers/index`, props records/filters. JSON data
+`{data,meta}` berisi id/code/name/phone/email/address/is_active/deleted_at,
+meta current_page/last_page/per_page/total. Pagination 25 urut code/id.
+Search literal code/name maksimal 150, status all/active/inactive, trashed0/1,
+page integer positif. Read tidak mengaudit atau mengubah data.
+
+Payload code wajib max32 trim/uppercase unik termasuk trashed; name wajib
+max150; phone nullable max32, email nullable valid max150, address nullable
+max500; kontak trim/kosong null. is_active opsional default true. Field lain
+tidak dipersist. Create JSON201/id; mutation200/id atau redirect back untuk
+Inertia/Sonner. Invalid/konflik kode422, ID invalid/tidak ditemukan404.
+Soft delete/restore mempertahankan status. Manage tidak otomatis memberi view;
+super-system tetap tunduk validasi. Audit wajib atomic dan tidak memuat nilai
+kontak. Belum ada dokumen purchasing atau public lookup/event supplier.
+Detail [spesifikasi Suppliers](modules/Purchasing/Suppliers/specification.md).
+
 ## Endpoint Internal POS
 
 Route module Sales/POS, session web/auth/CSRF. URL/name existing /pos (pos.index)
