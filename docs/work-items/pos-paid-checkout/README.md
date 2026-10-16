@@ -3,8 +3,8 @@
 ## Status
 
 In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
-Increment 1..4 selesai: presisi, Stock/Finance dan backend posting POS atomic
-teruji. UI pembayaran belum aktif sampai Increment 5.
+Increment 1..5 selesai: presisi, Stock/Finance, posting POS atomic dan UI
+multi-payment/recovery/receipt teruji. Increment 6 penutupan/delivery pending.
 
 ## Owner Dan Lokasi
 
@@ -61,12 +61,13 @@ lengkap. Tidak mengubah theme, grant/akun/password atau dependency.
 
 ## Acceptance Criteria
 
-- [ ] Checkout lunas nyata multi-metode, kembalian tunai dan bukti transaksi.
-- [ ] FIFO/HPP, saldo dan kartu stok keluar konsisten; stok tidak minus.
-- [ ] Seluruh mutation/audit atomic; retry tidak menggandakan transaksi.
-- [ ] Snapshot historis stabil sesudah rename/ubah konfigurasi master.
-- [ ] Permission backend, invalid/stale/tampered/insufficient stock ditolak.
-- [ ] QA otomatis desktop/tablet serta MySQL concurrency dan data lokal aman.
+- [x] Checkout lunas nyata multi-metode, kembalian tunai dan bukti transaksi.
+- [x] FIFO/HPP, saldo dan kartu stok keluar konsisten; stok tidak minus.
+- [x] Seluruh mutation/audit atomic; retry tidak menggandakan transaksi.
+- [x] Snapshot historis stabil sesudah rename/ubah konfigurasi master.
+- [x] Permission backend, invalid/stale/tampered/insufficient stock ditolak.
+- [x] QA otomatis desktop/tablet serta MySQL concurrency dan data lokal aman.
+- [ ] Penutupan keseluruhan, review delivery dan push Increment 6.
 
 ## Dampak Dan Risiko Yang Sudah Diidentifikasi
 
@@ -153,7 +154,7 @@ QA action/HTTP menginjeksi gagal pada Stock/Finance/persistence/audit, retry,
 harga/master/stok berubah, exact/multi-satuan dan permission. MySQL disposable
 menguji RR current reads serta worker checkout bersamaan. Local hanya additive
 migration/permission catalog dan fingerprint, tanpa posted/demo transaksi user.
-UI checkout tetap disabled sampai Increment 5, theme tidak diubah.
+UI checkout aktif sejak Increment 5, theme tidak diubah.
 
 Increment 4 full suite: 406 tests/3193 assertions PASS; backend PostInvoice,
 published boundary Stock/Finance, current lock/fingerprint, snapshot/idempotency,
@@ -161,9 +162,29 @@ net payment dan audit atomic teruji. MySQL native/RR stale/worker replay/last-st
 dan FK PASS. Regresi browser POS desktop/tablet Light/Dark PASS; DevTools BLOCKED
 karena tool tidak tersedia pada sesi ini. Frontend/theme tidak diubah.
 Migration POS Ran batch13 dan catalog permission additive; fingerprint bisnis
-existing identik, tanpa grant/reset atau invoice pengguna. Increment 5..6 Planned.
+existing identik, tanpa grant/reset atau invoice pengguna.
 Belum push karena keseluruhan work item belum selesai.
 
+### Implementasi Increment 5
+
+UI /pos mengaktifkan Pembayaran setelah quote valid dengan permission create+post;
+admin mengatur grant kasir secara eksplisit. Dialog memakai metode nyata dan angka
+Indonesia/exact, satu cash, sisa/kembalian dan loading/error/reload. Success hanya
+setelah snapshot backend valid, lalu cart kosong dan katalog stok dimuat ulang.
+Pending disimpan per user/tab sebelum POST, membekukan payload/key/context/cart;
+retry network/5xx/timeout dan reload tidak membuat invoice baru. 422 definitif
+mempertahankan cart dan membatalkan quote. Receipt terakhir dapat dimuat ulang
+dari server dan dicetak dengan browser, tanpa workspace/overlay atau data privat.
+
+Full suite 406 tests/3193 assertions, TS/lint/build2711, helper exact dan regresi
+POS browser PASS. QA checkout desktop/tablet Light/Dark meliputi double submit,
+response hilang setelah commit lalu retry, stale quote, permission create-only,
+storage unavailable dan print media. DevTools BLOCKED karena tool tidak tersedia;
+fallback Playwright PASS pada SQLite disposable, bukan database pengguna.
+Tidak ada schema/permission/grant/dependency berubah pada Increment 5.
+
 Rincian hasil increment dan command ada di tasks.md. Data pengguna, Old-docs,
-SampleUI dan LSP tidak boleh disentuh. Work item belum selesai hanya karena
-perhitungan Domain lulus; pembayaran UI tetap disabled sampai alur lengkap lolos.
+SampleUI dan LSP tidak disentuh. Recovery tab bukan offline queue/recovery lintas
+perangkat; tab/storage hilang perlu rekonsiliasi sebelum membuat transaksi baru.
+Printer fisik dan pagination receipt panjang belum diuji; retention/ownership
+akun dan granularity lock konservatif tetap risiko sebelum produksi.

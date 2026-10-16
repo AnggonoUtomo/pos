@@ -3,7 +3,8 @@
 Status: Active. Fondasi master selesai/diverifikasi 15 Oktober 2026.
 Memiliki master kas/bank dan metode pembayaran relasional sebagai prasyarat
 pembayaran POS berikutnya. Penerimaan internal penjualan tersedia sejak
-Increment 3 checkout (16 Oktober 2026); belum memiliki running balance atau UI checkout.
+Increment 3 checkout (16 Oktober 2026); belum memiliki running balance.
+UI checkout milik Sales/POS tersedia sejak Increment 5.
 
 Satu metode menunjuk satu akun aktif; beberapa metode boleh memakai akun sama.
 Tunai memakai akun cash; Debit/Transfer memakai bank. Akun terpakai, termasuk
@@ -37,5 +38,5 @@ Schema lokal batch12 Ran, fingerprint existing terjaga, tidak seed pembayaran.
 browser master PASS; DevTools smoke login PASS pada Increment 3.
 Increment 4 memasang consumer PostInvoice melalui SalePaymentWriter/DTOs dan
 pilihan aman SalePaymentMethods; tidak membuka repository/master mutation untuk
-kasir. Backend checkout tersedia, UI menunggu Increment 5. Tidak ada running
+kasir. Backend dan UI multi-payment/receipt Sales/POS tersedia. Tidak ada running
 balance atau route penerimaan Finance bebas.

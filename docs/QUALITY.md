@@ -374,11 +374,47 @@ grant harus identik; hanya tiga key POS guard web yang boleh ditambahkan, tidak
 grant/reset atau seed invoice. Metadata migrations dan cache/cache_locks turunan
 dikecualikan (Spatie menginvalidasi cache). Tabel invoice baru wajib kosong.
 
-Regresi browser memakai pos-demo-browser.mjs existing, bukan UI pembayaran yang
-belum aktif. Dropdown Shortcut harus selesai mengembalikan fokus setelah Escape
+Regresi katalog/quote memakai pos-demo-browser.mjs existing, terpisah dari QA
+UI pembayaran di bawah. Dropdown Shortcut harus selesai mengembalikan fokus setelah Escape
 sebelum Alt+F diuji; script menunggu state, bukan mengganti shortcut aplikasi.
 DevTools discovery tetap dicoba; jika tool tidak tersedia catat BLOCKED, tidak
 mengklaim fallback sebagai DevTools PASS. Desktop/tablet Light/Dark, bukan mobile.
+
+## QA UI Checkout POS
+
+`node scripts/qa/pos-payment-ui.mjs` memeriksa parsing rupiah Indonesia/scale2,
+BigInt tanpa float, aturan lunas/satu cash/unique, overflow, ULID crypto dan shape
+recovery. Non-cash berlebih tidak boleh menampilkan kembalian palsu.
+
+```powershell
+$env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/existing/playwright-core'
+node scripts/qa/pos-checkout-browser.mjs
+node scripts/qa/pos-demo-browser.mjs
+```
+
+Coba discovery Chrome DevTools MCP dahulu; jika tool tidak tersedia catat
+BLOCKED terpisah dari hasil fallback. Browser memakai Playwright existing,
+server loopback/profile terisolasi dan SQLite parties-browser-[16hex] pada
+storage/framework/testing. Fixture memakai credential random via stdin, demo
+master relasional CCTV/kelistrikan dan stok disposable; tidak membuat transaksi
+di database pengguna. Font CDN distub, browser/server ditutup pada finally.
+Verification helper menolak environment/database/path lain dan hanya mengeluarkan
+counts; repricing untuk QA terbatas ke fixture. Artefak screenshot/report ignored.
+
+Coverage checkout: multi-payment/kembalian, metode gagal/reload, noncash berlebih,
+double submit, respons hilang setelah commit lalu pending reload/retry payload/key
+identik, stok/payment tidak ganda, quote stale422/cart tetap, create-only tidak
+bisa membayar, storage unavailable mencegah POST, receipt GET/reload/cetak.
+Desktop1440x1000, tablet1024x768/768x1024, Light/Dark; screenshot diperiksa visual
+dan overflow. Cetak memeriksa portal receipt saja, background putih dan scroll
+lock dilepas pada media print termasuk Dark. Window.print distub: tidak mengklaim
+driver/printer fisik atau pagination receipt panjang telah diuji. Mobile tidak diuji.
+
+503/ERR_FAILED/422 yang diinjeksi dicatat terpisah; console/page error lain gagal.
+Regresi katalog/quote/shortcut memakai pos-demo-browser, bukan mengganti QA
+checkout. Bukti row lock/concurrency tetap melalui helper MySQL di atas, tidak
+dianggap terbukti oleh SQLite/browser. Recovery hanya per user/tab; hilang tab/
+storage memerlukan rekonsiliasi sebelum membuat pembayaran baru dengan key baru.
 
 ## QA Penerimaan Internal Finance
 
@@ -401,7 +437,7 @@ additive, fingerprint seluruh kolom/tabel pada schema project aktif (kecuali
 metadata migrations). Tidak seed/grant/reset atau membuat transaksi pengguna.
 Tabel baru harus kosong. Jangan down migration yang sudah berisi penerimaan.
 Browser regresi master memakai helper di bawah; guard histori baru diperiksa
-HTTP/action/MySQL, bukan mengklaim UI checkout tersedia.
+HTTP/action/MySQL; QA UI checkout Sales/POS memakai helper terpisah di atas.
 
 ## QA Master Finance/Payments
 

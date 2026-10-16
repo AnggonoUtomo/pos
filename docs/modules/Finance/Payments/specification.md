@@ -112,5 +112,5 @@ akun/grant/master/stok/ledger/harga existing wajib terjaga.
 
 Saldo awal, running balance kas/bank, settlement/fee, rekonsiliasi, utang/
 piutang, jurnal/full accounting, payment gateway, QRIS, integrasi rekening nyata,
-input diskon/pajak. Backend posting POS/FIFO berada di Sales/POS; UI pembayaran
-belum diaktifkan sampai Increment 5.
+input diskon/pajak. Orkestrasi posting POS/FIFO serta UI multi-payment/recovery/
+receipt berada di Sales/POS; UI aktif sejak Increment 5, bukan route Finance bebas.

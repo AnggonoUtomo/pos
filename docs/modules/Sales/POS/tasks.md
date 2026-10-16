@@ -8,6 +8,7 @@
 
 - [x] Backend posting atomic, snapshot/idempotency dan boundary Stock/Finance
   pada [Increment 4 checkout](../../../work-items/pos-paid-checkout/tasks.md).
-- [ ] UI checkout/receipt (Increment 5); payment UI belum diaktifkan.
+- [x] UI multi-payment/recovery/receipt dan QA desktop/tablet (Increment 5).
+- [ ] Penutupan/delivery keseluruhan checkout (Increment 6).
 
 Input diskon/pajak, piutang dan koreksi posted di luar scope pekerjaan ini.

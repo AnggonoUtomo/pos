@@ -144,7 +144,7 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
   - Acceptance: angka Indonesia, satu cash, metode/account nyata, sisa/kembalian,
     Sonner, loading/error/retry, double submit terjaga, quote stale invalidated.
   - Verification: typecheck/lint/build dan browser desktop/tablet Light/Dark.
-- [ ] Shortcut/permission dan commit.
+- [x] Shortcut/permission dan commit.
   - Acceptance: success sesudah commit saja; receipt reload dari snapshot,
     keranjang tidak hilang saat gagal; tidak mengubah theme.
   - Verification: DevTools discovery/fallback, console/network/screenshot.
@@ -179,6 +179,54 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 - [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
 
 ## Bukti Command
+
+### Sesudah Increment 5
+
+- [x] UI pembayaran/receipt/recovery, permission dan shortcut selesai.
+- [x] Helper exact, full test, TS/lint/build dan Pint fixture PASS.
+- [x] DevTools discovery BLOCKED (tool tidak tersedia); fallback Playwright
+  existing PASS desktop/tablet Light/Dark, tanpa memasang dependency.
+- [x] Print media hanya receipt putih/hitam, termasuk Dark; scroll lock dialog
+  tidak memotong area cetak. Screenshot diperiksa visual, bukan printer fisik.
+- [x] Schema/backend/grant/theme/data pengguna tidak diubah; migration SKIPPED
+  karena scope hanya frontend dan fixture disposable.
+- [x] Dokumen/status/review dan save point otomatis; belum push, Increment 6 pending.
+
+Penutupan Increment 5 (16 Oktober 2026):
+
+| Command/Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --compact | PASS | 406 tests/3193 assertions |
+| node scripts/qa/pos-payment-ui.mjs | PASS | Parsing Indonesia, settlement exact/overflow, ULID dan recovery shape; noncash berlebih tidak menampilkan kembalian palsu |
+| node scripts/qa/pos-demo.mjs | PASS | Format exact, tanpa mock/fake payment |
+| npx tsc --noEmit; npx eslint resources/js | PASS | Global frontend |
+| npm run build | PASS | 2711 modules, asset lokal diperbarui |
+| php vendor/bin/pint --test tests/Browser/parties-fixture.php tests/Browser/pos-checkout-verify.php | PASS | Fixture/verification helper saja |
+| DevTools discovery | BLOCKED | Tool namespace tidak tersedia; bukan klaim DevTools PASS |
+| node scripts/qa/pos-checkout-browser.mjs | PASS | Multi-payment/kembalian, double submit, lost-response/reload/retry key sama, 422/cart tetap, storage-block, permission, receipt reload dan print Light/Dark |
+| node scripts/qa/pos-demo-browser.mjs | PASS | Regresi katalog/barcode/harga/context/stok/quote, stale response, shortcut/reset/error retry dan create-only |
+| Migration/MySQL concurrency ulang | SKIPPED | Tidak ada schema/backend berubah; bukti Increment 4 tetap berlaku, browser memakai SQLite disposable |
+| Review/link lokal/git diff --check | PASS | Tidak ada file user/arsip/credential atau dependency ikut |
+
+Report checkout: storage/framework/testing/parties-browser-6b3e08847fcdd19a/
+pos-checkout-report.json. Regresi POS: parties-browser-b86220fcd1589907/
+pos-demo-report.json pada parent yang sama. Desktop1440x1000, tablet1024x768/
+768x1024, Light/Dark; mobile tidak diuji. Dua invoice/issue/receipt dan tiga
+payment records, stock kamera5 dari8, membuktikan replay tidak menggandakan
+checkout. Console unexpected kosong;503/ERR_FAILED/422 sengaja diinjeksi QA.
+
+QA cetak tambahan sempat RED karena body[data-scroll-locked] dari dialog
+mengalahkan selector print dengan specificity sama dan dimuat belakangan.
+Selector khusus media print diperkuat; assert overflow visible/background putih
+dan screenshot Dark print kemudian GREEN. Selector screenshot menunggu dialog
+closing detached agar animasi dialog tidak menyebabkan false failure.
+Cetak memakai window.print stub dan print media, bukan driver/printer fisik;
+pagination receipt panjang belum diuji. Tab/storage dihapus bukan recovery lintas
+perangkat; rekonsiliasi operasional tetap diperlukan jika key hilang.
+
+Save point Increment 5: 46ba610 helper exact/recovery, 12321c1 UI checkout/receipt,
+97a0d52 QA browser dan perbaikan scroll lock print. Penutupan keseluruhan/push
+tetap Increment 6, bukan bagian save point UI ini.
 
 Increment 5 UI save point: typecheck/ESLint global dan build2711 PASS.
 pos-checkout-browser.mjs PASS pada fixture terisolasi: kombinasi60000 transfer/
@@ -388,6 +436,6 @@ Penutupan Increment 1:
 Commit save point: fb5abf4 dokumen, 601745f settlement, 8657192 FIFO.
 Pada Increment 1 tidak ada perubahan database lokal, grant, credential, seeder, theme atau
 Old-docs/SampleUI/LSP. Tidak ada public port/event/adapter baru tanpa consumer.
-Status terkini: Increment 1..4 Passed; Increment 5..6 belum dikerjakan.
+Status terkini: Increment 1..5 Passed; Increment 6 pending.
 Tidak push sampai work item selesai atau instruksi eksplisit user.
-Langkah berikutnya: UI multi-payment, retry dan receipt snapshot (Increment 5).
+Langkah berikutnya: QA penutupan dan delivery keseluruhan (Increment 6).

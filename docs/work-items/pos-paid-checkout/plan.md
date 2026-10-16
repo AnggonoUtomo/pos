@@ -3,8 +3,8 @@
 ## Scope
 
 Sesuai README/PRD. Kerjakan risk-first, commit setiap increment yang benar-benar
-lulus. Increment 1..4 selesai; berikutnya Increment 5. Jangan mengaktifkan
-UI posting parsial.
+lulus. Increment 1..5 selesai; berikutnya Increment 6 penutupan/delivery.
+UI posting sudah aktif setelah quote valid dan permission terpenuhi.
 
 | No | Status | Nama | Perubahan Dan Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- |
@@ -12,7 +12,7 @@ UI posting parsial.
 | 2 | Passed | Pengeluaran Stock | Schema additive movement/alokasi, mutation no-negative current lock, query kartu/saldo keluar tanpa join privat POS | SQLite up/down, action/query/audit rollback, MySQL FK/current read |
 | 3 | Passed | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
 | 4 | Passed | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
-| 5 | In Progress | Checkout UI | Dialog multi-bayar, quote stale/retry, success/bukti snapshot, shortcut dan permission | TS/lint/build, DevTools atau fallback desktop/tablet |
+| 5 | Passed | Checkout UI | Dialog multi-bayar, quote stale/retry/recovery, success/bukti snapshot/cetak, shortcut dan permission | TS/lint/build, fallback browser desktop/tablet Light/Dark |
 | 6 | Planned | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
 
 ## Dependency Dan Implementasi
@@ -49,8 +49,9 @@ migration lokal additive tanpa pengeluaran pengguna. Belum ada port/route
 pengeluaran publik. Increment 3 menambah penerimaan internal Finance dan guard
 histori; migration lokal Ran tanpa payment pengguna. Increment 4 menambah backend
 posting atomic dan receipt JSON; schema POS Ran batch13 tanpa invoice pengguna.
-UI pembayaran belum aktif. Berikutnya
-urut sesuai dependency; scope baru harus mendapat persetujuan user.
+Increment 5 mengaktifkan UI multi-payment, recovery pending dan receipt/cetak
+browser. Increment 6 tetap pending untuk penutupan keseluruhan dan delivery;
+scope baru harus mendapat persetujuan user.
 
 Sebelum ada schema/data baru, rollback kode melalui commit terpisah sesuai
 instruksi user. Sesudah posting nyata, jangan down migration/soft delete ledger

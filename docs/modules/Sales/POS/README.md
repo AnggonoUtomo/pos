@@ -9,8 +9,8 @@ Barang/satuan tetap Items/Units; gudang Warehouses; pelanggan/harga Parties;
 saldo dan FIFO Stock. Tidak mengambil model/repository privat module lain.
 
 Backend posting lunas tersedia pada Increment 4: invoice/snapshot/idempotency,
-pengeluaran FIFO dan penerimaan pembayaran atomic. UI pembayaran/receipt belum
-diaktifkan sampai Increment 5. Tidak ada reservasi, input diskon/pajak, retur,
+pengeluaran FIFO dan penerimaan pembayaran atomic. Increment 5 mengaktifkan UI
+multi-payment, retry/recovery dan receipt cetak browser. Tidak ada reservasi, input diskon/pajak, retur,
 piutang atau closing shift. Snapshot diskon/pajak eksplisit nol.
 Theme existing dipertahankan; desktop/tablet, bukan mobile.
 
@@ -27,7 +27,9 @@ Detail: [specification](specification.md), [plan](plan.md), [tasks](tasks.md),
 [work item](../../../work-items/pos-live-cart/README.md).
 
 Tahap [checkout lunas/multi-payment](../../../work-items/pos-paid-checkout/README.md)
-sudah disetujui. Increment 1..4 selesai; endpoint posting dan detail JSON memakai
+sudah disetujui. Increment 1..5 selesai; endpoint posting dan detail JSON memakai
 permission create/post/view terpisah, tanpa memerlukan CRUD Finance pada kasir.
 Schema lokal Ran batch13, permission catalog additive tanpa grant/reset dan tanpa
-invoice pengguna. UI belum menyalakan pembayaran; QA rinci ada pada work item.
+invoice pengguna. UI /pos mengaktifkan Pembayaran setelah quote valid bagi user
+dengan create+post; admin perlu memberi permission post pada role kasir yang sesuai.
+QA rinci ada pada work item. Berikutnya Increment 6 penutupan/delivery keseluruhan.

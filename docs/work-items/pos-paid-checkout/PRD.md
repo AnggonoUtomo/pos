@@ -47,7 +47,7 @@ accounting dan mobile. Snapshot diskon/pajak nol tidak dianggap engine aktif.
 - [x] Tunai ganda, metode unavailable, non-tunai berlebih dan kurang bayar ditolak.
 - [x] Stok tidak minus, seluruh uang/stok/audit rollback bila satu tahap gagal.
 - [x] Retry identik memberikan nomor/snapshot sama tanpa pengeluaran ulang.
-- [ ] Desktop/tablet Light/Dark, permission dan network error terverifikasi.
+- [x] Desktop/tablet Light/Dark, permission dan network error terverifikasi.
 
 ## Pertanyaan Terbuka
 

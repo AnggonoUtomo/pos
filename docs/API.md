@@ -99,7 +99,8 @@ dengan applied bersih. Tidak memuat HPP, request_hash/idempotency key, actor,
 kontak pelanggan atau metadata rekening. Detail GET ownership dicek backend,
 view boleh lintas pemilik; tidak ada PUT/DELETE invoice posted. Pilihan metode
 id/code/name/type saja, active account/type compatible, bukan permission CRUD
-Finance. UI pembayaran/receipt menunggu Increment 5. Detail
+Finance. UI multi-payment/recovery/receipt memakai endpoint ini sejak Increment 5.
+Retry pending mempertahankan key/payload; recovery browser bukan offline queue. Detail
 [specification POS](modules/Sales/POS/specification.md).
 
 ## Endpoint API Eksternal
@@ -392,7 +393,8 @@ Consumer PostInvoice sudah memakai SalePaymentWriter/DTOs;
 pilihan metode melalui SalePaymentMethods. Metode berhistori tidak boleh dihapus,
 dinonaktifkan, diganti type atau pindah akun (422 field payments), termasuk
 super-system; nama/kode tetap boleh berubah. Akun memiliki guard histori langsung.
-Belum ada running balance uang atau piutang. UI checkout belum aktif.
+Belum ada running balance uang atau piutang. UI checkout dimiliki Sales/POS,
+bukan endpoint penerimaan Finance bebas.
 
 ## Contract Lintas Module
 

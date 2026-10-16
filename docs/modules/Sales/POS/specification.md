@@ -44,7 +44,8 @@ barcode, pagination, cart multi-satuan dan quantity Indonesia. Subtotal hanya
 hasil backend; perubahan context/line langsung membatalkan quote lama. Tidak
 menampilkan total stale saat loading/error. Response request lama tidak boleh
 menimpa context/line terbaru. Reset konfirmasi saat cart berisi. Shortcut dropdown
-di atas workspace: Alt+F cari, Ctrl/Cmd+Enter periksa keranjang. Payment disabled.
+di atas workspace: Alt+F cari, Ctrl/Cmd+Enter periksa keranjang, F8 pembayaran.
+Pembayaran aktif setelah quote valid dan permission post terpenuhi.
 Loading/empty/error, Sonner, shadcn/Lucide/theme existing. Desktop/tablet QA.
 
 ## Data, Demo Dan Risiko
@@ -59,8 +60,8 @@ barang dipaginasi. Customer remote search dapat menjadi pekerjaan berikutnya.
 
 ## Posting Lunas Atomic
 
-Backend posting tersedia pada Increment 4 checkout; UI Pembayaran tetap disabled
-sampai Increment 5. Quote menambah warehouse, base_unit_id/base_unit_name per
+Backend posting tersedia pada Increment 4 checkout; UI multi-payment/receipt
+tersedia sejak Increment 5. Quote menambah warehouse, base_unit_id/base_unit_name per
 line dan fingerprint deterministic SHA256 atas context/snapshot/total tanpa
 checked_at. Bukan reservasi atau otoritas harga. Posting menghitung ulang current
 master/harga/stok di bawah lock dan menolak quote_fingerprint yang berubah422.
@@ -115,3 +116,34 @@ Finance. Lifecycle/retention akun tidak diubah oleh increment ini. Sebelum
 penggunaan produksi dengan transaksi real, penghapusan akun dan keterlacakan
 actor tetap memerlukan keputusan retention/ownership seperti gap Identity
 existing; bukan alasan menghapus invoice atau audit ketika user dihapus.
+
+## UI Pembayaran, Recovery Dan Receipt
+
+Dialog mengambil metode aktif dari endpoint POS, bukan CRUD Finance. Nominal
+ditulis dengan titik ribuan/koma desimal dan dihitung exact memakai BigInt;
+preview bukan authority posting. Sisa/kembalian mengikuti satu cash, metode unik,
+lunas dan kontribusi positif. Loading/error/empty/reload tersedia. Permission
+create saja tidak dapat membuka pembayaran; post diperlukan, tanpa auto-grant.
+Ctrl/Cmd+Enter pada dialog mengirim pembayaran; double submit dikunci sinkron.
+
+Sebelum POST, simpan pending attempt di sessionStorage per user/tab: ULID crypto,
+payload asli, context/cart dan tampilan metode. Gagal menyimpan berarti POST tidak
+dikirim. Pending mengunci context/cart/reset dan penutupan dialog. Reload memakai
+payload/key yang sama; jangan membuat key baru karena network/5xx/response invalid.
+Timeout 30 detik adalah hasil ambigu, bukan bukti rollback. 401/403/419 dan konflik
+key juga mempertahankan attempt. Peringatan beforeunload aktif selama pending.
+422 definitif selain konflik idempotency membatalkan quote, mempertahankan
+keranjang dan meminta pemeriksaan ulang. Success/Sonner dan pengosongan cart
+hanya setelah menerima snapshot valid dari backend; katalog stok dimuat ulang.
+
+Pointer receipt terakhir disimpan per user/tab; tombol Bukti terakhir memuat GET
+snapshot dengan authorization backend. Receipt menampilkan harga/quantity/total,
+metode/tendered/kembalian, tanpa HPP/kontak/rekening. Cetak atau Ctrl/Cmd+P pada
+receipt memakai browser; portal khusus print hanya memuat bukti, putih/hitam juga
+pada Dark, tanpa overlay/workspace dan tanpa scroll lock dialog. Bukan integrasi
+driver printer atau verifikasi printer fisik.
+
+Recovery ini bukan offline queue, histori penjualan atau recovery lintas perangkat.
+Tab ditutup/storage dihapus dapat kehilangan pointer/key; jangan mengulang dengan
+key baru tanpa rekonsiliasi operasional. Storage corrupt/unavailable saat recovery
+mengunci transaksi baru. SessionStorage bukan tempat credential atau data kontak.
