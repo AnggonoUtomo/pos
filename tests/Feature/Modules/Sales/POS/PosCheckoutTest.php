@@ -112,6 +112,31 @@ class PosCheckoutTest extends TestCase
         $this->assertSame($before, $this->fingerprint());
     }
 
+    public function test_unique_collision_rolls_back_new_consumers_then_returns_the_winning_invoice(): void
+    {
+        $first = app(PostInvoice::class)->handle($this->input, $this->cashier->id);
+        $real = app(InvoiceRepository::class);
+        $reads = 0;
+        $repository = \Mockery::mock($real)->makePartial();
+        $repository->shouldReceive('lockByKey')->twice()->andReturnUsing(function ($actor, $key) use ($real, &$reads) {
+            return ++$reads === 1 ? null : $real->lockByKey($actor, $key);
+        });
+        $this->app->instance(InvoiceRepository::class, $repository);
+        $before = $this->fingerprint();
+        $this->assertSame($first, app(PostInvoice::class)->handle($this->input, $this->cashier->id));
+        $this->assertSame($before, $this->fingerprint());
+    }
+
+    public function test_cashier_method_choices_exclude_inactive_or_incompatible_accounts(): void
+    {
+        DB::table('payment_accounts')->where('type', 'bank')->update(['is_active' => false, 'account_number' => '00123456']);
+        $response = $this->getJson('/pos/payment-methods')->assertOk()->assertJsonCount(1, 'methods');
+        $response->assertJsonPath('methods.0.type', 'cash');
+        foreach (['account_number', 'account_holder', 'payment_account_id'] as $key) {
+            $this->assertStringNotContainsString('"'.$key.'"', $response->getContent());
+        }
+    }
+
     public function test_stale_quote_and_tampering_never_post_a_sale(): void
     {
         DB::table('item_prices')->where('item_id', $this->input['lines'][0]['item_id'])->update(['amount' => '49000']);
@@ -197,8 +222,12 @@ class PosCheckoutTest extends TestCase
 
     public function test_invoice_persistence_failure_rolls_back_consumers(): void
     {
-        $repository = \Mockery::mock(app(InvoiceRepository::class))->makePartial();
-        $repository->shouldReceive('audit')->once()->andThrow(new \RuntimeException('Simulated invoice failure'));
+        $real = app(InvoiceRepository::class);
+        $repository = \Mockery::mock($real)->makePartial();
+        $repository->shouldReceive('createPosted')->once()->andReturnUsing(function ($header, $lines) use ($real): void {
+            $real->createPosted($header, $lines);
+            throw new \RuntimeException('Simulated invoice failure');
+        });
         $this->app->instance(InvoiceRepository::class, $repository);
         $before = $this->fingerprint();
         try {

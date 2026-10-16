@@ -121,6 +121,8 @@ try {
     await page.getByRole('button', { name: 'Shortcut', exact: true }).click();
     await page.getByText('Shortcut Halaman', { exact: true }).waitFor();
     await page.keyboard.press('Escape');
+    await page.getByRole('menu').waitFor({ state: 'hidden' });
+    await page.waitForFunction(() => document.activeElement?.textContent?.includes('Shortcut'));
     await page.keyboard.press('Alt+f');
     assert.equal(await page.getByLabel('Cari barang', { exact: true }).evaluate((el) => el === document.activeElement), true);
     await page.getByLabel('Cari barang', { exact: true }).fill('');
