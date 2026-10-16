@@ -4,7 +4,8 @@
 
 In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
 Increment 1..5 selesai: presisi, Stock/Finance, posting POS atomic dan UI
-multi-payment/recovery/receipt teruji. Increment 6 penutupan/delivery pending.
+multi-payment/recovery/receipt teruji. Increment 6 verifikasi akhir lulus;
+delivery remote belum ditutup.
 
 ## Owner Dan Lokasi
 
@@ -188,3 +189,13 @@ SampleUI dan LSP tidak disentuh. Recovery tab bukan offline queue/recovery linta
 perangkat; tab/storage hilang perlu rekonsiliasi sebelum membuat transaksi baru.
 Printer fisik dan pagination receipt panjang belum diuji; retention/ownership
 akun dan granularity lock konservatif tetap risiko sebelum produksi.
+
+### Verifikasi Akhir Increment 6
+
+Full suite406/3193, TS/ESLint/build2711, Pint scope, helper exact, tiga QA MySQL
+checkout/Stock/Finance dan browser checkout/regresi desktop/tablet Light/Dark
+lulus. MySQL disposable dibersihkan; aktivasi lokal Nothing to migrate dengan
+fingerprint seluruh data bisnis existing/grant identik. Semua migration terkait
+Ran. Smoke pos.test dan21 asset build200, tanpa membutuhkan Vite aktif.
+Tidak ada fitur baru atau perubahan behavior pada increment penutupan.
+Hasil/artefak dan batas produksi tercatat pada tasks.md; delivery remote pending.

@@ -13,7 +13,7 @@ UI posting sudah aktif setelah quote valid dan permission terpenuhi.
 | 3 | Passed | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
 | 4 | Passed | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
 | 5 | Passed | Checkout UI | Dialog multi-bayar, quote stale/retry/recovery, success/bukti snapshot/cetak, shortcut dan permission | TS/lint/build, fallback browser desktop/tablet Light/Dark |
-| 6 | Planned | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
+| 6 | In Progress | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
 
 ## Dependency Dan Implementasi
 

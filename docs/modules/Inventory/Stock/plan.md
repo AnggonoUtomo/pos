@@ -38,8 +38,9 @@ produksi yang berisi posting memerlukan rencana preservasi data.
 
 Pengeluaran FIFO untuk penjualan disetujui dalam work item terpisah
 [pos-paid-checkout](../../../work-items/pos-paid-checkout/README.md).
-Increment 2 pekerjaan itu selesai: pengeluaran dan query internal Stock teruji,
-belum dihubungkan ke posting POS atau endpoint mutation publik.
+Pengeluaran dan query internal Stock teruji sejak Increment 2; consumer
+PostInvoice melalui SaleStockWriter tersedia sejak Increment 4 dan UI checkout
+sejak Increment 5. Tidak ada endpoint pengeluaran bebas milik Stock.
 Checklist stok awal di atas tetap selesai dalam batas scope awalnya.
 
 Tidak membuat sales/purchasing/transfer/adjustment/reversal/payment/pricing.

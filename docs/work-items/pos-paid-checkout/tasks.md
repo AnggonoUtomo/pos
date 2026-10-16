@@ -151,11 +151,22 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 
 ## Increment 6: Penutupan
 
-- [ ] Full QA, demo relasional disposable dan aktivasi lokal additive.
+### Sebelum Verifikasi Akhir
+
+- [x] AGENTS, docs/README, arsitektur/struktur dan work item dibaca ulang.
+- [x] Target Sales/POS, Inventory/Stock dan Finance/Payments diinformasikan.
+- [x] Scope dibatasi QA/review/dokumentasi/delivery, bukan fitur baru.
+- [x] Repo main dan remote origin diperiksa; 19 commit checkout lokal terpetakan.
+- [x] Old-docs, SampleUI, empat LSP dan data pengguna dikecualikan dari perubahan.
+- [x] DevTools discovery dicoba: tool tidak tersedia; fallback existing dipilih.
+
+### Checklist Penutupan
+
+- [x] Full QA, demo relasional disposable dan aktivasi lokal additive.
   - Acceptance: transaksi demo tidak menulis stok/payment database user;
     fingerprint existing terjaga; migration/status actual dan no reset/grant.
   - Verification: full tests/Pint/TS/lint/build, MySQL/browser/report, fingerprint.
-- [ ] Selaraskan API/MODULES/QUALITY/dokumen module dan commit.
+- [x] Selaraskan API/MODULES/QUALITY/dokumen module dan commit.
   - Acceptance: capability aktual, permission/contract/risiko jelas, tidak
     mengklaim piutang/diskon/pajak/void/full accounting selesai.
   - Verification: review, git diff --check, staging/secret scope check.
@@ -179,6 +190,52 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 - [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
 
 ## Bukti Command
+
+### Penutupan Increment 6
+
+Verifikasi akhir 16 Oktober 2026. Tidak ada fitur/runtime behavior baru;
+komentar POSDemoSeeder serta keterangan module Stock/POS/Payments diselaraskan
+dengan persistence/consumer aktual. Seeder tetap no-op, penjualan demo hanya
+fixture disposable yang mengomposisi master pemilik CCTV/kelistrikan.
+
+| Command/Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --compact | PASS | 406 tests/3193 assertions |
+| php artisan test --filter=PosReadBoundaryTest --compact | PASS | 5 tests/24 assertions; demo tidak grant/post transaksi, katalog readonly |
+| Pint --test file PHP dalam range checkout + POSDemoSeeder | PASS | Scope module/test/QA saja, tidak memformat file user |
+| npx tsc --noEmit; npx eslint resources/js; npm run build | PASS | Frontend global, build2711 modules |
+| node scripts/qa/pos-payment-ui.mjs; node scripts/qa/pos-demo.mjs | PASS | BigInt, Indonesia, settlement/recovery/key dan tanpa mock payment |
+| php scripts/qa/pos-checkout-mysql.php | PASS | Native DDL, RR stale/master/price, dua worker LOCK WAIT/replay/last-stock, rollback/FK dan cleanup |
+| php scripts/qa/payment-records-mysql.php | PASS | DECIMAL besar/max exact, RR assignment/history/replay, worker/FK/guard down dan cleanup |
+| php scripts/qa/stock-issues-mysql.php | PASS | Native alter, RR saldo/replay, pecahan/residual, worker last-stock/FK/transaction guard dan cleanup |
+| php scripts/qa/apply-pos-checkout-local.php | PASS | Nothing to migrate; fingerprint bisnis/permission lama/grant identik; tanpa reset atau invoice demo pengguna |
+| route:list --path=pos -v | PASS | Enam route POS; satu route Stock ikut substring post; auth/can dan ownership detail sesuai scope |
+| migrate:status path POS/Stock/Payments | PASS | Semua Ran: POS13, Stock7/11, Finance10/12 |
+| Chrome DevTools MCP discovery | BLOCKED | Tool tidak tersedia pada sesi ini; fallback bukan DevTools PASS |
+| node scripts/qa/pos-checkout-browser.mjs | PASS | Desktop/tablet Light/Dark, multi-payment/change, double submit, reload/retry lost response, quote422/cart tetap, permission/storage block, receipt GET/print |
+| node scripts/qa/pos-demo-browser.mjs | PASS | Katalog/barcode/matrix/stock/context, stale response, shortcut/reset,503/retry dan create-only |
+| Smoke http://pos.test/pos | PASS | Halaman auth200,21 asset production200, tanpa referensi Vite hot; bukan login memakai akun pengguna |
+| Link lokal/git diff --check | PASS | Dokumen scope dan whitespace, bukan scan arsip |
+| Boundary/privacy/review Git range | PASS | Published contracts/DTOs saja, tidak ada path Old-docs/SampleUI/storage/env atau credential pattern dalam107 file range awal |
+
+Report checkout ignored: storage/framework/testing/parties-browser-bb5691936452c4d3/
+pos-checkout-report.json. Hasil tepat dua invoice/issue/receipt, tiga payment
+records dan stock kamera5 dari8. Console unexpected kosong;503/ERR_FAILED/422
+merupakan fault injection. Desktop1440x1000 dan tablet1024x768/768x1024,
+Light/Dark. Mobile tidak diuji. Screenshot payment Light landscape, receipt Dark
+print dan katalog Dark portrait diperiksa visual; tidak ada overlap/overflow
+yang mengganggu. Regresi POS ignored: storage/framework/testing/
+parties-browser-67637491b9ec9474/pos-demo-report.json, console kosong.
+
+Review correctness/architecture/security/performance tidak menemukan blocker
+dalam scope checkout yang diuji. Batas tetap eksplisit: bukan load test semua
+interleaving, active-level lock konservatif, retention/ownership actor perlu
+keputusan sebelum produksi; recovery tab bukan offline/lintas perangkat dan key
+hilang perlu rekonsiliasi. Printer fisik dan pagination panjang belum diuji.
+Piutang, input diskon/pajak, retur/void/reversal, shift dan full accounting belum
+dikerjakan. Posted/ledger tidak boleh dihapus atau down sebagai koreksi.
+
+Delivery masih pending; checklist push baru ditutup setelah ref remote cocok.
 
 ### Sesudah Increment 5
 

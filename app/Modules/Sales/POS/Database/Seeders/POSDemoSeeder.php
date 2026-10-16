@@ -11,6 +11,6 @@ class POSDemoSeeder extends Seeder
         if (! app()->environment(['local', 'testing'])) {
             throw new \LogicException('Demo POS hanya local/testing.');
         }
-        // POS has no persistence yet; fixtures compose the owning modules' demo seeders.
+        // Posted sales are created only in disposable QA fixtures, never by demo seeding.
     }
 }

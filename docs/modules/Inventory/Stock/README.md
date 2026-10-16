@@ -1,8 +1,9 @@
 # Inventory/Stock
 
 StockAvailability adalah published read boundary POS untuk saldo base unit per
-gudang. Tidak mengunci/mereservasi stok, memuat nilai FIFO, atau melakukan
-pengeluaran. Consumer quote wajib memvalidasi ulang ketika posting dibuat nanti.
+gudang. Default read tidak mengunci/mereservasi stok atau melakukan pengeluaran;
+mode lock untuk posting memerlukan transaction caller. Consumer PostInvoice
+memvalidasi ulang quote dan memakai SaleStockWriter untuk pengeluaran/FIFO atomic.
 
 ## Status
 
