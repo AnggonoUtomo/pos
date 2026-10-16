@@ -30,11 +30,11 @@
 
 ## Increment 3: HTTP, Query Dan Seeder
 
-- [ ] Test RED lalu implementasi request/controller/query/routes.
+- [x] Test RED lalu implementasi request/controller/query/routes.
   - Acceptance: guest/outsider/viewer/manage/super, CSRF, whitelist, 404/422,
     search literal/filter/pagination/trashed, read no mutation, stale ditolak.
   - Verification: focused tests, route:list, Pint.
-- [ ] Access/demo seeder module.
+- [x] Access/demo seeder module.
   - Acceptance: no grant; CCTV/kelistrikan relasional dari public lookup; demo
     local/testing saja, existing/trashed tidak diubah, tidak menyentuh ledger.
   - Verification: idempotency/production/no-ledger tests dan commit.
@@ -81,3 +81,8 @@
   Math exact/overflow/rounding, audit veto create/update/delete/restore, stale/
   no-op, no-ledger, lookup supplier redacted dan disposable SQLite up/down PASS.
   Pint PASS. Native MySQL dan HTTP/UI masih menunggu increment berikutnya.
+- Increment3: RED 5 HTTP/seeder test (route/catalog/demo belum ada); GREEN
+  total12 test/133 assertion, Pint/6 route auth+verified+can PASS. Termasuk
+  CSRF419, manage-only tidak view, super-system tetap invariant, snapshot stale,
+  whitelist, read-only/filter/pagination, demo_key idempotent sesudah edit catatan
+  dan trashed. Inertia nama component diuji; file page menyusul Increment4.

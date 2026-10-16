@@ -12,6 +12,8 @@ class PurchaseOrder extends Model
 
     protected $guarded = [];
 
+    protected $hidden = ['demo_key'];
+
     protected function casts(): array
     {
         return ['version' => 'integer', 'total_value' => 'decimal:6'];
