@@ -20,14 +20,14 @@
 
 ## Increment 2: Schema Dan Application
 
-- [ ] Scaffold generator dan test RED persistence/action/audit.
+- [x] Scaffold generator dan test RED persistence/action/audit.
   - Acceptance: route/database/provider di module, tanpa Domain/port publik kosong.
   - Verification: generator, RED tests dan migration disposable up/down.
-- [ ] Implementasikan CRUD/lock/audit atomic dan privasi.
+- [x] Implementasikan CRUD/lock/audit atomic dan privasi.
   - Acceptance: ULID/code canonical/unique/soft delete/restore, no-op,
     audit gagal/veto me-rollback semua; kontak hanya changed_fields.
   - Verification: focused tests, Pint dan boundary review.
-- [ ] Catat bukti dan commit setelah GREEN.
+- [x] Catat bukti dan commit setelah GREEN.
 
 ## Increment 3: HTTP, Query Dan Seeder
 
@@ -77,3 +77,6 @@
 
 - Increment 1: review scope dan tautan relatif lokal PASS; generator dry-run
   PASS (provider, routes, migration directory, module demo seeder); diff check PASS.
+- Increment 2: RED 6 test class/action belum ada; GREEN 7 test/33 assertion,
+  termasuk migration down/up SQLite disposable. Pint PASS. Native MySQL
+  dan HTTP/UI belum diverifikasi pada checkpoint ini.

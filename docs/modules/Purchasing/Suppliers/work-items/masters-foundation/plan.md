@@ -3,7 +3,7 @@
 | No | Status | Hasil | Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- |
 | 1 | Done | Scope/dokumen | Boundary, constraint dan checklist sebelum coding | Review/link/diff dan generator dry-run PASS |
-| 2 | Planned | Scaffold/schema/application/audit | ULID/soft delete, CRUD atomic dan privasi/no-op | RED/GREEN feature, migration disposable, Pint |
+| 2 | Done | Scaffold/schema/application/audit | ULID/soft delete, CRUD atomic dan privasi/no-op | RED/GREEN 7 test/33 assertion, SQLite up/down, Pint PASS |
 | 3 | Planned | HTTP/query/permission/demo | Permission per action, validation/pagination/CSRF, seeder aman | Feature HTTP/seeder/scaffold dan route |
 | 4 | Planned | UI/navigasi | Dialog/filter/lifecycle, Sonner, shortcut/palette dan permission | Typecheck/lint/build, browser |
 | 5 | Planned | QA/aktivasi/delivery | Full/MySQL/browser, fingerprint lokal, docs dan remote cocok | Full gates/status/screenshot/commit/push |
