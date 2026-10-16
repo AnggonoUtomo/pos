@@ -3,7 +3,7 @@
 ## Scope
 
 Sesuai README/PRD. Kerjakan risk-first, commit setiap increment yang benar-benar
-lulus. Increment 1..5 selesai; berikutnya Increment 6 penutupan/delivery.
+lulus. Increment 1..6 selesai, termasuk verifikasi dan delivery checkout.
 UI posting sudah aktif setelah quote valid dan permission terpenuhi.
 
 | No | Status | Nama | Perubahan Dan Acceptance | Verifikasi |
@@ -13,7 +13,7 @@ UI posting sudah aktif setelah quote valid dan permission terpenuhi.
 | 3 | Passed | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
 | 4 | Passed | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
 | 5 | Passed | Checkout UI | Dialog multi-bayar, quote stale/retry/recovery, success/bukti snapshot/cetak, shortcut dan permission | TS/lint/build, fallback browser desktop/tablet Light/Dark |
-| 6 | In Progress | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
+| 6 | Passed | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
 
 ## Dependency Dan Implementasi
 
@@ -50,7 +50,7 @@ pengeluaran publik. Increment 3 menambah penerimaan internal Finance dan guard
 histori; migration lokal Ran tanpa payment pengguna. Increment 4 menambah backend
 posting atomic dan receipt JSON; schema POS Ran batch13 tanpa invoice pengguna.
 Increment 5 mengaktifkan UI multi-payment, recovery pending dan receipt/cetak
-browser. Increment 6 tetap pending untuk penutupan keseluruhan dan delivery;
+browser. Increment 6 menutup QA/delivery keseluruhan; work item selesai dan
 scope baru harus mendapat persetujuan user.
 
 Sebelum ada schema/data baru, rollback kode melalui commit terpisah sesuai

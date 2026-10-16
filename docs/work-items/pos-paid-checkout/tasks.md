@@ -170,7 +170,7 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
   - Acceptance: capability aktual, permission/contract/risiko jelas, tidak
     mengklaim piutang/diskon/pajak/void/full accounting selesai.
   - Verification: review, git diff --check, staging/secret scope check.
-- [ ] Push dan cocokkan remote.
+- [x] Push dan cocokkan remote.
   - Acceptance: hanya file scope; Old-docs/SampleUI/LSP tidak ikut.
   - Verification: git push, ls-remote dan divergence0/0.
 
@@ -235,7 +235,21 @@ hilang perlu rekonsiliasi. Printer fisik dan pagination panjang belum diuji.
 Piutang, input diskon/pajak, retur/void/reversal, shift dan full accounting belum
 dikerjakan. Posted/ledger tidak boleh dihapus atau down sebagai koreksi.
 
-Delivery masih pending; checklist push baru ditutup setelah ref remote cocok.
+Push main berhasil dari12b510b ke716946c. git ls-remote --heads origin main
+memastikan716946c9c5c2a5c8c6a97d19982e0ade1f92b889 sama dengan HEAD;
+git rev-list --left-right --count HEAD...origin/main menghasilkan0/0.
+Tracked worktree bersih; SampleUI dan empat LSP tetap untracked, tidak ikut push.
+Commit checklist penutup dibuat setelah bukti ini, lalu disinkronkan kembali.
+
+### Sesudah Increment 6
+
+- [x] Seluruh increment implementasi/QA scope checkout lulus.
+- [x] Demo hanya disposable; schema lokal Ran dan fingerprint data/grant identik.
+- [x] Full backend, native MySQL, frontend gates dan browser desktop/tablet lulus.
+- [x] DevTools BLOCKED jujur, fallback Playwright PASS dan screenshot diperiksa.
+- [x] API/MODULES/QUALITY serta dokumen Stock/Payments/POS sesuai capability aktual.
+- [x] Risiko/non-scope, review/link/diff/staged exclusion dan commit terverifikasi.
+- [x] Push/ref remote cocok; tidak menyertakan artefak user, arsip atau credential.
 
 ### Sesudah Increment 5
 
@@ -493,6 +507,5 @@ Penutupan Increment 1:
 Commit save point: fb5abf4 dokumen, 601745f settlement, 8657192 FIFO.
 Pada Increment 1 tidak ada perubahan database lokal, grant, credential, seeder, theme atau
 Old-docs/SampleUI/LSP. Tidak ada public port/event/adapter baru tanpa consumer.
-Status terkini: Increment 1..5 Passed; Increment 6 pending.
-Tidak push sampai work item selesai atau instruksi eksplisit user.
-Langkah berikutnya: QA penutupan dan delivery keseluruhan (Increment 6).
+Status terkini: Increment 1..6 Passed; work item Done dan delivery remote terverifikasi.
+Tidak memulai fitur baru dari checklist ini; tunggu arahan user berikutnya.

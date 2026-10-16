@@ -9,6 +9,6 @@
   diverifikasi pada [Increment 3 checkout](../../../work-items/pos-paid-checkout/tasks.md).
 - [x] Integrasi posting backend POS melalui published writers (Increment 4).
 - [x] UI checkout POS (Increment 5 work item yang sama, ownership Sales/POS).
-- [ ] Penutupan/delivery keseluruhan checkout (Increment 6).
+- [x] Penutupan/delivery keseluruhan checkout (Increment 6).
 
 Running balance, piutang dan mutasi umum di luar penerimaan penjualan belum dikerjakan.

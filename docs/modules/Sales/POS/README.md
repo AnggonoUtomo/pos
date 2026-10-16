@@ -27,9 +27,9 @@ Detail: [specification](specification.md), [plan](plan.md), [tasks](tasks.md),
 [work item](../../../work-items/pos-live-cart/README.md).
 
 Tahap [checkout lunas/multi-payment](../../../work-items/pos-paid-checkout/README.md)
-sudah disetujui. Increment 1..5 selesai; endpoint posting dan detail JSON memakai
+sudah selesai dalam scope Increment 1..6; endpoint posting dan detail JSON memakai
 permission create/post/view terpisah, tanpa memerlukan CRUD Finance pada kasir.
 Schema lokal Ran batch13, permission catalog additive tanpa grant/reset dan tanpa
 invoice pengguna. UI /pos mengaktifkan Pembayaran setelah quote valid bagi user
 dengan create+post; admin perlu memberi permission post pada role kasir yang sesuai.
-QA rinci ada pada work item. Berikutnya Increment 6 penutupan/delivery keseluruhan.
+QA dan delivery remote terverifikasi; bukti rinci ada pada work item.

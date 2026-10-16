@@ -2,10 +2,11 @@
 
 ## Status
 
-In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
-Increment 1..5 selesai: presisi, Stock/Finance, posting POS atomic dan UI
-multi-payment/recovery/receipt teruji. Increment 6 verifikasi akhir lulus;
-delivery remote belum ditutup.
+Done. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
+Increment 1..6 selesai: presisi, Stock/Finance, posting POS atomic, UI
+multi-payment/recovery/receipt dan verifikasi/delivery. Push main dikonfirmasi
+16 Oktober 2026; bukti ada pada tasks.md. Selesai dalam scope, bukan klaim siap
+produksi tanpa keputusan retention/recovery dan pengujian operasional tambahan.
 
 ## Owner Dan Lokasi
 
@@ -68,7 +69,7 @@ lengkap. Tidak mengubah theme, grant/akun/password atau dependency.
 - [x] Snapshot historis stabil sesudah rename/ubah konfigurasi master.
 - [x] Permission backend, invalid/stale/tampered/insufficient stock ditolak.
 - [x] QA otomatis desktop/tablet serta MySQL concurrency dan data lokal aman.
-- [ ] Penutupan keseluruhan, review delivery dan push Increment 6.
+- [x] Penutupan keseluruhan, review delivery dan push Increment 6.
 
 ## Dampak Dan Risiko Yang Sudah Diidentifikasi
 
@@ -164,7 +165,7 @@ dan FK PASS. Regresi browser POS desktop/tablet Light/Dark PASS; DevTools BLOCKE
 karena tool tidak tersedia pada sesi ini. Frontend/theme tidak diubah.
 Migration POS Ran batch13 dan catalog permission additive; fingerprint bisnis
 existing identik, tanpa grant/reset atau invoice pengguna.
-Belum push karena keseluruhan work item belum selesai.
+Delivery keseluruhan ditutup pada Increment 6.
 
 ### Implementasi Increment 5
 
@@ -198,4 +199,6 @@ lulus. MySQL disposable dibersihkan; aktivasi lokal Nothing to migrate dengan
 fingerprint seluruh data bisnis existing/grant identik. Semua migration terkait
 Ran. Smoke pos.test dan21 asset build200, tanpa membutuhkan Vite aktif.
 Tidak ada fitur baru atau perubahan behavior pada increment penutupan.
-Hasil/artefak dan batas produksi tercatat pada tasks.md; delivery remote pending.
+Hasil/artefak dan batas produksi tercatat pada tasks.md. Push main ke origin
+716946c telah dikonfirmasi lewat ls-remote dan divergence0/0; commit penutup
+checklist disinkronkan sesudah bukti delivery ini.
