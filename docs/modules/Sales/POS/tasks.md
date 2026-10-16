@@ -6,4 +6,8 @@
 - [x] Status module/contract/QA diperbarui sesuai hasil aktual.
 - [x] Delivery remote work item terverifikasi pada 15 Oktober 2026.
 
-Posting, pengeluaran FIFO, diskon/pajak dan pembayaran belum dikerjakan.
+- [x] Backend posting atomic, snapshot/idempotency dan boundary Stock/Finance
+  pada [Increment 4 checkout](../../../work-items/pos-paid-checkout/tasks.md).
+- [ ] UI checkout/receipt (Increment 5); payment UI belum diaktifkan.
+
+Input diskon/pajak, piutang dan koreksi posted di luar scope pekerjaan ini.

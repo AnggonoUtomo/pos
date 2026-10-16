@@ -78,6 +78,13 @@ Level yang pernah dirujuk harga tidak boleh delete/nonaktif, termasuk harga
 trashed. Lock workflow: level terurut -> Units terurut -> Item -> relasi/harga.
 Query locking memakai current read; mutation harga/katalog/audit atomic.
 
+Consumer PostInvoice memakai ItemPriceCatalog::forItems(itemIds, levelId,
+lock = false) dengan lock true pada transaction default. Harga/active levels
+memakai current read; default false mempertahankan read editor/katalog existing.
+CustomerSalesLookup::findActive(id, lock = false) mendukung lock level lalu
+customer dan recheck assignment, tanpa mempublikasikan kontak. Lookup locked
+menolak pemakaian di luar transaction. Model/repository tetap privat.
+
 Demo harga: 54 kombinasi dari 18 satuan jual sembilan produk x tiga level.
 Harga fiktif Eceran dasar per item, Grosir faktor 0.90 dan Installer 0.95 hanya
 untuk seed awal; bukan aturan pricing aplikasi. Rasio unit memakai DTO Items.

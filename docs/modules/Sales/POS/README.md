@@ -8,8 +8,10 @@ POS memiliki komposisi workspace kasir dan pemeriksaan keranjang sementara.
 Barang/satuan tetap Items/Units; gudang Warehouses; pelanggan/harga Parties;
 saldo dan FIFO Stock. Tidak mengambil model/repository privat module lain.
 
-Tidak menyimpan penjualan, reservasi, pengeluaran FIFO, diskon/pajak/payment,
-retur, struk atau closing shift pada scope ini. Tidak ada klaim pembayaran sukses.
+Backend posting lunas tersedia pada Increment 4: invoice/snapshot/idempotency,
+pengeluaran FIFO dan penerimaan pembayaran atomic. UI pembayaran/receipt belum
+diaktifkan sampai Increment 5. Tidak ada reservasi, input diskon/pajak, retur,
+piutang atau closing shift. Snapshot diskon/pajak eksplisit nol.
 Theme existing dipertahankan; desktop/tablet, bukan mobile.
 
 Public input route tetap /pos (pos.index). Permission existing
@@ -19,12 +21,13 @@ bukan invariant. POSAccessSeeder hanya provisioning catalog tanpa grant.
 
 Seeder demo POS tidak membuat transaksi: memakai demo master/stock/pricing
 existing secara eksplisit pada fixture disposable. Data pengguna tidak di-seed
-ulang. Tidak membuat tabel baru atau audit read-only sebagai transaksi palsu.
+ulang. Posted demo hanya fixture disposable; read-only tidak diaudit sebagai transaksi.
 
 Detail: [specification](specification.md), [plan](plan.md), [tasks](tasks.md),
 [work item](../../../work-items/pos-live-cart/README.md).
 
 Tahap [checkout lunas/multi-payment](../../../work-items/pos-paid-checkout/README.md)
-sudah disetujui. Increment 1 dokumen/Domain Finance dan Stock selesai;
-posting/idempotency/payment/UI transaksi belum aktif. Status data/keranjang
-di atas tidak berarti checkout sudah tersedia.
+sudah disetujui. Increment 1..4 selesai; endpoint posting dan detail JSON memakai
+permission create/post/view terpisah, tanpa memerlukan CRUD Finance pada kasir.
+Schema lokal Ran batch13, permission catalog additive tanpa grant/reset dan tanpa
+invoice pengguna. UI belum menyalakan pembayaran; QA rinci ada pada work item.

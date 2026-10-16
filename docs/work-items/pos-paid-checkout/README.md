@@ -3,8 +3,8 @@
 ## Status
 
 In Progress. Scope dan aturan kembalian disetujui user 15 Oktober 2026.
-Increment 1..3 selesai: presisi, outflow internal Stock dan penerimaan internal Finance teruji;
-checkout belum aktif.
+Increment 1..4 selesai: presisi, Stock/Finance dan backend posting POS atomic
+teruji. UI pembayaran belum aktif sampai Increment 5.
 
 ## Owner Dan Lokasi
 
@@ -88,8 +88,8 @@ lengkap. Tidak mengubah theme, grant/akun/password atau dependency.
 Stock memiliki stock_issues (sumber sale/ULID/nomor/gudang/hash/actor/waktu),
 stock_issue_lines (source_line_id/item/base unit/snapshot/quantity/nilai) dan
 fifo_consumptions (movement/layer/quantity/nilai). Tidak ada soft delete.
-Referensi sale/line opaque tervalidasi ULID, belum FK ke tabel POS yang belum
-ada. Semua FK internal Stock restrict; source_type/source_id dan line source
+Referensi sale/line tetap opaque ULID, tanpa FK circular ke tabel POS yang
+ditambahkan pada Increment 4. Semua FK internal Stock restrict; source_type/source_id dan line source
 unik. Source sama/payload normal sama replay tanpa mutation; payload beda ditolak.
 
 stock_movements.opening_line_id menjadi nullable, tambah issue_line_id unique
@@ -98,7 +98,8 @@ Movement sale quantity/nilai signed negatif; issue line/consumption positif.
 Query movement memakai snapshot sendiri dan fallback left join opening lama.
 Balance tetap memakai identitas opening existing; saldo nol tidak dihapus.
 
-IssueStock adalah action internal, belum published contract atau route publik.
+IssueStock awalnya action internal; Increment 4 memasang SaleStockWriter untuk
+consumer PostInvoice, tanpa route pengeluaran bebas.
 Input base_quantity berasal dari konversi authoritative POS kelak, bukan input
 harga/rasio bebas. Memakai lookup publik Warehouse/Units/Items. Lock gudang,
 base units terurut, items terurut, balance lalu layer received_at/id; gudang
@@ -112,7 +113,7 @@ Down migration menolak bila pengeluaran nyata ada, bukan menghapus histori.
 
 ## Handoff Saat Ini
 
-### Rencana Increment 4
+### Implementasi Increment 4
 
 POST /pos/invoices menerima idempotency_key ULID, warehouse_id/customer_id,
 lines item_id/unit_id/quantity, quote_fingerprint dan payments method_id/amount.
@@ -154,13 +155,13 @@ menguji RR current reads serta worker checkout bersamaan. Local hanya additive
 migration/permission catalog dan fingerprint, tanpa posted/demo transaksi user.
 UI checkout tetap disabled sampai Increment 5, theme tidak diubah.
 
-Increment 3 full suite: 390 tests/3045 assertions PASS. RecordSalePayment
-menyimpan receipt/record/snapshot dan audit atomic, kas bersih serta guard histori.
-MySQL native up/down/current read, nominal besar exact, worker retry sumber sama
-dan FK PASS. Browser regresi master desktop/tablet PASS; DevTools smoke login
-PASS, bukan authenticated CRUD. Frontend/theme tidak diubah pada increment ini.
-Migration Finance receipt Ran batch12; fingerprint semua data existing identik,
-tanpa pembayaran pengguna, grant atau reset. Increment 4..6 masih Planned.
+Increment 4 full suite: 406 tests/3193 assertions PASS; backend PostInvoice,
+published boundary Stock/Finance, current lock/fingerprint, snapshot/idempotency,
+net payment dan audit atomic teruji. MySQL native/RR stale/worker replay/last-stock
+dan FK PASS. Regresi browser POS desktop/tablet Light/Dark PASS; DevTools BLOCKED
+karena tool tidak tersedia pada sesi ini. Frontend/theme tidak diubah.
+Migration POS Ran batch13 dan catalog permission additive; fingerprint bisnis
+existing identik, tanpa grant/reset atau invoice pengguna. Increment 5..6 Planned.
 Belum push karena keseluruhan work item belum selesai.
 
 Rincian hasil increment dan command ada di tasks.md. Data pengguna, Old-docs,

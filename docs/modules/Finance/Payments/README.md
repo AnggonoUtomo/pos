@@ -34,5 +34,8 @@ replay canonical dan guard histori master. Metode berhistori tidak boleh hapus/
 nonaktif/ganti type/pindah akun; rename tetap boleh tanpa mengganti snapshot.
 Schema lokal batch12 Ran, fingerprint existing terjaga, tidak seed pembayaran.
 390 tests/3045 assertions, MySQL nominal besar/current read/worker dan regresi
-browser master PASS; DevTools smoke login PASS. Belum ada consumer lintas module,
-saldo uang, route penerimaan publik atau tombol checkout aktif.
+browser master PASS; DevTools smoke login PASS pada Increment 3.
+Increment 4 memasang consumer PostInvoice melalui SalePaymentWriter/DTOs dan
+pilihan aman SalePaymentMethods; tidak membuka repository/master mutation untuk
+kasir. Backend checkout tersedia, UI menunggu Increment 5. Tidak ada running
+balance atau route penerimaan Finance bebas.

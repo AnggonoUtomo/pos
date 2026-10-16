@@ -23,7 +23,7 @@ baris dokumen, dan stok awal hanya sekali per pasangan barang + gudang.
 8. Urutan layer berdasarkan received_at lalu ULID, per item + warehouse.
    Pengeluaran internal tersedia melalui IssueStock pada work item
    [checkout lunas](../../../work-items/pos-paid-checkout/README.md), belum
-   consumer checkout POS atau endpoint pengeluaran publik.
+   endpoint pengeluaran bebas. Consumer checkout backend tersedia sejak Increment 4.
 
 ## Presisi Dan Snapshot
 
@@ -64,7 +64,11 @@ histori setelah lock master yang sama, bukan query tanpa lock.
 IssueStock memvalidasi source_id/source_number dan 1..100 source_line_id unik,
 item_id serta base_quantity decimal string positif. Konversi satuan authoritative
 menjadi tanggung jawab consumer POS kelak; tidak menerima harga atau rasio bebas.
-Action internal mengunci gudang, base units terurut, items terurut, balance dan
+Action mengimplementasikan public SaleStockWriter, dengan consumer PostInvoice
+POS melalui DTOs SaleStockRequest/SaleStockResult. Writer wajib transaction
+caller; result issue ID dan map source_line_id/total_cost scale6, bukan model.
+Action internal handle tetap tersedia untuk workflow Stock. Action mengunci
+gudang, base units terurut, items terurut, balance dan
 layers current read. Gudang menserialisasi pengeluaran setempat. Quantity/value
 saldo harus sama dengan sisa layer sebelum mengeluarkan setiap baris.
 
@@ -77,7 +81,8 @@ menolak jika stock_issues berisi data, bukan shortcut menghapus histori.
 
 Kartu stok menampilkan snapshot movement sale dan fallback legacy opening lewat
 left join tabel Stock sendiri. Field quantity/value dapat negatif. Pembayaran,
-otorisasi HTTP posting dan atomicity lintas POS/Finance belum tersedia.
+otorisasi HTTP posting dan atomicity lintas POS/Finance dimiliki PostInvoice
+POS, bukan endpoint Stock bebas. UI checkout menunggu Increment 5.
 
 ## Guard Master Dan Public Boundary
 

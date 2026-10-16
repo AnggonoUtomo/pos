@@ -45,7 +45,7 @@ Mutation/audit atomic; detail kontrak ada pada
 ## Endpoint Internal POS
 
 Route module Sales/POS, session web/auth/CSRF. URL/name existing /pos (pos.index)
-dipertahankan; kini semua endpoint memerlukan sales.pos.invoices.create.
+dipertahankan; index/catalog/quote memerlukan sales.pos.invoices.create.
 Gate super-system tidak melewati validasi bisnis. Tidak perlu permission admin
 Inventory/Parties agar kasir dapat membaca data penjualan terbatas ini.
 
@@ -53,7 +53,10 @@ Inventory/Parties agar kasir dapat membaca data penjualan terbatas ini.
 | --- | --- | --- | --- |
 | GET | /pos | pos.index | Inertia sales/pos/index, warehouses/customers aktif |
 | GET | /pos/catalog | pos.catalog | items, has_more, customer |
-| POST | /pos/quote | pos.quote | lines, subtotal, customer, checked_at |
+| POST | /pos/quote | pos.quote | lines, subtotal, customer, warehouse, fingerprint, checked_at |
+| GET | /pos/payment-methods | pos.payment-methods | methods aman; create+post wajib |
+| POST | /pos/invoices | pos.invoices.store | receipt JSON201; create+post wajib |
+| GET | /pos/invoices/{id} | pos.invoices.show | receipt snapshot; pemilik dengan post atau staff view |
 
 Catalog: warehouse_id/customer_id wajib ULID; search optional maksimal 150,
 page 1..100000. 25 kandidat/page, has_more; query SKU/nama/barcode unit jual
@@ -70,7 +73,7 @@ stok yang dibutuhkan dijumlah per item lintas unit. Backend membaca ulang
 pelanggan/level, barang/unit jual, harga dan stok dalam read transaction.
 Price, conversion ratio, subtotal tidak dipercaya dari browser.
 
-Response line: item_id/unit_id/sku/name/unit_name, quantity/base_quantity,
+Response line: item_id/unit_id/base_unit_id/sku/name/unit_name/base_unit_name, quantity/base_quantity,
 conversion_ratio/unit_price/subtotal; semua nilai decimal berupa string.
 Base quantity harus tepat scale6/muat20,6; nilai uang tepat scale2/muat30,2,
 bukan pembulatan silent. Invalid/master tidak tersedia/stok kurang/harga kosong
@@ -78,8 +81,26 @@ bukan pembulatan silent. Invalid/master tidak tersedia/stok kurang/harga kosong
 Guest JSON 401, web redirect login, permission 403, CSRF invalid 419.
 
 Quote tidak disimpan, tidak reservasi stok, tidak membuat ledger/audit mutation,
-dan bukan dasar mempercayai harga/stok saat posting nanti. Tidak ada endpoint
-payment/posting pada scope ini. Detail [specification POS](modules/Sales/POS/specification.md).
+dan bukan dasar mempercayai harga/stok saat posting. Fingerprint deterministic
+mengecualikan checked_at, mencakup snapshot context/line/total; bukan harga bebas.
+
+Posting menerima idempotency_key ULID, warehouse_id/customer_id, lines seperti
+quote, quote_fingerprint64 hex lowercase dan payments list1..10 method_id/amount
+decimal string scale2. Unknown field ditolak; total/harga/ratio/HPP/nomor/actor/
+diskon/pajak/status bukan input client. Current master/price/stock dilock dan
+dihitung ulang; quote berubah422 field quote_fingerprint. Kurang bayar, metode
+invalid, stok kurang dan payload invalid422, tanpa mutation parsial. Create/retry
+identik201, key berbeda payload422 idempotency_key. Scope key per actor;
+retry tidak menambah invoice/Stock/Finance/audit. Auth401/403, CSRF419.
+
+Invoice receipt: ID/number POS-ULID, snapshot gudang/pelanggan/level, total,
+diskon/pajak nol, line snapshot dan payments total/tendered/change/baris metode
+dengan applied bersih. Tidak memuat HPP, request_hash/idempotency key, actor,
+kontak pelanggan atau metadata rekening. Detail GET ownership dicek backend,
+view boleh lintas pemilik; tidak ada PUT/DELETE invoice posted. Pilihan metode
+id/code/name/type saja, active account/type compatible, bukan permission CRUD
+Finance. UI pembayaran/receipt menunggu Increment 5. Detail
+[specification POS](modules/Sales/POS/specification.md).
 
 ## Endpoint API Eksternal
 
@@ -366,11 +387,12 @@ Nilai metadata bank tidak masuk audit; perubahan metadata-only mencatat nama
 field saja. No-op tanpa audit. PaymentsRepository adalah port internal, bukan
 published payment boundary. RecordSalePayment internal sudah menyimpan
 payment_receipts/payment_records snapshot, applied net, tendered/change dan
-audit received atomic. Tidak ada route penerimaan publik atau consumer lintas
-module sampai Increment 4 checkout. Metode berhistori tidak boleh dihapus,
+audit received atomic. Tidak ada route penerimaan Finance bebas.
+Consumer PostInvoice sudah memakai SalePaymentWriter/DTOs;
+pilihan metode melalui SalePaymentMethods. Metode berhistori tidak boleh dihapus,
 dinonaktifkan, diganti type atau pindah akun (422 field payments), termasuk
 super-system; nama/kode tetap boleh berubah. Akun memiliki guard histori langsung.
-Belum ada running balance uang, piutang atau integrasi checkout POS.
+Belum ada running balance uang atau piutang. UI checkout belum aktif.
 
 ## Contract Lintas Module
 
@@ -425,11 +447,12 @@ read. Consumer nyata: ManageItemPrices dan ItemPricesDemoSeeder; model tetap pri
 ItemPriceCatalog::activeLevels(lock = false) menghasilkan PriceLevelData[]
 (id/code/name), maksimal 1000. Lock memerlukan transaction; saveForItem(itemId,
 ItemPriceData[]) memvalidasi matrix current dan menyimpan harga atomic;
-forItems(itemIds, customerLevelId = null) menghasilkan map itemId ke list ItemPriceData
+forItems(itemIds, customerLevelId = null, lock = false) menghasilkan map itemId ke list ItemPriceData
 (unitId/customerLevelId/amount). Consumer: SaveItemCatalog, ListItems dan demo.
 Repository harga bukan public mutation boundary. Urutan lock workflow save:
 level aktif terurut, Units terurut, Item, relasi dan harga. Tidak ada fallback
-level, float, atau pricing kuantitas. Consumer transaksi posted POS belum tersedia.
+level, float, atau pricing kuantitas. Consumer PostInvoice memakai lock/current
+read pada transaction default bersama, bukan repository harga privat.
 
 Filter level opsional dipakai SaleCatalog/CheckCart POS agar hanya mengambil
 harga level pelanggan terpilih. Default null mempertahankan behavior editor
@@ -438,7 +461,7 @@ Items dan provisioning existing. POS tidak mengakses repository harga privat.
 ### Published Read Boundary Untuk POS
 
 - Items/SaleItemCatalog::search(query, page): data SaleItemData dan has_more,
-  25 kandidat/page; findMany(ids) map maksimal 100 barang. DTO item:
+  25 kandidat/page; findMany(ids, lock = false) map maksimal 100 barang. DTO item:
   id/sku/name/baseUnitId/baseUnitName/units; SaleUnitData:
   id/code/name/ratio/barcode. Aktif/non-trashed dan flag jual wajib; barcode
   satuan nonaktif tidak boleh menjadi hasil pencarian. Filter active unit lewat
@@ -447,11 +470,14 @@ Items dan provisioning existing. POS tidak mengakses repository harga privat.
 - Units/UnitLookup::findManyActive(ids): map id ke UnitData, maksimal 11000 ID
   untuk batch metadata item/unit tanpa N+1 atau batas choices 1000.
 - Parties/CustomerSalesLookup::choices(): maksimal 1000 SaleCustomerData;
-  findActive(id): DTO atau null. Customer dan level harus aktif/non-trashed;
+  findActive(id, lock = false): DTO atau null. Customer dan level harus aktif/non-trashed;
   kontak tidak dipublikasikan. Consumer SaleContext pada POS.
-- Stock/StockAvailability::forItems(warehouseId, itemIds): map maksimal 100 ID
+- Stock/StockAvailability::forItems(warehouseId, itemIds, lock = false): map maksimal 100 ID
   ke quantity base unit canonical scale6, nol jika tanpa saldo. Hanya membaca
-  stock_balances; tidak lock/reservasi atau memuat nilai stok/FIFO.
+  stock_balances; default tidak lock/reservasi atau memuat nilai stok/FIFO.
+  Lock true wajib transaction default bersama dan memakai current read. Hal
+  sama berlaku pada lock SaleItemCatalog/CustomerSalesLookup/ItemPriceCatalog;
+  POS memegang lock gudang/level terlebih dahulu sesuai mutation master existing.
 - WarehouseLookup dipakai SaleContext untuk pilihan dan validasi gudang POS,
   di samping consumer Stock existing.
 
@@ -469,12 +495,24 @@ ManageItem/ManageWarehouse untuk guard master. Caller memegang lock master
 terkait dalam transaction default bersama; adapter Stock memakai current read.
 Riwayat saldo/movement/layer tidak boleh diputus melalui delete/nonaktif master.
 StockRepository adalah port internal, bukan public mutation lintas module.
-Belum ada port/event FIFO keluar karena belum ada consumer transaksi.
+SaleStockWriter::issue(SaleStockRequest) dikonsumsi PostInvoice, wajib transaction
+caller. DTO request warehouse/source ID/number/line source ID/item/base quantity/
+actor; result SaleStockResult memuat issue ID dan map line cost scale6.
 
-IssueStock kini action internal Stock, bukan published service untuk POS atau
-endpoint baru. StockRepository tetap port internal; outflow dipakai IssueStock.
+IssueStock mengimplementasikan SaleStockWriter tanpa endpoint pengeluaran bebas.
+StockRepository tetap port internal; outflow dipakai IssueStock.
 `inventory.stock.data?tab=movements` tetap route existing dengan permission
 inventory.stock.view, tetapi quantity/total_value dapat signed negatif untuk
 sale. Snapshot sumber menghasilkan number/SKU/item/base-unit/gudang tanpa join
 privat POS. Opening legacy tetap terlihat; filter/pagination existing berlaku.
 Tidak ada route store/delete pengeluaran atau bypass permission melalui UI.
+
+### Finance/Payments Writer
+
+SalePaymentWriter::receive(SalePaymentRequest) dikonsumsi PostInvoice pada
+transaction default bersama. Request source ID/number/total/payments method ID/
+amount/actor; result SalePaymentResult receipt ID dan snapshot aman total/
+tendered/change/list method ID/name/type/tendered/applied/change. Writer menolak
+panggilan di luar transaction caller, tidak mengekspos account metadata atau
+PaymentsRepository. SalePaymentMethods::choices dipakai controller POS untuk
+opsi id/code/name/type aktif dan compatible, maksimal1000. Bukan payment gateway.

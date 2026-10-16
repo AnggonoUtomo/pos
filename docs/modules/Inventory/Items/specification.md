@@ -1,5 +1,11 @@
 # Specification: Inventory/Items
 
+Published SaleItemCatalog::findMany(ids, lock = false) dipakai CheckCart dan
+PostInvoice. Lock true wajib transaction default, discovery unit lalu lock
+unit terurut/item/relasi current read dan recheck konfigurasi. Unit baru yang
+belum termasuk discovery ditolak untuk quote ulang, bukan dibaca tanpa lock.
+Default false mempertahankan katalog/read existing. Tidak mengekspor model.
+
 ## Status Dan Scope
 
 Fondasi backend Implemented pada 9 Oktober 2026: create barang beserta satuan, audit,

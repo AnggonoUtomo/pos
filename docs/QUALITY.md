@@ -352,6 +352,34 @@ local, migration harga additive dan demo sembilan SKU yang dikenal. Fingerprint
 akun/grant/master/stok/ledger dan seluruh harga existing diperiksa; seed diulang
 tidak menimpa harga edit/trashed. Tidak ada migrate:fresh atau grant otomatis.
 
+## QA Posting POS Atomic
+
+`php artisan test --filter=PosCheckoutTest --compact` memeriksa net multi-payment,
+snapshot/no private fields, retry canonical/unique collision, quote stale,
+super-system invariant, multi-satuan, rollback sesudah Stock/Finance/invoice
+persist gagal, audit veto, ownership/permission, CSRF419 dan posted immutable.
+InvoiceSchemaTest memeriksa empty up/down; CheckoutLockBoundaryTest memastikan
+lock/read dan published writers memerlukan transaction default caller.
+
+`php scripts/qa/pos-checkout-mysql.php` hanya database generated
+pos_checkout_qa_[16hex], dengan fixture CCTV/kelistrikan. Mencakup native DDL,
+RR stale harga/customer/unit/method/flag jual (field error spesifik), dua worker
+LOCK WAIT untuk replay sumber sama dan perebutan stok terakhir, replay snapshot
+peer dan FK. Database/proses dibersihkan. Bukan load test seluruh interleaving;
+lock level konservatif dapat menserialisasi checkout lintas gudang.
+
+`php scripts/qa/apply-pos-checkout-local.php` hanya schema/permission catalog
+additive. Fingerprint seluruh data bisnis existing termasuk permission lama dan
+grant harus identik; hanya tiga key POS guard web yang boleh ditambahkan, tidak
+grant/reset atau seed invoice. Metadata migrations dan cache/cache_locks turunan
+dikecualikan (Spatie menginvalidasi cache). Tabel invoice baru wajib kosong.
+
+Regresi browser memakai pos-demo-browser.mjs existing, bukan UI pembayaran yang
+belum aktif. Dropdown Shortcut harus selesai mengembalikan fokus setelah Escape
+sebelum Alt+F diuji; script menunggu state, bukan mengganti shortcut aplikasi.
+DevTools discovery tetap dicoba; jika tool tidak tersedia catat BLOCKED, tidak
+mengklaim fallback sebagai DevTools PASS. Desktop/tablet Light/Dark, bukan mobile.
+
 ## QA Penerimaan Internal Finance
 
 `php artisan test --filter=RecordSalePaymentTest --compact` mencakup net cash,

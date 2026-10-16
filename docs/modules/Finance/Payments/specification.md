@@ -38,8 +38,9 @@ Tidak menambah event/port payment tanpa consumer atau abstraction global baru.
 
 ## Penerimaan Penjualan Internal
 
-RecordSalePayment memakai PaymentsRepository internal; belum ada route posting
-atau consumer lintas module. Input source_id ULID/source_number maksimal32,
+RecordSalePayment memakai PaymentsRepository internal; public SalePaymentWriter
+memiliki consumer PostInvoice POS sejak Increment 4. Tidak ada route posting
+Finance bebas. Input source_id ULID/source_number maksimal32,
 total decimal string scale2 dan 1..10 pasangan method_id/amount unik. Jenis dan
 akun dibaca dari master, bukan caller. Urutan metode di-canonical berdasarkan
 ID, angka scale2, actor masuk hash. Retry identik mengembalikan snapshot tanpa
@@ -63,9 +64,16 @@ receipt dan records current read pada transaction default. Assignment berubah
 ditolak; posting baru membutuhkan master aktif/non-trashed/type cocok.
 Replay memakai snapshot tersimpan; guard histori mencegah konfigurasi penting
 berubah lewat aplikasi. Unique sumber dan retry deadlock terbatas melindungi
-persistensi. Belum membuktikan orkestrasi invoice/FIFO lintas module (Increment4).
+persistensi. Orkestrasi invoice/FIFO ada di PostInvoice POS (Increment4).
 Audit finance.payments event received wajib tersimpan atomic, termasuk penolakan
 veto/disabled logger. Audit hanya source/number/actor, bukan payload rekening.
+
+Published SalePaymentWriter::receive(SalePaymentRequest) memakai transaction
+caller dan mengembalikan SalePaymentResult (receipt ID/snapshot total, tendered,
+change dan baris method ID/name/type/tendered/applied/change). Tidak mengekspor
+metadata/ID akun ke receipt POS. SalePaymentMethods::choices dipakai endpoint
+POS untuk pilihan metode aktif dengan account aktif/compatible, maksimal1000,
+hanya id/code/name/type. Ini bukan akses PaymentsRepository atau CRUD Finance.
 
 ## HTTP Dan UI
 
@@ -104,4 +112,5 @@ akun/grant/master/stok/ledger/harga existing wajib terjaga.
 
 Saldo awal, running balance kas/bank, settlement/fee, rekonsiliasi, utang/
 piutang, jurnal/full accounting, payment gateway, QRIS, integrasi rekening nyata,
-posting POS/FIFO dan diskon/pajak. Tidak mengaktifkan tombol pembayaran POS.
+input diskon/pajak. Backend posting POS/FIFO berada di Sales/POS; UI pembayaran
+belum diaktifkan sampai Increment 5.

@@ -104,20 +104,20 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 - [x] Audit ownership, mutation master dan rencana locking dilakukan sebelum coding.
   - Acceptance: detail implementasi di bawah; endpoint/UI lama tetap kompatibel.
   - Verification: source CheckCart/SaveItemCatalog/ManageCustomer/Stock/Finance.
-- [ ] Invoice/snapshot dan idempotency dengan fingerprint payload.
+- [x] Invoice/snapshot dan idempotency dengan fingerprint payload.
   - Acceptance: retry identik satu invoice; payload beda ditolak; snapshot
     harga/rasio/HPP/payment tetap dan diskon/pajak eksplisit nol.
   - Verification: feature retry/tamper/stale/master-change/overflow tests.
-- [ ] Pasang consumer contract Stock/Finance dan locking metadata/pricing.
+- [x] Pasang consumer contract Stock/Finance dan locking metadata/pricing.
   - Acceptance: published boundary saja, lock order diaudit, semua mutation
     commit/rollback bersama, super-system tetap tunduk invariant.
   - Verification: injection gagal di setiap tahap, MySQL dua koneksi/race.
-- [ ] HTTP posting/detail dan permission.
+- [x] HTTP posting/detail dan permission.
   - Acceptance: create dan post dibedakan; cashier tidak perlu CRUD Finance;
     auth/CSRF, whitelist payload, tidak bocor rekening/credential/HPP ke role
     yang tidak memerlukannya. Tidak menjalankan IdentityAccessSeeder ulang.
   - Verification: route:list, HTTP matrix guest/view/cashier/super dan rollback.
-- [ ] Verifikasi dan commit.
+- [x] Verifikasi dan commit.
   - Acceptance: route quote/read lama tetap kompatibel, posted tidak edit/delete.
   - Verification: focused/full suite dan diff review.
 
@@ -162,6 +162,52 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 - [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
 
 ## Bukti Command
+
+### Sesudah Increment 4
+
+- [x] Invoice/schema, published writers, snapshot/idempotency dan endpoint selesai.
+- [x] Full/focused tests, MySQL current read/worker/DDL/FK dan Pint PASS.
+- [x] DevTools discovery BLOCKED (namespace/tool tidak tersedia); fallback
+  Playwright existing PASS pada desktop/tablet Light/Dark, bukan mobile.
+- [x] Migration lokal Ran batch13/catalog additive; fingerprint bisnis identik,
+  tanpa grant, reset akun, InvoiceDemoSeeder atau invoice pengguna.
+- [x] Review dependency/precision/authorization/privacy dan dokumen scope PASS.
+- [x] Commit save point dibuat otomatis; tidak push dan UI payment belum aktif.
+
+Penutupan Increment 4 (16 Oktober 2026):
+
+| Command/Pemeriksaan | Hasil | Catatan |
+| --- | --- | --- |
+| php artisan test --compact | PASS | 406 tests/3193 assertions |
+| php artisan test --filter=PosCheckoutTest --compact | PASS | 14 tests/134 assertions, termasuk CSRF419 dan rollback pada persist/audit/consumer gagal |
+| CheckoutLockBoundaryTest | PASS | Read lock dan dua published writer menolak caller tanpa transaction |
+| php scripts/qa/pos-checkout-mysql.php | PASS | Native empty up/down, RR stale harga/customer/unit/method/flag dengan field error spesifik, dua worker LOCK WAIT (replay/key sama dan last-stock/key beda), snapshot peer, FK/cleanup |
+| Pint scoped runtime/test/QA | PASS | Source module/test sendiri, tidak SampleUI/LSP/arsip |
+| DevTools discovery | BLOCKED | Namespace dihapus/tidak ada tool, bukan kegagalan aplikasi |
+| node scripts/qa/pos-demo-browser.mjs | PASS | CCTV/kelistrikan, katalog/barcode/matrix/CSRF quote, stale response, shortcut/reset/error retry, create-only kasir, desktop/tablet Light/Dark; payment UI disabled |
+| php scripts/qa/apply-pos-checkout-local.php (dua kali) | PASS | Ran batch13 lalu Nothing to migrate; permission lama/pivot/bisnis identik, hanya catalog POS baru, tanpa grant/reset/posted user |
+| route:list --path=pos -v; migrate:status path POS | PASS | Enam route POS, satu Stock route ikut substring filter; schema Ran, auth/can middleware tepat |
+| TS/lint/build | SKIPPED | Tidak mengubah frontend; browser memakai build existing Increment 2, bukan QA UI checkout baru |
+
+Report ignored: storage/framework/testing/parties-browser-97b5d0fe0d46d9b1/
+pos-demo-report.json. Desktop1440x1000, tablet1024x768 dan768x1024, Light/Dark;
+gambar desktop dan dark portrait diperiksa visual. Percobaan browser pertama
+gagal di assert fokus Alt+F karena restore fokus dropdown belum selesai; script
+QA menunggu menu hidden dan trigger mendapat fokus, lalu lulus. UI tidak diubah.
+
+MySQL helper memakai nama generated/guard local dan membersihkan worker/database.
+Aktivasi mengecualikan metadata migrations dan cache/cache_locks turunan dari
+fingerprint; invalidasi cache Spatie bukan perubahan grant. Nominal/HPP sensitive
+tidak dikirim pada receipt/choices. Test collision memaksa unique conflict setelah
+consumer menulis dan membuktikan rollback lalu mengembalikan pemenang.
+
+Save point Increment 4: a462809 schema, b4433b8 current read/fingerprint,
+3ba4ff6 backend atomic, 9c21496 MySQL/QA/aktivasi. Lock active levels masih konservatif dan dapat menserialisasi
+checkout lintas gudang; belum load test semua interleaving. Tidak ada input pajak/
+diskon, piutang, return/reversal, running balance atau UI checkout/print baru.
+Old-docs, SampleUI, file LSP, credential dan theme tidak disentuh.
+Gap retention/ownership akun Identity tetap terbuka sebelum produksi; actor_id
+historis tidak diberi FK user dan lifecycle akun tidak diperluas dalam scope ini.
 
 Increment 4 schema: InvoiceSchemaTest RED sebelum tabel tersedia, lalu GREEN
 1 test/8 assertions; empty up/down mempertahankan Stock/Payments. Pint PASS.
@@ -309,6 +355,6 @@ Penutupan Increment 1:
 Commit save point: fb5abf4 dokumen, 601745f settlement, 8657192 FIFO.
 Pada Increment 1 tidak ada perubahan database lokal, grant, credential, seeder, theme atau
 Old-docs/SampleUI/LSP. Tidak ada public port/event/adapter baru tanpa consumer.
-Status terkini: Increment 1..3 Passed; Increment 4..6 belum dikerjakan.
+Status terkini: Increment 1..4 Passed; Increment 5..6 belum dikerjakan.
 Tidak push sampai work item selesai atau instruksi eksplisit user.
-Langkah berikutnya: posting POS atomic melalui published boundary berconsumer nyata.
+Langkah berikutnya: UI multi-payment, retry dan receipt snapshot (Increment 5).

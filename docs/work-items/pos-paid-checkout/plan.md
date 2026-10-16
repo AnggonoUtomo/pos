@@ -3,7 +3,7 @@
 ## Scope
 
 Sesuai README/PRD. Kerjakan risk-first, commit setiap increment yang benar-benar
-lulus. Increment 1..3 selesai; berikutnya Increment 4. Jangan mengaktifkan
+lulus. Increment 1..4 selesai; berikutnya Increment 5. Jangan mengaktifkan
 UI posting parsial.
 
 | No | Status | Nama | Perubahan Dan Acceptance | Verifikasi |
@@ -11,7 +11,7 @@ UI posting parsial.
 | 1 | Passed | Aturan dan presisi | Dokumen/ADR, Domain settlement dan alokasi FIFO murni, no I/O | RED/GREEN unit, Pint, regresi/full suite, diff |
 | 2 | Passed | Pengeluaran Stock | Schema additive movement/alokasi, mutation no-negative current lock, query kartu/saldo keluar tanpa join privat POS | SQLite up/down, action/query/audit rollback, MySQL FK/current read |
 | 3 | Passed | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
-| 4 | In Progress | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
+| 4 | Passed | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
 | 5 | Planned | Checkout UI | Dialog multi-bayar, quote stale/retry, success/bukti snapshot, shortcut dan permission | TS/lint/build, DevTools atau fallback desktop/tablet |
 | 6 | Planned | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
 
@@ -47,7 +47,9 @@ kontak/rekening sensitif atau seluruh request mentah.
 Increment 2 berhenti pada action internal dan query Stock yang teruji, termasuk
 migration lokal additive tanpa pengeluaran pengguna. Belum ada port/route
 pengeluaran publik. Increment 3 menambah penerimaan internal Finance dan guard
-histori; migration lokal Ran tanpa payment pengguna. Checkout tetap belum tersedia. Berikutnya
+histori; migration lokal Ran tanpa payment pengguna. Increment 4 menambah backend
+posting atomic dan receipt JSON; schema POS Ran batch13 tanpa invoice pengguna.
+UI pembayaran belum aktif. Berikutnya
 urut sesuai dependency; scope baru harus mendapat persetujuan user.
 
 Sebelum ada schema/data baru, rollback kode melalui commit terpisah sesuai

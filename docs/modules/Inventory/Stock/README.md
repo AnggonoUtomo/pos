@@ -52,9 +52,9 @@ lagi; marker demo existing termasuk terhapus tidak ditimpa.
 Ledger/layer posted tidak menggunakan soft delete. Draft bisa soft delete dan
 restore. Koreksi posted memerlukan capability reversal/adjustment terpisah.
 Pengeluaran internal melalui IssueStock sudah menyimpan saldo/movement keluar,
-consumption FIFO, snapshot dan audit secara atomic. Belum ada route pengeluaran
-publik atau consumer checkout POS. Referensi source dan line opaque ULID milik
-penjualan kelak; bukan FK ke model POS privat.
+consumption FIFO, snapshot dan audit secara atomic. Tidak ada route pengeluaran
+bebas; consumer PostInvoice POS memakai SaleStockWriter/DTOs sejak Increment 4.
+Referensi source dan line opaque ULID milik penjualan, bukan FK circular POS.
 
 Pekerjaan lanjutan [checkout lunas](../../../work-items/pos-paid-checkout/README.md):
 Domain FifoAllocation dipakai action internal IssueStock. MySQL disposable

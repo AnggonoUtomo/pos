@@ -42,11 +42,11 @@ accounting dan mobile. Snapshot diskon/pajak nol tidak dianggap engine aktif.
 
 ## Acceptance Criteria
 
-- [ ] Contoh transfer Rp60.000 + tunai Rp50.000 untuk tagihan Rp100.000 menghasilkan
+- [x] Contoh transfer Rp60.000 + tunai Rp50.000 untuk tagihan Rp100.000 menghasilkan
   kembalian Rp10.000 dan total penerimaan bersih Rp100.000.
-- [ ] Tunai ganda, metode unavailable, non-tunai berlebih dan kurang bayar ditolak.
-- [ ] Stok tidak minus, seluruh uang/stok/audit rollback bila satu tahap gagal.
-- [ ] Retry identik memberikan nomor/snapshot sama tanpa pengeluaran ulang.
+- [x] Tunai ganda, metode unavailable, non-tunai berlebih dan kurang bayar ditolak.
+- [x] Stok tidak minus, seluruh uang/stok/audit rollback bila satu tahap gagal.
+- [x] Retry identik memberikan nomor/snapshot sama tanpa pengeluaran ulang.
 - [ ] Desktop/tablet Light/Dark, permission dan network error terverifikasi.
 
 ## Pertanyaan Terbuka

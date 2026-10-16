@@ -7,6 +7,7 @@
 
 - [x] Penerimaan penjualan internal, snapshot/net cash/replay dan guard histori
   diverifikasi pada [Increment 3 checkout](../../../work-items/pos-paid-checkout/tasks.md).
-- [ ] Integrasi posting dan UI checkout POS (Increment 4..5 work item yang sama).
+- [x] Integrasi posting backend POS melalui published writers (Increment 4).
+- [ ] UI checkout POS (Increment 5 work item yang sama).
 
 Running balance, piutang dan mutasi umum di luar penerimaan penjualan belum dikerjakan.

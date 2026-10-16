@@ -20,14 +20,14 @@ Status yang digunakan:
 | Inventory | Units | Master satuan dan UI CRUD; base unit/konversi dimiliki Items; guard satuan terpakai | Items (ItemUnitUsage read contract), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Items | Barang, SKU, barcode, base unit immutable, multi satuan/konversi, form matrix harga dan lookup stok/pricing; kategori/brand ditunda | Units (UnitLookup), Stock (StockUsage), Parties (ItemPriceCatalog), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Inventory | Warehouses | Master gudang, UI CRUD dan pilihan gudang untuk stok awal/POS | Stock (StockUsage), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Inventory | Stock | Stok awal, saldo/kartu stok dan pengeluaran internal FIFO/no-negative dengan snapshot/alokasi; integrasi posting POS belum tersedia | Items (ItemStockLookup), Warehouses (WarehouseLookup), Units (UnitLookup) | Active |
+| Inventory | Stock | Stok awal, saldo/kartu stok dan pengeluaran FIFO/no-negative dengan snapshot/alokasi; SaleStockWriter dikonsumsi posting POS | Items (ItemStockLookup), Warehouses (WarehouseLookup), Units (UnitLookup) | Active |
 | Sales | Parties | CRUD pelanggan/level, harga barang per satuan/level melalui workflow Items, audit dan demo | Items (ItemPricingLookup), Laravel auth, Spatie Permission, Spatie Activitylog | Active |
-| Sales | POS | POS fullscreen dengan katalog/barcode, context pelanggan/gudang, matrix harga dan pemeriksaan keranjang nyata; posting/diskon/pajak/payment belum tersedia | Parties (CustomerSalesLookup, ItemPriceCatalog), Items (SaleItemCatalog), Warehouses (WarehouseLookup), Stock (StockAvailability) | Active |
+| Sales | POS | Katalog/keranjang nyata dan backend posting lunas atomic/idempotency/snapshot; UI checkout menunggu Increment 5, input diskon/pajak ditunda | Parties (CustomerSalesLookup, ItemPriceCatalog), Items (SaleItemCatalog), Warehouses (WarehouseLookup), Stock (StockAvailability, SaleStockWriter), Payments (SalePaymentWriter, SalePaymentMethods) | Active |
 | Sales | Returns | Retur penjualan dan koreksi transaksi posted | POS, Stock, Finance Payments | Planned |
 | Purchasing | Suppliers | Supplier master | Identity | Planned |
 | Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Items, Warehouses, Stock | Planned |
 | Purchasing | Returns | Retur pembelian dan koreksi stok/payment | PurchaseOrders, Stock, Finance Payments | Planned |
-| Finance | Payments | CRUD kas/bank/metode, penerimaan penjualan internal dengan snapshot/net cash/replay dan guard histori; belum checkout publik, running balance atau piutang/utang | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Finance | Payments | CRUD kas/bank/metode, penerimaan penjualan snapshot/net cash/replay dan guard histori; writer dikonsumsi POS, belum running balance atau piutang/utang | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Reporting | OperationalReports | Laporan stok, penjualan, pembelian, margin, kas sederhana | Inventory, Sales, Purchasing, Finance | Planned |
 
 ## Aturan Penambahan Module
