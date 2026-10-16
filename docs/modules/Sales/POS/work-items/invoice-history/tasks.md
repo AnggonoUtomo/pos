@@ -17,16 +17,16 @@
 
 ## Increment 2: Query Dan HTTP
 
-- [ ] Tulis test RED untuk authorization/filter/privacy/read-only.
+- [x] Tulis test RED untuk authorization/filter/privacy/read-only.
   - Acceptance: guest/outsider/create-only ditolak; post milik sendiri, view
     semua; actor tampering tidak memperluas scope dan opsi tidak bocor.
   - Verification: InvoiceHistoryTest sebelum endpoint tersedia.
-- [ ] Implementasikan query/adapter/filter dan endpoint Inertia/JSON.
+- [x] Implementasikan query/adapter/filter dan endpoint Inertia/JSON.
   - Acceptance: pagination25/stable order, literal invoice search, rentang WIB,
     validasi invalid tanggal/ULID/page, historical choices, exact money;
     tidak membuka HPP/payload privat atau mutation.
   - Verification: focused/regresi POS, Pint, route:list dan diff review.
-- [ ] Update bukti/status dan commit setelah GREEN.
+- [x] Update bukti/status dan commit setelah GREEN.
 
 ## Increment 3: UI
 
@@ -65,3 +65,11 @@
 
 Increment 1: review scope/source/permission, link relatif dan git diff --check
 PASS. Tidak ada runtime/schema/UI/database berubah. Berikutnya test RED Increment 2.
+
+Increment 2: InvoiceHistoryTest RED13 karena endpoint belum ada, lalu GREEN13.
+Boundary/privacy/date WIB/pagination27 invoice/literal wildcard/invalid/tamper
+teruji; Inertia memakai withoutVite mengikuti pola test Pages existing, bukan
+menganggap build frontend sudah tersedia. Dua route auth/middleware OR view/post
+terverifikasi; Pint scope PASS. Regresi checkout/read/lock dijalankan bersama.
+UI/navigasi/build/browser belum tersedia sampai Increment 3. Tidak ada migration,
+permission/grant, dependency atau database pengguna berubah.
