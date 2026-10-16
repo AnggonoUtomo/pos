@@ -8,5 +8,5 @@ interface ItemPriceRepository
 
     public function replace(string $itemId, array $prices): void;
 
-    public function forItems(array $itemIds, ?string $customerLevelId = null): array;
+    public function forItems(array $itemIds, ?string $customerLevelId = null, bool $lock = false): array;
 }

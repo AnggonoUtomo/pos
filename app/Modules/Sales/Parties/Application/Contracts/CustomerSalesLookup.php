@@ -9,5 +9,5 @@ interface CustomerSalesLookup
     /** @return list<SaleCustomerData> At most 1000 active choices, no contact data. */
     public function choices(): array;
 
-    public function findActive(string $id): ?SaleCustomerData;
+    public function findActive(string $id, bool $lock = false): ?SaleCustomerData;
 }

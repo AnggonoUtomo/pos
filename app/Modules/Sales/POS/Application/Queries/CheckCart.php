@@ -18,7 +18,7 @@ class CheckCart
         private ItemPriceCatalog $prices, private StockAvailability $stock) {}
 
     /** @param list<CartLineData> $lines */
-    public function handle(string $warehouseId, string $customerId, array $lines): array
+    public function handle(string $warehouseId, string $customerId, array $lines, bool $lock = false): array
     {
         if (! array_is_list($lines) || count($lines) < 1 || count($lines) > 100) {
             throw ValidationException::withMessages(['lines' => 'Keranjang harus berisi 1 sampai 100 baris.']);
@@ -29,12 +29,15 @@ class CheckCart
             }
         }
 
-        return DB::transaction(function () use ($warehouseId, $customerId, $lines): array {
-            $context = $this->context->resolve($warehouseId, $customerId);
+        return DB::transaction(function () use ($warehouseId, $customerId, $lines, $lock): array {
+            if ($lock) {
+                $this->prices->activeLevels(lock: true);
+            }
+            $context = $this->context->resolve($warehouseId, $customerId, $lock);
             $ids = array_values(array_unique(array_map(fn ($line) => $line->itemId, $lines)));
-            $items = $this->items->findMany($ids);
-            $prices = $this->prices->forItems($ids, $context['customer']->levelId);
-            $stock = $this->stock->forItems($warehouseId, $ids);
+            $items = $this->items->findMany($ids, $lock);
+            $prices = $this->prices->forItems($ids, $context['customer']->levelId, $lock);
+            $stock = $this->stock->forItems($warehouseId, $ids, $lock);
             $seen = $required = $rows = [];
             $total = BigDecimal::zero()->toScale(2);
             foreach ($lines as $index => $line) {
@@ -66,11 +69,17 @@ class CheckCart
                     throw ValidationException::withMessages(['lines' => 'Nilai keranjang melebihi batas.']);
                 }
                 $rows[] = ['item_id' => $item->id, 'unit_id' => $unit->id, 'sku' => $item->sku, 'name' => $item->name,
+                    'base_unit_id' => $item->baseUnitId, 'base_unit_name' => $item->baseUnitName,
                     'unit_name' => $unit->name, 'quantity' => $amounts->quantity, 'base_quantity' => $amounts->baseQuantity,
                     'conversion_ratio' => $unit->ratio, 'unit_price' => $price, 'subtotal' => $amounts->subtotal];
             }
 
-            return ['lines' => $rows, 'subtotal' => (string) $total, 'customer' => $context['customer'], 'checked_at' => now()->toIso8601String()];
+            $canonical = $rows;
+            usort($canonical, fn ($a, $b) => [$a['item_id'], $a['unit_id']] <=> [$b['item_id'], $b['unit_id']]);
+            $fingerprint = hash('sha256', json_encode([$context, $canonical, (string) $total], JSON_THROW_ON_ERROR));
+
+            return ['lines' => $rows, 'subtotal' => (string) $total, 'customer' => $context['customer'], 'warehouse' => $context['warehouse'],
+                'fingerprint' => $fingerprint, 'checked_at' => now()->toIso8601String()];
         });
     }
 }

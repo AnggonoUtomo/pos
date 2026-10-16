@@ -10,5 +10,5 @@ interface SaleItemCatalog
     public function search(string $query, int $page): array;
 
     /** @return array<string, SaleItemData> At most 100 requested items. */
-    public function findMany(array $ids): array;
+    public function findMany(array $ids, bool $lock = false): array;
 }

@@ -74,8 +74,12 @@ class ManageItemPrices implements ItemPriceCatalog
         }, 3);
     }
 
-    public function forItems(array $itemIds, ?string $customerLevelId = null): array
+    public function forItems(array $itemIds, ?string $customerLevelId = null, bool $lock = false): array
     {
-        return $this->prices->forItems($itemIds, $customerLevelId);
+        if ($lock && DB::transactionLevel() === 0) {
+            throw new LogicException('Harga lock memerlukan transaction default.');
+        }
+
+        return $this->prices->forItems($itemIds, $customerLevelId, $lock);
     }
 }

@@ -9,6 +9,7 @@ use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class EloquentSaleItemCatalog implements SaleItemCatalog
@@ -49,19 +50,41 @@ class EloquentSaleItemCatalog implements SaleItemCatalog
         return ['data' => array_values($visible), 'has_more' => $rows->count() > 25];
     }
 
-    public function findMany(array $ids): array
+    public function findMany(array $ids, bool $lock = false): array
     {
+        if ($lock && DB::transactionLevel() === 0) {
+            throw new \LogicException('Katalog lock memerlukan transaction default.');
+        }
         if (count($ids) > 100) {
             throw new InvalidArgumentException('Batch barang melebihi batas.');
         }
 
-        return $this->map($this->query()->whereIn('id', $ids)->get());
+        $discovery = $this->query()->whereIn('id', $ids)->get();
+        if (! $lock) {
+            return $this->map($discovery);
+        }
+        $unitIds = $discovery->flatMap(fn ($item) => [$item->base_unit_id, ...$item->units->pluck('unit_id')->all()])->unique()->sort()->values()->all();
+        $units = [];
+        foreach ($unitIds as $id) {
+            $units[$id] = $this->units->findActiveById($id, lock: true);
+        }
+        $rows = Item::whereIn('id', $ids)->where('is_active', true)->orderBy('id')->lockForUpdate()->get();
+        foreach ($rows as $item) {
+            $item->setRelation('units', $item->units()->where('is_sale_unit', true)->orderBy('id')->lockForUpdate()->get());
+            foreach ([$item->base_unit_id, ...$item->units->pluck('unit_id')->all()] as $id) {
+                if (! array_key_exists($id, $units)) {
+                    throw new InvalidArgumentException('Konfigurasi satuan berubah. Periksa ulang keranjang.');
+                }
+            }
+        }
+
+        return $this->map($rows, $units);
     }
 
-    private function map(Collection $rows): array
+    private function map(Collection $rows, ?array $lockedUnits = null): array
     {
         $ids = $rows->flatMap(fn ($item) => [$item->base_unit_id, ...$item->units->pluck('unit_id')->all()])->unique()->values()->all();
-        $units = $this->units->findManyActive($ids);
+        $units = $lockedUnits ?? $this->units->findManyActive($ids);
         $result = [];
         foreach ($rows as $item) {
             $base = $units[$item->base_unit_id] ?? null;

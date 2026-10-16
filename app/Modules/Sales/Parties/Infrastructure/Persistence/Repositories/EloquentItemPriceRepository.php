@@ -38,11 +38,11 @@ class EloquentItemPriceRepository implements ItemPriceRepository
         }
     }
 
-    public function forItems(array $itemIds, ?string $customerLevelId = null): array
+    public function forItems(array $itemIds, ?string $customerLevelId = null, bool $lock = false): array
     {
         $result = [];
         foreach (ItemPrice::whereIn('item_id', $itemIds)->when($customerLevelId !== null, fn ($q) => $q->where('customer_level_id', $customerLevelId))
-            ->orderBy('unit_id')->orderBy('customer_level_id')->get() as $row) {
+            ->orderBy('item_id')->orderBy('unit_id')->orderBy('customer_level_id')->when($lock, fn ($q) => $q->lockForUpdate())->get() as $row) {
             $result[$row->item_id][] = new ItemPriceData($row->unit_id, $row->customer_level_id, $row->amount);
         }
 

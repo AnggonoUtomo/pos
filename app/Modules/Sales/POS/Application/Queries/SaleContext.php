@@ -15,10 +15,10 @@ class SaleContext
         return ['warehouses' => $this->warehouses->choices(), 'customers' => $this->customers->choices()];
     }
 
-    public function resolve(string $warehouseId, string $customerId): array
+    public function resolve(string $warehouseId, string $customerId, bool $lock = false): array
     {
-        $warehouse = $this->warehouses->findActive($warehouseId);
-        $customer = $this->customers->findActive($customerId);
+        $warehouse = $this->warehouses->findActive($warehouseId, $lock);
+        $customer = $this->customers->findActive($customerId, $lock);
         if ($warehouse === null) {
             throw ValidationException::withMessages(['warehouse_id' => 'Pilih gudang aktif yang tersedia.']);
         }

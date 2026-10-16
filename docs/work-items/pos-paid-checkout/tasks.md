@@ -163,6 +163,13 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 
 ## Bukti Command
 
+Increment 4 schema: InvoiceSchemaTest RED sebelum tabel tersedia, lalu GREEN
+1 test/8 assertions; empty up/down mempertahankan Stock/Payments. Pint PASS.
+CheckoutLockBoundaryTest RED pada parameter lock yang belum tersedia, lalu
+GREEN. Read API lama kompatibel; CheckCart menambah fingerprint deterministic.
+Focused POS/boundary 23 tests/193 assertions PASS; full suite awal integrasi
+404 tests/3178 assertions PASS. MySQL/aktivasi lokal masih menunggu QA penutupan.
+
 ### Sesudah Increment 3
 
 - [x] Schema/action internal, snapshot/net cash, audit dan guard histori selesai.
