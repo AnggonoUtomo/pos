@@ -128,11 +128,11 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Supplier',
-                url: '',
+                url: '/purchasing/suppliers',
                 icon: Truck,
-                badge: 'Segera',
+                permission: 'purchasing.suppliers.view',
+                badge: 'Aktif',
                 badgeTone: 'blue',
-                comingSoon: true,
             },
             {
                 title: 'Order Pembelian',

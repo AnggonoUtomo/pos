@@ -22,7 +22,7 @@ class ManageSupplier
             'name' => ['required', 'string', 'max:150'], 'phone' => ['nullable', 'string', 'max:32'],
             'email' => ['nullable', 'email', 'max:150'], 'address' => ['nullable', 'string', 'max:500'],
             'is_active' => ['required', 'boolean'],
-        ])->validate();
+        ], ['code.unique' => 'Kode sudah digunakan, termasuk pada data terhapus.'])->validate();
 
         return DB::transaction(fn () => $this->repository->save($data, $id), 3);
     }

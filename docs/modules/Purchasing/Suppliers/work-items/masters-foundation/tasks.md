@@ -42,11 +42,11 @@
 
 ## Increment 4: UI
 
-- [ ] Buat page/types/komponen Suppliers lokal dan nav/palette.
+- [x] Buat page/types/komponen Suppliers lokal dan nav/palette.
   - Acceptance: pola shared master existing, state loading/error/empty,
     permission guard UX, icon semantik, tidak mengubah theme.
   - Verification: TS/lint/build dan browser.
-- [ ] Dialog CRUD/lifecycle dan shortcut.
+- [x] Dialog CRUD/lifecycle dan shortcut.
   - Acceptance: Sonner, nilai optional, data persisten/reload, shortcut dropdown,
     form/konfirmasi aman desktop/tablet Light/Dark.
   - Verification: browser fixture dan screenshot, commit setelah lulus.
@@ -84,3 +84,12 @@
   GREEN total Suppliers 13 test/114 assertion. Enam route auth/verified/can
   PASS; CSRF 419 semua mutation tanpa token PASS, Pint PASS. Assertion
   Inertia menguji nama component tanpa pemeriksaan file sampai Increment 4.
+- Increment 4: TS/lint/build PASS (2718 module). Assertion file Inertia aktif
+  kembali, Suppliers 13/114 PASS. Chrome DevTools login redirect/assets dan
+  console PASS. Alur authenticated disposable Playwright PASS; report lokal
+  storage/framework/testing/suppliers-browser-2c7f52292bfa5332/report.json.
+  Desktop1440x1000/tablet1024x768/768x1024, Light/Dark, expanded/collapsed,
+  dialog framing/empty/filter/error/CRUD/reload/restore nonaktif, viewer/outsider,
+  shortcut/palette dan audit privacy PASS; console/page error nol.
+  Run awal gagal selector Tema pada tablet (label hidden); selector QA diperbaiki
+  dengan memilih mode pada desktop, lalu seluruh matriks diulang PASS.

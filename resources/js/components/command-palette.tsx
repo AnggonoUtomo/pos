@@ -113,7 +113,14 @@ const commandItems = [
         tone: 'text-rose-600 dark:text-rose-300',
         disabled: true,
     },
-    { title: 'Supplier', description: 'Kelola supplier pembelian', icon: Truck, tone: 'text-blue-600 dark:text-blue-300', disabled: true },
+    {
+        title: 'Supplier',
+        description: 'Kelola supplier pembelian',
+        url: '/purchasing/suppliers',
+        permission: 'purchasing.suppliers.view',
+        icon: Truck,
+        tone: 'text-blue-600 dark:text-blue-300',
+    },
     {
         title: 'Order Pembelian',
         description: 'Rencana dan dokumen pembelian',

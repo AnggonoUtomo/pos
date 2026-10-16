@@ -5,7 +5,7 @@
 | 1 | Done | Scope/dokumen | Boundary, constraint dan checklist sebelum coding | Review/link/diff dan generator dry-run PASS |
 | 2 | Done | Scaffold/schema/application/audit | ULID/soft delete, CRUD atomic dan privasi/no-op | RED/GREEN 7 test/33 assertion, SQLite up/down, Pint PASS |
 | 3 | Done | HTTP/query/permission/demo | Permission per action, validation/pagination/CSRF, seeder aman | 13 test/114 assertion, Pint dan 6 route PASS |
-| 4 | Planned | UI/navigasi | Dialog/filter/lifecycle, Sonner, shortcut/palette dan permission | Typecheck/lint/build, browser |
+| 4 | Done | UI/navigasi | Dialog/filter/lifecycle, Sonner, shortcut/palette dan permission | TS/lint/build, DevTools smoke/Playwright desktop-tablet Light-Dark PASS |
 | 5 | Planned | QA/aktivasi/delivery | Full/MySQL/browser, fingerprint lokal, docs dan remote cocok | Full gates/status/screenshot/commit/push |
 
 DevTools discovery dahulu, smoke terisolasi tanpa credential user. Workflow
