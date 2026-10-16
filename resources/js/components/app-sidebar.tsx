@@ -7,6 +7,7 @@ import {
     Boxes,
     Building2,
     CreditCard,
+    History,
     Landmark,
     LayoutGrid,
     Package,
@@ -103,6 +104,14 @@ const mainNavGroups: NavGroup[] = [
                 badge: 'Aktif',
                 badgeTone: 'emerald',
                 permission: 'sales.pos.invoices.create',
+            },
+            {
+                title: 'Riwayat Penjualan',
+                url: '/sales/invoices',
+                icon: History,
+                badge: 'Aktif',
+                badgeTone: 'blue',
+                permission: ['sales.pos.invoices.post', 'sales.pos.invoices.view'],
             },
             {
                 title: 'Retur Penjualan',

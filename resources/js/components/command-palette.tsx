@@ -9,6 +9,7 @@ import {
     Boxes,
     Building2,
     CreditCard,
+    History,
     Landmark,
     LayoutGrid,
     Package,
@@ -25,6 +26,14 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
+    {
+        title: 'Riwayat Penjualan',
+        description: 'Invoice posted dan cetak ulang bukti',
+        url: '/sales/invoices',
+        permission: ['sales.pos.invoices.post', 'sales.pos.invoices.view'],
+        icon: History,
+        tone: 'text-sky-600 dark:text-sky-300',
+    },
     { title: 'Dasbor', description: 'Ringkasan operasional admin', url: '/dashboard', icon: LayoutGrid, tone: 'text-sky-600 dark:text-sky-300' },
     {
         title: 'POS',

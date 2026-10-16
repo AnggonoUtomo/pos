@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ReceiptText, RotateCcw } from 'lucide-react';
+import { ArrowLeft, History, ReceiptText, RotateCcw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { CartPanel } from './components/cart-panel';
@@ -36,7 +36,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [error, setError] = useState('');
     const [resetOpen, setResetOpen] = useState(false);
     const [paymentOpen, setPaymentOpen] = useState(false);
-    const { user, can } = usePermission();
+    const { user, can, canAny } = usePermission();
     const canPost = can('sales.pos.invoices.post');
     const request = useRef<AbortController | null>(null);
     const { result, loading, error: catalogError } = useCatalog(warehouseId, customerId, query, page, catalogVersion);
@@ -217,6 +217,20 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     <div className="flex items-center gap-2">
                         <CommandPalette />
                         <ThemeMenu />
+                        {canAny(['sales.pos.invoices.post', 'sales.pos.invoices.view']) && (
+                            <Button variant="outline" size="sm" asChild disabled={locked}>
+                                <Link
+                                    href={route('sales.invoices.index')}
+                                    aria-disabled={locked}
+                                    onClick={(event) => {
+                                        if (locked) event.preventDefault();
+                                    }}
+                                >
+                                    <History className="text-sky-600 dark:text-sky-300" />
+                                    Riwayat
+                                </Link>
+                            </Button>
+                        )}
                         {checkout.lastId && (
                             <Button variant="outline" size="sm" disabled={locked} onClick={() => void checkout.openReceipt()}>
                                 <ReceiptText className="text-emerald-600 dark:text-emerald-300" />

@@ -30,16 +30,16 @@
 
 ## Increment 3: UI
 
-- [ ] Buat halaman admin dengan komponen lokal history.
+- [x] Buat halaman admin dengan komponen lokal history.
   - Acceptance: cari/filter/reset URL, pagination, loading/error/empty, tanggal
     WIB dan angka Indonesia; tidak ada edit/delete atau fake summary.
   - Verification: typecheck/ESLint/build, browser authenticated fixture.
-- [ ] Pasang receipt existing, navigasi dan shortcut.
+- [x] Pasang receipt existing, navigasi dan shortcut.
   - Acceptance: detail GET authorization backend, request stale dibatalkan,
     error/reload/cetak dan dialog viewport aman; sidebar/palette berizin;
     Alt+F cari, Ctrl/Cmd+Enter terapkan, Esc tutup, Ctrl/Cmd+P pada receipt.
   - Verification: UI gates, browser desktop/tablet Light/Dark dan permission.
-- [ ] Update bukti/status dan commit setelah verifikasi.
+- [x] Update bukti/status dan commit setelah verifikasi.
 
 ## Increment 4: QA Dan Delivery
 
@@ -73,3 +73,21 @@ menganggap build frontend sudah tersedia. Dua route auth/middleware OR view/post
 terverifikasi; Pint scope PASS. Regresi checkout/read/lock dijalankan bersama.
 UI/navigasi/build/browser belum tersedia sampai Increment 3. Tidak ada migration,
 permission/grant, dependency atau database pengguna berubah.
+
+Increment 3: TS/ESLint/build2715 PASS; full suite sebelum patch dependency
+419 tests/3301 assertions PASS. Browser history PASS pada fixture28 invoice,
+fingerprint invoice/Stock/Finance/activity identik sesudah seluruh read/print.
+Scope own/view-all/options/count, pagination/reload, literal search, WIB,
+historical master, empty/reset, shortcut/palette, receipt503/reload/stale abort
+dan cetak-only receipt terverifikasi. Desktop1440x1000 dan tablet1024x768/
+768x1024, Light/Dark serta sidebar collapsed. Screenshot desktop dan receipt
+Dark portrait diperiksa visual. Console unexpected kosong,503 injeksi QA.
+DevTools discovery BLOCKED karena tool tidak tersedia; fallback Playwright
+existing dipakai tanpa dependency baru. Report ignored: storage/framework/
+testing/parties-browser-9b4c2f3956657589/invoice-history-report.json.
+Percobaan pertama gagal selector placeholder command palette pada script QA;
+disesuaikan ke label existing, bukan mengubah aplikasi, kemudian PASS.
+
+Audit npm production bersih; Composer menemukan advisory existing HTTP Foundation.
+User menyetujui [patch terpisah](../../../../../work-items/http-foundation-security-patch/README.md).
+Regresi akhir/delivery menunggu patch dan pengulangan gate terkait.
