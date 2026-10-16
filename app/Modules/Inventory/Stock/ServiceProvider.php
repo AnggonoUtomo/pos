@@ -2,6 +2,8 @@
 
 namespace App\Modules\Inventory\Stock;
 
+use App\Modules\Inventory\Stock\Application\Actions\IssueStock;
+use App\Modules\Inventory\Stock\Application\Contracts\SaleStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\StockAvailability;
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
@@ -13,6 +15,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(SaleStockWriter::class, IssueStock::class);
         $this->app->bind(StockAvailability::class,
             DatabaseStockAvailability::class);
         $this->app->bind(StockRepository::class, EloquentStockRepository::class);

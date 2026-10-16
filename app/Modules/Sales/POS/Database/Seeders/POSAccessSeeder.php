@@ -9,6 +9,8 @@ class POSAccessSeeder extends Seeder
 {
     public function run(): void
     {
-        Permission::findOrCreate('sales.pos.invoices.create', 'web');
+        foreach (['sales.pos.invoices.create', 'sales.pos.invoices.post', 'sales.pos.invoices.view'] as $permission) {
+            Permission::findOrCreate($permission, 'web');
+        }
     }
 }

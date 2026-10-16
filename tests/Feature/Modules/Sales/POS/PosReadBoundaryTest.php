@@ -67,7 +67,7 @@ class PosReadBoundaryTest extends TestCase
     {
         $before = DB::table('activity_log')->count();
         $this->seed([POSAccessSeeder::class, POSAccessSeeder::class, POSDemoSeeder::class]);
-        $this->assertDatabaseCount('permissions', 1);
+        $this->assertDatabaseCount('permissions', 3);
         $this->assertDatabaseCount('users', 0);
         $this->assertDatabaseCount('model_has_permissions', 0);
         $this->assertSame($before, DB::table('activity_log')->count());

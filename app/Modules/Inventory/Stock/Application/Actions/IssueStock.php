@@ -3,7 +3,10 @@
 namespace App\Modules\Inventory\Stock\Application\Actions;
 
 use App\Modules\Inventory\Items\Application\Contracts\ItemStockLookup;
+use App\Modules\Inventory\Stock\Application\Contracts\SaleStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
+use App\Modules\Inventory\Stock\Application\DTOs\SaleStockRequest;
+use App\Modules\Inventory\Stock\Application\DTOs\SaleStockResult;
 use App\Modules\Inventory\Stock\Domain\ValueObjects\FifoAllocation;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
 use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseLookup;
@@ -13,10 +16,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 
-class IssueStock
+class IssueStock implements SaleStockWriter
 {
     public function __construct(private StockRepository $stock, private WarehouseLookup $warehouses,
         private ItemStockLookup $items, private UnitLookup $units) {}
+
+    public function issue(SaleStockRequest $request): SaleStockResult
+    {
+        if (DB::transactionLevel() === 0) {
+            throw new \LogicException('Sale stock writer memerlukan transaction caller.');
+        }
+        $result = $this->handle(['warehouse_id' => $request->warehouseId, 'source_id' => $request->sourceId,
+            'source_number' => $request->sourceNumber, 'lines' => $request->lines], $request->actorId);
+
+        return new SaleStockResult($result['id'], array_column($result['lines'], 'total_value', 'source_line_id'));
+    }
 
     public function handle(array $input, ?int $actorId = null): array
     {

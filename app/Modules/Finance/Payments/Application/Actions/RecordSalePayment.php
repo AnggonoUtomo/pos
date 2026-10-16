@@ -3,6 +3,9 @@
 namespace App\Modules\Finance\Payments\Application\Actions;
 
 use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
+use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
+use App\Modules\Finance\Payments\Application\DTOs\SalePaymentRequest;
+use App\Modules\Finance\Payments\Application\DTOs\SalePaymentResult;
 use App\Modules\Finance\Payments\Domain\Enums\PaymentMethodType;
 use App\Modules\Finance\Payments\Domain\ValueObjects\PaymentSettlement;
 use Brick\Math\BigDecimal;
@@ -12,9 +15,23 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 
-class RecordSalePayment
+class RecordSalePayment implements SalePaymentWriter
 {
     public function __construct(private PaymentsRepository $repository) {}
+
+    public function receive(SalePaymentRequest $request): SalePaymentResult
+    {
+        if (DB::transactionLevel() === 0) {
+            throw new \LogicException('Sale payment writer memerlukan transaction caller.');
+        }
+        $result = $this->handle(['source_id' => $request->sourceId, 'source_number' => $request->sourceNumber,
+            'total' => $request->total, 'payments' => $request->payments], $request->actorId);
+        $rows = array_map(fn ($row) => array_intersect_key($row, array_flip(['method_id', 'method_name', 'method_type',
+            'tendered_amount', 'applied_amount', 'change_amount'])), $result['payments']);
+
+        return new SalePaymentResult($result['id'], ['total' => $result['total'], 'tendered' => $result['tendered'],
+            'change' => $result['change'], 'payments' => $rows]);
+    }
 
     public function handle(array $input, ?int $actorId = null): array
     {
