@@ -2,6 +2,7 @@ export class PosRequestError extends Error {
     constructor(
         message: string,
         public fields: Record<string, string[]> = {},
+        public status: number = 0,
     ) {
         super(message);
     }
@@ -30,7 +31,7 @@ export async function posRequest<T>(url: string, signal: AbortSignal, payload?: 
             Object.values(fields)[0]?.[0] ??
             { 401: 'Sesi berakhir. Masuk kembali.', 403: 'Akses POS tidak diizinkan.', 419: 'Sesi berakhir. Muat ulang halaman.' }[response.status] ??
             'Data POS belum dapat dimuat. Coba lagi.';
-        throw new PosRequestError(message, fields);
+        throw new PosRequestError(message, fields, response.status);
     }
     return result as T;
 }

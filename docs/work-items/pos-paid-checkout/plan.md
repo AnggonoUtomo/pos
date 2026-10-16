@@ -12,7 +12,7 @@ UI posting parsial.
 | 2 | Passed | Pengeluaran Stock | Schema additive movement/alokasi, mutation no-negative current lock, query kartu/saldo keluar tanpa join privat POS | SQLite up/down, action/query/audit rollback, MySQL FK/current read |
 | 3 | Passed | Payment record | Schema dan action Finance, snapshot, cash bersih dan guard histori metode/akun; belum checkout UI | Action/precision/rollback/guard tests, migration dan MySQL |
 | 4 | Passed | Posting POS atomic | Invoice/line/idempotency, consumer nyata contract Stock/Finance dan locking metadata/pricing, HTTP permission/read detail | HTTP/tamper/retry/race/rollback, route/status dan MySQL dua koneksi |
-| 5 | Planned | Checkout UI | Dialog multi-bayar, quote stale/retry, success/bukti snapshot, shortcut dan permission | TS/lint/build, DevTools atau fallback desktop/tablet |
+| 5 | In Progress | Checkout UI | Dialog multi-bayar, quote stale/retry, success/bukti snapshot, shortcut dan permission | TS/lint/build, DevTools atau fallback desktop/tablet |
 | 6 | Planned | Penutupan | Regresi penuh, demo disposable CCTV/kelistrikan, aktivasi lokal additive dan docs aktual | Full gates, MySQL/browser, fingerprint lokal, review/commit/push/remote |
 
 ## Dependency Dan Implementasi

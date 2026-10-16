@@ -123,6 +123,23 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 
 ## Increment 5: UI Checkout
 
+- [x] Scope UI/permission/retry/receipt dan file lokal dipetakan sebelum coding.
+  - Acceptance: theme/global shell/backend posting tidak dirombak; belum push.
+  - Verification: review page/type/request/backend DTO dan QA existing.
+- [x] Helper pembayaran exact dan recovery attempt melalui test RED/GREEN.
+  - Acceptance: rupiah Indonesia scale2 tanpa float, satu cash/unique/lunas,
+    key ULID crypto, retry mempertahankan payload.
+  - Verification: Node assertions tanpa memasang dependency.
+- [ ] State checkout tahan double submit/respons ambigu dan reload.
+  - Acceptance: sessionStorage per user/tab berisi pending attempt sebelum POST;
+    pending mengunci edit/context/reset; network/5xx mempertahankan key/payload,
+    422 definitif meminta quote ulang tanpa menghapus keranjang.
+  - Verification: browser timeout sesudah commit, reload/retry satu invoice,
+    storage unavailable tidak mengirim POST, permission create-only readonly.
+- [ ] Receipt snapshot reload/cetak dan transaksi berikutnya.
+  - Acceptance: receipt dari server, pointer ID per user/tab, cetak browser
+    terisolasi tanpa HPP/kontak/rekening; keberhasilan baru sesudah response valid.
+  - Verification: browser GET receipt/reload/print media desktop/tablet.
 - [ ] Dialog multi-payment dan receipt snapshot.
   - Acceptance: angka Indonesia, satu cash, metode/account nyata, sisa/kembalian,
     Sonner, loading/error/retry, double submit terjaga, quote stale invalidated.
@@ -162,6 +179,13 @@ histori setelah snapshot lama dan replay; bukan klaim semua interleaving checkou
 - [x] Dokumen, risiko, status dan commit save point diselaraskan; belum push.
 
 ## Bukti Command
+
+Increment 5 helper: pos-payment-ui.mjs RED sebelum helper tersedia, kemudian
+GREEN untuk format Indonesia, settlement multi-payment/satu cash, duplicate/
+kurang/noncash berlebih, nominal besar/max, ULID crypto bounds dan shape recovery.
+Typecheck global dan ESLint helper PASS. PosRequestError menambah status HTTP
+agar 422 definitif dibedakan dari respons network/5xx yang ambigu. UI belum aktif
+pada save point helper ini; tidak memasang dependency.
 
 ### Sesudah Increment 4
 
