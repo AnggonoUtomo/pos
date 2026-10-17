@@ -32,14 +32,16 @@ class EloquentPaymentsRepository implements PaymentsRepository
     public function isAccountReferenced(string $id): bool
     {
         return PaymentMethod::withTrashed()->where('payment_account_id', $id)->lockForUpdate()->first(['id']) !== null
-            || DB::table('payment_records')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null;
+            || DB::table('payment_records')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null
+            || DB::table('payment_disbursement_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null;
     }
 
     public function hasMethodHistory(string $id): bool
     {
         $this->assertTransaction();
 
-        return DB::table('payment_records')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null;
+        return DB::table('payment_records')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null
+            || DB::table('payment_disbursement_lines')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null;
     }
 
     public function lockReceiptBySource(string $sourceId): ?array

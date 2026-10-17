@@ -16,11 +16,11 @@
 
 ## Increment 2: Finance/Payments
 
-- [ ] Ledger/writer dan settlement lunas exact.
+- [x] Ledger/writer dan settlement lunas exact.
   - Acceptance: transaction caller, jumlah tepat, metode unik/aktif/compatible,
     replay no-op dan payload beda ditolak, audit wajib, down/FK aman.
   - Verification: RED/GREEN focused, precision/audit/guard master/regresi sale.
-- [ ] Guard akun/metode mencakup pengeluaran.
+- [x] Guard akun/metode mencakup pengeluaran.
   - Acceptance: histori immutable melindungi konfigurasi; rename tidak ubah snapshot.
   - Verification: lifecycle tests/Pint dan commit.
 
@@ -64,3 +64,7 @@
 
 - Increment1: scope dan contract user dikonfirmasi, source/ownership konsisten;
   generator tidak relevan karena tidak menambah module.
+- Increment2: RED4 DTO belum ada; GREEN5 receipt/purchase writer tests, gabungan
+  regresi Finance26/181 PASS. Exact6, under/over/zero/duplicate, hash replay
+  snapshot sesudah master nonaktif, guard metode, audit veto dan posted down
+  teruji. Pint scoped PASS. Tidak mengubah receipt penjualan/saldo stok.

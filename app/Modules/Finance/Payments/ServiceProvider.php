@@ -2,11 +2,16 @@
 
 namespace App\Modules\Finance\Payments;
 
+use App\Modules\Finance\Payments\Application\Actions\RecordPurchasePayment;
 use App\Modules\Finance\Payments\Application\Actions\RecordSalePayment;
+use App\Modules\Finance\Payments\Application\Contracts\DisbursementRepository;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
+use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
+use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentWriter;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseSalePaymentMethods;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentDisbursementRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentPaymentsRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -14,6 +19,9 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(PurchasePaymentWriter::class, RecordPurchasePayment::class);
+        $this->app->bind(PurchasePaymentMethods::class, DatabaseSalePaymentMethods::class);
+        $this->app->bind(DisbursementRepository::class, EloquentDisbursementRepository::class);
         $this->app->bind(SalePaymentWriter::class, RecordSalePayment::class);
         $this->app->bind(SalePaymentMethods::class, DatabaseSalePaymentMethods::class);
         $this->app->bind(PaymentsRepository::class,
