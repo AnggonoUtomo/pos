@@ -16,12 +16,12 @@
 
 ## Increment 2: Inventory/Stock
 
-- [ ] Tulis RED writer/precision/integrity/replay/query lalu implementasi.
+- [x] Tulis RED writer/precision/integrity/replay/query lalu implementasi.
   - Acceptance: tanpa outer transaction ditolak, saldo baru/additive exact,
     consistency layer/saldo dan overflow, source/line unique, replay sama no-op,
     beda ditolak, satu movement/layer/baris, audit veto rollback.
   - Verification: focused tests RED/GREEN, legacy saldo/movement dan sale FIFO.
-- [ ] Schema ledger/FK/query purchase-only.
+- [x] Schema ledger/FK/query purchase-only.
   - Acceptance: nullable opening anchor, metadata fallback, legacy tidak hilang;
     rollback posted ditolak, base unit/master guard tetap berlaku.
   - Verification: SQLite migration up/down disposable, Pint/boundary/commit.
@@ -75,3 +75,9 @@
 
 - Increment1: scope/PRD/ADR013/boundary/checklist dan relative links direview;
   git diff --check PASS. Tidak ada module baru, generator tidak relevan.
+- Increment2: receipt writer RED6 test (DTO/action belum ada), GREEN6/28;
+  regresi Stock40 test/298 assertion dan draft/checkout terkait25/254 PASS.
+  Saldo purchase-only/legacy, additive setelah sale, FIFO old-first, hash replay/
+  source-line conflict, audit veto, corrupt balance/overflow dan posted down
+  guard teruji. Pint PASS. Regresi schema JSON key order diperbaiki dengan
+  pembandingan terstruktur, tidak mengubah data/production behavior.

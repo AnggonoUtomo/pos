@@ -137,14 +137,19 @@ class EloquentStockRepository implements StockRepository, StockUsage
             $paginator = $query->orderBy('ledger.posted_at')->orderBy('ledger.id')->paginate(25, page: $page);
             $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
         } else {
-            $query = DB::table('stock_balances as ledger')->join('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
-                ->join('stock_openings as opening', 'opening.id', '=', 'line.opening_id')
-                ->select(['ledger.*', 'line.sku', 'line.item_name', 'line.base_unit_name', 'opening.number', 'opening.warehouse_name', 'opening.warehouse_code'])
+            $query = DB::table('stock_balances as ledger')->leftJoin('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
+                ->leftJoin('stock_openings as opening', 'opening.id', '=', 'line.opening_id')
+                ->select(['ledger.*', 'opening.number']);
+            foreach (['sku', 'item_name', 'base_unit_name', 'warehouse_code', 'warehouse_name'] as $field) {
+                $fallback = in_array($field, ['warehouse_code', 'warehouse_name'], true) ? 'opening.'.$field : 'line.'.$field;
+                $query->addSelect(DB::raw('COALESCE(ledger.'.$field.', '.$fallback.') as '.$field));
+            }
+            $query
                 ->when($filters['warehouse_id'] ?? '', fn ($q, $id) => $q->where('ledger.warehouse_id', $id))
                 ->when($filters['item_id'] ?? '', fn ($q, $id) => $q->where('ledger.item_id', $id))
-                ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->where('line.sku', 'like', '%'.$search.'%')
-                    ->orWhere('line.item_name', 'like', '%'.$search.'%')->orWhere('opening.number', 'like', '%'.$search.'%')));
-            $query->orderBy('line.sku')->orderBy('ledger.id');
+                ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->whereRaw('COALESCE(ledger.sku, line.sku) like ?', ['%'.$search.'%'])
+                    ->orWhereRaw('COALESCE(ledger.item_name, line.item_name) like ?', ['%'.$search.'%'])->orWhere('opening.number', 'like', '%'.$search.'%')));
+            $query->orderByRaw('COALESCE(ledger.sku, line.sku)')->orderBy('ledger.id');
             $paginator = $query->paginate(25, page: $page);
             $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
         }

@@ -38,6 +38,6 @@ class StockIssueSchemaTest extends TestCase
         $this->assertFalse(Schema::hasTable('stock_issues'));
         $this->assertDatabaseCount('stock_movements', 1);
         $migration->up();
-        $this->assertSame($opening, DB::table('stock_movements')->get()->toJson());
+        $this->assertEquals(json_decode($opening, flags: JSON_THROW_ON_ERROR), DB::table('stock_movements')->get()->all());
     }
 }
