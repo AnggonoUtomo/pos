@@ -658,3 +658,27 @@ tendered/change/list method ID/name/type/tendered/applied/change. Writer menolak
 panggilan di luar transaction caller, tidak mengekspos account metadata atau
 PaymentsRepository. SalePaymentMethods::choices dipakai controller POS untuk
 opsi id/code/name/type aktif dan compatible, maksimal1000. Bukan payment gateway.
+
+## Riwayat Pembayaran Internal
+
+Session web/auth/verified, permission finance.payments.history.view khusus
+(master view/manage tidak memberi history). GET /finance/payments/history
+Inertia finance/payments/history/index, /data JSON {data,meta},
+/{direction}/{id} JSON detail. Nama finance.payments.history.index/data/show;
+direction route incoming/outgoing, id ULID. Tidak ada endpoint mutation.
+
+Index props records/filters/options {accounts,methods}. Pagination25 urut waktu
+descending/direction/id. Filter search literal max150, direction all/incoming/
+outgoing, account_id/method_id nullable ULID, date_from/date_to Y-m-d, page positif.
+Unknown/invalid filters422, detail tidak ditemukan404, forbidden403/guest login.
+Tanggal Asia/Jakarta inklusif; date_to diubah hari berikutnya exclusive sebelum
+konversi ke timezone storage. Account+method harus cocok pada baris split sama.
+
+Row id/direction/source_number/occurred_at ISO/total decimal string scale2 sale,
+scale6 purchase. Satu baris per dokumen, total header penuh meski difilter akun;
+tidak ada agregat/saldo. Detail menambah tendered/change header (outgoing null)
+dan payments snapshot method/account id/code/name/type, amount bersih (sale
+applied_amount) serta tendered_amount/change_amount untuk incoming. Tanpa
+metadata bank/credential/request_hash/actor. Pilihan dari snapshot ledger max1000,
+bukan master aktif/live. GET tidak mengubah ledger/audit atau mengimpor model
+privat POS/Purchasing. Detail [specification](modules/Finance/Payments/specification.md#riwayat-pembayaran-readonly).

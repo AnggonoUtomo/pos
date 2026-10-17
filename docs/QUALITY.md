@@ -148,6 +148,38 @@ Chrome DevTools QA: BLOCKED
 - Fallback:
 ```
 
+## QA Riwayat Pembayaran
+
+`php artisan test --filter=PaymentHistoryTest`: permission khusus, filter split
+sama/literal/tanggal Jakarta, privacy snapshot sesudah master berubah, pagination,
+405 mutation dan GET fingerprint. Backend full480 test/3845 assertion PASS.
+Typecheck/ESLint/build2730 dan scoped Pint; audit npm/composer diperiksa sebelum
+delivery. Tidak ada schema/dependency/module baru; generator tidak relevan.
+
+`php scripts/qa/payment-history-mysql.php`: local/MySQL, database random
+pos_payment_history_qa_ berbeda dari DB user, finally cleanup. Native union/date/
+LIKE escape, split akun+metode, sale28digit/2pecahan dan purchase24digit/6pecahan
+exact, kas masuk bersih, snapshot tanpa metadata rekening dan fingerprint read
+PASS. Ini read-only, bukan klaim concurrency writer atau saldo kas mencukupi.
+
+`node scripts/qa/payment-history-browser.mjs` memakai QA_PLAYWRIGHT_MODULE existing,
+fixture testing/sqlite payment-history-browser- random dan password random stdin.
+Menguji filter/date reload/literal/empty split, kas masuk bersih, retry sesudah
+500 terkontrol, abort/stale response, permission403, shortcut/palette serta
+desktop1440/tablet1024/768 Light/Dark expanded/collapsed/detail framing. Console
+error500/403 yang sengaja diinjeksi harus dipisahkan dari error tidak terduga.
+Artefak ignored storage/framework/testing. Server/browser ditutup pada finally.
+Pada resume18 Oktober2026, Chrome DevTools MCP BLOCKED karena namespace tool
+tidak tersedia lagi setelah interupsi; discovery kosong. Gunakan fallback ini,
+jangan menyalin status PASS DevTools dari pekerjaan sebelumnya.
+
+`php scripts/qa/activate-payment-history-local.php` dua kali: catalog history
+permission saja, tanpa grant/reset/seed/pay/migration. Fingerprint seluruh data
+existing termasuk akun/ledger/audit/migration identik, pengecualian cache/cache_locks
+dan tambahan row permissions; permission lama dipertahankan. migrate:status
+tetap batch1..19 Ran, tidak ada schema baru. Demo halaman baca tidak menambah
+transaksi ke data toko. Bukti [work item](modules/Finance/Payments/work-items/payment-history/tasks.md).
+
 ## QA Pembayaran Pembelian Lunas
 
 `php artisan test --filter='PurchasePaymentTest|RecordPurchasePaymentTest|PurchasePaymentDemoTest'`:

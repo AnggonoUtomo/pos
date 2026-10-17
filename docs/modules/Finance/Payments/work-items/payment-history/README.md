@@ -1,6 +1,7 @@
 # Work Item: Riwayat Pembayaran
 
-Status In Progress, 17 Oktober 2026. Baseline da3811c. Scope disetujui user:
+Status QA selesai, menunggu delivery remote, 18 Oktober 2026; dimulai17 Oktober.
+Baseline da3811c. Scope disetujui user:
 admin/finance membaca penerimaan penjualan dan pengeluaran pembelian, pencarian
 nomor, filter tanggal/arah/akun/metode dan detail snapshot. Owner Finance/Payments.
 
@@ -37,3 +38,12 @@ dan purchase existing eksplisit pada database disposable, bukan data toko.
 Aktivasi hanya permission catalog tanpa grant/reset/seed/pay.
 
 Lihat [plan](plan.md), [tasks](tasks.md).
+
+## Verifikasi Aktual
+
+Full480 test/3845 assertion, TS/ESLint/build2730/Pint, audit dependency, native
+MySQL exact nominal/date/union/snapshot dan browser matrix desktop/tablet PASS.
+Console unexpected0, tiga HTTP error sengaja diinjeksi/diharapkan dipisahkan.
+DevTools MCP BLOCKED karena tool hilang setelah interupsi, fallback Playwright
+existing tanpa dependency baru. Helper aktivasi dua kali PASS fingerprint data
+lama, catalog permission saja; tidak seed/grant/transaksi/schema baru.

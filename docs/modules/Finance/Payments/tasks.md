@@ -16,3 +16,7 @@
   Bukti [pembayaran pembelian](../../../work-items/purchase-paid-settlement/tasks.md).
 
 Running balance, piutang/utang dan mutasi umum belum dikerjakan.
+
+- [x] Riwayat pembayaran dua arah readonly, filter/permission/detail snapshot,
+  GET fingerprint dan QA backend/browser/native.
+  Bukti [payment-history](work-items/payment-history/tasks.md).

@@ -134,6 +134,38 @@ incompatible pada metode baru membatalkan batch/audit. Tidak mengarang rekening
 nyata, saldo atau transaksi. Aktivasi lokal eksplisit/additive dan fingerprint
 akun/grant/master/stok/ledger/harga existing wajib terjaga.
 
+## Riwayat Pembayaran Readonly
+
+PaymentHistoryReader adalah port baca internal dengan consumer ListPaymentHistory,
+bukan contract mutation publik. Adapter membaca hanya tabel ledger Finance,
+tanpa join model privat POS/Purchasing atau master live. GET index/data/show
+memakai permission finance.payments.history.view (semua histori single company),
+terpisah dari master view/manage dan permission transaksi. GET tidak mengaudit.
+
+Satu row per header payment_receipts/disbursements, UNION ALL pagination25 urut
+occurred_at descending, direction ascending, id descending. CAST total AS CHAR
+sebelum union mempertahankan sale28digit/scale2 dan purchase24digit/scale6.
+Filter nomor literal max150, direction all/incoming/outgoing, account_id/method_id
+ULID, tanggal inklusif Asia/Jakarta dengan boundary akhir exclusive hari berikutnya
+yang dikonversi ke timezone storage config app. Kedua filter split harus cocok
+pada baris yang sama, tidak menggandakan header. Nominal adalah Total dokumen,
+bukan agregat akun/metode terfilter; tidak ada saldo/net atau laporan accounting.
+
+Detail berisi id/direction/source_number/occurred_at/total/tendered/change/payments.
+Incoming amount memakai applied_amount, bukan uang diserahkan sebelum kembalian;
+tendered/change header dan tiap split tersedia. Outgoing memakai amount exact6,
+tendered/change null. Snapshot id/code/name/type akun+metode boleh dibaca pemegang
+history, bukan bank_name/account_number/account_holder, actor atau request_hash.
+Pilihan filter dari snapshot ledger (nama representatif MAX, bukan nama terkini),
+max1000 per jenis; master nonaktif/rename/soft delete tidak menghilangkan histori.
+
+UI finance/payments/history memakai daftar/dialog readonly, format Indonesia/WIB,
+badge arah semantic, shortcut Alt+F, Ctrl/Cmd+Enter filter, Esc tutup, nav/palette.
+Loading/error/retry, abort saat tutup/unmount/pindah pilihan mencegah stale detail.
+Tidak ada seeder transaksi baru untuk halaman baca; fixture QA memakai writer
+existing pada DB disposable. Aktivasi catalog permission saja tanpa grant/pay/seed.
+Rincian [work item](work-items/payment-history/README.md).
+
 ## Non-Scope
 
 Saldo awal, running balance kas/bank, settlement/fee, rekonsiliasi, utang/

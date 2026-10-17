@@ -31,12 +31,12 @@
 
 ## Increment 4: QA Dan Delivery
 
-- [ ] Full/native QA dan aktivasi catalog aman.
+- [x] Full/native QA dan aktivasi catalog aman.
   - Acceptance: native union/date/decimal/filter query sesuai, no business mutation,
     catalog tanpa grant/reset/seed; existing data identik.
   - Verification: full tests/Pint/TS/lint/build/audits, MySQL disposable,
     aktivasi fingerprint dua kali dan migration status.
-- [ ] Update API/module/QUALITY dan review akhir.
+- [x] Update API/module/QUALITY dan review akhir.
   - Acceptance: dokumen menjelaskan behavior aktual, limit/non-scope terbuka.
   - Verification: link/diff/staged/exclusions/secret/commit.
 - [ ] Push dan remote verifikasi.
@@ -44,7 +44,7 @@
 
 ## Sesudah Coding
 
-- [ ] Acceptance dan QA terisi sesuai hasil nyata.
+- [x] Acceptance dan QA terisi sesuai hasil nyata.
 - [ ] Tidak menyentuh data toko/arsip, commit/push terverifikasi.
 
 ## Bukti
@@ -71,3 +71,15 @@
   dihentikan bersama server milik QA; ditambah timeout eksplisit/progress dan
   koreksi selector palette/footer serta pemisahan console403 yang diharapkan.
   Rerun PASS, server/browser ditutup pada finally. Tidak mengubah business rule.
+- Increment4, 18 Oktober2026: full480/3845 PASS (64,61s), typecheck/ESLint/build2730,
+  scoped Pint dan3 route PASS. npm audit0, composer audit --locked bersih.
+  Native MySQL disposable PASS: UNION CHAR dua arah, tanggal Jakarta, literal
+  wildcard, same-split, nominal sale28digit/2pecahan dan purchase24digit/6pecahan
+  tetap exact, kas masuk net, snapshot/options sesudah master nonaktif/terhapus,
+  no metadata bank, seluruh query menjaga fingerprint. Database QA dibersihkan.
+  Aktivasi catalog helper dua kali PASS, data/account/ledger/audit/migration lama
+  identik, tanpa grant/seed/reset/transaksi. Batch1..19 Ran, tidak ada schema baru.
+  Review scope/privacy/dependency/precision/loading/abort tidak menemukan blocker;
+  ledger read internal, tidak menambah public mutation atau seeder transaksi.
+  API/module/QUALITY diselaraskan. Batas options1000, offset pagination25, label
+  snapshot representatif dan tidak ada saldo/aggregate/reversal tetap eksplisit.

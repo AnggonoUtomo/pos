@@ -50,3 +50,15 @@ tidak mengubah stok/FIFO. Guard master juga mencakup histori pengeluaran.
 Tidak ada endpoint Finance pengeluaran bebas, running balance atau transfer bank
 nyata. Local batch18/19 aktif tanpa seed/pay/grant. QA DevTools authenticated,
 Playwright desktop/tablet dan native MySQL tercatat pada work item tersebut.
+
+## Riwayat Pembayaran
+
+Halaman [Pembayaran](http://pos.test/finance/payments/history) menyediakan daftar
+kas masuk penjualan dan pengeluaran pembelian readonly. Permission khusus
+finance.payments.history.view, bukan implikasi view/manage master. Filter nomor,
+tanggal WIB, arah, akun dan metode; detail snapshot tanpa metadata rekening.
+Satu baris per dokumen; Total dokumen tidak berubah menjadi total akun terfilter.
+Penerimaan memakai jumlah bersih sesudah kembalian, pengeluaran exact6.
+Read tidak membuat audit atau mutation ledger; tidak mengklaim saldo berjalan.
+Lihat [work item](work-items/payment-history/README.md), termasuk alasan tidak
+menambah seeder transaksi baru, dan hasil QA/aktivasi permission catalog saja.

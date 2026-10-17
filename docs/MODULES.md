@@ -27,7 +27,7 @@ Status yang digunakan:
 | Purchasing | Suppliers | CRUD master supplier/kontak/status, soft delete/restore, permission/audit atomic, demo CCTV/kelistrikan; SupplierLookup redacted dikonsumsi draft pembelian | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Purchasing | PurchaseOrders | Draft multi-satuan/harga positif, snapshot exact, CRUD/version/audit/demo; penerimaan penuh dan pembayaran lunas atomic/replay/readonly; belum parsial/utang | Suppliers (SupplierLookup), Items (ItemStockLookup), Units (UnitLookup), Warehouses (WarehouseLookup), Stock (PurchaseStockWriter), Payments (PurchasePaymentWriter, PurchasePaymentMethods) | Active |
 | Purchasing | Returns | Retur pembelian dan koreksi stok/payment | PurchaseOrders, Stock, Finance Payments | Planned |
-| Finance | Payments | CRUD kas/bank/metode, penerimaan penjualan dan pengeluaran pembelian lunas dengan snapshot/replay/guard histori; writers dikonsumsi POS/PurchaseOrders, belum running balance atau piutang/utang | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Finance | Payments | CRUD kas/bank/metode, penerimaan penjualan/pengeluaran pembelian lunas dengan snapshot/replay/guard; riwayat dua arah readonly berizin/filter/detail; belum running balance atau piutang/utang | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Reporting | OperationalReports | Laporan stok, penjualan, pembelian, margin, kas sederhana | Inventory, Sales, Purchasing, Finance | Planned |
 
 ## Aturan Penambahan Module

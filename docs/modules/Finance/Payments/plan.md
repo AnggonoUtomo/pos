@@ -9,6 +9,8 @@
    penutupan/delivery keseluruhan selesai pada Increment 6.
 3. [Pengeluaran pembelian lunas](../../../work-items/purchase-paid-settlement/plan.md):
    exact6, ledger terpisah/replay, consumer Purchasing, tanpa mutation Stock.
-4. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
+4. [Riwayat pembayaran](work-items/payment-history/plan.md): baca dua arah,
+   filter/snapshot/permission khusus, tanpa mutation/aggregate saldo.
+5. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
 
 Jangan membuat saldo/payment record dari checklist fondasi master ini.
