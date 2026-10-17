@@ -16,8 +16,10 @@ import type { PurchaseFilters, PurchasePageProps, PurchaseRow } from './types';
 export default function PurchaseOrders({ records, filters, options }: PurchasePageProps) {
     const { can } = usePermission();
     const canManage = can('purchasing.purchase-orders.manage');
+    const canPost = can('purchasing.purchase-orders.post');
     const [dialog, setDialog] = useState<{ record: PurchaseRow | null; readOnly: boolean } | null>(null);
     const [lifecycle, setLifecycle] = useState<PurchaseRow | null>(null);
+    const [posting, setPosting] = useState<PurchaseRow | null>(null);
     const [search, setSearch] = useState(filters.search);
     const [loading, setLoading] = useState(false);
     const searchRef = useRef<HTMLInputElement>(null);
@@ -63,7 +65,7 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
             <Head title="Order pembelian" />
             <WorkspaceShortcutDropdown
                 title="Order pembelian"
-                description={`${records.meta.total} draft ${filters.trashed ? 'terhapus' : 'tersedia'}`}
+                description={`${records.meta.total} dokumen ${filters.trashed ? 'terhapus' : 'tersedia'}`}
                 shortcuts={[
                     { label: 'Cari', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
                     {
@@ -72,7 +74,12 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                         keys: ['Ctrl/Cmd', 'Shift', 'N'],
                         disabled: !canManage || filters.trashed,
                     },
-                    { label: 'Simpan / Konfirmasi', description: 'Operasi dialog aktif', keys: ['Ctrl/Cmd', 'Enter'], disabled: !canManage },
+                    {
+                        label: 'Simpan / Konfirmasi',
+                        description: 'Operasi dialog aktif',
+                        keys: ['Ctrl/Cmd', 'Enter'],
+                        disabled: !canManage && !canPost,
+                    },
                     { label: 'Tutup', description: 'Tutup dialog', keys: ['Esc'] },
                 ]}
             />
@@ -134,7 +141,17 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                             </Select>
                         );
                     })}
-                    <div className="flex rounded-md border p-1" role="group" aria-label="Tampilan draft">
+                    <Select value={filters.status} onValueChange={(status: PurchaseFilters['status']) => visit({ status })} disabled={loading}>
+                        <SelectTrigger className="w-40" aria-label="Filter status pembelian">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Semua status</SelectItem>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="posted">Diterima</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div className="flex rounded-md border p-1" role="group" aria-label="Tampilan dokumen">
                         {[false, true].map((trashed) => (
                             <Button
                                 key={String(trashed)}
@@ -157,12 +174,14 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                 <DataTable
                     rows={records.data}
                     canManage={canManage}
+                    canPost={canPost}
                     onOpen={(record, readOnly) => setDialog({ record, readOnly })}
                     onLifecycle={setLifecycle}
+                    onPost={setPosting}
                 />
                 <div className="text-muted-foreground flex items-center justify-between gap-3 text-sm">
                     <span>
-                        {records.meta.total} draft / Halaman {records.meta.current_page} dari {records.meta.last_page}
+                        {records.meta.total} dokumen / Halaman {records.meta.current_page} dari {records.meta.last_page}
                     </span>
                     <div className="flex gap-2">
                         <Button
@@ -193,11 +212,12 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                     key={`${dialog.record?.id ?? 'new'}-${dialog.readOnly}`}
                     record={dialog.record}
                     options={options}
-                    readOnly={dialog.readOnly}
+                    readOnly={dialog.readOnly || dialog.record?.status === 'posted'}
                     onClose={() => setDialog(null)}
                 />
             )}
             {canManage && lifecycle && <LifecycleDialog key={lifecycle.id} record={lifecycle} onClose={() => setLifecycle(null)} />}
+            {canPost && posting && <LifecycleDialog key={posting.id} mode="post" record={posting} onClose={() => setPosting(null)} />}
         </AppLayout>
     );
 }

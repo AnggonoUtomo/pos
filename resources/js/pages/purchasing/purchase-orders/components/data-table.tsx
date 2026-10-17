@@ -3,19 +3,23 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatDecimalInput } from '@/lib/decimal-input';
-import { Eye, ReceiptText } from 'lucide-react';
+import { CheckCheck, Eye, ReceiptText } from 'lucide-react';
 import type { PurchaseRow } from '../types';
 
 export function DataTable({
     rows,
     canManage,
+    canPost,
     onOpen,
     onLifecycle,
+    onPost,
 }: {
     rows: PurchaseRow[];
     canManage: boolean;
+    canPost: boolean;
     onOpen: (row: PurchaseRow, readOnly: boolean) => void;
     onLifecycle: (row: PurchaseRow) => void;
+    onPost: (row: PurchaseRow) => void;
 }) {
     return (
         <div className="overflow-x-auto rounded-md border">
@@ -34,7 +38,7 @@ export function DataTable({
                         <tr>
                             <td colSpan={7} className="text-muted-foreground px-4 py-16 text-center">
                                 <ReceiptText className="mx-auto mb-3 size-7 text-orange-600 dark:text-orange-300" />
-                                Tidak ada draft pembelian.
+                                Tidak ada pembelian.
                             </td>
                         </tr>
                     ) : (
@@ -46,8 +50,15 @@ export function DataTable({
                                 <td className="px-4 py-3">{row.lines.length}</td>
                                 <td className="px-4 py-3 text-right whitespace-nowrap">Rp {formatDecimalInput(row.total_value)}</td>
                                 <td className="px-4 py-3">
-                                    <Badge variant="outline" className="border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                                        {row.status === 'draft' ? 'Draft' : row.status}
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            row.status === 'posted'
+                                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                                                : 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                                        }
+                                    >
+                                        {row.status === 'draft' ? 'Draft' : 'Diterima'}
                                     </Badge>
                                 </td>
                                 <td className="px-3 py-1">
@@ -65,6 +76,21 @@ export function DataTable({
                                             </TooltipTrigger>
                                             <TooltipContent>Detail</TooltipContent>
                                         </Tooltip>
+                                        {canPost && row.status === 'draft' && !row.deleted_at && (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        aria-label={`Terima ${row.number}`}
+                                                        onClick={() => onPost(row)}
+                                                    >
+                                                        <CheckCheck className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Terima barang</TooltipContent>
+                                            </Tooltip>
+                                        )}
                                         {canManage && row.status === 'draft' && (
                                             <MasterActions
                                                 record={{ id: row.id, name: row.number, is_active: true, deleted_at: row.deleted_at }}

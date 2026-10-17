@@ -139,7 +139,7 @@ const mainNavGroups: NavGroup[] = [
                 url: '/purchasing/purchase-orders',
                 icon: ReceiptText,
                 permission: 'purchasing.purchase-orders.view',
-                badge: 'Draft',
+                badge: 'Aktif',
                 badgeTone: 'amber',
             },
         ],

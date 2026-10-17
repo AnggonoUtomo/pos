@@ -36,12 +36,16 @@ export interface PurchaseRow {
     created_at: string;
     total_value: string;
     lines: PurchaseLine[];
+    stock_receipt_id: string | null;
+    posted_at: string | null;
+    posted_from_version: number | null;
 }
 export interface PurchaseFilters {
     search: string;
     supplier_id: string;
     warehouse_id: string;
     trashed: boolean;
+    status: 'all' | 'draft' | 'posted';
 }
 export interface PurchaseOptions {
     suppliers: Choice[];

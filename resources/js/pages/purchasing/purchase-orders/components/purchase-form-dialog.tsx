@@ -94,11 +94,22 @@ export function PurchaseFormDialog({
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle>{readOnly ? 'Detail draft pembelian' : record ? 'Edit draft pembelian' : 'Tambah draft pembelian'}</DialogTitle>
+                    <DialogTitle>
+                        {readOnly
+                            ? record?.status === 'posted'
+                                ? 'Detail penerimaan pembelian'
+                                : 'Detail draft pembelian'
+                            : record
+                              ? 'Edit draft pembelian'
+                              : 'Tambah draft pembelian'}
+                    </DialogTitle>
                     <DialogDescription className={record ? 'break-all' : 'sr-only'}>
                         {record ? `${record.number} / Revisi ${record.version}` : 'Form draft pembelian'}
                     </DialogDescription>
                 </DialogHeader>
+                {record?.posted_at && (
+                    <p className="text-muted-foreground min-w-0 text-sm">Diterima {new Date(record.posted_at).toLocaleString('id-ID')}</p>
+                )}
                 <form
                     onSubmit={submit}
                     className="min-w-0 space-y-4"

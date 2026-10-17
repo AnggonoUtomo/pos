@@ -39,11 +39,11 @@
 
 ## Increment 4: UI Dan Demo
 
-- [ ] Tombol berizin, dialog konfirmasi, badge/filter/detail posted readonly.
+- [x] Tombol berizin, dialog konfirmasi, badge/filter/detail posted readonly.
   - Acceptance: Sonner/loading/error, data tetap saat gagal, shortcut dialog,
     tidak ada kesan lunas atau aksi edit/hapus pada posted.
   - Verification: TS/lint/build, isolated browser screenshot/console/network.
-- [ ] Seeder demo posting eksplisit dan fixture relasional.
+- [x] Seeder demo posting eksplisit dan fixture relasional.
   - Acceptance: CCTV/kelistrikan, local/testing, idempotent posted tidak diubah,
     tidak otomatis mem-posting data user atau menambah Finance.
   - Verification: demo/replay tests dan browser desktop1440/tablet1024/768,
@@ -86,3 +86,13 @@
   trashed guard, dua audit rollback/retry, replay no-op sesudah supplier nonaktif,
   posted readonly/down guard, Finance tidak berubah, permission matrix+CSRF dan
   whitelist versi PASS. Pint/7 route PASS. UI belum diverifikasi pada checkpoint.
+- Increment4: demo RED3 (seeder belum ada), GREEN3/14. Typecheck, ESLint seluruh
+  resources/js, build2723 module dan Pint PASS. DevTools MCP BLOCKED: tool tidak
+  tersedia pada sesi ini; fallback Playwright existing tanpa dependency baru.
+  Browser receipt PASS: stale dua tab, receiver view/post tanpa manage, replay,
+  detail readonly, filter, saldo/movement purchase-only, Finance tetap kosong.
+  Desktop1440/tablet1024/768 Light/Dark expanded/collapsed, dialog/total/footer
+  tidak terpotong; console kosong. Screenshot konfirmasi768 dan saldo direview.
+  Artefak storage/framework/testing/purchase-receipt-browser-276d5c6316c8c338.
+  Regresi draft browser juga PASS, console kosong; artefak
+  storage/framework/testing/purchase-drafts-browser-fdf050aa443efb10.

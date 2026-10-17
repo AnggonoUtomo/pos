@@ -10,6 +10,7 @@ use App\Modules\Purchasing\Suppliers\Database\Seeders\SuppliersDemoSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
@@ -17,10 +18,24 @@ $app->make(Kernel::class)->bootstrap();
 $database = config('database.connections.sqlite.database');
 if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     || realpath(dirname($database)) !== realpath(__DIR__.'/../../storage/framework/testing')
-    || ! preg_match('/^purchase-drafts-browser-[a-f0-9]{16}\.sqlite$/D', basename($database))) {
+    || ! preg_match('/^purchase-(?:drafts|receipt)-browser-[a-f0-9]{16}\.sqlite$/D', basename($database))) {
     throw new LogicException('QA hanya SQLite disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+if (($input['verify_receipt'] ?? false) === true) {
+    $order = DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->sole();
+    if ($order->status !== 'posted' || $order->version !== 3 || $order->posted_from_version !== 2 || $order->stock_receipt_id === null || DB::table('stock_receipts')->count() !== 1
+        || DB::table('stock_movements')->count() !== 2 || DB::table('fifo_layers')->count() !== 2 || DB::table('stock_balances')->count() !== 2) {
+        throw new RuntimeException('Receipt QA tidak sesuai.');
+    }
+    foreach (['payment_receipts', 'sales_invoices'] as $table) {
+        if (DB::table($table)->exists()) {
+            throw new RuntimeException('Receipt tidak boleh membuat Finance/Sales.');
+        }
+    }
+    echo 'PASS: posted/receipt/layers/balances tanpa Finance/Sales.';
+    exit;
+}
 if (($input['verify'] ?? false) === true) {
     $row = DB::table('purchase_orders')->whereNull('demo_key')->sole();
     $line = DB::table('purchase_order_lines')->where('purchase_order_id', $row->id)->sole();
@@ -47,10 +62,15 @@ Artisan::call('migrate', ['--force' => true]);
 foreach ([UnitsDemoSeeder::class, WarehousesDemoSeeder::class, ItemsDemoSeeder::class, SuppliersDemoSeeder::class, PurchaseOrdersAccessSeeder::class, PurchaseOrdersDemoSeeder::class] as $seeder) {
     app($seeder)->run();
 }
-foreach (['manager', 'viewer', 'outsider'] as $role) {
+foreach (['manager', 'receiver', 'viewer', 'outsider'] as $role) {
     $user = User::create(['name' => 'QA '.$role, 'email' => "qa-{$role}@example.test", 'password' => $input['password']]);
     if ($role === 'manager') {
         $user->givePermissionTo(['purchasing.purchase-orders.view', 'purchasing.purchase-orders.manage']);
+        if ($input['receipt'] ?? false) {
+            $user->givePermissionTo(['purchasing.purchase-orders.post', Permission::findOrCreate('inventory.stock.view', 'web')]);
+        }
+    } elseif ($role === 'receiver') {
+        $user->givePermissionTo(['purchasing.purchase-orders.view', 'purchasing.purchase-orders.post']);
     } elseif ($role === 'viewer') {
         $user->givePermissionTo('purchasing.purchase-orders.view');
     }

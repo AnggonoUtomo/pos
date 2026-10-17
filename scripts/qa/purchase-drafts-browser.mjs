@@ -106,7 +106,7 @@ try {
         await page.getByRole('button', { name: `${operation === 'Hapus' ? 'Pulihkan' : 'Edit'} ${number}`, exact: true }).waitFor();
     }
     await choose('Filter supplier', 'DEMO-SUP-ELEC - Distributor Kelistrikan Demo');
-    await page.getByText('Tidak ada draft pembelian.', { exact: true }).waitFor(); await shot('empty');
+    await page.getByText('Tidak ada pembelian.', { exact: true }).waitFor(); await shot('empty');
     await choose('Filter supplier', 'Semua supplier');
     await page.keyboard.press('Alt+f'); await page.getByLabel('Cari pembelian').fill(number);
     await page.getByRole('button', { name: 'Cari', exact: true }).click();
