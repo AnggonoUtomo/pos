@@ -15,7 +15,7 @@
 
 ## Increment 2: Backend
 
-- [ ] Port/query/read adapter, request/controller/route, permission catalog.
+- [x] Port/query/read adapter, request/controller/route, permission catalog.
   - Acceptance: dua arah/snapshot exact, filter split sama/date Jakarta/literal,
     deterministic pagination25, invalid422/missing404/unauthorized403, read-only.
   - Verification: RED/GREEN, permission matrix/super/privacy/GET fingerprint,
@@ -51,3 +51,9 @@
 
 - Increment1: contract scope read-only dikonfirmasi; struktur/source konsisten,
   tidak ada module baru atau perubahan identifier/stack/bounded context.
+- Increment2: RED4 (route belum ada), GREEN29/338 bersama regresi writer sale/
+  purchase dan HTTP master. Permission dedicated, 405 mutation, GET fingerprint,
+  privacy allowlist, snapshot sesudah master terhapus, date Jakarta, literal
+  wildcard, filter split sama, pagination deterministic dan super validation PASS.
+  Pint/3 route PASS. Pemeriksaan file page ditunda ke UI (assert component false
+  hanya pada checkpoint backend); UI tidak diklaim selesai pada increment ini.

@@ -3,7 +3,7 @@
 | Increment | Status | Hasil | Verifikasi |
 | --- | --- | --- | --- |
 | 1 | Done | Scope/contract/checklist | Review/link/diff |
-| 2 | Planned | Read query/HTTP/permission | RED/GREEN/filter/privacy/no mutation/routes |
+| 2 | Done | Read query/HTTP/permission | RED/GREEN29/338, filters/privacy/no mutation, Pint/3 route PASS |
 | 3 | Planned | UI/detail/sidebar/palette | TS/lint/build/browser desktop-tablet |
 | 4 | Planned | Full/native/aktivasi/docs/delivery | Full/MySQL/fingerprint/remote |
 

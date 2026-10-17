@@ -9,7 +9,7 @@ class PaymentsAccessSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['finance.payments.view', 'finance.payments.manage'] as $permission) {
+        foreach (['finance.payments.view', 'finance.payments.manage', 'finance.payments.history.view'] as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
     }

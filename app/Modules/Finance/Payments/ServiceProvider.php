@@ -5,11 +5,13 @@ namespace App\Modules\Finance\Payments;
 use App\Modules\Finance\Payments\Application\Actions\RecordPurchasePayment;
 use App\Modules\Finance\Payments\Application\Actions\RecordSalePayment;
 use App\Modules\Finance\Payments\Application\Contracts\DisbursementRepository;
+use App\Modules\Finance\Payments\Application\Contracts\PaymentHistoryReader;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentWriter;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabasePaymentHistoryReader;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseSalePaymentMethods;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentDisbursementRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentPaymentsRepository;
@@ -19,6 +21,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(PaymentHistoryReader::class, DatabasePaymentHistoryReader::class);
         $this->app->bind(PurchasePaymentWriter::class, RecordPurchasePayment::class);
         $this->app->bind(PurchasePaymentMethods::class, DatabaseSalePaymentMethods::class);
         $this->app->bind(DisbursementRepository::class, EloquentDisbursementRepository::class);
