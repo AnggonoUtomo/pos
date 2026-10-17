@@ -52,13 +52,13 @@
 - [x] Dokumentasi aktif dan review akhir.
   - Acceptance: API/module/quality sesuai behavior, risk/non-scope jelas.
   - Verification: review source/link/diff/staged/exclusions/secret dan commit.
-- [ ] Push dan remote sync.
+- [x] Push dan remote sync.
   - Verification: HEAD=ls-remote, divergence0/0, user untracked terpisah.
 
 ## Sesudah Coding
 
 - [x] Seluruh acceptance dan QA tercatat sesuai hasil nyata.
-- [ ] Aktivasi aman, checklist terisi dan commit/push terverifikasi.
+- [x] Aktivasi aman, checklist terisi dan commit/push terverifikasi.
 
 ## Bukti
 
@@ -105,3 +105,7 @@
   ADR014/API/MODULES/module docs/QUALITY diselaraskan; source review tidak
   menemukan blocker dalam scope. Belum ada running balance/kecukupan kas,
   utang/parsial/reversal; tidak mengklaim dana bank benar-benar ditransfer.
+  Relative links/diff/Pint PASS. Stage source/QA/docs saja, tanpa secret,
+  Old-docs/SampleUI/empat LSP. Commit18e2063/2b6252a/6ff79c1/4015d9d/1715598
+  dipush origin/main. HEAD1715598ca500a72d5943f7af897b4e2e0297f448 sama dengan
+  ls-remote dan divergence0/0; tracked bersih, untracked user tetap terpisah.

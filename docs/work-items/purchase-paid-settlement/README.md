@@ -1,6 +1,6 @@
 # Work Item: Pembayaran Pembelian Lunas
 
-Status QA selesai, menunggu delivery remote, 17 Oktober 2026. Baseline3470416.
+Status Done, 17 Oktober 2026. Baseline3470416.
 User menyetujui pembayaran
 sesudah penerimaan penuh, sekali lunas, multi-metode dengan jumlah tepat tanpa
 kembalian. Owner Purchasing/PurchaseOrders dan Finance/Payments.
@@ -50,3 +50,5 @@ kosong. Native MySQL worker double payment/current read LOCK WAIT PASS, audit
 rollback dan stock fingerprint aman. Migration lokal batch18/19 Ran, helper dua
 kali PASS tanpa mengubah data lama, seed/pay/grant/reset. Matriks QA dan batas
 DevTools viewport/root dicatat di [tasks](tasks.md).
+Delivery implementasi/QA1715598 sudah dipush origin/main; HEAD sama dengan
+ls-remote, divergence0/0. SampleUI/empat LSP user tetap untracked dan terpisah.
