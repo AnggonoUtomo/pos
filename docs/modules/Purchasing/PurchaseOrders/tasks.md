@@ -5,6 +5,6 @@
 - [x] Application/schema/lifecycle/audit/lookup publik terverifikasi.
 - [x] HTTP/query/permission/demo terverifikasi.
 - [x] UI/shortcut/palette dan browser desktop/tablet lulus.
-- [ ] Aktivasi lokal additive, dokumentasi dan delivery terverifikasi.
+- [x] Aktivasi lokal additive, dokumentasi dan delivery terverifikasi.
 
 Bukti: [draft-foundation](work-items/draft-foundation/tasks.md).

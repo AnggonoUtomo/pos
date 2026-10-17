@@ -1,7 +1,9 @@
 # Work Item: Fondasi Draft Pembelian
 
-Status QA/aktivasi selesai, menunggu delivery remote, 17 Oktober 2026.
+Status Done, 17 Oktober 2026. QA/aktivasi dan delivery remote terverifikasi.
 Baseline aa6411f; checkpoint scope5de3615, backend e25a1a8/aac7611, UI a953a86.
+Implementasi/QA 4627456 dipush; HEAD cocok ls-remote dan divergence0/0 sebelum
+commit penutupan checklist.
 Owner Purchasing/PurchaseOrders; perubahan Suppliers hanya public lookup
 tanpa kontak untuk consumer nyata ini. [PRD](PRD.md),
 [spesifikasi](../../specification.md), [plan](plan.md), [tasks](tasks.md).

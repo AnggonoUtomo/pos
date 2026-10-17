@@ -59,10 +59,10 @@
 - [x] Aktivasi lokal hanya schema/catalog dan preservasi data lama.
   - Acceptance: tidak seed draft user atau grant/reset akun, fingerprint identik.
   - Verification: helper guarded dua kali, migrate:status.
-- [ ] API/MODULES/QUALITY/module/work item aktual dan commit.
+- [x] API/MODULES/QUALITY/module/work item aktual dan commit.
   - Acceptance: checklist hanya sesudah lulus; gap/resiko/exclusion tercatat.
   - Verification: review/link/diff/staged/secret check.
-- [ ] Push dan verifikasi remote.
+- [x] Push dan verifikasi remote.
   - Acceptance: HEAD=ls-remote, divergence0/0, artefak user tetap terpisah.
   - Verification: git push/status/ls-remote/rev-list.
 
@@ -70,7 +70,7 @@
 
 - [x] Scope/acceptance/test/QA terpenuhi.
 - [x] Migration/data existing aman dan tidak ada perubahan ledger.
-- [ ] Dokumen/checklist/risiko/commit/push terverifikasi.
+- [x] Dokumen/checklist/risiko/commit/push terverifikasi.
 
 ## Bukti Verifikasi
 
@@ -122,3 +122,8 @@
   Scope tidak memperbaiki module lain di luar helper angka shared/consumer nyata.
   Risiko lookup bounded1000, master bisa invalid setelah draft, no posting dan
   mobile ditunda terdokumentasi. Old-docs/SampleUI/empat LSP tidak disentuh.
+- Delivery: link relatif/diff/staged scope/secret-pattern review PASS; artefak
+  browser/sqlite/report di-ignore. Commit5de3615/e25a1a8/aac7611/a953a86/4627456
+  dipush origin/main, HEAD46274564f46e84cffabfabf41d526560684203d1 sama dengan
+  ls-remote dan divergence0/0. SampleUI/empat LSP user tetap untracked, tidak
+  di-stage. Commit penutupan checklist mengikuti checkpoint terverifikasi ini.
