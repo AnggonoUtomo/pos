@@ -4,8 +4,10 @@ namespace App\Modules\Purchasing\PurchaseOrders\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
+use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PostPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Queries\PurchaseWorkspace;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\ListPurchaseOrdersRequest;
+use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\PostPurchaseOrderRequest;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\SavePurchaseOrderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +22,8 @@ class PurchaseOrderController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:purchasing.purchase-orders.view', only: ['index', 'data']),
-            new Middleware('can:purchasing.purchase-orders.manage', only: ['store', 'update', 'destroy', 'restore'])];
+            new Middleware('can:purchasing.purchase-orders.manage', only: ['store', 'update', 'destroy', 'restore']),
+            new Middleware('can:purchasing.purchase-orders.post', only: ['post'])];
     }
 
     public function index(ListPurchaseOrdersRequest $request, PurchaseWorkspace $query): Response
@@ -61,5 +64,12 @@ class PurchaseOrderController extends Controller implements HasMiddleware
         $action->restore(strtolower($id), $request->input('version'));
 
         return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft pembelian berhasil dipulihkan.');
+    }
+
+    public function post(PostPurchaseOrderRequest $request, string $id, PostPurchaseOrder $action): JsonResponse|RedirectResponse
+    {
+        $result = $action->handle(strtolower($id), $request->validated('version'), $request->user()->id);
+
+        return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Barang pembelian berhasil diterima.');
     }
 }

@@ -24,7 +24,11 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
     {
         $this->requireTransaction();
 
-        return ($deleted ? PurchaseOrder::onlyTrashed() : PurchaseOrder::query())->lockForUpdate()->findOrFail($id)->toArray();
+        $model = ($deleted ? PurchaseOrder::onlyTrashed() : PurchaseOrder::query())->lockForUpdate()->findOrFail($id);
+        $lines = DB::table('purchase_order_lines')->where('purchase_order_id', $id)->orderBy('item_id')->lockForUpdate()->get()
+            ->map(fn ($row) => $this->normalizeLine((array) $row))->all();
+
+        return $model->toArray() + ['lines' => $lines];
     }
 
     public function save(array $header, array $lines, ?string $id = null): string
@@ -84,11 +88,34 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
         $this->audit($model, 'restored');
     }
 
-    private function audit(PurchaseOrder $model, string $event): void
+    public function post(string $id, array $header, array $lines, string $receiptId, string $postedAt, int $version, ?int $actorId): void
     {
-        $log = activity('purchasing.purchase-orders')->performedOn($model)->event($event)
-            ->withProperties(['attributes' => Arr::only($model->toArray(), ['number', 'status', 'version', 'supplier_id', 'warehouse_id', 'total_value']),
-                'line_count' => DB::table('purchase_order_lines')->where('purchase_order_id', $model->id)->count()])->log('Draft pembelian '.$event);
+        $this->requireTransaction();
+        foreach ($lines as $line) {
+            DB::table('purchase_order_lines')->where('id', $line['id'])->where('purchase_order_id', $id)->update(Arr::except($line, ['id']));
+        }
+        $model = PurchaseOrder::query()->lockForUpdate()->findOrFail($id);
+        $model->fill($header + ['status' => 'posted', 'version' => $version + 1, 'stock_receipt_id' => $receiptId,
+            'posted_from_version' => $version, 'posted_at' => $postedAt, 'posted_by' => $actorId]);
+        if (! $model->save()) {
+            throw new RuntimeException('Status penerimaan tidak tersimpan.');
+        }
+        $this->audit($model, 'posted', $actorId);
+    }
+
+    private function audit(PurchaseOrder $model, string $event, ?int $actorId = null): void
+    {
+        $logger = activity('purchasing.purchase-orders')->performedOn($model)->event($event)
+            ->withProperties(['attributes' => Arr::only($model->toArray(), ['number', 'status', 'version', 'supplier_id', 'warehouse_id', 'total_value', 'stock_receipt_id', 'posted_at']),
+                'line_count' => DB::table('purchase_order_lines')->where('purchase_order_id', $model->id)->count()]);
+        if ($event === 'posted') {
+            if ($actorId === null) {
+                $logger->causedByAnonymous();
+            } else {
+                $logger->causedBy($actorId);
+            }
+        }
+        $log = $logger->log('Pembelian '.$event);
         if ($log === null || ! $log->exists) {
             throw new RuntimeException('Audit draft pembelian gagal disimpan.');
         }
@@ -97,6 +124,9 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
     public function paginate(int $page, array $filters): array
     {
         $query = ! empty($filters['trashed']) ? PurchaseOrder::onlyTrashed() : PurchaseOrder::query();
+        if (in_array($filters['status'] ?? 'all', ['draft', 'posted'], true)) {
+            $query->where('status', $filters['status']);
+        }
         foreach (['warehouse_id', 'supplier_id'] as $key) {
             $query->when($filters[$key] ?? '', fn ($q, $id) => $q->where($key, $id));
         }

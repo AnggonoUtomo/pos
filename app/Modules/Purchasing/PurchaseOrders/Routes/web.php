@@ -10,4 +10,5 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('purchasing/purchase-orde
     Route::put('{id}', [PurchaseOrderController::class, 'update'])->whereUlid('id')->name('update');
     Route::delete('{id}', [PurchaseOrderController::class, 'destroy'])->whereUlid('id')->name('destroy');
     Route::post('{id}/restore', [PurchaseOrderController::class, 'restore'])->whereUlid('id')->name('restore');
+    Route::post('{id}/post', [PurchaseOrderController::class, 'post'])->whereUlid('id')->name('post');
 });

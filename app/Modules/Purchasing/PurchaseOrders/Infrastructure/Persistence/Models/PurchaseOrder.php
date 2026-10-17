@@ -16,6 +16,6 @@ class PurchaseOrder extends Model
 
     protected function casts(): array
     {
-        return ['version' => 'integer', 'total_value' => 'decimal:6'];
+        return ['version' => 'integer', 'posted_from_version' => 'integer', 'posted_at' => 'datetime', 'total_value' => 'decimal:6'];
     }
 }

@@ -75,7 +75,7 @@ class PurchaseOrdersHttpTest extends StockTestCase
         $this->putJson(self::URL.'/'.$id, $input)->assertUnprocessable()->assertJsonValidationErrors('supplier_id');
         $this->deleteJson(self::URL.'/invalid', ['version' => 4])->assertNotFound();
         $this->deleteJson(self::URL.'/'.strtolower((string) Str::ulid()), ['version' => 1])->assertNotFound();
-        $this->postJson(self::URL.'/'.$id.'/post')->assertNotFound();
+        $this->postJson(self::URL.'/'.$id.'/post')->assertForbidden();
     }
 
     public function test_permission_matrix_csrf_and_super_system_invariant(): void

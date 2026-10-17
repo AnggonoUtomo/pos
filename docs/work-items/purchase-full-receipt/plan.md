@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | 1 | Done | Scope/PRD/ADR/boundary/checklist | Review/link/diff PASS |
 | 2 | Done | Receipt ledger/public Stock writer + query saldo | RED/GREEN6/28, Stock40/298, draft-checkout25/254 PASS |
-| 3 | Planned | Posting PurchaseOrders + permission/HTTP/status | RED/GREEN, atomicity/stale/snapshot/readonly/CSRF |
+| 3 | Done | Posting PurchaseOrders + permission/HTTP/status | RED/GREEN22/207, atomicity/stale/snapshot/permission/CSRF/7 route PASS |
 | 4 | Planned | UI konfirmasi/status/detail/filter dan demo QA | TS/lint/build/browser desktop/tablet |
 | 5 | Planned | Full/native concurrency/aktivasi/docs/delivery | Full gates/fingerprint/status/commit/remote |
 

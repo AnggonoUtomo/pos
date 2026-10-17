@@ -28,11 +28,11 @@
 
 ## Increment 3: Purchasing/PurchaseOrders
 
-- [ ] Posting action/HTTP/version/snapshot/replay atomic.
+- [x] Posting action/HTTP/version/snapshot/replay atomic.
   - Acceptance: full saja, harga/qty authoritative, ratio berubah ditolak,
     stale/trashed/posted mutation ditolak, kedua audit wajib, Finance tidak berubah.
   - Verification: RED/GREEN, inject failure sesudah receipt, retry/replay dan CSRF.
-- [ ] Permission post dan filter/status.
+- [x] Permission post dan filter/status.
   - Acceptance: view/manage bukan post, post-only bukan view, super tetap invariant;
     query posted snapshot readonly, endpoint payload whitelist version saja.
   - Verification: HTTP matrix/route:list/Pint dan commit.
@@ -81,3 +81,8 @@
   source-line conflict, audit veto, corrupt balance/overflow dan posted down
   guard teruji. Pint PASS. Regresi schema JSON key order diperbaiki dengan
   pembandingan terstruktur, tidak mengubah data/production behavior.
+- Increment3: RED5 posting tests (route/action belum ada), GREEN22/207 bersama
+  draft/HTTP/receipt terkait. Header/line snapshot refreshed, ratio/stale/master/
+  trashed guard, dua audit rollback/retry, replay no-op sesudah supplier nonaktif,
+  posted readonly/down guard, Finance tidak berubah, permission matrix+CSRF dan
+  whitelist versi PASS. Pint/7 route PASS. UI belum diverifikasi pada checkpoint.
