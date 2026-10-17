@@ -41,11 +41,11 @@
 
 ## Increment 4: UI
 
-- [ ] Page/types/komponen lokal, nav/palette, form/detail/lifecycle.
+- [x] Page/types/komponen lokal, nav/palette, form/detail/lifecycle.
   - Acceptance: angka Indonesia exact, total readonly backend, no posting palsu;
     loading/error/empty, form tidak hilang saat error, guard UX dan Sonner.
   - Verification: typecheck/lint/build dan authenticated browser fixture.
-- [ ] Shortcut/dropdown dan responsivitas.
+- [x] Shortcut/dropdown dan responsivitas.
   - Acceptance: desktop1440x1000, tablet1024x768/768x1024, Light/Dark,
     sidebar expanded/collapsed, dialog tidak overflow, tidak mengubah theme.
   - Verification: DevTools dahulu, screenshot/runtime checks dan commit.
@@ -86,3 +86,18 @@
   CSRF419, manage-only tidak view, super-system tetap invariant, snapshot stale,
   whitelist, read-only/filter/pagination, demo_key idempotent sesudah edit catatan
   dan trashed. Inertia nama component diuji; file page menyusul Increment4.
+- Increment4: TS/lint/build PASS (2723 module), node item-ratio-format dan
+  purchase-draft-format PASS. Helper angka Indonesia dipindah ke js/lib karena
+  dua consumer nyata, semua consumer internal/QA diubah; output Items tetap sama.
+  Inertia page file check aktif kembali. DevTools URL/login/assets21/console PASS;
+  authenticated QA memakai fixture isolated, tidak memakai credential user.
+- Browser QA: PASS pada report lokal
+  storage/framework/testing/purchase-drafts-browser-736d3065ac15769e/report.json.
+  CRUD/detail/reload/error retention, dua tab stale, filter/empty/shortcut/palette,
+  viewer/outsider, persistence/audit privacy/no-ledger; console/page error0.
+  Desktop1440x1000/tablet1024x768/768x1024, Light/Dark expanded/collapsed;
+  total/footer detail kini terverifikasi di dalam dialog, tabel scroll internal.
+  Review screenshot awal menemukan clipping meski frame PASS; test baru RED
+  light-detail-tablet: total terpotong. Perbaikan min-w-0 pada form/wrapper
+  lokal, build ulang dan seluruh browser QA GREEN. Selector no-posting awal
+  diperbaiki agar tidak menghitung menu sidebar Pembayaran.

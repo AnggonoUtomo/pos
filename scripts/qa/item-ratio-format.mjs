@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { formatDecimalInput as formatRatioInput, parseDecimalInput as parseRatioInput } from '../../resources/js/pages/inventory/items/lib/decimal-input.ts';
+import { formatDecimalInput as formatRatioInput, parseDecimalInput as parseRatioInput } from '../../resources/js/lib/decimal-input.ts';
 
 for (const [canonical, local] of [
     ['1.000000', '1'], ['6.000000', '6'], ['2.000000', '2'],

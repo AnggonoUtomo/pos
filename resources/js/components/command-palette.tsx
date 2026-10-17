@@ -124,9 +124,10 @@ const commandItems = [
     {
         title: 'Order Pembelian',
         description: 'Rencana dan dokumen pembelian',
+        url: '/purchasing/purchase-orders',
+        permission: 'purchasing.purchase-orders.view',
         icon: ReceiptText,
         tone: 'text-orange-600 dark:text-orange-300',
-        disabled: true,
     },
     {
         title: 'Pembayaran',

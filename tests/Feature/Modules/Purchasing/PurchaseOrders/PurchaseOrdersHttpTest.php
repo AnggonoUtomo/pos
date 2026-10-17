@@ -69,7 +69,7 @@ class PurchaseOrdersHttpTest extends StockTestCase
         $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 3])->assertOk();
         $logs = DB::table('activity_log')->count();
         $this->getJson(self::URL.'/data')->assertJsonPath('data.0.supplier_name', 'Supplier 100%_!')->assertJsonPath('data.0.version', 4);
-        $this->get(self::URL)->assertInertia(fn (Assert $page) => $page->component('purchasing/purchase-orders/index', false)->has('records.data', 1));
+        $this->get(self::URL)->assertInertia(fn (Assert $page) => $page->component('purchasing/purchase-orders/index')->has('records.data', 1));
         $this->assertSame($logs, DB::table('activity_log')->count());
         $input['version'] = 4;
         $this->putJson(self::URL.'/'.$id, $input)->assertUnprocessable()->assertJsonValidationErrors('supplier_id');

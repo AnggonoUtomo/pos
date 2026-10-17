@@ -5,11 +5,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { formatDecimalInput, parseDecimalInput } from '@/lib/decimal-input';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Save } from 'lucide-react';
 import { type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { formatDecimalInput, parseDecimalInput } from '../lib/decimal-input';
 import { baseRow, type ItemPriceInput, type ItemRow, type ItemUnitInput, type PriceLevel, type UnitOption } from '../types';
 import { PriceEditor, priceMatrix } from './price-editor';
 import { UnitEditor } from './unit-editor';
