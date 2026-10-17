@@ -62,14 +62,14 @@
 - [x] Dokumentasi aktif/API/MODULES/QUALITY dan review.
   - Acceptance: tidak lagi menyatakan draft-only/anchor opening wajib; hasil aktual.
   - Verification: link/diff/staged/secret/exclusion review dan commit.
-- [ ] Push dan buktikan remote.
+- [x] Push dan buktikan remote.
   - Verification: HEAD=ls-remote, divergence0/0, user untracked tetap terpisah.
 
 ## Sesudah Coding
 
 - [x] Acceptance/test/native/browser/gates lulus sesuai bukti.
 - [x] Aktivasi dan ledger lama aman; risk/non-scope dicatat.
-- [ ] Checklist/commit/push selesai dan terverifikasi.
+- [x] Checklist/commit/push selesai dan terverifikasi.
 
 ## Bukti Command
 
@@ -111,3 +111,6 @@
   tetap di luar scope. DDL tidak dijanjikan rollback bersama transaction catalog.
   route:list7 PASS, relative link dokumen dan git diff --check PASS. Stage hanya
   source/QA/dokumen pekerjaan; Old-docs/SampleUI/empat LSP/secret tidak diikutkan.
+  Delivery a177947/6e7476c/f8aba44/c1d86ec/c441cb2 dipush origin/main;
+  c441cb23d47a1569edbc94feebff827155f63614 sama dengan ls-remote, divergence0/0.
+  Worktree tracked bersih, hanya SampleUI dan empat LSP user untracked.

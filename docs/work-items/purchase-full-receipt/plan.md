@@ -6,7 +6,7 @@
 | 2 | Done | Receipt ledger/public Stock writer + query saldo | RED/GREEN6/28, Stock40/298, draft-checkout25/254 PASS |
 | 3 | Done | Posting PurchaseOrders + permission/HTTP/status | RED/GREEN22/207, atomicity/stale/snapshot/permission/CSRF/7 route PASS |
 | 4 | Done | UI konfirmasi/status/detail/filter dan demo QA | Demo3/14, TS/lint/build, receipt + draft browser desktop/tablet PASS |
-| 5 | In Progress | Full/native concurrency/aktivasi/docs/delivery | Full463/3666, native LOCK WAIT, fingerprint/status PASS; remote menunggu |
+| 5 | Done | Full/native concurrency/aktivasi/docs/delivery | Full463/3666, native LOCK WAIT, fingerprint/status, remote HEAD sama/divergence0/0 PASS |
 
 Commit otomatis tiap increment lulus; push ketika seluruh pekerjaan selesai.
 Tidak ada module baru sehingga generator tidak dijalankan lagi. Test migration

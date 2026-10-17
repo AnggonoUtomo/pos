@@ -1,6 +1,6 @@
 # Work Item: Penerimaan Pembelian Penuh
 
-Status QA selesai, menunggu delivery remote, 17 Oktober 2026. Baseline71b9ca5.
+Status Done, 17 Oktober 2026. Baseline71b9ca5.
 User menyetujui terima penuh
 satu kali per draft; partial receiving, utang dan pembayaran tidak termasuk.
 Owner Purchasing/PurchaseOrders (dokumen/status/snapshot) dan Inventory/Stock
@@ -69,3 +69,5 @@ DevTools MCP BLOCKED karena tool tidak tersedia; fallback Playwright existing.
 Aktivasi schema/catalog dua kali PASS fingerprint data existing; Stock batch16
 dan PurchaseOrders batch17 Ran. Tidak mem-posting draft user atau seed demo.
 Detail hasil dan non-scope pada [tasks](tasks.md) dan [Quality](../../QUALITY.md#qa-penerimaan-pembelian-penuh).
+Delivery implementasi/QA c441cb2 telah dipush ke origin/main; HEAD sama dengan
+ls-remote dan divergence0/0. SampleUI/empat LSP tetap untracked di luar pekerjaan.
