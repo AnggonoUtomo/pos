@@ -71,7 +71,8 @@ item/unit, dan barcode tetap direservasi pada soft-deleted row.
 Editor isi satuan dasar memakai format Indonesia: 1.000000 dari API menjadi 1,
 6.000000 menjadi 6, dan 1.500000 menjadi 1,5. Nol desimal akhir tidak ditampilkan;
 titik adalah grouping ribuan (1.000), koma adalah pemisah pecahan.
-Formatter/parser lokal Items menjaga semua digit sebagai string/BigInt,
+Formatter/parser shared resources/js/lib/decimal-input.ts (dipakai Items dan
+PurchaseOrders) menjaga semua digit sebagai string/BigInt,
 bukan float. Input 1,5 dikirim sebagai canonical 1.5; 1.000,5 sebagai 1000.5.
 Input ambigu 1.5, grouping tidak valid, atau lebih dari enam digit pecahan
 ditolak sebelum request, tanpa menghapus isian. Base unit tetap readonly 1.

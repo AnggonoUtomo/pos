@@ -9,8 +9,9 @@ masuk audit. Permission purchasing.suppliers.view/manage, tanpa auto-grant.
 Demo CCTV/kelistrikan fiktif hanya local/testing dan tidak menimpa existing.
 
 Source app/Modules/Purchasing/Suppliers; UI resources/js/pages/purchasing/suppliers.
-Route/database/seeder berada di module. Domain/lookup/event belum diperlukan:
-CRUD sederhana dan belum ada consumer lintas module. Detail [specification](specification.md),
+Route/database/seeder berada di module. Domain/event belum diperlukan untuk CRUD.
+SupplierLookup/DTOs mempublikasikan id/code/name aktif tanpa kontak untuk consumer
+Purchasing/PurchaseOrders. Lock true wajib shared transaction. Detail [specification](specification.md),
 [plan](plan.md), [tasks](tasks.md) dan [work item](work-items/masters-foundation/README.md).
 
 Aktif lokal: [Supplier](http://pos.test/purchasing/suppliers). Migration batch14,

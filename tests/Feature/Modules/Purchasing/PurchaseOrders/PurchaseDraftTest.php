@@ -163,4 +163,14 @@ class PurchaseDraftTest extends StockTestCase
         $migration->up();
         $this->assertTrue(Schema::hasColumns('purchase_orders', ['version', 'deleted_at', 'total_value']));
     }
+
+    public function test_persisted_maximum_precision_keeps_every_digit(): void
+    {
+        $input = $this->payload();
+        $input['lines'][0] = ['item_id' => $this->item, 'unit_id' => $this->base, 'quantity' => '99999999999999.999999', 'unit_cost' => '1'];
+        $id = app(ManagePurchaseOrder::class)->save($input);
+        $record = $this->record($id);
+        $this->assertSame('99999999999999.999999', $record['total_value']);
+        $this->assertSame('99999999999999.999999', $record['lines'][0]['base_quantity']);
+    }
 }

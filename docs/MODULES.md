@@ -24,8 +24,8 @@ Status yang digunakan:
 | Sales | Parties | CRUD pelanggan/level, harga barang per satuan/level melalui workflow Items, audit dan demo | Items (ItemPricingLookup), Laravel auth, Spatie Permission, Spatie Activitylog | Active |
 | Sales | POS | Katalog/keranjang, checkout lunas atomic/FIFO/multi-payment/recovery, receipt cetak dan riwayat readonly berizin/filter snapshot; input diskon/pajak ditunda | Parties (CustomerSalesLookup, ItemPriceCatalog), Items (SaleItemCatalog), Warehouses (WarehouseLookup), Stock (StockAvailability, SaleStockWriter), Payments (SalePaymentWriter, SalePaymentMethods) | Active |
 | Sales | Returns | Retur penjualan dan koreksi transaksi posted | POS, Stock, Finance Payments | Planned |
-| Purchasing | Suppliers | CRUD master supplier/kontak/status, soft delete/restore, permission/audit atomic, demo CCTV/kelistrikan; belum dokumen pembelian/lookup lintas module | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Purchasing | PurchaseOrders | Pembelian, penerimaan stok, HPP awal FIFO | Suppliers, Items, Warehouses, Stock | Planned |
+| Purchasing | Suppliers | CRUD master supplier/kontak/status, soft delete/restore, permission/audit atomic, demo CCTV/kelistrikan; SupplierLookup redacted dikonsumsi draft pembelian | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
+| Purchasing | PurchaseOrders | Draft pembelian multi-satuan/harga positif, snapshot/subtotal exact, CRUD/lifecycle/version/audit dan demo; belum penerimaan/stok/FIFO/payment | Suppliers (SupplierLookup), Items (ItemStockLookup), Units (UnitLookup), Warehouses (WarehouseLookup) | Active |
 | Purchasing | Returns | Retur pembelian dan koreksi stok/payment | PurchaseOrders, Stock, Finance Payments | Planned |
 | Finance | Payments | CRUD kas/bank/metode, penerimaan penjualan snapshot/net cash/replay dan guard histori; writer dikonsumsi POS, belum running balance atau piutang/utang | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
 | Reporting | OperationalReports | Laporan stok, penjualan, pembelian, margin, kas sederhana | Inventory, Sales, Purchasing, Finance | Planned |

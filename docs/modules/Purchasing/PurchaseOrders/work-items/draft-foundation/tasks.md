@@ -52,11 +52,11 @@
 
 ## Increment 5: QA Dan Delivery
 
-- [ ] Full/backend/native MySQL dan browser.
+- [x] Full/backend/native MySQL dan browser.
   - Acceptance: math/unique/FK/current read/stale/audit/no-ledger teruji;
     tidak mengklaim SQLite membuktikan locking MySQL.
   - Verification: full test/Pint/TS/lint/build, audits, QA disposable.
-- [ ] Aktivasi lokal hanya schema/catalog dan preservasi data lama.
+- [x] Aktivasi lokal hanya schema/catalog dan preservasi data lama.
   - Acceptance: tidak seed draft user atau grant/reset akun, fingerprint identik.
   - Verification: helper guarded dua kali, migrate:status.
 - [ ] API/MODULES/QUALITY/module/work item aktual dan commit.
@@ -68,8 +68,8 @@
 
 ## Sesudah Coding
 
-- [ ] Scope/acceptance/test/QA terpenuhi.
-- [ ] Migration/data existing aman dan tidak ada perubahan ledger.
+- [x] Scope/acceptance/test/QA terpenuhi.
+- [x] Migration/data existing aman dan tidak ada perubahan ledger.
 - [ ] Dokumen/checklist/risiko/commit/push terverifikasi.
 
 ## Bukti Verifikasi
@@ -101,3 +101,24 @@
   light-detail-tablet: total terpotong. Perbaikan min-w-0 pada form/wrapper
   lokal, build ulang dan seluruh browser QA GREEN. Selector no-posting awal
   diperbaiki agar tidak menghitung menu sidebar Pembayaran.
+- Increment5: php artisan test --compact PASS449 test/3565 assertion (termasuk
+  regression persisted precision maksimum); focused PurchaseOrders13/135 PASS;
+  Pint --test scoped PHP PASS. TS/lint/build ulang sesudah perbaikan tablet PASS.
+  npm audit0 vulnerabilities, composer audit --locked --no-interaction0 advisory.
+- php scripts/qa/purchase-drafts-mysql.php PASS: migration lengkap/up-down,
+  demo idempotent, locked current read sesudah peer commit menolak stale version
+  dan supplier nonaktif, audit veto rollback header/baris/revision, unique order/
+  item dan FK RESTRICT supplier. Ledger stok existing nonnol (opening posted),
+  FIFO/movement/finance/sales identik sepanjang lifecycle draft. QA database
+  dihapus pada finally; schema QA sisa dicek kosong. Tidak mengklaim seluruh
+  race scenario teruji. Run terinterup tidak dipakai sebagai bukti PASS.
+- php scripts/qa/apply-purchase-drafts-local.php dua kali PASS; batch15 Ran,
+  dua permission tanpa grant, tanpa draft demo. Fingerprint seluruh tabel lama
+  (kecuali derived cache/migrations) dan tiap permission lama identik; tidak
+  reset akun/password, mengubah master/ledger/audit user atau seed transaksi.
+- Review boundary/security/performance PASS: hanya public lookup/DTOs antar
+  module, Domain bebas framework, query parameterized/25*100 batas baris,
+  permission per action/CSRF/whitelist/version dan audit atomic/redacted.
+  Scope tidak memperbaiki module lain di luar helper angka shared/consumer nyata.
+  Risiko lookup bounded1000, master bisa invalid setelah draft, no posting dan
+  mobile ditunda terdokumentasi. Old-docs/SampleUI/empat LSP tidak disentuh.

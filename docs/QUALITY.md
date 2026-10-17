@@ -148,6 +148,34 @@ Chrome DevTools QA: BLOCKED
 - Fallback:
 ```
 
+## QA Draft Pembelian
+
+Focused: php artisan test --filter='PurchaseDraftTest|PurchaseLineValueTest|PurchaseOrdersHttpTest'.
+Format shared/preview exact: node scripts/qa/item-ratio-format.mjs dan
+node scripts/qa/purchase-draft-format.mjs. Full gate tetap wajib sebelum delivery.
+
+Native MySQL: php scripts/qa/purchase-drafts-mysql.php. Guard local/mysql,
+database random prefix pos_purchase_qa_ dan finally cleanup; tidak memakai DB
+user untuk test destructive. Memeriksa stale version/current supplier read
+sesudah peer commit, unique/FK, audit veto, demo/up-down, dan ledger stok existing
+tetap identik. Ini bukan klaim seluruh skenario concurrency telah diuji.
+
+Chrome DevTools dicoba dahulu untuk URL/assets/console terisolasi. Alur
+authenticated: gunakan Playwright existing melalui QA_PLAYWRIGHT_MODULE, lalu
+node scripts/qa/purchase-drafts-browser.mjs. Fixture guarded testing/sqlite
+dengan prefix purchase-drafts-browser-; credential random stdin, tidak memakai
+akun user. CRUD/restore/detail/error/stale dua tab/format/permission/shortcut/
+palette dan desktop-tablet Light/Dark expanded/collapsed. Screenshot/report
+ignored pada storage/framework/testing; browser/server ditutup pada finally.
+Periksa framing konten/total/footer, bukan hanya bounding box dialog.
+
+Aktivasi: php scripts/qa/apply-purchase-drafts-local.php dua kali, kemudian
+migrate:status. Hanya migration/catalog permission; fingerprint seluruh tabel
+existing kecuali migrations/cache/cache_locks dan preservasi tiap permission
+lama. Tidak men-seed draft demo, mengubah master/ledger, grant atau reset akun.
+Demo operasional module hanya eksplisit pada local/testing; bukan aktivasi
+otomatis database bisnis. Migration DDL terpisah dari transaction catalog.
+
 ## QA Master Supplier
 
 Sesudah build, jalankan `php artisan test --filter=Suppliers` dan

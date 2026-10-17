@@ -69,8 +69,40 @@ tidak dipersist. Create JSON201/id; mutation200/id atau redirect back untuk
 Inertia/Sonner. Invalid/konflik kode422, ID invalid/tidak ditemukan404.
 Soft delete/restore mempertahankan status. Manage tidak otomatis memberi view;
 super-system tetap tunduk validasi. Audit wajib atomic dan tidak memuat nilai
-kontak. Belum ada dokumen purchasing atau public lookup/event supplier.
+kontak. Public SupplierLookup kini dikonsumsi draft PurchaseOrders melalui DTO
+id/code/name aktif tanpa kontak; lock true wajib shared transaction. Belum ada
+integration event atau posted purchase/usage guard supplier.
 Detail [spesifikasi Suppliers](modules/Purchasing/Suppliers/specification.md).
+
+## Endpoint Internal Draft Pembelian
+
+Purchasing/PurchaseOrders memakai session web/auth/verified/CSRF.
+Prefix `/purchasing/purchase-orders`, nama `purchasing.purchase-orders.*`.
+GET index/data memerlukan purchasing.purchase-orders.view. POST store, PUT {id},
+DELETE {id}, POST {id}/restore memerlukan purchasing.purchase-orders.manage.
+Manage bukan view; super-system tetap tunduk invariant. Tidak ada endpoint posting.
+
+Index Inertia purchasing/purchase-orders/index, props records/filters/options.
+Data JSON {data,meta}, pagination25 descending id, baris eager maksimum100/order.
+Search literal max150 pada number/supplier_name/warehouse_name; supplier_id dan
+warehouse_id opsional ULID, trashed0/1, page integer positif. Read tidak mengaudit.
+Options aktif melalui public lookup (maksimum1000/master), supplier hanya
+id/code/name tanpa kontak, barang hanya satuan pembelian aktif.
+
+Input supplier_id/warehouse_id ULID wajib, notes nullable max500; lines1..100,
+item_id distinct dan unit_id ULID, quantity/unit_cost canonical decimal string
+positif max14 digit integer/6 pecahan. Satuan terdaftar dengan is_purchase_unit.
+Konversi dan subtotal exact scale6 dihitung backend; rounding/overflow ditolak.
+Field ID/status/number/total/snapshot/demo_key/actor dari client tidak dipersist.
+Edit/delete/restore wajib version existing; stale422 error purchase_order,
+no-op edit tidak menaikkan revision/audit. Restore hanya mempertahankan snapshot;
+master invalid harus diganti saat simpan berikutnya. Tidak hard delete.
+
+JSON store201/id, mutation200/id; Inertia redirect back dengan Sonner. Invalid/
+stale422, invalid/missing id404, forbidden403 atau guest401/login redirect.
+Draft memakai ULID/PO-{ULID}, snapshot master dan total_value/lines scale6;
+audit atomic tanpa catatan/kontak. Draft tidak mengubah stok/FIFO/finance.
+Rincian [spesifikasi PurchaseOrders](modules/Purchasing/PurchaseOrders/specification.md).
 
 ## Endpoint Internal POS
 

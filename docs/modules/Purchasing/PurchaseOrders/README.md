@@ -1,6 +1,6 @@
 # Purchasing/PurchaseOrders
 
-Status: In Progress. Scope draft pembelian disetujui 17 Oktober 2026.
+Status: Active. Draft pembelian terverifikasi 17 Oktober 2026.
 Harga beli wajib positif per satuan pilihan sejak draft disimpan.
 
 Source app/Modules/Purchasing/PurchaseOrders, UI purchasing/purchase-orders.
@@ -10,3 +10,9 @@ Items/ItemStockLookup, Units/UnitLookup. Tidak mengambil model privat module lai
 
 Lihat [spesifikasi](specification.md), [rencana](plan.md), [checklist](tasks.md)
 dan [work item](work-items/draft-foundation/README.md).
+
+Aktif lokal: [Order pembelian](http://pos.test/purchasing/purchase-orders),
+migration batch15 Ran, permission catalog tersedia tanpa auto-grant. Aktivasi
+lokal tidak menambahkan draft demo atau mengubah data lama; demo module hanya
+eksplisit pada local/testing dan QA disposable. Posting/penerimaan/FIFO serta
+utang/pembayaran belum dibuat. QA/aktivasi: [Quality](../../../QUALITY.md#qa-draft-pembelian).

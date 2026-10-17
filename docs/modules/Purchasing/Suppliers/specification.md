@@ -41,5 +41,9 @@ distributor CCTV, kelistrikan dan kabel fiktif lewat Application, idempotent,
 skip kode existing termasuk nonaktif/trashed/user-edit. Tidak membuat login,
 transaksi atau saldo. Aktivasi MySQL lokal additive dengan fingerprint existing,
 tanpa migrate:fresh, reset/grant atau update data lama; demo tiga supplier baru
-boleh ditambahkan dan diaudit. Referensi purchase/guard histori baru dibuat
-saat consumer nyata tersedia. Tidak membuat port/event placeholder.
+boleh ditambahkan dan diaudit. SupplierLookup publik kini dikonsumsi draft
+PurchaseOrders: findActive(id, lock=false) dan choices() maksimum1000, DTO
+SupplierLookupData id/code/name tanpa kontak. Lock true wajib transaction
+default dan memakai current read. Draft tidak melarang nonaktif/soft delete
+supplier; snapshot draft tetap tersedia, simpan ulang memvalidasi master aktif.
+Guard histori belum diperlukan sebelum posted purchase nyata tersedia.
