@@ -1,6 +1,6 @@
 # Work Item: Riwayat Pembayaran
 
-Status QA selesai, menunggu delivery remote, 18 Oktober 2026; dimulai17 Oktober.
+Status Done, 18 Oktober 2026; dimulai17 Oktober.
 Baseline da3811c. Scope disetujui user:
 admin/finance membaca penerimaan penjualan dan pengeluaran pembelian, pencarian
 nomor, filter tanggal/arah/akun/metode dan detail snapshot. Owner Finance/Payments.
@@ -47,3 +47,5 @@ Console unexpected0, tiga HTTP error sengaja diinjeksi/diharapkan dipisahkan.
 DevTools MCP BLOCKED karena tool hilang setelah interupsi, fallback Playwright
 existing tanpa dependency baru. Helper aktivasi dua kali PASS fingerprint data
 lama, catalog permission saja; tidak seed/grant/transaksi/schema baru.
+Delivery implementasi/QA e8fb6ce sudah dipush origin/main; HEAD=ls-remote dan
+divergence0/0. SampleUI/empat LSP user tetap untracked dan tidak diikutkan.

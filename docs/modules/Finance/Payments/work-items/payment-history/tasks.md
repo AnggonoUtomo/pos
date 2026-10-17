@@ -39,13 +39,13 @@
 - [x] Update API/module/QUALITY dan review akhir.
   - Acceptance: dokumen menjelaskan behavior aktual, limit/non-scope terbuka.
   - Verification: link/diff/staged/exclusions/secret/commit.
-- [ ] Push dan remote verifikasi.
+- [x] Push dan remote verifikasi.
   - Verification: HEAD=ls-remote/divergence0/0, user untracked terpisah.
 
 ## Sesudah Coding
 
 - [x] Acceptance dan QA terisi sesuai hasil nyata.
-- [ ] Tidak menyentuh data toko/arsip, commit/push terverifikasi.
+- [x] Tidak menyentuh data toko/arsip, commit/push terverifikasi.
 
 ## Bukti
 
@@ -83,3 +83,7 @@
   ledger read internal, tidak menambah public mutation atau seeder transaksi.
   API/module/QUALITY diselaraskan. Batas options1000, offset pagination25, label
   snapshot representatif dan tidak ada saldo/aggregate/reversal tetap eksplisit.
+  Relative links/diff/staged/secret/exclusion review PASS. Delivery a168aa3,
+  e95c736, 39285f4 dan e8fb6ce dipush origin/main. HEAD implementasi/QA
+  e8fb6cefc559510bb81bc104c7e77b1fa531103f sama dengan ls-remote, divergence0/0.
+  Worktree tracked bersih; SampleUI/empat LSP user untracked tetap terpisah.
