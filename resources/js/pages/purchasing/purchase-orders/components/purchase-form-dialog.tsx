@@ -110,6 +110,22 @@ export function PurchaseFormDialog({
                 {record?.posted_at && (
                     <p className="text-muted-foreground min-w-0 text-sm">Diterima {new Date(record.posted_at).toLocaleString('id-ID')}</p>
                 )}
+                {record?.payment_snapshot && (
+                    <section className="min-w-0 space-y-2 border-y py-3 text-sm" aria-label="Pembayaran tercatat">
+                        <div className="flex flex-wrap justify-between gap-2">
+                            <h2 className="font-semibold">Lunas</h2>
+                            <span className="text-muted-foreground">{record.paid_at ? new Date(record.paid_at).toLocaleString('id-ID') : ''}</span>
+                        </div>
+                        <dl className="min-w-0 space-y-2">
+                            {record.payment_snapshot.payments.map((payment) => (
+                                <div key={payment.method_id} className="flex min-w-0 flex-wrap justify-between gap-2">
+                                    <dt className="break-words">{payment.method_name}</dt>
+                                    <dd className="break-words">Rp {format(payment.amount)}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </section>
+                )}
                 <form
                     onSubmit={submit}
                     className="min-w-0 space-y-4"

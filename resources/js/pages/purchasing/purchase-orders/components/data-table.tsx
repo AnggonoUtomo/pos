@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatDecimalInput } from '@/lib/decimal-input';
-import { CheckCheck, Eye, ReceiptText } from 'lucide-react';
+import { Banknote, CheckCheck, Eye, ReceiptText } from 'lucide-react';
 import type { PurchaseRow } from '../types';
 
 export function DataTable({
@@ -13,10 +13,14 @@ export function DataTable({
     onOpen,
     onLifecycle,
     onPost,
+    canPay,
+    onPay,
 }: {
     rows: PurchaseRow[];
     canManage: boolean;
     canPost: boolean;
+    canPay: boolean;
+    onPay: (row: PurchaseRow) => void;
     onOpen: (row: PurchaseRow, readOnly: boolean) => void;
     onLifecycle: (row: PurchaseRow) => void;
     onPost: (row: PurchaseRow) => void;
@@ -26,7 +30,7 @@ export function DataTable({
             <table className="w-full min-w-[920px] text-sm">
                 <thead className="bg-muted/40 text-muted-foreground border-b">
                     <tr>
-                        {['Nomor', 'Supplier', 'Gudang', 'Baris', 'Total', 'Status', 'Operasi'].map((name) => (
+                        {['Nomor', 'Supplier', 'Gudang', 'Baris', 'Total', 'Status', 'Pembayaran', 'Operasi'].map((name) => (
                             <th scope="col" key={name} className="px-4 py-3 text-left font-medium">
                                 {name}
                             </th>
@@ -36,7 +40,7 @@ export function DataTable({
                 <tbody className="divide-y">
                     {rows.length === 0 ? (
                         <tr>
-                            <td colSpan={7} className="text-muted-foreground px-4 py-16 text-center">
+                            <td colSpan={8} className="text-muted-foreground px-4 py-16 text-center">
                                 <ReceiptText className="mx-auto mb-3 size-7 text-orange-600 dark:text-orange-300" />
                                 Tidak ada pembelian.
                             </td>
@@ -59,6 +63,18 @@ export function DataTable({
                                         }
                                     >
                                         {row.status === 'draft' ? 'Draft' : 'Diterima'}
+                                    </Badge>
+                                </td>
+                                <td className="px-4 py-3">
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            row.payment_disbursement_id
+                                                ? 'border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300'
+                                                : 'text-muted-foreground border-zinc-500/20 bg-zinc-500/5'
+                                        }
+                                    >
+                                        {row.status === 'draft' ? '-' : row.payment_disbursement_id ? 'Lunas' : 'Belum dicatat'}
                                     </Badge>
                                 </td>
                                 <td className="px-3 py-1">
@@ -89,6 +105,16 @@ export function DataTable({
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>Terima barang</TooltipContent>
+                                            </Tooltip>
+                                        )}
+                                        {canPay && row.status === 'posted' && !row.payment_disbursement_id && !row.deleted_at && (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon" aria-label={`Bayar ${row.number}`} onClick={() => onPay(row)}>
+                                                        <Banknote className="size-4 text-sky-600 dark:text-sky-300" />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Bayar pembelian</TooltipContent>
                                             </Tooltip>
                                         )}
                                         {canManage && row.status === 'draft' && (

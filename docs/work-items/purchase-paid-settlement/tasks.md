@@ -33,12 +33,12 @@
 
 ## Increment 4: UI Dan Demo
 
-- [ ] Dialog bayar, badge/filter dan detail readonly snapshot.
+- [x] Dialog bayar, badge/filter dan detail readonly snapshot.
   - Acceptance: Indonesia exact6, Sonner/error/loading, shortcut/dropdown,
     tanpa aksi bayar lagi pada paid atau edit posted.
   - Verification: TS/lint/build/browser desktop1440/tablet1024/768 Light/Dark,
     expanded/collapsed, framing/console/permission/retry.
-- [ ] Demo relasional eksplisit.
+- [x] Demo relasional eksplisit.
   - Acceptance: local/testing, idempotent, preserve user-edit/trashed/paid.
   - Verification: demo tests dan commit.
 
@@ -74,3 +74,19 @@
   rollback pointer/Finance, seluruh tabel Stock identik, permission terpisah
   termasuk pay-only tanpa view, CSRF419 dan super invariant PASS. Snapshot JSON
   diuji sesudah key order berubah (kompatibel MySQL). Pint/8 route PASS.
+- Increment4: demo RED3 belum ada, GREEN3/15; typecheck/ESLint resources/js,
+  build2724 dan scoped Pint PASS. Playwright existing PASS pada desktop1440,
+  tablet1024/768 Light/Dark expanded/collapsed: underpayment/error preserve,
+  split/replay dua operator, payer tanpa manage/post, filter/detail readonly,
+  audit sekali dan fingerprint Stock identik. Console kosong. Artefak ignored
+  storage/framework/testing/purchase-payment-browser-d4eadadded57da69; screenshot
+  light-payment-768 dan paid-readonly-detail diperiksa visual.
+  Run pertama fixture jumlah hardcoded salah, diperbaiki memakai total exact
+  authoritative fixture; rerun PASS, bukan perubahan business rule aplikasi.
+  Sesudah user restart VSCode, Chrome DevTools MCP tersedia dan PASS langsung:
+  login/assets pos.test200 tanpa console, akun payer di server disposable51042,
+  dialog, POST pay302/GET200, Lunas dan snapshot readonly. Tidak ada console error.
+  Viewport tool aktual768x637 (tinggi jendela dibatasi host), dialog framed;
+  matriks viewport penuh dibuktikan Playwright. Simpan screenshot MCP ke workspace
+  ditolak roots tool, fallback screenshot inline berhasil; bukan bypass access.
+  Server/browser QA ditutup. Credential random tidak ditulis ke source/artefak.

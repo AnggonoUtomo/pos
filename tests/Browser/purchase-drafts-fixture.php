@@ -1,11 +1,13 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
 use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersDemoSeeder;
+use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersReceiptDemoSeeder;
 use App\Modules\Purchasing\Suppliers\Database\Seeders\SuppliersDemoSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
@@ -18,10 +20,24 @@ $app->make(Kernel::class)->bootstrap();
 $database = config('database.connections.sqlite.database');
 if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     || realpath(dirname($database)) !== realpath(__DIR__.'/../../storage/framework/testing')
-    || ! preg_match('/^purchase-(?:drafts|receipt)-browser-[a-f0-9]{16}\.sqlite$/D', basename($database))) {
+    || ! preg_match('/^purchase-(?:drafts|receipt|payment)-browser-[a-f0-9]{16}\.sqlite$/D', basename($database))) {
     throw new LogicException('QA hanya SQLite disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+$stockHash = static fn () => hash('sha256', json_encode(array_map(fn ($t) => DB::table($t)->orderBy('id')->get()->all(), ['stock_receipts', 'stock_receipt_lines', 'stock_balances', 'stock_movements', 'fifo_layers']), JSON_THROW_ON_ERROR));
+if (($input['verify_payment'] ?? false) === true) {
+    $order = DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->sole();
+    if ($order->status !== 'posted' || $order->version !== 3 || $order->paid_from_version !== 2 || $order->payment_disbursement_id === null
+        || DB::table('payment_disbursements')->count() !== 1 || DB::table('payment_disbursement_lines')->count() !== 2 || ! hash_equals($input['stock_hash'], $stockHash())
+        || DB::table('payment_receipts')->exists() || DB::table('sales_invoices')->exists()) {
+        throw new RuntimeException('Payment/stock QA tidak sesuai.');
+    }
+    if (DB::table('activity_log')->where('event', 'paid')->count() !== 1 || DB::table('activity_log')->where('event', 'disbursed')->count() !== 1) {
+        throw new RuntimeException('Audit pembayaran ganda.');
+    }
+    echo 'PASS: pembayaran lunas sekali, stock identik, tanpa receipt sale.';
+    exit;
+}
 if (($input['verify_receipt'] ?? false) === true) {
     $order = DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->sole();
     if ($order->status !== 'posted' || $order->version !== 3 || $order->posted_from_version !== 2 || $order->stock_receipt_id === null || DB::table('stock_receipts')->count() !== 1
@@ -62,17 +78,26 @@ Artisan::call('migrate', ['--force' => true]);
 foreach ([UnitsDemoSeeder::class, WarehousesDemoSeeder::class, ItemsDemoSeeder::class, SuppliersDemoSeeder::class, PurchaseOrdersAccessSeeder::class, PurchaseOrdersDemoSeeder::class] as $seeder) {
     app($seeder)->run();
 }
-foreach (['manager', 'receiver', 'viewer', 'outsider'] as $role) {
+if ($input['payment'] ?? false) {
+    app(PaymentsDemoSeeder::class)->run();
+    app(PurchaseOrdersReceiptDemoSeeder::class)->run();
+}
+foreach (['manager', 'receiver', 'payer', 'viewer', 'outsider'] as $role) {
     $user = User::create(['name' => 'QA '.$role, 'email' => "qa-{$role}@example.test", 'password' => $input['password']]);
     if ($role === 'manager') {
         $user->givePermissionTo(['purchasing.purchase-orders.view', 'purchasing.purchase-orders.manage']);
         if ($input['receipt'] ?? false) {
             $user->givePermissionTo(['purchasing.purchase-orders.post', Permission::findOrCreate('inventory.stock.view', 'web')]);
         }
+        if ($input['payment'] ?? false) {
+            $user->givePermissionTo(['purchasing.purchase-orders.post', 'purchasing.purchase-orders.pay']);
+        }
     } elseif ($role === 'receiver') {
         $user->givePermissionTo(['purchasing.purchase-orders.view', 'purchasing.purchase-orders.post']);
     } elseif ($role === 'viewer') {
         $user->givePermissionTo('purchasing.purchase-orders.view');
+    } elseif ($role === 'payer') {
+        $user->givePermissionTo(['purchasing.purchase-orders.view', 'purchasing.purchase-orders.pay']);
     }
 }
-echo 'Fixture draft siap.';
+echo ($input['payment'] ?? false) ? json_encode(['stock_hash' => $stockHash(), 'number' => DB::table('purchase_orders')->sole()->number, 'total' => DB::table('purchase_orders')->sole()->total_value]) : 'Fixture draft siap.';

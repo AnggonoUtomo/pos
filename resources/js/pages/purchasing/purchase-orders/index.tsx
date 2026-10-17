@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DataTable } from './components/data-table';
 import { LifecycleDialog } from './components/lifecycle-dialog';
+import { PaymentDialog } from './components/payment-dialog';
 import { PurchaseFormDialog } from './components/purchase-form-dialog';
 import type { PurchaseFilters, PurchasePageProps, PurchaseRow } from './types';
 
@@ -17,6 +18,8 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
     const { can } = usePermission();
     const canManage = can('purchasing.purchase-orders.manage');
     const canPost = can('purchasing.purchase-orders.post');
+    const canPay = can('purchasing.purchase-orders.pay');
+    const [paying, setPaying] = useState<PurchaseRow | null>(null);
     const [dialog, setDialog] = useState<{ record: PurchaseRow | null; readOnly: boolean } | null>(null);
     const [lifecycle, setLifecycle] = useState<PurchaseRow | null>(null);
     const [posting, setPosting] = useState<PurchaseRow | null>(null);
@@ -78,7 +81,7 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                         label: 'Simpan / Konfirmasi',
                         description: 'Operasi dialog aktif',
                         keys: ['Ctrl/Cmd', 'Enter'],
-                        disabled: !canManage && !canPost,
+                        disabled: !canManage && !canPost && !canPay,
                     },
                     { label: 'Tutup', description: 'Tutup dialog', keys: ['Esc'] },
                 ]}
@@ -151,6 +154,20 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                             <SelectItem value="posted">Diterima</SelectItem>
                         </SelectContent>
                     </Select>
+                    <Select
+                        value={filters.payment_status}
+                        onValueChange={(payment_status: PurchaseFilters['payment_status']) => visit({ payment_status })}
+                        disabled={loading}
+                    >
+                        <SelectTrigger className="w-48" aria-label="Filter pembayaran">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Semua pembayaran</SelectItem>
+                            <SelectItem value="unrecorded">Belum dicatat</SelectItem>
+                            <SelectItem value="paid">Lunas</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <div className="flex rounded-md border p-1" role="group" aria-label="Tampilan dokumen">
                         {[false, true].map((trashed) => (
                             <Button
@@ -175,6 +192,8 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                     rows={records.data}
                     canManage={canManage}
                     canPost={canPost}
+                    canPay={canPay}
+                    onPay={setPaying}
                     onOpen={(record, readOnly) => setDialog({ record, readOnly })}
                     onLifecycle={setLifecycle}
                     onPost={setPosting}
@@ -218,6 +237,7 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
             )}
             {canManage && lifecycle && <LifecycleDialog key={lifecycle.id} record={lifecycle} onClose={() => setLifecycle(null)} />}
             {canPost && posting && <LifecycleDialog key={posting.id} mode="post" record={posting} onClose={() => setPosting(null)} />}
+            {canPay && paying && <PaymentDialog key={paying.id} record={paying} methods={options.paymentMethods} onClose={() => setPaying(null)} />}
         </AppLayout>
     );
 }
