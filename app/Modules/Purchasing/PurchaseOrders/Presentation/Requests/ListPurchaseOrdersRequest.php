@@ -15,12 +15,13 @@ class ListPurchaseOrdersRequest extends FormRequest
     public function rules(): array
     {
         return ['page' => ['sometimes', 'integer', 'min:1', 'max:2147483647'], 'search' => ['nullable', 'string', 'max:150'],
-            'supplier_id' => ['nullable', 'ulid'], 'warehouse_id' => ['nullable', 'ulid'], 'trashed' => ['sometimes', 'boolean'], 'status' => ['sometimes', Rule::in(['all', 'draft', 'posted'])]];
+            'supplier_id' => ['nullable', 'ulid'], 'warehouse_id' => ['nullable', 'ulid'], 'trashed' => ['sometimes', 'boolean'], 'status' => ['sometimes', Rule::in(['all', 'draft', 'posted'])],
+            'payment_status' => ['sometimes', Rule::in(['all', 'paid', 'unrecorded'])]];
     }
 
     public function filters(): array
     {
         return ['search' => trim($this->validated('search') ?? ''), 'supplier_id' => strtolower($this->validated('supplier_id') ?? ''),
-            'warehouse_id' => strtolower($this->validated('warehouse_id') ?? ''), 'trashed' => $this->boolean('trashed'), 'status' => $this->validated('status', 'all')];
+            'warehouse_id' => strtolower($this->validated('warehouse_id') ?? ''), 'trashed' => $this->boolean('trashed'), 'status' => $this->validated('status', 'all'), 'payment_status' => $this->validated('payment_status', 'all')];
     }
 }

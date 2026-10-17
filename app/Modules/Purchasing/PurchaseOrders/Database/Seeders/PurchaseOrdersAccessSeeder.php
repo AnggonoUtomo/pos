@@ -9,7 +9,7 @@ class PurchaseOrdersAccessSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['purchasing.purchase-orders.view', 'purchasing.purchase-orders.manage', 'purchasing.purchase-orders.post'] as $name) {
+        foreach (['purchasing.purchase-orders.view', 'purchasing.purchase-orders.manage', 'purchasing.purchase-orders.post', 'purchasing.purchase-orders.pay'] as $name) {
             Permission::findOrCreate($name, 'web');
         }
     }

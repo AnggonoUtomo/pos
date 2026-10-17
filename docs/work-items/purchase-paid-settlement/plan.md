@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | 1 | Done | Scope/contract/checklist | Review boundary/link/diff |
 | 2 | Done | Ledger Finance/writer/guard master | RED/GREEN, Finance26/181, Pint PASS |
-| 3 | Planned | Orkestrasi Purchasing/HTTP/permission | Atomic rollback/stale/CSRF/readonly |
+| 3 | Done | Orkestrasi Purchasing/HTTP/permission | RED/GREEN31/309, atomic/stale/CSRF/permission/8 route PASS |
 | 4 | Planned | UI dan demo | TS/lint/build/browser desktop-tablet |
 | 5 | Planned | Native/full/aktivasi/docs/delivery | Native lock/fingerprint/full/remote |
 

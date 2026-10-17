@@ -3,10 +3,13 @@
 namespace App\Modules\Purchasing\PurchaseOrders\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
+use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PayPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PostPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Queries\PurchaseWorkspace;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\ListPurchaseOrdersRequest;
+use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\PayPurchaseOrderRequest;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\PostPurchaseOrderRequest;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\SavePurchaseOrderRequest;
 use Illuminate\Http\JsonResponse;
@@ -23,14 +26,16 @@ class PurchaseOrderController extends Controller implements HasMiddleware
     {
         return [new Middleware('can:purchasing.purchase-orders.view', only: ['index', 'data']),
             new Middleware('can:purchasing.purchase-orders.manage', only: ['store', 'update', 'destroy', 'restore']),
-            new Middleware('can:purchasing.purchase-orders.post', only: ['post'])];
+            new Middleware('can:purchasing.purchase-orders.post', only: ['post']),
+            new Middleware('can:purchasing.purchase-orders.pay', only: ['pay'])];
     }
 
-    public function index(ListPurchaseOrdersRequest $request, PurchaseWorkspace $query): Response
+    public function index(ListPurchaseOrdersRequest $request, PurchaseWorkspace $query, PurchasePaymentMethods $methods): Response
     {
         $filters = $request->filters();
 
-        return Inertia::render('purchasing/purchase-orders/index', ['records' => $query->records((int) $request->validated('page', 1), $filters), 'filters' => $filters, 'options' => $query->options()]);
+        return Inertia::render('purchasing/purchase-orders/index', ['records' => $query->records((int) $request->validated('page', 1), $filters), 'filters' => $filters,
+            'options' => $query->options() + ['paymentMethods' => $request->user()->can('purchasing.purchase-orders.pay') ? $methods->choices() : []]]);
     }
 
     public function data(ListPurchaseOrdersRequest $request, PurchaseWorkspace $query): JsonResponse
@@ -71,5 +76,12 @@ class PurchaseOrderController extends Controller implements HasMiddleware
         $result = $action->handle(strtolower($id), $request->validated('version'), $request->user()->id);
 
         return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Barang pembelian berhasil diterima.');
+    }
+
+    public function pay(PayPurchaseOrderRequest $request, string $id, PayPurchaseOrder $action): JsonResponse|RedirectResponse
+    {
+        $result = $action->handle(strtolower($id), $request->validated('version'), $request->validated('payments'), $request->user()->id);
+
+        return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Pembayaran pembelian berhasil dicatat.');
     }
 }

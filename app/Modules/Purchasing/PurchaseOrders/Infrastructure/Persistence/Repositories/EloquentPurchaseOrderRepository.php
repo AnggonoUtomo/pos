@@ -103,12 +103,24 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
         $this->audit($model, 'posted', $actorId);
     }
 
+    public function pay(string $id, string $disbursementId, string $paidAt, array $snapshot, int $version, ?int $actorId): void
+    {
+        $this->requireTransaction();
+        $model = PurchaseOrder::query()->lockForUpdate()->findOrFail($id);
+        $model->fill(['payment_disbursement_id' => $disbursementId, 'paid_at' => $paidAt, 'payment_snapshot' => $snapshot,
+            'paid_from_version' => $version, 'paid_by' => $actorId, 'version' => $version + 1]);
+        if (! $model->save()) {
+            throw new RuntimeException('Status pembayaran tidak tersimpan.');
+        }
+        $this->audit($model, 'paid', $actorId);
+    }
+
     private function audit(PurchaseOrder $model, string $event, ?int $actorId = null): void
     {
         $logger = activity('purchasing.purchase-orders')->performedOn($model)->event($event)
-            ->withProperties(['attributes' => Arr::only($model->toArray(), ['number', 'status', 'version', 'supplier_id', 'warehouse_id', 'total_value', 'stock_receipt_id', 'posted_at']),
+            ->withProperties(['attributes' => Arr::only($model->toArray(), ['number', 'status', 'version', 'supplier_id', 'warehouse_id', 'total_value', 'stock_receipt_id', 'posted_at', 'payment_disbursement_id', 'paid_at']),
                 'line_count' => DB::table('purchase_order_lines')->where('purchase_order_id', $model->id)->count()]);
-        if ($event === 'posted') {
+        if (in_array($event, ['posted', 'paid'], true)) {
             if ($actorId === null) {
                 $logger->causedByAnonymous();
             } else {
@@ -126,6 +138,12 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
         $query = ! empty($filters['trashed']) ? PurchaseOrder::onlyTrashed() : PurchaseOrder::query();
         if (in_array($filters['status'] ?? 'all', ['draft', 'posted'], true)) {
             $query->where('status', $filters['status']);
+        }
+        if (($filters['payment_status'] ?? 'all') === 'paid') {
+            $query->whereNotNull('payment_disbursement_id');
+        }
+        if (($filters['payment_status'] ?? 'all') === 'unrecorded') {
+            $query->where('status', 'posted')->whereNull('payment_disbursement_id');
         }
         foreach (['warehouse_id', 'supplier_id'] as $key) {
             $query->when($filters[$key] ?? '', fn ($q, $id) => $q->where($key, $id));

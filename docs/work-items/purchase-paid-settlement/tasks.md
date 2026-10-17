@@ -26,7 +26,7 @@
 
 ## Increment 3: Purchasing/PurchaseOrders
 
-- [ ] Schema pointer/snapshot/pay action dan endpoint.
+- [x] Schema pointer/snapshot/pay action dan endpoint.
   - Acceptance: posted saja, total server, version/replay, audit kedua rollback,
     stock/FIFO identik, posted lama belum dicatat, permission pay terpisah.
   - Verification: RED/GREEN HTTP/permission/CSRF/whitelist/stale, route dan commit.
@@ -68,3 +68,9 @@
   regresi Finance26/181 PASS. Exact6, under/over/zero/duplicate, hash replay
   snapshot sesudah master nonaktif, guard metode, audit veto dan posted down
   teruji. Pint scoped PASS. Tidak mengubah receipt penjualan/saldo stok.
+- Increment3: RED5 (pay route/action belum ada), GREEN31/309 bersama regresi
+  posting/draft/Finance sale. Versi asal replay, payload berubah/stale/draft/
+  trashed ditolak, supplier posted nonaktif tetap dapat dibayar, dua audit veto
+  rollback pointer/Finance, seluruh tabel Stock identik, permission terpisah
+  termasuk pay-only tanpa view, CSRF419 dan super invariant PASS. Snapshot JSON
+  diuji sesudah key order berubah (kompatibel MySQL). Pint/8 route PASS.
