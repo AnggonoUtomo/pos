@@ -23,7 +23,7 @@
 
 ## Increment 3: UI
 
-- [ ] Daftar/filter/detail, nav/palette/shortcut.
+- [x] Daftar/filter/detail, nav/palette/shortcut.
   - Acceptance: Indonesia, badge semantic, readonly/no mutation control,
     loading/empty/error/retry, cancel stale detail response, framing tablet.
   - Verification: TS/lint/build, DevTools dan browser desktop1440/tablet1024/768,
@@ -57,3 +57,17 @@
   wildcard, filter split sama, pagination deterministic dan super validation PASS.
   Pint/3 route PASS. Pemeriksaan file page ditunda ke UI (assert component false
   hanya pada checkpoint backend); UI tidak diklaim selesai pada increment ini.
+- Increment3: TS/ESLint/build2730 PASS; pengecekan file page pada Inertia test
+  sudah diaktifkan kembali. Playwright existing PASS desktop1440/tablet1024/768,
+  Light/Dark expanded/collapsed, filter literal/tanggal+reload/same split,
+  detail net cash/presisi6, retry500 terkontrol, abort/stale response, role403,
+  shortcut/palette, dan fingerprint seluruh data bisnis/ledger/audit identik.
+  Console unexpected0; expected3 dari injeksi500 dan dua403, bukan error aplikasi
+  yang diabaikan. Screenshot light-768-expanded dan dark-detail-768 direview.
+  Artefak storage/framework/testing/payment-history-browser-47d2235abbafe4b7.
+  DevTools MCP BLOCKED pada resume18 Oktober: tool discovery kosong setelah
+  namespace dilepas; tidak mengklaim PASS dari pekerjaan sebelumnya. Fallback
+  Playwright tanpa install dependency. Run QA pertama berhenti tanpa progress,
+  dihentikan bersama server milik QA; ditambah timeout eksplisit/progress dan
+  koreksi selector palette/footer serta pemisahan console403 yang diharapkan.
+  Rerun PASS, server/browser ditutup pada finally. Tidak mengubah business rule.

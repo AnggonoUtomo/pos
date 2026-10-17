@@ -42,7 +42,7 @@ class PaymentHistoryTest extends TestCase
             $this->getJson(self::URL.'/incoming/'.$this->fixture['incoming'])->assertForbidden();
         }
         $before = PaymentHistoryFixture::fingerprint();
-        $this->actingAs($this->viewer)->get(self::URL)->assertOk()->assertInertia(fn (Assert $p) => $p->component('finance/payments/history/index', false)->has('records.data', 3)->has('options.accounts', 2)->has('options.methods', 2));
+        $this->actingAs($this->viewer)->get(self::URL)->assertOk()->assertInertia(fn (Assert $p) => $p->component('finance/payments/history/index')->has('records.data', 3)->has('options.accounts', 2)->has('options.methods', 2));
         $rows = $this->getJson(self::URL.'/data')->assertOk()->assertJsonPath('meta.total', 3)->json('data');
         $this->assertSame('incoming', $rows[0]['direction']);
         $incoming = $this->getJson(self::URL.'/incoming/'.$this->fixture['incoming'])->assertOk()->assertJsonPath('total', '10000.12')->assertJsonPath('tendered', '11000.12')->assertJsonPath('change', '1000.00')->json();

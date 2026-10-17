@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | 1 | Done | Scope/contract/checklist | Review/link/diff |
 | 2 | Done | Read query/HTTP/permission | RED/GREEN29/338, filters/privacy/no mutation, Pint/3 route PASS |
-| 3 | Planned | UI/detail/sidebar/palette | TS/lint/build/browser desktop-tablet |
+| 3 | Done | UI/detail/sidebar/palette | TS/lint/build2730, Playwright desktop-tablet PASS; DevTools BLOCKED |
 | 4 | Planned | Full/native/aktivasi/docs/delivery | Full/MySQL/fingerprint/remote |
 
 Commit otomatis setiap increment terverifikasi; push keseluruhan selesai.

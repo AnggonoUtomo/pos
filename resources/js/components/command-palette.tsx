@@ -131,10 +131,11 @@ const commandItems = [
     },
     {
         title: 'Pembayaran',
-        description: 'Finance Lite dan payment tracking',
+        description: 'Riwayat kas masuk dan pengeluaran tercatat',
+        url: '/finance/payments/history',
+        permission: 'finance.payments.history.view',
         icon: CreditCard,
         tone: 'text-fuchsia-600 dark:text-fuchsia-300',
-        disabled: true,
     },
     {
         title: 'Kas dan bank',
