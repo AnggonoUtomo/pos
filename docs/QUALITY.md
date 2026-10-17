@@ -148,6 +148,46 @@ Chrome DevTools QA: BLOCKED
 - Fallback:
 ```
 
+## QA Penerimaan Pembelian Penuh
+
+Focused: `php artisan test --filter='PurchasePostingTest|PurchaseStockReceiptTest|PurchaseReceiptDemoTest'`.
+Full test 17 Oktober 2026: 463 test/3666 assertion PASS. Typecheck, ESLint source,
+build2723 module, scoped Pint, npm audit0 dan composer audit --locked PASS.
+
+Native: `php scripts/qa/purchase-full-receipt-mysql.php`. Guard local/mysql,
+DB random pos_full_receipt_qa_ berbeda dari DB user, worker stdin tanpa secret,
+finally drop database disposable. Barrier membuktikan LOCK WAIT melalui
+information_schema.innodb_trx: duplicate post satu receipt, receipt dahulu versus
+sale, dan sale dahulu versus receipt. Saldo akhir5/nilai320000, FIFO old-first,
+tidak lost update/audit ganda. Native FK/unique, audit veto rollback lintas
+module, empty up/down legacy, posted down guard dan query purchase-only PASS.
+Sale memakai writer Inventory nyata, bukan invoice/Finance palsu. SQLite test
+tidak dianggap membuktikan locking; helper perlu akses membuat DB dan melihat
+transaction metadata di MySQL disposable, bukan privilege tambahan aplikasi.
+
+Chrome DevTools MCP: BLOCKED pada sesi ini, discovery tool tidak tersedia.
+Fallback Playwright existing melalui QA_PLAYWRIGHT_MODULE tanpa instalasi:
+`node scripts/qa/purchase-receipt-browser.mjs`. Fixture purchase-receipt-browser-
+guarded testing/sqlite dengan password random stdin. Stale dua tab/replay,
+receiver view/post tanpa manage, filter/posted readonly, saldo/kartu purchase-only
+dan Finance kosong PASS. Desktop1440/tablet1024/768, Light/Dark, sidebar expanded/
+collapsed, framing dialog/total/footer dan console kosong. Screenshot konfirmasi
+tablet dan saldo diperiksa visual. Regresi purchase-drafts-browser.mjs juga PASS.
+Artefak ignored storage/framework/testing/purchase-receipt-browser-276d5c6316c8c338
+dan purchase-drafts-browser-fdf050aa443efb10; server/browser ditutup pada finally.
+
+Aktivasi: `php scripts/qa/apply-purchase-receipt-local.php` dua kali kemudian
+`php artisan migrate:status`: Stock000003 batch16 dan PurchaseOrders000004 batch17
+Ran. Stock lebih dahulu karena FK receipt. Fingerprint membandingkan seluruh
+kolom existing (bukan kolom nullable baru), tabel selain migrations/cache/cache_locks/
+permissions, serta tiap row permission lama. Hanya schema/catalog, tanpa grant,
+reset akun, demo atau posting draft user; master/stock/finance/audit identik.
+DDL migration terpisah dari transaction catalog; down menolak histori posted.
+PurchaseOrdersReceiptDemoSeeder local/testing hanya eksplisit pada demo/disposable,
+memakai action nyata dan skip demo posted/trashed/versi atau catatan diubah.
+Tidak otomatis dipanggil saat aktivasi. Bukti
+[work item](work-items/purchase-full-receipt/tasks.md).
+
 ## QA Draft Pembelian
 
 Focused: php artisan test --filter='PurchaseDraftTest|PurchaseLineValueTest|PurchaseOrdersHttpTest'.

@@ -46,4 +46,8 @@ PurchaseOrders: findActive(id, lock=false) dan choices() maksimum1000, DTO
 SupplierLookupData id/code/name tanpa kontak. Lock true wajib transaction
 default dan memakai current read. Draft tidak melarang nonaktif/soft delete
 supplier; snapshot draft tetap tersedia, simpan ulang memvalidasi master aktif.
-Guard histori belum diperlukan sebelum posted purchase nyata tersedia.
+Posting PurchaseOrders juga memakai lookup aktif yang sama. Supplier tetap boleh
+nonaktif/soft delete setelah posted: FK restrict dan snapshot transaksi menjaga
+histori; tidak ada hard delete atau usage port spekulatif. Posting baru menolak
+master nonaktif, replay versi asal memakai hasil immutable tanpa lookup ulang.
+Lihat [penerimaan penuh](../../../work-items/purchase-full-receipt/README.md).

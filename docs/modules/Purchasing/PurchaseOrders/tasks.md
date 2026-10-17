@@ -8,3 +8,9 @@
 - [x] Aktivasi lokal additive, dokumentasi dan delivery terverifikasi.
 
 Bukti: [draft-foundation](work-items/draft-foundation/tasks.md).
+
+- [x] Penerimaan penuh sekali, status posted/snapshot dan ledger Stock atomic.
+- [x] Replay/stale/permission/audit veto dan posted readonly teruji.
+- [x] Browser desktop/tablet, native concurrency dan aktivasi tanpa posting user.
+
+Bukti penerimaan: [purchase-full-receipt](../../../work-items/purchase-full-receipt/tasks.md).

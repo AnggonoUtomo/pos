@@ -69,23 +69,27 @@ tidak dipersist. Create JSON201/id; mutation200/id atau redirect back untuk
 Inertia/Sonner. Invalid/konflik kode422, ID invalid/tidak ditemukan404.
 Soft delete/restore mempertahankan status. Manage tidak otomatis memberi view;
 super-system tetap tunduk validasi. Audit wajib atomic dan tidak memuat nilai
-kontak. Public SupplierLookup kini dikonsumsi draft PurchaseOrders melalui DTO
+kontak. Public SupplierLookup dikonsumsi draft/posting PurchaseOrders melalui DTO
 id/code/name aktif tanpa kontak; lock true wajib shared transaction. Belum ada
-integration event atau posted purchase/usage guard supplier.
+integration event atau usage guard supplier spekulatif. Supplier boleh nonaktif/
+soft delete setelah posted; FK restrict/snapshot transaksi menjaga histori,
+posting baru wajib aktif dan replay versi asal tidak membaca ulang master.
 Detail [spesifikasi Suppliers](modules/Purchasing/Suppliers/specification.md).
 
-## Endpoint Internal Draft Pembelian
+## Endpoint Internal Pembelian
 
 Purchasing/PurchaseOrders memakai session web/auth/verified/CSRF.
 Prefix `/purchasing/purchase-orders`, nama `purchasing.purchase-orders.*`.
 GET index/data memerlukan purchasing.purchase-orders.view. POST store, PUT {id},
 DELETE {id}, POST {id}/restore memerlukan purchasing.purchase-orders.manage.
-Manage bukan view; super-system tetap tunduk invariant. Tidak ada endpoint posting.
+POST {id}/post memerlukan purchasing.purchase-orders.post. Manage/post bukan view
+dan manage bukan post; super-system tetap tunduk invariant.
 
 Index Inertia purchasing/purchase-orders/index, props records/filters/options.
 Data JSON {data,meta}, pagination25 descending id, baris eager maksimum100/order.
 Search literal max150 pada number/supplier_name/warehouse_name; supplier_id dan
-warehouse_id opsional ULID, trashed0/1, page integer positif. Read tidak mengaudit.
+warehouse_id opsional ULID, status all/draft/posted default all, trashed0/1,
+page integer positif. Read tidak mengaudit.
 Options aktif melalui public lookup (maksimum1000/master), supplier hanya
 id/code/name tanpa kontak, barang hanya satuan pembelian aktif.
 
@@ -102,6 +106,19 @@ JSON store201/id, mutation200/id; Inertia redirect back dengan Sonner. Invalid/
 stale422, invalid/missing id404, forbidden403 atau guest401/login redirect.
 Draft memakai ULID/PO-{ULID}, snapshot master dan total_value/lines scale6;
 audit atomic tanpa catatan/kontak. Draft tidak mengubah stok/FIFO/finance.
+
+Posting hanya payload version integer positif (CSRF diizinkan); field lain422.
+Seluruh draft diterima sekali, bukan input quantity/cost baru. Revalidasi master
+aktif dan konsistensi base unit/ratio/base quantity/total; perubahan konversi
+memerlukan edit/simpan draft. Snapshot nama/SKU diperbarui saat posting.
+JSON200 {id,status,version,stock_receipt_id,posted_at}, web redirect/Sonner.
+posted_from_version menyimpan request pertama; replay versi asal mengembalikan
+hasil lama tanpa stok/audit/revision baru, bahkan sesudah master nonaktif.
+Versi lain/stale/trashed/posted mutation422; posted tidak bisa edit/delete/restore.
+Data read menambah stock_receipt_id/posted_from_version/posted_at nullable.
+Status/baris/audit Purchasing dan receipt/saldo/movement/FIFO/audit Stock satu
+transaction retry3, gagal semuanya rollback. Finance tetap tidak dicatat;
+partial receiving/payment/utang/retur/reversal bukan endpoint tahap ini.
 Rincian [spesifikasi PurchaseOrders](modules/Purchasing/PurchaseOrders/specification.md).
 
 ## Endpoint Internal POS
@@ -589,6 +606,20 @@ inventory.stock.view, tetapi quantity/total_value dapat signed negatif untuk
 sale. Snapshot sumber menghasilkan number/SKU/item/base-unit/gudang tanpa join
 privat POS. Opening legacy tetap terlihat; filter/pagination existing berlaku.
 Tidak ada route store/delete pengeluaran atau bypass permission melalui UI.
+
+PurchaseStockWriter::receive(PurchaseStockRequest) dikonsumsi PostPurchaseOrder,
+wajib transaction default caller. Request warehouseId/sourceId/sourceNumber,
+lines source_line_id/item_id/base_unit_id/base_quantity/total_value dan actorId
+nullable. Result PurchaseStockResult receipt ID/postedAt. ReceivePurchaseStock
+menormalisasi hash/source, memvalidasi base unit/master, lock gudang/saldo/layer,
+dan menambah quantity/value exact beserta satu movement/layer per line.
+Source purchase dan source_line unik; replay identik no-op, payload beda ditolak.
+ReceiptBalance menolak saldo/FIFO tidak konsisten, orphan layer dan overflow.
+Receipt/line immutable dengan audit received atomic, bukan StockRepository publik.
+Saldo opening_line_id nullable dan snapshot metadata fallback menampilkan
+purchase-only bersama legacy. Movement purchase positif, receipt_line_id unique
+FK restrict; query existing tetap inventory.stock.view. Tidak ada route receipt
+bebas, Finance, soft delete posted atau rollback yang membuang receipt.
 
 ### Finance/Payments Writer
 

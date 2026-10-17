@@ -51,15 +51,15 @@
 
 ## Increment 5: QA Dan Delivery
 
-- [ ] Full test/build/Pint/audits dan native MySQL.
+- [x] Full test/build/Pint/audits dan native MySQL.
   - Acceptance: duplicate/concurrent post dan receipt-vs-sale tidak lost update,
     FK/posted-down guard, rollback lintas module dan legacy reports terbukti.
   - Verification: disposable native QA/barrier, full gates; bukan klaim SQLite lock.
-- [ ] Aktivasi lokal hanya schema/catalog.
+- [x] Aktivasi lokal hanya schema/catalog.
   - Acceptance: seluruh master/account/grant/stock/finance/audit lama identik;
     tidak seed/post draft user, script ulang idempotent.
   - Verification: guarded helper/fingerprint dua kali dan migrate:status.
-- [ ] Dokumentasi aktif/API/MODULES/QUALITY dan review.
+- [x] Dokumentasi aktif/API/MODULES/QUALITY dan review.
   - Acceptance: tidak lagi menyatakan draft-only/anchor opening wajib; hasil aktual.
   - Verification: link/diff/staged/secret/exclusion review dan commit.
 - [ ] Push dan buktikan remote.
@@ -67,8 +67,8 @@
 
 ## Sesudah Coding
 
-- [ ] Acceptance/test/native/browser/gates lulus sesuai bukti.
-- [ ] Aktivasi dan ledger lama aman; risk/non-scope dicatat.
+- [x] Acceptance/test/native/browser/gates lulus sesuai bukti.
+- [x] Aktivasi dan ledger lama aman; risk/non-scope dicatat.
 - [ ] Checklist/commit/push selesai dan terverifikasi.
 
 ## Bukti Command
@@ -96,3 +96,18 @@
   Artefak storage/framework/testing/purchase-receipt-browser-276d5c6316c8c338.
   Regresi draft browser juga PASS, console kosong; artefak
   storage/framework/testing/purchase-drafts-browser-fdf050aa443efb10.
+- Increment5: full backend463 test/3666 assertion PASS; scoped Pint, typecheck,
+  ESLint resources/js, build2723, npm audit0 dan composer audit --locked bersih.
+  php scripts/qa/purchase-full-receipt-mysql.php PASS: tiga barrier LOCK WAIT
+  worker nyata (double posting, receipt dahulu vs sale, sale dahulu vs receipt),
+  receipt3 bukan ganda, saldo5/nilai320000 old-first, audit posted3.
+  Audit Purchasing veto rollback Stock, source-line unique/FK restrict, empty
+  native up/down mempertahankan legacy, kedua posted down ditolak, query saldo/
+  kartu dan Finance0 PASS. Database QA dibersihkan, database user tidak dimutasi.
+  php scripts/qa/apply-purchase-receipt-local.php dua kali PASS fingerprint
+  seluruh kolom/data existing; catalog tanpa grant/seed/posting user. Migration
+  Stock000003 batch16 dan PurchaseOrders000004 batch17 Ran. Review kode final
+  tidak menemukan blocker pada scope; limit master1000/partial/reversal/utang
+  tetap di luar scope. DDL tidak dijanjikan rollback bersama transaction catalog.
+  route:list7 PASS, relative link dokumen dan git diff --check PASS. Stage hanya
+  source/QA/dokumen pekerjaan; Old-docs/SampleUI/empat LSP/secret tidak diikutkan.

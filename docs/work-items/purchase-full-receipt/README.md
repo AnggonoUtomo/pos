@@ -1,6 +1,7 @@
 # Work Item: Penerimaan Pembelian Penuh
 
-Status In Progress, 17 Oktober 2026. Baseline71b9ca5. User menyetujui terima penuh
+Status QA selesai, menunggu delivery remote, 17 Oktober 2026. Baseline71b9ca5.
+User menyetujui terima penuh
 satu kali per draft; partial receiving, utang dan pembayaran tidak termasuk.
 Owner Purchasing/PurchaseOrders (dokumen/status/snapshot) dan Inventory/Stock
 (receipt ledger, saldo, movement, FIFO). [PRD](PRD.md), [plan](plan.md), [tasks](tasks.md).
@@ -57,3 +58,14 @@ Demo posting hanya QA/disposable atau seeder eksplisit local/testing; tidak
 otomatis mem-posting draft user atau mengubah stok saat aktivasi lokal.
 Aktivasi hanya schema dan permission catalog, fingerprint seluruh data lama
 identik. Old-docs/SampleUI/empat LSP/credential tidak disentuh.
+
+## Hasil Verifikasi
+
+Backend463 test/3666 assertion, TS/lint/build2723, scoped Pint dan audit dependency
+PASS. Native MySQL tiga barrier LOCK WAIT membuktikan duplicate post/replay dan
+dua urutan receipt-versus-sale; saldo/FIFO/audit konsisten. Browser receipt dan
+regresi draft desktop/tablet Light/Dark expanded/collapsed PASS, console kosong.
+DevTools MCP BLOCKED karena tool tidak tersedia; fallback Playwright existing.
+Aktivasi schema/catalog dua kali PASS fingerprint data existing; Stock batch16
+dan PurchaseOrders batch17 Ran. Tidak mem-posting draft user atau seed demo.
+Detail hasil dan non-scope pada [tasks](tasks.md) dan [Quality](../../QUALITY.md#qa-penerimaan-pembelian-penuh).

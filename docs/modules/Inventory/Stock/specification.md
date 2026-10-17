@@ -1,4 +1,4 @@
-# Specification: Stok Awal Dan Fondasi FIFO
+# Spesifikasi: Stok Awal, Penerimaan Dan FIFO
 
 ## Status Dan Persetujuan
 
@@ -52,8 +52,8 @@ Application memakai port repository serta lookup publik; adapter DB milik Stock
 tidak mengimpor model privat module lain.
 
 Tabel ULID: stock_openings, stock_opening_lines, stock_balances,
-stock_movements, fifo_layers, stock_issues, stock_issue_lines dan
-fifo_consumptions. Hanya stock_openings draft menggunakan soft delete.
+stock_movements, fifo_layers, stock_issues, stock_issue_lines, fifo_consumptions,
+stock_receipts dan stock_receipt_lines. Hanya stock_openings draft menggunakan soft delete.
 Lines draft diganti dalam transaksi saat edit; lines posted, balance, movement,
 layer tidak menyediakan delete bebas. FK restrict menjaga referensi master.
 Audit created/updated/deleted/restored/posted atomic dengan mutation.
@@ -63,7 +63,7 @@ histori setelah lock master yang sama, bukan query tanpa lock.
 
 IssueStock memvalidasi source_id/source_number dan 1..100 source_line_id unik,
 item_id serta base_quantity decimal string positif. Konversi satuan authoritative
-menjadi tanggung jawab consumer POS kelak; tidak menerima harga atau rasio bebas.
+menjadi tanggung jawab consumer POS; tidak menerima harga atau rasio bebas.
 Action mengimplementasikan public SaleStockWriter, dengan consumer PostInvoice
 POS melalui DTOs SaleStockRequest/SaleStockResult. Writer wajib transaction
 caller; result issue ID dan map source_line_id/total_cost scale6, bukan model.
@@ -79,10 +79,41 @@ issue line/consumption positif. Audit wajib tersimpan (termasuk menolak veto),
 actor eksplisit/null anonymous; posted tanpa edit/soft delete. Down migration
 menolak jika stock_issues berisi data, bukan shortcut menghapus histori.
 
-Kartu stok menampilkan snapshot movement sale dan fallback legacy opening lewat
+Kartu stok menampilkan snapshot movement sale/purchase dan fallback legacy opening lewat
 left join tabel Stock sendiri. Field quantity/value dapat negatif. Pembayaran,
 otorisasi HTTP posting dan atomicity lintas POS/Finance dimiliki PostInvoice
-POS, bukan endpoint Stock bebas. UI checkout menunggu Increment 5.
+POS, bukan endpoint Stock bebas. UI checkout sudah tersedia di POS.
+
+## Penerimaan Pembelian Penuh
+
+ReceivePurchaseStock mengimplementasikan public PurchaseStockWriter::receive
+dengan consumer PostPurchaseOrder. PurchaseStockRequest berisi warehouseId,
+sourceId/sourceNumber, lines dan actorId nullable. Setiap baris source_line_id,
+item_id/base_unit_id, base_quantity/total_value canonical decimal string positif.
+PurchaseStockResult hanya receipt ID dan postedAt, bukan model Eloquent.
+Transaction default caller wajib; tidak ada endpoint receipt Stock bebas.
+
+Source purchase fixed; unique(source_type,source_id) dan source_line_id unique.
+Hash canonical tanpa actor menjaga replay identik no-op; payload berbeda ditolak.
+Master/unit aktif dan base unit cocok; lock gudang, base units/items sorted,
+saldo dan layer current read, konsisten dengan writer sale. ReceiptBalance
+memastikan saldo sama dengan jumlah sisa FIFO, tidak ada layer orphan, quantity/
+value konsisten dan hasil penambahan tidak overflow. Satu receipt line menghasilkan
+satu movement purchase positif dan layer FIFO, received_at waktu server.
+Audit received wajib atomic; veto menggagalkan seluruh transaksi caller.
+
+Saldo purchase-only tidak membutuhkan stok awal palsu: opening_line_id nullable,
+snapshot sku/item_name/base_unit_name/warehouse_code/warehouse_name tersedia.
+Query saldo left join opening dengan COALESCE metadata saldo/legacy, bukan inner
+join yang menghilangkan saldo purchase-only. Movement receipt_line_id nullable
+unique FK restrict. Receipt/line posted tidak memakai soft delete atau edit bebas.
+Down migration receipt menolak histori receipt atau saldo tanpa opening;
+rollback posting PurchaseOrders juga menolak dokumen posted/pointer receipt.
+Guard histori Items/Warehouses tetap bekerja melalui movement purchase nyata.
+Supplier lifecycle tetap dimiliki Purchasing dengan snapshot, bukan Stock.
+
+Verifikasi dan aktivasi [penerimaan penuh](../../../work-items/purchase-full-receipt/README.md).
+Tidak mencatat pembayaran/utang, menerima parsial atau menyediakan reversal.
 
 ## Guard Master Dan Public Boundary
 

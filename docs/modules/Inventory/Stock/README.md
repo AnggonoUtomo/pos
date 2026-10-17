@@ -16,7 +16,7 @@ juga telah lulus gate.
 
 Memiliki dokumen stok awal draft/posted, saldo dalam satuan dasar, movement,
 dan layer FIFO per barang + gudang. Activity log bukan ledger stok.
-Tidak memiliki penjualan, pembelian, transfer, adjustment, reversal UI,
+Tidak memiliki dokumen penjualan/pembelian, transfer, adjustment, reversal UI,
 payment, pajak, diskon, atau harga level pelanggan.
 
 ## Public Boundary Dan Dependency
@@ -25,7 +25,9 @@ payment, pajak, diskon, atau harga level pelanggan.
 - Warehouses menyediakan lookup gudang melalui contract dan DTOs publik.
 - Units.UnitLookup memvalidasi dan mengunci satuan aktif.
 - StockUsage menyediakan guard histori untuk consumer Items/Warehouses.
-- Tidak membuat event atau port pengeluaran FIFO tanpa consumer transaksi.
+- SaleStockWriter dikonsumsi PostInvoice POS untuk pengeluaran dan FIFO.
+- PurchaseStockWriter dikonsumsi PostPurchaseOrder untuk receipt/movement/FIFO.
+- Tidak membuat event atau port tanpa consumer transaksi nyata.
 
 ## Permission Dan Operasi
 
@@ -65,3 +67,9 @@ additive sudah diterapkan tanpa pengeluaran demo, grant atau reset data.
 
 Lihat [specification.md](specification.md), [plan.md](plan.md), dan
 [tasks.md](tasks.md) untuk aturan dan hasil implementasi aktual.
+
+[Penerimaan pembelian penuh](../../../work-items/purchase-full-receipt/README.md)
+menambah receipt ledger immutable dan saldo tanpa anchor opening wajib. Saldo
+purchase-only tampil bersama legacy melalui snapshot fallback. MySQL batch16
+aktif lokal tanpa seed/posting user; receipt dan sale diserialisasi per gudang.
+Duplicate post/dua urutan receipt-versus-sale terbukti lewat worker MySQL nyata.
