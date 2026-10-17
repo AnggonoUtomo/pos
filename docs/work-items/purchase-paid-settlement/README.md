@@ -1,6 +1,7 @@
 # Work Item: Pembayaran Pembelian Lunas
 
-Status In Progress, 17 Oktober 2026. Baseline3470416. User menyetujui pembayaran
+Status QA selesai, menunggu delivery remote, 17 Oktober 2026. Baseline3470416.
+User menyetujui pembayaran
 sesudah penerimaan penuh, sekali lunas, multi-metode dengan jumlah tepat tanpa
 kembalian. Owner Purchasing/PurchaseOrders dan Finance/Payments.
 
@@ -40,3 +41,12 @@ QA destructive/concurrency memakai database disposable; data existing wajib
 identik. Old-docs/SampleUI/empat LSP user tidak disentuh.
 
 Lihat [plan](plan.md) dan [tasks](tasks.md).
+
+## Verifikasi Aktual
+
+Full476 test/3757 assertion, typecheck/lint/build2724/Pint, audit dependency PASS.
+DevTools MCP authenticated dan Playwright desktop/tablet Light/Dark PASS, console
+kosong. Native MySQL worker double payment/current read LOCK WAIT PASS, audit
+rollback dan stock fingerprint aman. Migration lokal batch18/19 Ran, helper dua
+kali PASS tanpa mengubah data lama, seed/pay/grant/reset. Matriks QA dan batas
+DevTools viewport/root dicatat di [tasks](tasks.md).

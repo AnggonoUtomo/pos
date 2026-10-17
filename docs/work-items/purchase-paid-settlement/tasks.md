@@ -44,12 +44,12 @@
 
 ## Increment 5: QA Dan Delivery
 
-- [ ] Native/full gate dan aktivasi guarded.
+- [x] Native/full gate dan aktivasi guarded.
   - Acceptance: double payment/current read tidak duplikasi; audit failure
     rollback dua module; schema/catalog lokal tidak ubah data/grant/stock user.
   - Verification: MySQL disposable worker, full tests/Pint/TS/lint/build/audit,
     migration status/fingerprint dua kali.
-- [ ] Dokumentasi aktif dan review akhir.
+- [x] Dokumentasi aktif dan review akhir.
   - Acceptance: API/module/quality sesuai behavior, risk/non-scope jelas.
   - Verification: review source/link/diff/staged/exclusions/secret dan commit.
 - [ ] Push dan remote sync.
@@ -57,7 +57,7 @@
 
 ## Sesudah Coding
 
-- [ ] Seluruh acceptance dan QA tercatat sesuai hasil nyata.
+- [x] Seluruh acceptance dan QA tercatat sesuai hasil nyata.
 - [ ] Aktivasi aman, checklist terisi dan commit/push terverifikasi.
 
 ## Bukti
@@ -90,3 +90,18 @@
   matriks viewport penuh dibuktikan Playwright. Simpan screenshot MCP ke workspace
   ditolak roots tool, fallback screenshot inline berhasil; bukan bypass access.
   Server/browser QA ditutup. Credential random tidak ditulis ke source/artefak.
+- Increment5: full476 test/3757 assertion PASS (54,85s), npm audit0 dan composer
+  audit --locked bersih. Native MySQL PASS: empty up/down legacy, double payment
+  worker LOCK WAIT menghasilkan satu pengeluaran, replay MySQL JSON sesudah
+  master nonaktif, audit veto rollback dua module, nominal10,123456 exact,
+  peer nonaktifkan metode sesudah discovery dengan LOCK WAIT pada akun ditolak
+  lewat current read tanpa mutation. Down kedua migration posted ditolak,
+  FK restrict dan receipt sale tetap kosong. DB QA dibersihkan.
+  Regresi browser penerimaan penuh PASS, console kosong; artefak
+  storage/framework/testing/purchase-receipt-browser-c0186bb90e63aa11.
+  Aktivasi php scripts/qa/apply-purchase-payment-local.php dua kali PASS,
+  seluruh kolom/data existing serta permission lama identik. Finance000005
+  batch18 dan PurchaseOrders000006 batch19 Ran. Tanpa seed/pay/grant/reset.
+  ADR014/API/MODULES/module docs/QUALITY diselaraskan; source review tidak
+  menemukan blocker dalam scope. Belum ada running balance/kecukupan kas,
+  utang/parsial/reversal; tidak mengklaim dana bank benar-benar ditransfer.

@@ -17,6 +17,7 @@ Dokumen ini menjadi indeks singkat ADR yang berlaku.
 | [ADR-011](decisions/ADR-011-INVENTORY-BASE-UNIT-AND-REFERENCE-GUARDS.md) | Satuan dasar barang tetap; satuan yang pernah dirujuk tidak boleh dihapus/nonaktif | Accepted |
 | [ADR-012](decisions/ADR-012-PAID-CHECKOUT-AND-FIFO-RESIDUAL.md) | Checkout lunas, kembalian hanya tunai, presisi uang dan residual FIFO | Accepted |
 | [ADR-013](decisions/ADR-013-PURCHASE-RECEIPT-LEDGER.md) | Receipt pembelian terpisah, anchor saldo opsional dan ledger immutable atomic | Accepted |
+| [ADR-014](decisions/ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md) | Ledger pengeluaran pembelian exact6 terpisah, lunas sesudah receipt dan replay aman | Accepted |
 
 Tambahkan ADR baru hanya untuk keputusan yang mahal, sulit dibalik, atau
 mengubah baseline arsitektur/domain.

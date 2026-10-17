@@ -75,6 +75,32 @@ metadata/ID akun ke receipt POS. SalePaymentMethods::choices dipakai endpoint
 POS untuk pilihan metode aktif dengan account aktif/compatible, maksimal1000,
 hanya id/code/name/type. Ini bukan akses PaymentsRepository atau CRUD Finance.
 
+## Pengeluaran Pembelian Internal
+
+RecordPurchasePayment mengimplementasikan PurchasePaymentWriter::pay dengan
+consumer PayPurchaseOrder. Request sourceId/sourceNumber/total/payments/actorId
+nullable; transaction default caller wajib. PurchaseSettlement memvalidasi
+jumlah exact6 positif, 1..10 metode unik, total tepat tanpa kembalian. Presisi6
+mempertahankan biaya pembelian; receipt penjualan scale2 tidak diubah.
+DisbursementRepository port persistence internal, bukan public boundary.
+
+payment_disbursements: ULID, source_type purchase/source_id unique, source_number,
+hash canonical tanpa actor, total decimal30,6, paid_at server/paid_by nullable.
+payment_disbursement_lines: ULID, header/line_number dan header/method unique,
+FK restrict header/method/account, snapshot code/name/type metode+akun dan amount
+decimal30,6. SQLite string untuk QA exact. Tidak ada soft delete/edit bebas;
+down menolak data posted. Guard akun/metode mencakup kedua arah ledger.
+
+Discovery assignment lalu akun sorted/metode sorted/current read, recheck mapping
+dan status/type compatible sebelum persist. Replay sumber/hash identik memakai
+snapshot immutable sebelum lookup, beda split ditolak. Audit finance.payments
+disbursed wajib; audit gagal membatalkan transaction caller. Result
+PurchasePaymentResult id/paidAt/snapshot total/payments method_id/name/type/amount,
+tanpa metadata bank/account_id. PurchasePaymentMethods::choices memakai adapter
+lookup aktif yang sama dengan sale, tanpa mengganti contract sale existing.
+Tidak ada route Finance pengeluaran bebas atau pengujian saldo kas berjalan.
+Detail [ADR014](../../../decisions/ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md).
+
 ## HTTP Dan UI
 
 Prefix /finance/payment-accounts (finance.payment-accounts.*) dan

@@ -9,7 +9,8 @@ Nomor otomatis PO-{ULID}, status awal draft dan created_at berasal server.
 Catatan opsional maksimal500; tidak disalin ke audit karena dapat sensitif.
 Tidak ada nomor invoice supplier, tanggal custom, diskon/pajak atau approval.
 Penerimaan penuh satu kali tersedia: posting menambah saldo/movement/layer FIFO.
-Tidak ada penerimaan parsial, utang, pembayaran, retur/reversal atau cetak.
+Pembayaran lunas sesudah receipt tersedia terpisah. Tidak ada penerimaan/
+pembayaran parsial, utang/jatuh tempo, uang muka, retur/reversal atau cetak.
 Penambahan tahap tersebut memerlukan work item tersendiri.
 
 ## Data Dan Presisi
@@ -19,6 +20,8 @@ snapshot code/name supplier/gudang, status draft/posted, version integer mulai1,
 notes nullable, demo_key nullable unique internal seeder, total_value
 decimal(30,6), timestamps/softDeletes untuk draft. stock_receipt_id nullable
 unique FK restrict, posted_from_version/posted_at/posted_by nullable dari server.
+payment_disbursement_id nullable unique FK restrict, payment_snapshot JSON,
+paid_from_version/paid_at/paid_by nullable; existing tidak di-backfill lunas.
 demo_key dan field posting tidak diterima dari request.
 purchase_order_lines: ULID, purchase_order_id/item_id/unit_id/base_unit_id FK
 restrict, snapshot SKU/nama/satuan/base unit, quantity/conversion_ratio/unit_cost/
@@ -76,7 +79,8 @@ diabaikan. Field input di-whitelist.
 Prefix /purchasing/purchase-orders, name purchasing.purchase-orders.*.
 Session web/auth/verified/CSRF; index/data permission purchasing.purchase-orders.view;
 store/update/destroy/restore purchasing.purchase-orders.manage; post memakai
-purchasing.purchase-orders.post. Ketiganya terpisah; tidak auto-grant.
+purchasing.purchase-orders.post, pay memakai purchasing.purchase-orders.pay.
+Keempatnya terpisah; tidak auto-grant.
 GET index Inertia purchasing/purchase-orders/index, props records/filters/options;
 GET data JSON {data,meta}. Pagination25 descending id, eager lines bounded100.
 Filter search literal max150 pada number/supplier_name/warehouse_name,
@@ -121,3 +125,33 @@ dan browser fixture. Draft lifecycle tidak mengubah stok/finance; posting
 memutasi Stock atomic dan Finance tetap identik. Native MySQL disposable
 membuktikan duplicate post serta receipt-versus-sale tanpa lost update.
 Lihat [hasil penerimaan](../../../work-items/purchase-full-receipt/tasks.md).
+
+## Pembayaran Lunas Sesudah Penerimaan
+
+POST /{id}/pay hanya version dan payments1..10 {method_id,amount}; field lain422,
+CSRF diizinkan. Total dari snapshot order, amount canonical string positif max24
+digit integer/6 pecahan. Metode unik, active/compatible melalui public Finance
+PurchasePaymentWriter/DTOs; opsi aktif via PurchasePaymentMethods hanya diberikan
+kepada pemegang pay. Tidak membutuhkan hak CRUD master Finance.
+
+Order wajib posted/receipt stok tersedia dan tidak terhapus. Supplier/item
+posted tidak divalidasi ulang. Lock purchase/baris lalu akun/metode sorted dan
+ledger, retry3. Finance disbursement dan pointer/snapshot/dua audit satu transaksi.
+Tidak mengubah Stock/FIFO, status receipt atau receipt kas masuk penjualan.
+paid_from_version menyimpan versi asal; version naik sekali. Replay versi asal
+dengan split identik mengembalikan hasil lama sebelum lookup master, tanpa
+mutation/audit tambahan atau mengganti actor. Versi/payload beda ditolak422.
+
+JSON200 id/status/version/payment_disbursement_id/payment_snapshot/paid_at;
+web redirect/Sonner. Snapshot publik total/payments method_id/name/type/amount,
+tanpa account_id/metadata bank. Paid immutable, bukan edit posted atau soft delete.
+Filter payment_status all/paid/unrecorded; unrecorded hanya posted tanpa pointer,
+bukan label utang. UI badge Lunas/Belum dicatat, draft '-', dialog multi-metode
+dengan format Indonesia/preview exact6, shortcut dialog Ctrl/Cmd+Enter/Esc, dan
+detail readonly. Backend tetap authority untuk total tepat tanpa kembalian.
+
+PurchaseOrdersPaymentDemoSeeder local/testing eksplisit, prerequisite master
+aktif, memakai workflow receipt/pay nyata tanpa seed module lain; skip demo
+edited/trashed/paid. Tidak berjalan saat aktivasi. Tidak menghitung saldo kas/
+bank atau kecukupan kas. Bukti [pembayaran](../../../work-items/purchase-paid-settlement/tasks.md)
+dan [ADR014](../../../decisions/ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md).

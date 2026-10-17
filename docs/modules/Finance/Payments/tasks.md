@@ -11,4 +11,8 @@
 - [x] UI checkout POS (Increment 5 work item yang sama, ownership Sales/POS).
 - [x] Penutupan/delivery keseluruhan checkout (Increment 6).
 
-Running balance, piutang dan mutasi umum di luar penerimaan penjualan belum dikerjakan.
+- [x] Pengeluaran pembelian exact6, snapshot/replay/audit dan guard histori;
+  consumer PayPurchaseOrder melalui public writer/DTOs, tanpa mutasi stok.
+  Bukti [pembayaran pembelian](../../../work-items/purchase-paid-settlement/tasks.md).
+
+Running balance, piutang/utang dan mutasi umum belum dikerjakan.

@@ -7,6 +7,8 @@
    guard histori internal. Increment 4 memasang consumer backend PostInvoice;
    UI checkout/recovery/receipt Sales/POS selesai pada Increment 5;
    penutupan/delivery keseluruhan selesai pada Increment 6.
-3. Reversal, piutang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
+3. [Pengeluaran pembelian lunas](../../../work-items/purchase-paid-settlement/plan.md):
+   exact6, ledger terpisah/replay, consumer Purchasing, tanpa mutation Stock.
+4. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
 
 Jangan membuat saldo/payment record dari checklist fondasi master ini.

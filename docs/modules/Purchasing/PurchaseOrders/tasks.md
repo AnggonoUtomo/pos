@@ -14,3 +14,9 @@ Bukti: [draft-foundation](work-items/draft-foundation/tasks.md).
 - [x] Browser desktop/tablet, native concurrency dan aktivasi tanpa posting user.
 
 Bukti penerimaan: [purchase-full-receipt](../../../work-items/purchase-full-receipt/tasks.md).
+
+- [x] Pembayaran lunas setelah receipt, multi-metode exact6 dan audit atomic.
+- [x] Permission pay, version/replay, filter/readonly dan tanpa mutation Stock.
+- [x] QA backend/browser/native dan aktivasi additive tanpa membayar data user.
+
+Bukti pembayaran: [purchase-paid-settlement](../../../work-items/purchase-paid-settlement/tasks.md).

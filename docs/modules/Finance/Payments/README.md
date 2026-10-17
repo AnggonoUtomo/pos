@@ -40,3 +40,13 @@ Increment 4 memasang consumer PostInvoice melalui SalePaymentWriter/DTOs dan
 pilihan aman SalePaymentMethods; tidak membuka repository/master mutation untuk
 kasir. Backend dan UI multi-payment/receipt Sales/POS tersedia. Tidak ada running
 balance atau route penerimaan Finance bebas.
+
+[Pembayaran pembelian lunas](../../../work-items/purchase-paid-settlement/README.md)
+tersedia melalui PurchasePaymentWriter/DTOs dengan consumer PayPurchaseOrder,
+serta pilihan terbatas PurchasePaymentMethods. Ledger pengeluaran terpisah
+payment_disbursements/payment_disbursement_lines, nilai exact6 sesuai biaya beli,
+tanpa rounding/kembalian. Snapshot/audit/version commit bersama Purchasing,
+tidak mengubah stok/FIFO. Guard master juga mencakup histori pengeluaran.
+Tidak ada endpoint Finance pengeluaran bebas, running balance atau transfer bank
+nyata. Local batch18/19 aktif tanpa seed/pay/grant. QA DevTools authenticated,
+Playwright desktop/tablet dan native MySQL tercatat pada work item tersebut.

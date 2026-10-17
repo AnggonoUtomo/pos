@@ -148,6 +148,48 @@ Chrome DevTools QA: BLOCKED
 - Fallback:
 ```
 
+## QA Pembayaran Pembelian Lunas
+
+`php artisan test --filter='PurchasePaymentTest|RecordPurchasePaymentTest|PurchasePaymentDemoTest'`:
+RED/GREEN writer5, orkestrasi5 dan demo3; full gate 476 test/3757 assertion PASS.
+Typecheck, ESLint resources/js, build2724 module, scoped Pint, npm audit0 dan
+composer audit --locked bersih. Contract sale/FIFO tidak diubah.
+
+`php scripts/qa/purchase-payment-mysql.php`: local/mysql, DB random
+pos_purchase_pay_qa_ berbeda dari DB user dan finally cleanup. Worker native
+double payment diblokir LOCK WAIT pada order, lalu replay satu disbursement;
+snapshot MySQL JSON canonical tetap aman setelah master nonaktif. Audit veto
+Purchasing rollback Finance, nominal6 exact, empty up/down menjaga legacy,
+posted down/FK restrict dan Stock fingerprint diperiksa. Current read metode
+diuji dengan worker menunggu akun dan peer mengubah status metode.
+Jangan menganggap SQLite membuktikan row lock atau kas mencukupi.
+
+`node scripts/qa/purchase-payment-browser.mjs` memakai QA_PLAYWRIGHT_MODULE
+existing tanpa instalasi. Fixture testing/sqlite purchase-payment-browser-
+random, password random stdin. Underpayment/error preservation, split, payer
+view/pay tanpa manage/post, replay dua operator, filter/readonly/audit dan hash
+Stock identik PASS. Desktop1440/tablet1024/768, Light/Dark expanded/collapsed,
+dialog/footer framing dan console kosong. Artefak ignored
+storage/framework/testing/purchase-payment-browser-d4eadadded57da69.
+
+Chrome DevTools MCP tersedia sesudah user restart VSCode. PASS langsung pada
+login pos.test/assets200 dan workflow authenticated payer di server disposable:
+dialog, POST pay302/GET200, badge Lunas/detail readonly, console kosong. Jangan
+langsung navigate setelah click login sebelum menunggu state login selesai.
+Resize tool aktual768x637 karena batas jendela host; matriks ukuran penuh melalui
+Playwright. Screenshot ke path workspace ditolak roots MCP; screenshot inline
+berhasil, tanpa bypass root. `purchase-payment-devtools.mjs` menyediakan server
+fixture terisolasi; credential QA wajib runtime stdin/env, jangan ditulis ke
+file/artefak atau diprint. Server dibatasi10 menit dan ditutup sesudah QA.
+
+`php scripts/qa/apply-purchase-payment-local.php` dua kali PASS: migration
+Finance000005 batch18 lebih dahulu lalu Purchase000006 batch19 Ran, catalog pay
+tanpa grant/seed/pay. Fingerprint seluruh kolom/data existing dan permission lama
+identik; pengecualian hanya metadata migrations/cache/cache_locks dan tambahan
+katalog permission. DDL terpisah dari transaction catalog. Seeder pembayaran
+demo hanya local/testing eksplisit, bukan deployment atau pembayaran data user.
+Bukti [work item](work-items/purchase-paid-settlement/tasks.md).
+
 ## QA Penerimaan Pembelian Penuh
 
 Focused: `php artisan test --filter='PurchasePostingTest|PurchaseStockReceiptTest|PurchaseReceiptDemoTest'`.

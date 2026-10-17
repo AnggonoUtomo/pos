@@ -118,7 +118,27 @@ Versi lain/stale/trashed/posted mutation422; posted tidak bisa edit/delete/resto
 Data read menambah stock_receipt_id/posted_from_version/posted_at nullable.
 Status/baris/audit Purchasing dan receipt/saldo/movement/FIFO/audit Stock satu
 transaction retry3, gagal semuanya rollback. Finance tetap tidak dicatat;
-partial receiving/payment/utang/retur/reversal bukan endpoint tahap ini.
+partial receiving/utang/retur/reversal bukan endpoint tahap ini; pembayaran
+terpisah sesudah receipt melalui endpoint berikut.
+
+POST /purchasing/purchase-orders/{id}/pay (purchasing.purchase-orders.pay),
+permission purchasing.purchase-orders.pay terpisah dari view/manage/post.
+Payload version dan payments1..10 {method_id,amount}, field lain422 (CSRF boleh).
+ULID metode unik, amount canonical string positif max24 digit integer/6 pecahan;
+total snapshot backend harus tepat, tanpa kembalian/rounding/pembayaran parsial.
+Posted nontrashed dengan receipt stok saja; tidak lookup ulang supplier/item
+posted, tetapi akun/metode aktif dan compatible wajib saat pembayaran baru.
+JSON200 id/status/version/payment_disbursement_id/payment_snapshot/paid_at;
+web redirect/Sonner. Snapshot total/payments method_id/name/type/amount, tanpa
+account_id/metadata bank. Index options.paymentMethods hanya diberikan kepada
+pemegang pay, melalui public lookup maksimal1000, tanpa perlu finance.view.
+Read menambah pointer/paid_from_version/paid_at/payment_snapshot nullable,
+filter payment_status all/paid/unrecorded (posted tanpa pointer).
+paid_from_version menyimpan revisi request asal, version naik sekali. Replay
+versi asal/split canonical identik no-op sebelum lookup master; actor pertama
+tetap, beda revisi/split422. Pengeluaran Finance dan snapshot/pointer/dua audit
+Purchasing atomic dalam transaction retry3; Stock/FIFO tidak berubah. Existing
+tidak otomatis lunas atau dibuatkan utang; saldo kas berjalan belum tersedia.
 Rincian [spesifikasi PurchaseOrders](modules/Purchasing/PurchaseOrders/specification.md).
 
 ## Endpoint Internal POS
@@ -622,6 +642,14 @@ FK restrict; query existing tetap inventory.stock.view. Tidak ada route receipt
 bebas, Finance, soft delete posted atau rollback yang membuang receipt.
 
 ### Finance/Payments Writer
+
+PurchasePaymentWriter::pay(PurchasePaymentRequest) dikonsumsi PayPurchaseOrder,
+wajib shared transaction. DTO sourceId/sourceNumber/total/payments/actorId,
+result id/paidAt/snapshot aman. PurchasePaymentMethods::choices pilihan aktif
+id/code/name/type maksimal1000. Ledger pengeluaran terpisah immutable exact6,
+unique source/hash replay tanpa actor, lock akun/metode sorted dan current read.
+Audit disbursed wajib. Bukan PaymentsRepository publik atau route Finance bebas.
+Contract penerimaan sale existing di bawah ini tidak berubah (scale2).
 
 SalePaymentWriter::receive(SalePaymentRequest) dikonsumsi PostInvoice pada
 transaction default bersama. Request source ID/number/total/payments method ID/
