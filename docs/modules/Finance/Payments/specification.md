@@ -109,7 +109,7 @@ refund tetap mendukung28 digit integer penjualan tanpa mengubah ledger
 pembelian decimal30,6 existing. Increment 3 menyediakan
 `RecordSaleRefundPayment`/`SaleRefundPaymentWriter`, DTOs request/result dan
 `SaleRefundPaymentMethods` dengan adapter pilihan metode existing. Consumer
-settlement/quote Returns baru dipasang pada Increment 4; tidak ada route payout.
+settlement/quote Returns dipasang pada Increment 4; tidak ada route payout Finance bebas.
 
 Writer memerlukan shared default transaction caller; total/split positif scale2,
 1..10 metode unik dengan jumlah tepat tanpa kembalian. RefundSettlement Domain

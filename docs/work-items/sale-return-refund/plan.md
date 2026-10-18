@@ -78,7 +78,9 @@ penjualan/pembelian dan perlindungan master.
 
 ## Increment 4: Quote Dan Settlement Returns
 
-Status: Planned. Owner: Sales/Returns. Dependency: Increment 2 dan 3.
+Status: Passed. Owner: Sales/Returns. Dependency: Increment 2 dan 3.
+Focused15 test/124 assertion, full633/5428 serta native MySQL empat worker PASS.
+Migration lokal dua file masih Pending; UI/history masuk Increment 5.
 
 Quote hanya untuk posted yang eligible, membaca snapshot safe tanpa HPP. Pada
 settlement, lock scope invoice/alokasi dan dokumen sesuai urutan ADR; current
@@ -155,8 +157,8 @@ work item selesai atau diminta eksplisit. Buktikan SHA remote dan divergence.
 
 ## Batas Berhenti Dan Rollback
 
-Tahap saat ini berhenti setelah Increment 3. Orkestrasi/endpoint/UI
-Increment 4..6 menunggu instruksi berikutnya. Perubahan scope di luar README
+Tahap saat ini berhenti setelah Increment 4. UI/history dan aktivasi/delivery
+Increment 5..6 menunggu instruksi berikutnya. Perubahan scope di luar README
 perlu persetujuan user.
 
 Dokumentasi dapat dipulihkan melalui revert commit terfokus, bukan reset file

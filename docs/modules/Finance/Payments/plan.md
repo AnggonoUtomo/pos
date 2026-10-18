@@ -15,7 +15,8 @@
    disetujui; rencana writer pengeluaran khusus refund, snapshot/replay/audit,
    metode aktif bebas dari split asal dan integrasi riwayat. Desain ledger
    khusus decimal30,2 dikunci pada ADR-016; writer/DTOs/choices, schema dan guard
-   histori sudah dibuat di Increment 3. Orkestrasi Returns/UI/history belum ada;
+   histori sudah dibuat di Increment 3. Orkestrasi Returns tersedia Increment 4;
+   UI/history belum ada;
    penyelesaian nol milik Returns tanpa ledger uang. Bukan pembayaran purchase.
 6. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
 

@@ -10,7 +10,9 @@ Dependency publik: `Sales/POS/Application/Contracts/ReturnInvoiceLookup` untuk
 snapshot invoice asal dan `Inventory/Stock/Application/Contracts/SaleReturnStockWriter`
 untuk penerimaan stok, bukan model/repository privat module lain.
 
-Status: Active untuk draft dan posting fisik; refund/karantina/tukar belum tersedia.
+Status: Active untuk draft/posting fisik. Backend quote/refund lunas tersedia,
+tetapi migration lokal Pending dan UI/history belum dibuat. Karantina/tukar
+belum tersedia. Rincian [refund](../../../work-items/sale-return-refund/README.md).
 URL `/sales/returns`, permission `sales.returns.view`, `sales.returns.manage`,
 serta `sales.returns.post` terpisah. Posted readonly, replay aman, FIFO biaya
 asal/residual exact, batas kumulatif dan audit atomic sudah diuji.

@@ -68,19 +68,19 @@
 
 ## Increment 4: Settlement Returns
 
-- [ ] Tambahkan quote, alokasi dan settlement hanya untuk retur posted.
+- [x] Tambahkan quote, alokasi dan settlement hanya untuk retur posted.
   - Acceptance: lock/current read invoice/alokasi, hitung ulang exact; quote stale
     memerlukan konfirmasi ulang; tidak memakai total/harga bebas dari client.
   - Verification: feature quote/stale/version/permission/tampered payload.
-- [ ] Selesaikan total positif melalui writer dan total nol tanpa ledger.
+- [x] Selesaikan total positif melalui writer dan total nol tanpa ledger.
   - Acceptance: alokasi/status/audit atomic, nol tanpa metode; draft/trashed
     ditolak, dokumen selesai readonly dan replay memakai hasil tersimpan.
   - Verification: feature zero/positive/replay termasuk super-system invariants.
-- [ ] Buktikan rollback lintas module dan source tetap immutable.
+- [x] Buktikan rollback lintas module dan source tetap immutable.
   - Acceptance: audit Returns gagal setelah Finance tidak meninggalkan ledger;
     invoice/penerimaan/Stock/movement/layer/consumption tidak berubah.
   - Verification: audit-veto test dan fingerprint sebelum/sesudah.
-- [ ] Uji dua proses MySQL pada invoice sama dan duplicate source.
+- [x] Uji dua proses MySQL pada invoice sama dan duplicate source.
   - Acceptance: tidak over-refund/deadlock permanen/duplikasi; residual uang dan
     kuantitas exact, termasuk quote yang tadinya sama lalu menjadi stale.
   - Verification: QA native disposable dengan worker nyata dan cleanup.
@@ -210,6 +210,38 @@ Checklist setelah Increment 3:
 
 Commit otomatis dilakukan setelah gate akhir lulus; identitas tersedia pada
 riwayat Git. Belum push karena work item refund belum selesai.
+
+## Handoff Increment 4
+
+Implementasi 19 Oktober2026 melengkapi consumer Returns tanpa mengubah lookup
+draft, posted header/version, source invoice, penerimaan atau Stock/FIFO.
+Quote readonly tidak membuat scope. Schema yang belum tersedia menghasilkan422
+refund. Request client tidak boleh menyertakan total/harga/akun/aktor bebas;
+quote dihitung ulang di bawah scope lock dan revision yang berubah ditolak.
+
+| Pemeriksaan | Hasil | Bukti ringkas |
+| --- | --- | --- |
+| TDD RED backend/source | EXPECTED FAIL | 10 test awal belum memiliki permission refund; satu lookup test gagal karena method belum ada. |
+| Lookup GREEN | PASS | Projection safe terpisah, 1 test/5 assertion. |
+| Focused settlement/source terbaru | PASS | 15 test/124 assertion; positive/zero/residual, source immutable, replay, multi-unit, stale/version/tamper, guest/permission/super-system, disabled/veto audit, missing/trashed/overflow, source invalid dan harga/master berubah. |
+| `php artisan test --compact` | PASS | 633 test/5428 assertion, 59,67 detik. |
+| `php scripts/qa/sale-return-refund-mysql.php` | PASS | Empty up/down/status, quote readonly, empat worker LOCK WAIT, initial scope race/stale quote dan dua retry, replay JSON, nol/sen terakhir, audit Returns sesudah Finance rollback, FK/down guard. Semua child/DB dibersihkan. |
+| `php artisan route:list --path=sales/returns` | PASS | 11 route; quote/refund baru diproteksi sales.returns.refund. |
+| `php artisan migrate:status` lokal | PASS untuk inspeksi | Finance refund dan Returns settlement Pending; seluruh migration lama Ran. Tidak menjalankan migrasi/demo/payout/grant di DB user. |
+| UI/browser/JS gates | SKIPPED | Tidak ada perubahan UI/JS/CSS; contract backend memakai feature/native QA. Chrome DevTools dan desktop/tablet pada Increment 5. |
+| Scoped Pint | PASS | Delapan belas file PHP target, termasuk test dan skrip QA. |
+| Review staged scope/link/whitespace/boundary | PASS | 34 file terfokus, 16 dokumen/68 link lokal valid. Application tidak mengimpor adapter atau Domain privat lintas module; pemeriksaan pola credential lulus. |
+
+Checklist setelah Increment 4:
+
+- [x] Rencana dan dependency dibaca sebelum coding; schema/contract mengikuti ADR.
+- [x] Focused/full test serta native concurrency/rollback/immutability lulus.
+- [x] Readiness guard dan status lokal Pending dijelaskan tanpa klaim aktivasi.
+- [x] Scoped Pint dan review akhir boundary/link/whitespace/staged scope dicatat.
+
+Commit otomatis setelah gate akhir lulus, tanpa push sampai keseluruhan work item
+selesai. UI/history dan aktivasi tetap pekerjaan berikutnya, bukan scope tambahan
+yang dikerjakan diam-diam pada increment ini.
 
 Jangan menambahkan scope ke checklist tanpa persetujuan user. Commit otomatis
 setelah task/increment verified; push setelah keseluruhan work item selesai.

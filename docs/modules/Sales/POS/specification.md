@@ -185,3 +185,18 @@ Histori bukan pemulihan otomatis pembayaran ambigu: key hilang tetap memerlukan
 rekonsiliasi sebelum mengulang dengan key baru. Index/performance volume besar
 dan pagination panjang receipt belum diuji. Detail QA pada
 [work item riwayat](work-items/invoice-history/README.md).
+
+## Boundary Retur Dan Refund
+
+ReturnInvoiceLookup::find/search tetap snapshot draft safe, tanpa HPP/payment
+atau join master live. Increment 4 refund menambah refundBasis(id) dengan
+ReturnRefundBasisData khusus consumer Returns, terpisah dari toArray draft.
+Header hanya id/subtotal/discount_amount/tax_amount/total/paid_total; paid_total
+diambil sebagai decimal string dari payments.total immutable milik invoice,
+bukan tendered/change atau tabel Finance. Lines hanya id/quantity/subtotal/
+discount_amount/tax_amount. Invalid JSON/angka ditolak, bukan fallback total.
+
+Adapter POS hanya membaca tabel miliknya; nilai bersih semua baris dan total
+dibuktikan kembali oleh Domain Returns. Invoice/receipt/consumption tidak
+dimutasi refund. Contract dan QA pada [API](../../../API.md#contract-refund-retur)
+dan [work item](../../../work-items/sale-return-refund/README.md).

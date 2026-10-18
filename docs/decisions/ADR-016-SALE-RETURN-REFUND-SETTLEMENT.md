@@ -4,8 +4,9 @@
 
 Accepted untuk aturan dan desain Increment 2 berdasarkan scope interview user.
 Writer/ledger Finance dan lock master diimplementasi pada Increment 3 serta
-diuji disposable. Scope invoice/settlement Returns, endpoint dan UI masih
-rencana Increment 4..6; penerimaan ADR bukan bukti payout siap operasional.
+diuji disposable. Scope invoice/settlement Returns dan endpoint tersedia pada
+Increment 4. UI/history dan aktivasi lokal masih rencana Increment 5..6;
+penerimaan ADR bukan bukti payout siap operasional.
 
 ## Tanggal
 
@@ -167,7 +168,7 @@ di bawah batas maksimum sebelum increment. Tidak membungkus integer saat penuh.
 GET `/{id}/refund-quote` menghasilkan total, alokasi, version/fingerprint dan
 pilihan metode aman; POST `/{id}/refund` menerima version/quote_fingerprint/
 payments. Semua route di prefix `/sales/returns`, auth/verified/CSRF. Detail
-payload dan error tercatat di [API](../API.md#rencana-contract-refund-retur).
+payload dan error tercatat di [API](../API.md#contract-refund-retur).
 
 Finance history menambah union ledger refund positif dengan direction outgoing
 dan source_type sale_return. Route detail existing incoming/outgoing tetap
@@ -202,6 +203,19 @@ nonaktif/assignment berubah, presisi28 digit/sen terakhir, audit veto, FK restri
 dan down guard PASS. Guard master tetap berjalan sebelum tabel refund tersedia.
 Migration lokal masih Pending; tidak ada refund/demo/grant di DB user. Scope
 invoice/alokasi dan rollback Returns setelah Finance masih acceptance Increment 4.
+
+Increment 4: consumer QuoteReturnRefund/SettleReturnRefund dan summary POS
+tersedia tanpa mengubah lookup draft. Current read/lock scope invoice melindungi
+initial-create race dan retry. Native MySQL empat worker LOCK WAIT, stale quote
+walau total sama, replay JSON, nol/sen terakhir, rollback audit Returns sesudah
+Finance dan FK/down guard PASS. Version/status fisik tidak diubah. Initial
+response dibaca dari snapshot settlement tersimpan agar urutan key JSON MySQL
+tidak membedakan hasil first commit dan replay.
+
+Quote/POST memeriksa ketersediaan tiga tabel Returns sebelum membaca ledger.
+Schema belum aktif menghasilkan422 refund, bukan query ke tabel yang belum ada.
+Permission catalog additive tidak memberi grant. Kedua migration lokal masih
+Pending; native QA hanya pada database disposable yang sudah dibersihkan.
 
 Referensi: [Work item](../work-items/sale-return-refund/README.md),
 [ADR-014](ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md),

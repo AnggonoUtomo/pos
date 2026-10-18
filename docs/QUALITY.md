@@ -99,6 +99,21 @@ git diff --check
 Full gate digunakan untuk perubahan lintas area, risiko tinggi, atau sebelum
 release. Jangan menjalankannya berulang tanpa perubahan source.
 
+## QA Settlement Refund Returns
+
+`php scripts/qa/sale-return-refund-mysql.php` memakai MySQL disposable random
+`pos_return_refund_qa_` +16 hex, salinan config URL null dan SELECT DATABASE()
+sebelum migration/writer. Fixture transaksi CCTV nyata berjalan pada testing,
+bukan DB/session user. Native QA memeriksa empty up/down/status, quote readonly,
+initial scope race dua retur dengan quote lama, dua retry bersamaan, replay JSON,
+hasil nol/sen terakhir, rollback Returns audit setelah Finance, FK/down guard dan
+fingerprint source/Stock. Empat worker harus terbukti LOCK WAIT. Semua child dan
+database dibersihkan pada finally, tanpa mencetak credential atau payload pribadi.
+
+Focused: `php artisan test --compact tests/Feature/Modules/Sales/Returns/SettleReturnRefundTest.php tests/Feature/Modules/Sales/POS/RefundBasisLookupTest.php`.
+Scope ini backend/HTTP, belum UI refund. Browser desktop/tablet dan integrasi
+history dijadwalkan Increment 5; migration lokal tetap Pending hingga aktivasi.
+
 ## QA Writer Refund Finance
 
 `php scripts/qa/sale-refund-payment-mysql.php` memerlukan local/MySQL dan

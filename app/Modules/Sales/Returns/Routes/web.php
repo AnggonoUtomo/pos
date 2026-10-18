@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Sales\Returns\Presentation\Controllers\ReturnDraftController;
+use App\Modules\Sales\Returns\Presentation\Controllers\ReturnRefundController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified'])->prefix('sales/returns')->name('sales.returns.')->group(function (): void {
@@ -13,4 +14,6 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('sales/returns')->name('s
     Route::delete('{id}', [ReturnDraftController::class, 'destroy'])->whereUlid('id')->name('destroy');
     Route::post('{id}/restore', [ReturnDraftController::class, 'restore'])->whereUlid('id')->name('restore');
     Route::post('{id}/post', [ReturnDraftController::class, 'post'])->whereUlid('id')->name('post');
+    Route::get('{id}/refund-quote', [ReturnRefundController::class, 'quote'])->whereUlid('id')->name('refund-quote');
+    Route::post('{id}/refund', [ReturnRefundController::class, 'store'])->whereUlid('id')->name('refund');
 });

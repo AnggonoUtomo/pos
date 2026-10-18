@@ -716,17 +716,18 @@ input stok awal/pembelian tetap positif. Lock/current read menjaga dua draft
 bersaing; gagal audit salah satu module membatalkan seluruh posting. Refund,
 barang rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
 
-## Rencana Contract Refund Retur
+## Contract Refund Retur
 
-Status: desain Accepted pada ADR-016. Domain valuasi dan writer internal Finance
-tersedia sampai Increment 3; migration Finance lokal masih Pending. Endpoint,
-scope settlement Returns dan UI berikut **belum aktif**, dibuat Increment 4..5
-[work item](work-items/sale-return-refund/README.md).
-Bagian ini tidak mengubah contract route existing di atas/bawahnya.
+Backend quote/settlement tersedia pada Increment 4 sesuai ADR-016; Domain dan
+writer Finance sudah tersedia sebelumnya. Dua migration refund lokal masih
+Pending sampai aktivasi Increment 6. UI dan riwayat refund belum diimplementasi
+(Increment 5 [work item](work-items/sale-return-refund/README.md)). Endpoint
+menolak422 refund bila schema Returns belum tersedia, tanpa membuat payout.
+Contract lookup draft dan route existing di atas/bawahnya tetap utuh.
 
 ### Ringkasan Invoice Internal
 
-Rencana `ReturnInvoiceLookup::refundBasis(id): ?ReturnRefundBasisData` dipakai
+`ReturnInvoiceLookup::refundBasis(id): ?ReturnRefundBasisData` dipakai
 Returns. DTO header {id,subtotal,discount_amount,tax_amount,total,paid_total};
 lines1..100 {id,quantity,subtotal,discount_amount,tax_amount}. Money decimal string
 max28integer/2fraction, quantity max14integer/6fraction. Parser POS memproyeksikan
@@ -742,7 +743,7 @@ dengan remaining quantity/amount, partial round down2 dan full residual.
 
 ### Quote Dan Settlement
 
-Rencana GET `/sales/returns/{id}/refund-quote` (sales.returns.refund-quote) dan
+GET `/sales/returns/{id}/refund-quote` (sales.returns.refund-quote) dan
 POST `/sales/returns/{id}/refund` (sales.returns.refund) memakai web/auth/verified
 serta `can:sales.returns.refund`; POST memakai CSRF. Catalog additive tanpa grant.
 Tidak membuka route mutation Finance bebas atau menambah izin lookup draft.
@@ -801,11 +802,12 @@ akunnya aktif/kompatibel, hanya id/code/name/type; tidak mengekspos master CRUD.
 Schema/locking/audit/guard histori mengikuti [ADR-016](decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md).
 Writer baru hanya menyediakan mekanisme pengeluaran; pemeriksaan retur posted,
 hak nominal, scope invoice dan quote wajib dilakukan consumer Returns pada
-Increment 4. Tidak memanggil writer untuk nominal nol. Runtime port tidak
+Increment 4. Consumer tersebut tersedia dan tidak memanggil writer untuk nominal nol. Runtime port tidak
 membuka akses controller/repository/model privat ke module lain.
 
-History existing incoming/outgoing dipertahankan, dengan penambahan source_type
-sale/purchase/sale_return pada rows dan union refund sebagai outgoing scale2.
+Rencana Increment 5: history existing incoming/outgoing dipertahankan, dengan
+penambahan source_type sale/purchase/sale_return pada rows dan union refund
+sebagai outgoing scale2; belum diimplementasi pada Increment 4.
 Rencana GET `/finance/payments/history/refunds/{id}`
 (finance.payments.history.refund) khusus detail ledger refund, permission
 finance.payments.history.view. Snapshot/filter mengikuti history existing;

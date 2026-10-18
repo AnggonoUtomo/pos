@@ -7,6 +7,8 @@
   disetujui melalui interview.
 - [x] Increment 2 refund: ADR-016, desain contract dan Domain valuasi/reconciliation
   diverifikasi; belum memasang persistence, endpoint atau UI refund.
+- [x] Increment 4: source summary, quote dan settlement backend atomik/nol,
+  permission, audit, replay serta concurrency MySQL diverifikasi; belum UI/aktivasi.
 - [ ] Implementasi dan QA refund selesai; ikuti
   [checklist refund](../../../work-items/sale-return-refund/tasks.md).
 - [ ] Karantina/tukar/reversal disepakati pada pekerjaan terpisah.

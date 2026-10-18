@@ -69,6 +69,7 @@ Increment 3 [refund retur](../../../work-items/sale-return-refund/README.md)
 menyediakan writer internal/DTOs/choices dan ledger refund khusus decimal30,2,
 canonical replay, audit wajib serta guard histori master. Bukan endpoint payout
 bebas, bukan pembayaran purchase dan bukan klaim fitur refund siap UI.
-Consumer settlement Returns, quote, riwayat refund dan UI masih increment lanjut.
+Consumer settlement Returns dan quote tersedia sejak Increment 4;
+riwayat refund dan UI masih increment lanjut.
 Migration refund lokal Pending; QA schema dan native worker hanya pada database
 disposable, tanpa payout/demo/grant di DB user.

@@ -2,8 +2,8 @@
 
 ## Status
 
-In Progress. Increment 1..3 Passed; Increment 4..6 belum dimulai.
-Endpoint/UI refund belum tersedia.
+In Progress. Increment 1..4 Passed; UI/history dan aktivasi Increment 5..6 belum.
+Backend endpoint tersedia, tetapi dua migration lokal masih Pending.
 Increment 1 hanya dokumentasi, bukan aktivasi fitur refund.
 
 ## Owner Dan Lokasi
@@ -68,16 +68,16 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 
 ## Acceptance Criteria
 
-- [ ] Hanya retur posted yang belum diselesaikan dapat direfund.
-- [ ] Nilai dihitung exact dari snapshot asal; total per baris terjaga sampai
+- [x] Hanya retur posted yang belum diselesaikan dapat direfund.
+- [x] Nilai dihitung exact dari snapshot asal; total per baris terjaga sampai
   sisa kuantitas dan nominal habis, termasuk alokasi nol dan nominal besar.
-- [ ] Dua proses pada invoice sama tidak membayar melebihi hak refund.
-- [ ] Multi-payment positif tepat jumlah, metode berbeda dari asal dibolehkan,
+- [x] Dua proses pada invoice sama tidak membayar melebihi hak refund.
+- [x] Multi-payment positif tepat jumlah, metode berbeda dari asal dibolehkan,
   dan akun/metode tidak valid ditolak tanpa efek samping.
-- [ ] Penyelesaian nol diaudit tanpa ledger uang dan tanpa metode pembayaran.
-- [ ] Replay identik stabil; payload berbeda, quote stale dan mutation setelah
+- [x] Penyelesaian nol diaudit tanpa ledger uang dan tanpa metode pembayaran.
+- [x] Replay identik stabil; payload berbeda, quote stale dan mutation setelah
   settlement ditolak sesuai contract yang dikunci sebelum implementasi.
-- [ ] Audit gagal membatalkan seluruh settlement dan ledger, termasuk setelah
+- [x] Audit gagal membatalkan seluruh settlement dan ledger, termasuk setelah
   writer Finance berhasil.
 - [ ] Histori refund tetap terbaca dari snapshot setelah rename master;
   histori penerimaan dan pembelian existing tidak berubah makna/presisinya.
@@ -122,22 +122,23 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 | 1 | Passed | Scope, ownership, rencana dan checklist sebelum coding | Review dokumen, 31 link lokal valid, whitespace PASS |
 | 2 | Passed | ADR-016, desain contract dan Domain valuasi exact | RED/GREEN, focused/regresi592 test, Pint |
 | 3 | Passed | Writer pengeluaran refund Finance dengan snapshot/replay | Focused26/full618 test, native MySQL worker/schema/guard |
-| 4 | Planned | Quote dan penyelesaian Returns atomik, termasuk nol | Feature, audit veto, concurrency MySQL |
+| 4 | Passed | Quote dan penyelesaian Returns atomik, termasuk nol | Focused15/full633 test, empat worker native, audit/FK/down guard |
 | 5 | Planned | UI refund dan riwayat Finance yang benar | Typecheck/lint/build, DevTools desktop/tablet |
 | 6 | Planned | Regresi, aktivasi aman dan delivery | Full test, native/browser, migration dan Git remote |
 
 ## Handoff Saat Ini
 
-- Perubahan: Domain valuasi Returns dan writer/DTOs/choices/schema refund
-  Finance, audit wajib/replay dan guard histori. Tidak ada endpoint/permission
-  grant/UI refund atau perubahan DB user. Migration lokal refund masih Pending.
-- Verifikasi terbaru: full618 test/5304 assertion, focused26 test/116 assertion,
-  native MySQL worker/status/schema/up-down/presisi/audit/FK; bukti RED/GREEN
-  pada [tasks.md](tasks.md). Scoped Pint dan pemeriksaan route juga dijalankan.
-- Browser QA SKIPPED: tidak ada perubahan UI/HTTP. Database native QA dibersihkan;
-  QA scope invoice, stale quote dan UI tetap dijadwalkan Increment 4..6.
-- Risiko terbuka: consumer settlement Returns, alokasi kuantitas/hak refund,
-  stale quote operasional, history/UI dan aktivasi lokal. Lulus writer Finance
-  tidak membuktikan hak refund atau membuat payout siap operasional.
+- Perubahan: backend quote/settlement, summary POS terpisah, scope invoice,
+  alokasi exact/nol, audit/replay atomik bersama writer Finance. Dua endpoint
+  memakai sales.returns.refund; catalog additive tanpa grant. Tidak ada UI baru,
+  payout/data user atau aktivasi lokal; kedua migration refund masih Pending.
+- Verifikasi terbaru: full633 test/5428 assertion, focused15 test/124 assertion,
+  native empat worker LOCK WAIT/initial scope/stale quote/replay/zero/residual/
+  audit rollback/FK/down guard. Bukti pada [tasks.md](tasks.md).
+- Browser QA SKIPPED: belum ada UI refund; contract HTTP diverifikasi melalui
+  feature tests dan transaksi native. QA desktop/tablet pada Increment 5.
+- Risiko terbuka: history/UI/timeout recovery dan aktivasi lokal. Backend yang
+  lulus QA tidak membuat fitur siap dipakai sebelum schema, catalog dan UI
+  diaktifkan sesuai Increment 5..6.
 - Gap conformance: tidak ditemukan konflik struktural pada bagian yang dibaca;
   ini bukan audit menyeluruh repository. `Old-docs` dan file user tidak disentuh.

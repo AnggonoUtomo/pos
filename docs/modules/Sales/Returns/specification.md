@@ -21,7 +21,7 @@
 Draft sendiri tidak mengubah stok/FIFO, refund atau invoice/pembayaran asal.
 Beberapa draft boleh menunjuk invoice sama; batas kumulatif diperiksa saat
 posting melalui writer Stock. Harga asal bukan HPP atau uang yang otomatis
-dikembalikan; scope refund disetujui terpisah di bawah dan belum aktif.
+dikembalikan; backend refund tersedia terpisah di bawah, belum aktif lokal/UI.
 
 Tidak ada endpoint edit invoice, hapus permanen, atau perubahan ledger bebas.
 Snapshot publik tidak memuat HPP, pembayaran, request hash, maupun credential.
@@ -43,11 +43,11 @@ input harga pokok stok awal/pembelian tetap positif.
 
 Posted readonly dengan receipt ID/posted_at dan replay revisi asal tanpa stok
 atau audit ganda. First posting memerlukan master aktif; replay tidak bergantung
-master aktif. Finance/invoice/consumption asal immutable; refund, karantina,
-tukar, gudang tujuan bebas dan reversal tetap belum tersedia. HPP tidak menjadi
+master aktif. Invoice/penerimaan/consumption asal immutable; posting fisik tidak
+melakukan refund. Karantina, tukar, gudang tujuan bebas dan reversal belum tersedia. HPP tidak menjadi
 props atau response Returns. Audit Returns dan Stock berada dalam satu transaction.
 
-## Rencana Refund Lunas (Belum Aktif)
+## Backend Refund Lunas (Belum Aktif Lokal/UI)
 
 Scope disetujui melalui interview pada [work item refund](../../../work-items/sale-return-refund/README.md).
 Hanya retur posted, satu penyelesaian penuh dengan multi-payment tepat tanpa
@@ -60,17 +60,34 @@ sebagai Tanpa pengembalian uang dengan permission/audit, tanpa metode atau
 ledger nol; alokasi kuantitas tetap tercatat. Refund tidak mengubah Stock/FIFO
 atau penerimaan invoice asal. Posted lama tidak otomatis menjadi sudah dibayar.
 
-Permission, quote/stale handling, persistence, published contract Finance dan
-QA mengikuti increment work item; belum ada route/schema baru dari rencana ini.
+Permission, quote/stale handling, persistence dan consumer writer Finance sudah
+tersedia pada Increment 4. UI/history menyusul; migration lokal belum dijalankan.
 Pembayaran parsial, kredit pelanggan, tukar barang dan reversal di luar scope.
 
 Increment 2 menyediakan `RefundInvoiceBasis` untuk rekonsiliasi semua baris
 terhadap header/paid_total bersih dan `RefundAllocation` untuk alokasi
 remaining amount/quantity exact. Keduanya Domain murni tanpa persistence/HTTP.
-Source summary khusus refund dan consumer quote/settlement belum dipasang;
-lookup draft existing tidak mendapat field pembayaran baru.
+Source summary khusus refund dan consumer quote/settlement dipasang Increment 4;
+lookup draft existing tetap tidak mendapat field pembayaran baru.
 Desain ledger khusus Finance, scope invoice, stale quote dan outcome nol
 dikunci di [ADR-016](../../../decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md).
+
+GET `/{id}/refund-quote` dan POST `/{id}/refund` memakai sales.returns.refund
+terpisah dari view/manage/post. Quote readonly, tidak membuat scope atau audit.
+Settlement mengunci scope invoice (insert-if-absent dan current read), return/
+lines, lalu alokasi terdahulu. Quote fingerprint mencakup revision/basis/lines;
+perubahan revision menolak quote stale422 walaupun total tetap sama.
+
+Settlement, allocation, kenaikan revision, payout Finance positif dan audit
+refund_settled commit bersama. Nol menyimpan alokasi tanpa payout. Snapshot hasil
+menjadi sumber replay; body berbeda ditolak, master nonaktif tidak menghalangi
+replay. Status/version posted asal tidak berubah, CRUD posted tetap dilarang.
+Schema belum tersedia ditolak422 refund; tidak fallback atau membuat pembayaran.
+
+Migration `2026_10_19_000002_create_sales_return_settlements` memiliki scope,
+settlement dan allocation immutable; FK/unique dan down guard melindungi data.
+Tidak ada FK ke ledger Finance; ID berasal dari public writer pada transaction
+yang sama. Permission catalog tidak memberi grant atau reset role existing.
 
 ## Demo Dan UI
 
