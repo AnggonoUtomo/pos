@@ -63,6 +63,11 @@ Migration dieksekusi pada SQLite disposable melalui RefreshDatabase; native
 MySQL dan aktivasi lokal tetap menunggu increment 4. Tidak ada migration user
 yang dijalankan pada increment ini.
 
+Review lanjutan: test regresi RED membuktikan perbandingan long decimal dan
+catatan numeric-string tidak boleh memakai loose equality PHP. Perbaikan
+strict comparison dengan urutan key JSON dinormalisasi PASS; focused kini
+24 test/124 assertion, termasuk multi-satuan BOX dan veto audit restore/model.
+
 Schema memakai header snapshot JSON dan snapshot per baris JSON untuk data asal
 immutable; qty/base qty tetap decimal20,6 MySQL, source invoice/line FK restrict,
 unique baris per draft. Harga asal disimpan sebagai string decimal exact di JSON,

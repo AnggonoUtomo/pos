@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Sales\Returns\Application\Actions\ManageReturnDraft;
 use App\Modules\Sales\Returns\Database\Seeders\ReturnsAccessSeeder;
 use App\Modules\Sales\Returns\Database\Seeders\ReturnsDemoSeeder;
+use App\Modules\Sales\Returns\Infrastructure\Persistence\Models\SalesReturn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -209,5 +210,61 @@ class ReturnDraftTest extends TestCase
         $this->app->detectEnvironment(fn () => 'production');
         $this->expectException(\LogicException::class);
         app(ReturnsDemoSeeder::class)->run();
+    }
+
+    public function test_multi_unit_return_uses_original_line_ratio_and_rejects_other_invoice_lines(): void
+    {
+        $box = SalesReturnFixture::seed('BOX', '1');
+        $line = $box['lines'][0];
+        $input = ['invoice_id' => $box['id'], 'lines' => [['invoice_line_id' => $line['id'], 'quantity' => '0.125']]];
+        $this->postJson('/sales/returns', $input)->assertCreated();
+        $row = $this->getJson('/sales/returns/data')->assertOk()->json('data.0.lines.0');
+        $this->assertSame('0.500000', $row['base_quantity']);
+        $this->assertSame('4.000000', $row['snapshot']['conversion_ratio']);
+        $this->assertSame($line['unit_price'], $row['snapshot']['unit_price']);
+        $input['invoice_id'] = $this->invoice['id'];
+        $this->postJson('/sales/returns', $input)->assertUnprocessable();
+    }
+
+    public function test_audit_restore_veto_and_model_save_veto_preserve_state(): void
+    {
+        $id = app(ManageReturnDraft::class)->save($this->input);
+        app(ManageReturnDraft::class)->lifecycle($id, 1, false);
+        Activity::saving(fn ($log) => $log->log_name === 'sales.returns' ? false : null);
+        try {
+            app(ManageReturnDraft::class)->lifecycle($id, 2, true);
+            $this->fail('Audit restore wajib berhasil.');
+        } catch (RuntimeException) {
+            $this->assertNotNull(DB::table('sales_returns')->where('id', $id)->value('deleted_at'));
+            $this->assertDatabaseHas('sales_returns', ['id' => $id, 'version' => 2]);
+        } finally {
+            Activity::flushEventListeners();
+        }
+        SalesReturn::saving(fn () => false);
+        try {
+            app(ManageReturnDraft::class)->save($this->input);
+            $this->fail('Veto model wajib membatalkan save.');
+        } catch (RuntimeException) {
+            $this->assertDatabaseCount('sales_returns', 1);
+        } finally {
+            SalesReturn::flushEventListeners();
+        }
+    }
+
+    public function test_noop_comparison_preserves_large_decimal_and_numeric_notes_exactly(): void
+    {
+        // Fixture batas presisi; bukan posting atau perubahan invoice oleh fitur retur.
+        DB::table('sales_invoice_lines')->where('id', $this->input['lines'][0]['invoice_line_id'])->update([
+            'quantity' => '99999999999999.999999', 'base_quantity' => '99999999999999.999999']);
+        $this->input['lines'][0]['quantity'] = '99999999999998.000001';
+        $this->input['notes'] = '01';
+        $id = app(ManageReturnDraft::class)->save($this->input);
+        $this->input['lines'][0]['quantity'] = '99999999999998.000002';
+        $this->input['notes'] = '1';
+        app(ManageReturnDraft::class)->save($this->input + ['version' => 1], $id);
+        $row = $this->getJson('/sales/returns/data')->assertOk()->json('data.0');
+        $this->assertSame(2, $row['version']);
+        $this->assertSame('1', $row['notes']);
+        $this->assertSame('99999999999998.000002', $row['lines'][0]['quantity']);
     }
 }

@@ -32,9 +32,11 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
     {
         $this->requireTransaction();
         $model = $id === null ? new SalesReturn : SalesReturn::query()->lockForUpdate()->findOrFail($id);
-        $sameHeader = $id !== null && collect($header)->every(fn ($value, $key) => $model->getAttribute($key) == $value);
+        $sameHeader = $id !== null && collect($header)->every(fn ($value, $key) => $key === 'snapshot'
+            ? $this->sameSnapshot($model->getAttribute($key), $value)
+            : $model->getAttribute($key) === $value);
         $model->fill($header);
-        if ($sameHeader && ($this->lines([$id])[$id] ?? collect())->map(fn ($row) => Arr::except($row, ['id', 'sales_return_id']))->all() == $lines) {
+        if ($sameHeader && $this->sameLines(($this->lines([$id])[$id] ?? collect())->all(), $lines)) {
             return $id;
         }
         if ($id === null) {
@@ -111,5 +113,33 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
     public function demoExists(string $key): bool
     {
         return SalesReturn::withTrashed()->where('demo_key', $key)->exists();
+    }
+
+    private function sameSnapshot(array $left, array $right): bool
+    {
+        // MySQL JSON dapat mengurutkan key; nilai decimal tetap dibandingkan sebagai string.
+        ksort($left);
+        ksort($right);
+
+        return $left === $right;
+    }
+
+    private function sameLines(array $left, array $right): bool
+    {
+        if (count($left) !== count($right)) {
+            return false;
+        }
+        foreach ($left as $index => $line) {
+            foreach (['invoice_line_id', 'quantity', 'base_quantity'] as $key) {
+                if ($line[$key] !== $right[$index][$key]) {
+                    return false;
+                }
+            }
+            if (! $this->sameSnapshot($line['snapshot'], $right[$index]['snapshot'])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
