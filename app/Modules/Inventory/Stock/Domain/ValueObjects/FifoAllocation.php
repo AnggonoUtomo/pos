@@ -38,7 +38,7 @@ final readonly class FifoAllocation
             $seen[$key] = true;
             $available = self::decimal($layer['remaining_quantity'], 14);
             $value = self::decimal($layer['remaining_value'], 24);
-            if ($available->isZero() !== $value->isZero()) {
+            if ($available->isZero() && ! $value->isZero()) {
                 throw new InvalidArgumentException('Sisa kuantitas dan nilai layer FIFO tidak konsisten.');
             }
             $normalized[] = ['id' => $layer['id'], 'quantity' => $available, 'value' => $value];

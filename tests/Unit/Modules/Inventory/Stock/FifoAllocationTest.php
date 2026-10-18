@@ -121,7 +121,6 @@ class FifoAllocationTest extends TestCase
             'too precise value' => ['1', [[...$layer, 'remaining_value' => '1.0000001']]],
             'overflow value' => ['1', [[...$layer, 'remaining_value' => '1000000000000000000000000']]],
             'exhausted with value' => ['1', [[...$layer, 'remaining_quantity' => '0']]],
-            'quantity with no value' => ['1', [[...$layer, 'remaining_value' => '0']]],
             'aggregate value overflow' => ['2', [
                 [...$layer, 'remaining_value' => '999999999999999999999999.999999'],
                 [...$layer, 'id' => 'another', 'remaining_value' => '999999999999999999999999.999999'],
@@ -134,5 +133,17 @@ class FifoAllocationTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         FifoAllocation::calculate($quantity, $layers);
+    }
+
+    public function test_zero_cost_return_layers_can_be_sold_partial_full_and_mixed(): void
+    {
+        $zero = ['id' => 'returned', 'remaining_quantity' => '2', 'remaining_value' => '0'];
+        $partial = FifoAllocation::calculate('0.25', [$zero]);
+        $this->assertSame('0.000000', $partial->value);
+        $this->assertSame('1.750000', $partial->allocations[0]['remaining_quantity']);
+        $mixed = FifoAllocation::calculate('3', [$zero, ['id' => 'paid', 'remaining_quantity' => '3', 'remaining_value' => '1']]);
+        $this->assertSame('0.333333', $mixed->value);
+        $this->assertSame('0.000000', $mixed->allocations[0]['remaining_quantity']);
+        $this->assertSame('0.666667', $mixed->allocations[1]['remaining_value']);
     }
 }

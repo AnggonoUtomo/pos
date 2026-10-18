@@ -7,11 +7,11 @@ use InvalidArgumentException;
 
 final class ReceiptBalance
 {
-    public static function add(?array $balance, array $layers, string $quantity, string $value): array
+    public static function add(?array $balance, array $layers, string $quantity, string $value, bool $allowZeroValue = false): array
     {
         $addedQuantity = self::decimal($quantity, 14);
         $addedValue = self::decimal($value, 24);
-        if (! $addedQuantity->isPositive() || ! $addedValue->isPositive()) {
+        if (! $addedQuantity->isPositive() || (! $allowZeroValue && ! $addedValue->isPositive())) {
             throw new InvalidArgumentException('Kuantitas dan nilai penerimaan wajib positif.');
         }
         if ($balance === null && $layers !== []) {
@@ -21,7 +21,7 @@ final class ReceiptBalance
         foreach ($layers as $layer) {
             $lq = self::decimal((string) $layer['remaining_quantity'], 14);
             $lv = self::decimal((string) $layer['remaining_value'], 24);
-            if ($lq->isZero() !== $lv->isZero()) {
+            if ($lq->isZero() && ! $lv->isZero()) {
                 throw new InvalidArgumentException('Sisa kuantitas dan nilai layer tidak konsisten.');
             }
             $q = $q->plus($lq);

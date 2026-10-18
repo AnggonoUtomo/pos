@@ -85,3 +85,9 @@ Verifikasi baseline: link relatif dokumen diperiksa; git diff --check PASS.
 Increment 1 Passed: user mengonfirmasi biaya nol hasil alokasi. ADR-015 accepted,
 schema/lock/port plan ditetapkan; harga input tetap positif. Belum ada mutation
 ledger pada penutupan baseline ini.
+
+Increment 2, slice biaya nol: RED dua kasus (layer nol ditolak/flag belum ada),
+lalu FifoAllocationTest/ReceiptBalanceTest PASS32 test/887 assertion. Layer qty
+positif/value0 dapat dikeluarkan partial/full/campuran; qty0 dengan residual
+tetap ditolak. ReceiptBalance hanya menerima added value0 bila flag eksplisit
+writer retur; default pembelian dan harga pokok input tetap positif.
