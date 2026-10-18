@@ -18,16 +18,34 @@
 
 ## Batas Tegas
 
-Draft belum memposting retur, mereservasi stok/kuantitas retur, mengembalikan
-stok/FIFO, mencatat refund, atau mengubah invoice/pembayaran asal. Beberapa
-draft boleh menunjuk invoice sama; batas kumulatif retur posted wajib dirancang
-sebelum posting tersedia. Draft hanya menyimpan kuantitas permintaan dan harga
-asal; nominal refund dan kebijakan pembulatannya belum ditetapkan.
+Draft sendiri tidak mengubah stok/FIFO, refund atau invoice/pembayaran asal.
+Beberapa draft boleh menunjuk invoice sama; batas kumulatif diperiksa saat
+posting melalui writer Stock. Harga asal bukan nominal refund; kebijakan
+refund dan pembulatannya belum ditetapkan.
 
-Tidak ada endpoint posting, edit invoice, hapus permanen, atau perubahan ledger.
+Tidak ada endpoint edit invoice, hapus permanen, atau perubahan ledger bebas.
 Snapshot publik tidak memuat HPP, pembayaran, request hash, maupun credential.
 Nomor draft dibuat server dan immutable. Draft terhapus hanya dapat dipulihkan,
 bukan diedit; operasi stale ditolak, termasuk dari super-system.
+
+## Posting Barang Layak Jual
+
+Scope dan ADR-015 disetujui 18 Oktober2026. Backend sedang diverifikasi pada
+[pekerjaan lintas module](../../../work-items/sale-return-posting/README.md);
+UI/aktivasi lokal mengikuti checklist, bukan klaim sudah tersedia lokal.
+
+POST /sales/returns/{id}/post membutuhkan sales.returns.post dan version draft.
+Semua baris diterima bersama ke gudang invoice asal, source cost berasal dari
+fifo_consumptions penjualan, dengan layer baru bertanggal penerimaan. Stock
+menyimpan trace kumulatif per consumption; partial round down scale6, full drain
+mengambil residual. Biaya turunan nol diperbolehkan dan bisa dijual kembali;
+input harga pokok stok awal/pembelian tetap positif.
+
+Posted readonly dengan receipt ID/posted_at dan replay revisi asal tanpa stok
+atau audit ganda. First posting memerlukan master aktif; replay tidak bergantung
+master aktif. Finance/invoice/consumption asal immutable; refund, karantina,
+tukar, gudang tujuan bebas dan reversal tetap belum tersedia. HPP tidak menjadi
+props atau response Returns. Audit Returns dan Stock berada dalam satu transaction.
 
 ## Demo Dan UI
 

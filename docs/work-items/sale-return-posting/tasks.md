@@ -28,11 +28,11 @@
 
 ## Increment 2: Stock Writer
 
-- [ ] Tambahkan unit test red, domain alokasi dan test conservation.
+- [x] Tambahkan unit test red, domain alokasi dan test conservation.
   - Acceptance: exact quantity/value, partial berulang, full drain residual,
     beberapa source consumption, invalid/overflow dan batas kumulatif.
   - Verification: focused unit test red-green.
-- [ ] Tambahkan schema/port/DTOs/adapter Stock dengan trace consumption asal.
+- [x] Tambahkan schema/port/DTOs/adapter Stock dengan trace consumption asal.
   - Acceptance: receipt/movement/layer immutable dan source unik; histori sale
     utuh; tidak membaca model/DB privat POS atau Returns.
   - Verification: feature test, migration disposable dan route inspection.
@@ -43,7 +43,7 @@
 
 ## Increment 3: Returns Dan UI
 
-- [ ] Tambahkan action/metadata/status posting dan permission backend terpisah.
+- [x] Tambahkan action/metadata/status posting dan permission backend terpisah.
   - Acceptance: shared transaction, stale ditolak, replay aman, posted tidak
     edit/hapus/restore; tidak menghitung atau mengeluarkan refund.
   - Verification: focused test termasuk super-system dan rollback lintas module.
@@ -91,3 +91,15 @@ lalu FifoAllocationTest/ReceiptBalanceTest PASS32 test/887 assertion. Layer qty
 positif/value0 dapat dikeluarkan partial/full/campuran; qty0 dengan residual
 tetap ditolak. ReceiptBalance hanya menerima added value0 bila flag eksplisit
 writer retur; default pembelian dan harga pokok input tetap positif.
+
+Slice backend: ReturnAllocationTest RED empat class belum ada lalu GREEN;
+PostReturnDraftTest RED permission belum ada lalu GREEN. Focused
+ReturnAllocationTest/SaleReturnStockTest/PostReturnDraftTest/ReturnDraftTest
+PASS29 test/178 assertion. PurchaseStockReceiptTest tetap PASS, route:list
+sales/returns PASS9 route, scoped Pint PASS. Native concurrency, browser dan
+aktivasi lokal masih pending; belum ada perubahan schema/data user.
+
+Stock memakai stock_receipts source_type sale_return dan stock_return_allocations
+untuk cumulative current read. Port internal receipt mendapat sourceType default
+purchase dan receiveLine mengembalikan ID; consumer purchase existing tetap
+kompatibel dan diuji. Published SaleReturnStockWriter dikonsumsi PostReturnDraft.

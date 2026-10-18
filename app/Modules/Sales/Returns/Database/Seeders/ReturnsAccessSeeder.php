@@ -9,7 +9,7 @@ class ReturnsAccessSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['sales.returns.view', 'sales.returns.manage'] as $name) {
+        foreach (['sales.returns.view', 'sales.returns.manage', 'sales.returns.post'] as $name) {
             Permission::findOrCreate($name, 'web');
         }
     }

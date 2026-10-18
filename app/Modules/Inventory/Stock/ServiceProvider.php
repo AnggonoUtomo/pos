@@ -4,7 +4,9 @@ namespace App\Modules\Inventory\Stock;
 
 use App\Modules\Inventory\Stock\Application\Actions\IssueStock;
 use App\Modules\Inventory\Stock\Application\Actions\ReceivePurchaseStock;
+use App\Modules\Inventory\Stock\Application\Actions\ReceiveSaleReturnStock;
 use App\Modules\Inventory\Stock\Application\Contracts\PurchaseStockWriter;
+use App\Modules\Inventory\Stock\Application\Contracts\SaleReturnStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\SaleStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\StockAvailability;
 use App\Modules\Inventory\Stock\Application\Contracts\StockReceiptRepository;
@@ -21,6 +23,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(SaleStockWriter::class, IssueStock::class);
         $this->app->bind(PurchaseStockWriter::class, ReceivePurchaseStock::class);
+        $this->app->bind(SaleReturnStockWriter::class, ReceiveSaleReturnStock::class);
         $this->app->bind(StockReceiptRepository::class, EloquentStockReceiptRepository::class);
         $this->app->bind(StockAvailability::class,
             DatabaseStockAvailability::class);

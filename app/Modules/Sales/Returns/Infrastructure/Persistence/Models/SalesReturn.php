@@ -17,6 +17,6 @@ class SalesReturn extends Model
 
     protected function casts(): array
     {
-        return ['snapshot' => 'array', 'version' => 'integer'];
+        return ['snapshot' => 'array', 'version' => 'integer', 'posted_from_version' => 'integer', 'posted_at' => 'datetime'];
     }
 }

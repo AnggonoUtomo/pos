@@ -25,7 +25,8 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
     {
         $this->requireTransaction();
 
-        return ($trashed ? SalesReturn::onlyTrashed() : SalesReturn::query())->lockForUpdate()->findOrFail($id)->toArray();
+        return ($trashed ? SalesReturn::onlyTrashed() : SalesReturn::query())->lockForUpdate()->findOrFail($id)->toArray()
+            + ['lines' => ($this->lines([$id], lock: true)[$id] ?? collect())->all()];
     }
 
     public function save(array $header, array $lines, ?string $id = null): string
@@ -71,12 +72,28 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         $this->audit($model, $restore ? 'restored' : 'deleted');
     }
 
-    private function audit(SalesReturn $model, string $event): void
+    public function post(string $id, string $receiptId, string $postedAt, int $version, ?int $actorId): void
     {
-        $log = activity('sales.returns')->performedOn($model)->event($event)->withProperties([
-            'attributes' => Arr::only($model->toArray(), ['number', 'invoice_id', 'status', 'version']),
+        $this->requireTransaction();
+        $model = SalesReturn::query()->lockForUpdate()->findOrFail($id);
+        $model->fill(['status' => 'posted', 'version' => $version + 1, 'posted_from_version' => $version,
+            'stock_receipt_id' => $receiptId, 'posted_at' => $postedAt, 'posted_by' => $actorId]);
+        if (! $model->save()) {
+            throw new RuntimeException('Status penerimaan retur gagal disimpan.');
+        }
+        $this->audit($model, 'posted', $actorId);
+    }
+
+    private function audit(SalesReturn $model, string $event, ?int $actorId = null): void
+    {
+        $logger = activity('sales.returns')->performedOn($model)->event($event)->withProperties([
+            'attributes' => Arr::only($model->toArray(), ['number', 'invoice_id', 'status', 'version', 'stock_receipt_id', 'posted_at']),
             'line_count' => DB::table('sales_return_lines')->where('sales_return_id', $model->id)->count(),
-        ])->log('Draft retur '.$event);
+        ]);
+        if ($event === 'posted') {
+            $actorId === null ? $logger->causedByAnonymous() : $logger->causedBy($actorId);
+        }
+        $log = $logger->log('Retur '.$event);
         if ($log === null || ! $log->exists) {
             throw new RuntimeException('Audit retur gagal disimpan.');
         }
@@ -93,13 +110,13 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         $result = $query->orderByDesc('id')->paginate(25, page: $page);
         $lines = $this->lines($result->getCollection()->pluck('id')->all());
 
-        return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key']) + ['lines' => ($lines[$model->id] ?? collect())->all()])->all(),
+        return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key', 'posted_by', 'posted_from_version']) + ['lines' => ($lines[$model->id] ?? collect())->all()])->all(),
             'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
     }
 
-    private function lines(array $ids): Collection
+    private function lines(array $ids, bool $lock = false): Collection
     {
-        return DB::table('sales_return_lines')->whereIn('sales_return_id', $ids)->orderBy('invoice_line_id')->get()->map(function ($row): array {
+        return DB::table('sales_return_lines')->whereIn('sales_return_id', $ids)->orderBy('invoice_line_id')->when($lock, fn ($q) => $q->lockForUpdate())->get()->map(function ($row): array {
             $line = (array) $row;
             $line['snapshot'] = json_decode($line['snapshot'], true, flags: JSON_THROW_ON_ERROR);
             foreach (['quantity', 'base_quantity'] as $key) {

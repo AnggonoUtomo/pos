@@ -44,4 +44,11 @@ final class SalesReturnFixture
 
         return hash('sha256', json_encode(array_map(fn ($table) => DB::table($table)->orderBy('id')->get()->all(), $tables), JSON_THROW_ON_ERROR));
     }
+
+    public static function sourceFingerprint(): string
+    {
+        $tables = ['sales_invoices', 'sales_invoice_lines', 'stock_issues', 'stock_issue_lines', 'fifo_consumptions', 'payment_receipts', 'payment_records'];
+
+        return hash('sha256', json_encode(array_map(fn ($table) => DB::table($table)->orderBy('id')->get()->all(), $tables), JSON_THROW_ON_ERROR));
+    }
 }

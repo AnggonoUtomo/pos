@@ -4,6 +4,7 @@ namespace App\Modules\Sales\Returns\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Sales\Returns\Application\Actions\ManageReturnDraft;
+use App\Modules\Sales\Returns\Application\Actions\PostReturnDraft;
 use App\Modules\Sales\Returns\Application\Queries\ReturnWorkspace;
 use App\Modules\Sales\Returns\Presentation\Requests\ListReturnDraftsRequest;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,8 @@ class ReturnDraftController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:sales.returns.view', only: ['index', 'data']),
-            new Middleware('can:sales.returns.manage', only: ['invoices', 'invoice', 'store', 'update', 'destroy', 'restore'])];
+            new Middleware('can:sales.returns.manage', only: ['invoices', 'invoice', 'store', 'update', 'destroy', 'restore']),
+            new Middleware('can:sales.returns.post', only: ['post'])];
     }
 
     public function index(ListReturnDraftsRequest $request, ReturnWorkspace $query): Response
@@ -75,5 +77,13 @@ class ReturnDraftController extends Controller implements HasMiddleware
         $action->lifecycle(strtolower($id), $request->input('version'), true);
 
         return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft retur berhasil dipulihkan.');
+    }
+
+    public function post(Request $request, string $id, PostReturnDraft $action): JsonResponse|RedirectResponse
+    {
+        $input = $request->validate(['version' => ['required', 'integer', 'min:1', 'max:2147483646']]);
+        $result = $action->handle(strtolower($id), $input['version'], $request->user()->id);
+
+        return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Barang retur berhasil diterima.');
     }
 }

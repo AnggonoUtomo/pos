@@ -12,4 +12,5 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('sales/returns')->name('s
     Route::put('{id}', [ReturnDraftController::class, 'update'])->whereUlid('id')->name('update');
     Route::delete('{id}', [ReturnDraftController::class, 'destroy'])->whereUlid('id')->name('destroy');
     Route::post('{id}/restore', [ReturnDraftController::class, 'restore'])->whereUlid('id')->name('restore');
+    Route::post('{id}/post', [ReturnDraftController::class, 'post'])->whereUlid('id')->name('post');
 });
