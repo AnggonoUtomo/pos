@@ -31,11 +31,11 @@
 
 ## Increment 3: UI Dan Browser
 
-- [ ] Buat halaman, form, lifecycle, Sonner dan format Indonesia.
+- [x] Buat halaman, form, lifecycle, Sonner dan format Indonesia.
   - Acceptance: input qty memakai satuan asli, harga hanya snapshot; permission
     visibility benar, loading/error/empty tertangani, tidak ada sukses refund.
   - Verification: typecheck, ESLint, build dan browser CRUD.
-- [ ] Hubungkan sidebar/palette dan shortcut dropdown.
+- [x] Hubungkan sidebar/palette dan shortcut dropdown.
   - Acceptance: desktop/tablet Light/Dark, expanded/collapsed tanpa overflow.
   - Verification: DevTools atau BLOCKED + fallback Playwright dan screenshot.
 
@@ -67,6 +67,24 @@ Review lanjutan: test regresi RED membuktikan perbandingan long decimal dan
 catatan numeric-string tidak boleh memakai loose equality PHP. Perbaikan
 strict comparison dengan urutan key JSON dinormalisasi PASS; focused kini
 24 test/124 assertion, termasuk multi-satuan BOX dan veto audit restore/model.
+
+Increment 3: npx tsc --noEmit PASS; npx eslint resources/js PASS; npm run build
+PASS (2735 module). Chrome DevTools MCP namespace tidak diekspos sesi; server
+existing berhasil diakses via stdio, Chrome headless isolated dan MCP roots/list
+dibatasi workspace POS. Tidak install package/mengubah konfigurasi user.
+DevTools QA PASS login/source/create/detail, kuantitas 1,25, framing1440/1024/768,
+console runtime/network internal, screenshot dan fingerprint ledger unchanged.
+Artefak lokal: storage/framework/testing/sales-returns-browser-cb589704e672f02b/.
+
+Playwright existing melengkapi QA: CRUD lifecycle, invalid qty > terjual,
+format1,5, pencarian literal, retry snapshot500 terkontrol dan disable save,
+viewer readonly/outsider403, shortcut/palette, Light/Dark expanded/collapsed
+desktop1440x1000/tablet1024x768 dan768x1024. PASS, console unexpected kosong,
+dua error disengaja terpisah; event created/updated/deleted/restored dan
+fingerprint invoice/stock/FIFO/finance unchanged. Screenshot diperiksa visual.
+Artefak lokal: storage/framework/testing/sales-returns-browser-c6581ddc16018648/.
+QA mobile tidak dijalankan sesuai scope. Selector QA retry dan parsing page ID/
+MCP roots diperbaiki setelah percobaan gagal; hasil akhir di atas sudah ulang PASS.
 
 Schema memakai header snapshot JSON dan snapshot per baris JSON untuk data asal
 immutable; qty/base qty tetap decimal20,6 MySQL, source invoice/line FK restrict,

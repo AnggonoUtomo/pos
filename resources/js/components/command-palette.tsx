@@ -108,10 +108,11 @@ const commandItems = [
     },
     {
         title: 'Retur Penjualan',
-        description: 'Proses retur dan koreksi transaksi posted',
+        description: 'Draft retur berdasarkan invoice asal',
+        url: '/sales/returns',
+        permission: 'sales.returns.view',
         icon: RotateCcw,
         tone: 'text-rose-600 dark:text-rose-300',
-        disabled: true,
     },
     {
         title: 'Supplier',
