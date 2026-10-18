@@ -64,23 +64,22 @@
   - Acceptance: semua command tercatat dengan hasil aktual; no-negative/FIFO
     penjualan dan pembelian existing tidak regresi.
   - Verification: test, Pint, tsc, ESLint, build, QA native/browser.
-- [ ] Aktifkan schema/katalog lokal tanpa grant/demo/reset/posting.
+- [x] Aktifkan schema/katalog lokal tanpa grant/demo/reset/posting.
   - Acceptance: data existing dan invoice/Finance asal identik; activation repeat
     idempotent; migration status sesuai realita.
   - Verification: fingerprint, activation dua kali, migrate:status.
-- [ ] Perbarui API/module/ADR dan checklist, scoped commit lalu push.
+- [x] Perbarui API/module/ADR dan checklist, scoped commit.
   - Acceptance: klaim sesuai bukti; remote sama HEAD; file user tidak ikut.
-  - Verification: diff --check, staged review, ls-remote, divergence/status.
+  - Verification: diff --check, review staged dan link relatif dokumen.
+- [ ] Push dan verifikasi checkpoint remote.
+  - Acceptance: HEAD sama remote main, ahead/behind 0/0; file user tetap terpisah.
+  - Verification: push, ls-remote, rev-list dan status.
 
-## Bukti Saat Ini
+## Bukti Verifikasi
 
-Baseline dokumentasi saja. Source Returns, POS, Stock dan ADR-012 diperiksa;
-pilihan urutan layer sudah ditanyakan melalui interview satu pertanyaan.
-User menyetujui layer baru saat retur diterima. Keputusan layer biaya nol
-ditanyakan terpisah; belum ada pelonggaran invariant existing atau implementasi.
-Belum ada runtime change, migration, test behavior baru atau perubahan ledger.
-Gate test/build/browser tidak relevan sampai implementasi dimulai.
-Verifikasi baseline: link relatif dokumen diperiksa; git diff --check PASS.
+Baseline: source Returns, POS, Stock dan ADR-012 diperiksa; interview mengunci
+urutan layer baru serta dukungan biaya nol hasil alokasi secara eksplisit.
+Link relatif dan git diff --check PASS sebelum coding dimulai.
 
 Increment 1 Passed: user mengonfirmasi biaya nol hasil alokasi. ADR-015 accepted,
 schema/lock/port plan ditetapkan; harga input tetap positif. Belum ada mutation
@@ -96,8 +95,8 @@ Slice backend: ReturnAllocationTest RED empat class belum ada lalu GREEN;
 PostReturnDraftTest RED permission belum ada lalu GREEN. Focused
 ReturnAllocationTest/SaleReturnStockTest/PostReturnDraftTest/ReturnDraftTest
 PASS29 test/178 assertion. PurchaseStockReceiptTest tetap PASS, route:list
-sales/returns PASS9 route, scoped Pint PASS. Native concurrency, browser dan
-aktivasi lokal masih pending; belum ada perubahan schema/data user.
+sales/returns PASS 9 route, scoped Pint PASS. Bukti native/browser/aktivasi
+dicatat pada increment berikutnya.
 
 Stock memakai stock_receipts source_type sale_return dan stock_return_allocations
 untuk cumulative current read. Port internal receipt mendapat sourceType default
@@ -138,3 +137,14 @@ Artefak: storage/framework/testing/sales-returns-browser-8145b63ab67603a7/.
 
 Gate akhir sebelum aktivasi: `php artisan test --compact` PASS525 test/4057
 assertion; scoped Pint dan diff --check PASS. QA mobile di luar scope.
+
+Increment 4: `php scripts/qa/activate-sale-return-posting-local.php` dua kali
+PASS. `php artisan migrate:status` seluruhnya Ran, dua migration posting pada
+batch 21. Fingerprint semua kolom/data existing serta permission/migration lama
+identik. Hanya schema baru/metadata nullable dan catalog posting ditambahkan,
+tanpa grant/demo/reset/posting transaksi user. Script PHP dan server QA milik
+pekerjaan sudah selesai; aplikasi memakai virtual host Laragon existing.
+
+Review boundary/privacy/transaction dan scope staging dilakukan sebelum commit.
+Tidak ada dependency/stack/theme/Old-docs atau file user yang diubah. Generator
+tidak diperlukan karena tidak membuat module atau mengubah struktur canonical.

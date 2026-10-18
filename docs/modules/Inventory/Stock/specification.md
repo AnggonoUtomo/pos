@@ -1,5 +1,40 @@
 # Spesifikasi: Stok Awal, Penerimaan Dan FIFO
 
+## Retur Penjualan Layak Jual
+
+`SaleReturnStockWriter::receive(SaleReturnStockRequest)` dikonsumsi
+`Sales/Returns/PostReturnDraft` dalam shared transaction default. DTO membawa
+warehouseId/sourceId/sourceNumber/invoiceId, actorId nullable dan lines
+{source_line_id,sale_line_id,base_quantity}. Tidak menerima biaya bebas dan tidak
+mengambil model/tabel privat POS atau Returns. Stock mencari stock_issues sale
+melalui invoice source ID dan stock_issue_lines melalui source line asal.
+
+Gudang tujuan wajib asal dan aktif pada first posting; unit/item aktif dan
+base unit sama. Warehouse lock mendahului source issue/consumption, master
+terurut serta inventory current read. Receipt source_type sale_return + hash
+canonical/unique source menjaga replay; source_line unik per receipt. Existing
+purchase writer/contract publik tidak berubah.
+
+`stock_return_allocations` menyimpan FK receipt_line_id/fifo_consumption_id
+restrict, unique pasangan, quantity20,6/value30,6. Sisa consumption asal dihitung
+exact dari original dikurangi seluruh trace current read (tanpa SQL float sum).
+Quantity/value asal harus sesuai issue line. ReturnAllocation mengalokasikan
+consumption dalam urutan FIFO asal, partial round down6 dan full drain residual.
+Barang sama di dua satuan penjualan tetap dibedakan menurut source line.
+
+Receipt menambah movement positif bertipe sale_return, saldo dan layer baru
+received_at saat penerimaan. Layer/consumption/issue asal tidak ditulis ulang.
+Quantity positif dengan value nol hasil alokasi sah dan dapat dikeluarkan lagi;
+quantity nol wajib value nol, negatif/overflow tetap ditolak. ReceiptBalance
+added value0 hanya diizinkan writer retur melalui flag eksplisit. Harga pokok
+input stok awal/pembelian tetap positif. Audit Stock/Returns atomic; posted
+ledger/trace tidak soft delete, migration down menolak histori posted.
+
+Selesai diverifikasi: full525 test/4057 assertion, native MySQL dua proses
+bersaing, biaya nol/resale, replay, rollback audit dan FIFO exact. Schema lokal
+Ran batch21, tidak ada demo/posting/grant otomatis. Detail bukti:
+[pekerjaan posting retur](../../../work-items/sale-return-posting/tasks.md).
+
 ## Status Dan Persetujuan
 
 Disetujui untuk scope awal pada 12 Oktober 2026. Draft/posting, query/UI dan
@@ -53,7 +88,8 @@ tidak mengimpor model privat module lain.
 
 Tabel ULID: stock_openings, stock_opening_lines, stock_balances,
 stock_movements, fifo_layers, stock_issues, stock_issue_lines, fifo_consumptions,
-stock_receipts dan stock_receipt_lines. Hanya stock_openings draft menggunakan soft delete.
+stock_receipts, stock_receipt_lines dan stock_return_allocations. Hanya
+stock_openings draft menggunakan soft delete.
 Lines draft diganti dalam transaksi saat edit; lines posted, balance, movement,
 layer tidak menyediakan delete bebas. FK restrict menjaga referensi master.
 Audit created/updated/deleted/restored/posted atomic dengan mutation.

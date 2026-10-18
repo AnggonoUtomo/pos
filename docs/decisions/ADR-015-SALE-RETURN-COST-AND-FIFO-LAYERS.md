@@ -70,6 +70,11 @@ version dan posted guard; rollback audit Stock/Returns; privacy HPP; MySQL
 locking/current read/constraint/migration; QA browser desktop/tablet. Kasus
 dua unit jual barang sama harus tetap dibedakan berdasarkan source line.
 
+Implementasi dan verifikasi selesai pada scope ini: full525 test/4057 assertion,
+native MySQL dua proses/cumulative/residual/biaya nol-resale, DevTools MCP dan
+Playwright desktop/tablet PASS. Migration lokal batch21, aktivasi tanpa posting
+atau grant data user. Bukti dan checkpoint berada pada work item.
+
 Harga pokok input tetap positif; hanya writer retur yang mengizinkan added value
 nol pada ReceiptBalance. Penerimaan pembelian memakai default positif existing.
 

@@ -30,9 +30,9 @@ bukan diedit; operasi stale ditolak, termasuk dari super-system.
 
 ## Posting Barang Layak Jual
 
-Scope dan ADR-015 disetujui 18 Oktober2026. Backend sedang diverifikasi pada
-[pekerjaan lintas module](../../../work-items/sale-return-posting/README.md);
-UI/aktivasi lokal mengikuti checklist, bukan klaim sudah tersedia lokal.
+Scope dan ADR-015 disetujui 18 Oktober2026. Backend/UI dan QA telah selesai pada
+[pekerjaan lintas module](../../../work-items/sale-return-posting/README.md).
+Migration posting lokal Ran batch21, aktivasi dua kali tanpa demo/grant/posting.
 
 POST /sales/returns/{id}/post membutuhkan sales.returns.post dan version draft.
 Semua baris diterima bersama ke gudang invoice asal, source cost berasal dari
@@ -61,8 +61,9 @@ dropdown, navigasi sidebar/palette, desktop/tablet Light/Dark.
 
 `sales_returns`: ULID, nomor SR-ULID unique immutable, FK invoice_id restrict,
 invoice_number/customer_name untuk pencarian, header snapshot JSON safe,
-status draft, version integer, notes nullable500, demo_key unique nullable,
-timestamps dan deleted_at. `sales_return_lines`: ULID, FK sales_return_id dan
+status draft/posted, version integer, notes nullable500, demo_key unique nullable,
+timestamps dan deleted_at. Metadata posted: stock_receipt_id unique FK restrict,
+posted_from_version, posted_at/by. `sales_return_lines`: ULID, FK sales_return_id dan
 invoice_line_id restrict, unique pasangan draft/baris asal, snapshot JSON flat
 unit/barang/rasio/qty/harga asal, quantity/base_quantity decimal20,6 exact.
 SQLite test memakai string decimal; MySQL target memakai decimal native.
@@ -82,6 +83,12 @@ URL `/sales/returns`. Aktivasi aman: `php scripts/qa/activate-sales-returns-loca
 menjalankan migration module dan katalog permission saja, menjaga fingerprint
 data existing. Migrasi target Ran batch20; aktivasi dua kali lulus.
 
+Posting: `php scripts/qa/activate-sale-return-posting-local.php` hanya dua
+migration baru dan catalog permission; fingerprint memakai kolom existing agar
+penambahan metadata null tidak dianggap perubahan isi draft lama. Tidak ada
+grant/reset/posting. Semua migration Ran sampai batch21. Perlu permission
+sales.returns.post eksplisit untuk user biasa; super-system hanya bypass izin.
+
 `php artisan test --filter='ReturnQuantityTest|ReturnDraftTest|ReturnsScaffoldTest'`
 menguji domain/lifecycle/permission/snapshot/audit/demo. Native:
 `php scripts/qa/sales-returns-mysql.php` memakai DB random disposable dan cleanup.
@@ -90,4 +97,10 @@ menunjuk executable MCP existing; `node scripts/qa/sales-returns-browser.mjs`
 dengan QA_PLAYWRIGHT_MODULE menunjuk Playwright existing. Keduanya memakai
 fixture disposable, credential random stdin, bukan DB atau session user.
 
-Rincian bukti aktual: [Checklist pekerjaan](work-items/draft-foundation/tasks.md).
+QA posting native: `php scripts/qa/sale-return-posting-mysql.php`, termasuk dua
+proses berebut sisa kuantitas dan biaya nol/resale. Browser kedua script memakai
+flag `--posting` untuk grant terbatas fixture QA, konfirmasi, status readonly,
+source fingerprint unchanged serta delta stok. Full525 test/4057 assertion PASS.
+
+Rincian bukti: [Draft](work-items/draft-foundation/tasks.md) dan
+[Posting](../../../work-items/sale-return-posting/tasks.md).

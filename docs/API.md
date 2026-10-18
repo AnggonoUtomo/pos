@@ -659,11 +659,12 @@ panggilan di luar transaction caller, tidak mengekspos account metadata atau
 PaymentsRepository. SalePaymentMethods::choices dipakai controller POS untuk
 opsi id/code/name/type aktif dan compatible, maksimal1000. Bukan payment gateway.
 
-## Draft Retur Penjualan Internal
+## Retur Penjualan Internal
 
 Session web/auth/verified. GET `/sales/returns` (Inertia sales/returns/index) dan
 `/data` (JSON {data,meta}) memerlukan sales.returns.view. Filter search literal
-max150 untuk nomor retur/invoice/pelanggan, trashed boolean, page1..1000000;
+max150 untuk nomor retur/invoice/pelanggan, trashed boolean, status all/draft/posted,
+page1..1000000;
 pagination25 descending ID. GET tidak menulis ledger/audit.
 
 GET `/sales/returns/invoices?search=...` (max25 berdasarkan nomor invoice) dan
@@ -688,8 +689,32 @@ guest401 JSON/redirect login HTML, forbidden403. JSON create201 {id}, update/
 delete/restore200 {id}; HTML redirect dengan feedback. Audit atomic created/
 updated/deleted/restored berisi ID/nomor/status/version/count, bukan notes.
 No-op tidak menaikkan version/audit. Draft soft delete dan restore mempertahankan
-snapshot. Tidak ada post/void/refund endpoint, pengurangan/penambahan stok,
-reservasi, kalkulasi nominal refund, atau perubahan invoice/payment asal.
+snapshot. CRUD ini hanya draft. Tidak ada void/refund endpoint, reservasi,
+kalkulasi nominal refund, atau perubahan invoice/payment asal.
+
+POST `/sales/returns/{id}/post` (sales.returns.post) memerlukan permission
+sales.returns.post dan body version1..2147483646. Semua isi draft diterima
+bersama ke gudang invoice asal melalui writer Stock. JSON200
+{id,status,version,stock_receipt_id,posted_at}; HTML redirect dengan Sonner.
+Nilai HPP/biaya, actor dan request hash tidak diekspos. Version asal yang sama
+replay tanpa stok/audit tambahan; version lain422. Posted tidak diedit/dihapus/
+restore sebagai draft. First posting memerlukan master aktif/base unit benar;
+replay tetap bekerja setelah master nonaktif. Metadata kosong fail closed.
+
+Published `Inventory/Stock/SaleReturnStockWriter::receive(SaleReturnStockRequest)`
+memerlukan shared transaction caller Returns. DTO warehouseId/sourceId/
+sourceNumber/invoiceId, actorId nullable, dan lines {source_line_id,sale_line_id,
+base_quantity}; tidak menerima HPP/harga bebas. SaleReturnStockResult hanya
+id/postedAt. Stock menemukan issue sale sendiri, memvalidasi gudang/source line,
+menjaga batas kumulatif per consumption dan menambah receipt source_type
+sale_return, movement positif, layer baru received_at sekarang, trace dan audit.
+Histori invoice/issue/consumption/payment asal tidak ditulis ulang.
+
+Partial cost memakai sisa nilai/quantity consumption asal round down6, full drain
+residual exact. Layer berbiaya nol hasil alokasi sah dan bisa dijual kembali;
+input stok awal/pembelian tetap positif. Lock/current read menjaga dua draft
+bersaing; gagal audit salah satu module membatalkan seluruh posting. Refund,
+barang rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
 
 ## Riwayat Pembayaran Internal
 

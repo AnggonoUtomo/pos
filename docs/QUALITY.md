@@ -150,6 +150,21 @@ Chrome DevTools QA: BLOCKED
 
 ## QA Draft Retur Penjualan
 
+Posting fisik diuji melalui `php scripts/qa/sale-return-posting-mysql.php`:
+DB random disposable, dua proses PHP independen dipertemukan pada warehouse
+lock; tepat satu menang saat request gabungan melebihi sisa terjual. Menguji
+cost BOX/base exact, cumulative/residual, replay, audit rollback lintas module,
+source invoice/consumption/Finance immutable, rollback posted ditolak dan
+biaya nol dapat dijual ulang. Finally cleanup, tanpa DB user dimutasi.
+
+Script browser di bawah menerima `--posting` untuk QA konfirmasi/keyboard,
+filter status, readonly posted, hidden edit/hapus/post dan source fingerprint
+serta delta stok. DevTools MCP dan Playwright PASS; full525 test/4057 assertion.
+Aktivasi schema+catalog `php scripts/qa/activate-sale-return-posting-local.php`
+dua kali PASS, migration batch21; fingerprint memakai kolom existing dan
+menjaga seluruh data lama tanpa grant/demo/reset/posting.
+Lihat [bukti posting](work-items/sale-return-posting/tasks.md).
+
 `php artisan test --filter='ReturnQuantityTest|ReturnDraftTest|ReturnsScaffoldTest'`:
 kuantitas/base exact, snapshot tanpa HPP, permission/super-system invariant,
 CRUD versioned/soft delete/restore, veto model/audit rollback, demo aman,

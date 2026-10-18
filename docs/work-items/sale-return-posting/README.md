@@ -1,7 +1,8 @@
 # Posting Retur Penjualan Layak Jual
 
-Status: In Progress. Scope, layer baru dan biaya nol hasil alokasi disetujui
-18 Oktober 2026. Implementasi mengikuti increment dan checklist.
+Status: implementasi, QA dan aktivasi lokal selesai; delivery remote menunggu
+verifikasi checkpoint akhir. Scope, layer baru dan biaya nol hasil alokasi
+disetujui 18 Oktober 2026.
 
 ## Tujuan Dan Scope
 
@@ -48,5 +49,15 @@ residual. Harga pokok input stok awal/pembelian tetap positif.
 - [Stock](../../modules/Inventory/Stock/specification.md).
 - [ADR-012](../../decisions/ADR-012-PAID-CHECKOUT-AND-FIFO-RESIDUAL.md).
 
+## Hasil
+
+Posting tersedia di `/sales/returns`, permission `sales.returns.post` terpisah.
+Migration Stock/Returns Ran batch 21. Full regression 525 test/4057 assertion,
+native MySQL dua proses, DevTools MCP dan Playwright desktop/tablet PASS.
+Aktivasi dua kali hanya schema/catalog; source invoice/consumption/Finance,
+data existing, user/role, stok dan audit lama tetap identik. Tidak ada posting
+otomatis atau grant role. Demo posted hanya fixture disposable, bukan seeder
+operasional yang memposting draft user.
+
 Old-docs, SampleUI, artefak user, dependency, theme, serta akun/role existing
-tidak termasuk scope. Tidak ada migration atau transaksi lokal pada baseline ini.
+tidak disentuh. Refund, karantina, tukar dan reversal tetap belum tersedia.
