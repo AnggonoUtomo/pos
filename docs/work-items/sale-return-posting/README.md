@@ -1,7 +1,7 @@
 # Posting Retur Penjualan Layak Jual
 
-Status: Draft. Scope produk dan layer baru disetujui 18 Oktober 2026;
-perlakuan layer biaya nol masih menunggu jawaban user sebelum mutation ledger.
+Status: In Progress. Scope, layer baru dan biaya nol hasil alokasi disetujui
+18 Oktober 2026. Implementasi mengikuti increment dan checklist.
 
 ## Tujuan Dan Scope
 
@@ -33,15 +33,13 @@ reversal. Invoice, konsumsi FIFO penjualan dan payment asal tetap immutable.
 User menyetujui layer baru pada waktu retur diterima dengan biaya asal.
 Histori sale/consumption dan layer lama tetap utuh, tidak mengembalikan umur
 FIFO lama. Rancangan lebih rinci ada pada
-[ADR-015 proposed](../../decisions/ADR-015-SALE-RETURN-COST-AND-FIFO-LAYERS.md).
+[ADR-015 accepted](../../decisions/ADR-015-SALE-RETURN-COST-AND-FIFO-LAYERS.md).
 
 Gap presisi yang harus diselesaikan pada desain: ADR-012 mengizinkan alokasi
 HPP partial bernilai nol pada scale6. FifoAllocation/ReceiptBalance existing
-menolak layer berkuantitas positif dengan nilai nol. Pertanyaan user aktif:
-dukung layer biaya nol hasil alokasi FIFO tanpa mengubah harga pokok input
-stok awal/pembelian, atau tolak posting tersebut? Rekomendasi: dukung biaya nol
-turunan dan uji jalur pengeluaran berikutnya, tanpa menaikkan HPP/membuang
-residual. Pilihan urutan FIFO tidak otomatis memutuskan perubahan invariant ini.
+menolak layer berkuantitas positif dengan nilai nol. User menyetujui dukungan
+biaya nol turunan dan jalur pengeluaran berikutnya tanpa menaikkan HPP/membuang
+residual. Harga pokok input stok awal/pembelian tetap positif.
 
 ## Acuan
 

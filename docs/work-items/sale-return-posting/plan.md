@@ -2,7 +2,7 @@
 
 ## Increment 1: Baseline Dan Keputusan Domain
 
-Status: In Progress.
+Status: Passed.
 
 Catat persetujuan scope, ownership dan checklist. Kunci urutan FIFO serta
 perlakuan nilai nol/residual sebelum ADR dan implementasi. Desain harus

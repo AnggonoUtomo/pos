@@ -17,11 +17,11 @@
 - [x] Tetapkan urutan layer barang retur.
   - Acceptance: jawaban eksplisit user; ADR membedakan biaya asal dari umur FIFO.
   - Verification: review keputusan terhadap Stock dan invariant posted immutable.
-- [ ] Tetapkan valuasi partial/residual termasuk alokasi biaya nol.
+- [x] Tetapkan valuasi partial/residual termasuk alokasi biaya nol.
   - Acceptance: tidak mengubah HPP asal, menciptakan nilai, membuang residual,
     atau menerima layer yang membuat pengeluaran berikutnya gagal.
   - Verification: contoh partial/full dan test plan conservation.
-- [ ] Finalisasi ADR serta contract/schema/lock plan sebelum mutation ledger.
+- [x] Finalisasi ADR serta contract/schema/lock plan sebelum mutation ledger.
   - Acceptance: ada consumer nyata dan aturan replay, master nonaktif, privacy,
     overflow serta urutan lock yang jelas.
   - Verification: review dependency dan keputusan accepted.
@@ -81,3 +81,7 @@ ditanyakan terpisah; belum ada pelonggaran invariant existing atau implementasi.
 Belum ada runtime change, migration, test behavior baru atau perubahan ledger.
 Gate test/build/browser tidak relevan sampai implementasi dimulai.
 Verifikasi baseline: link relatif dokumen diperiksa; git diff --check PASS.
+
+Increment 1 Passed: user mengonfirmasi biaya nol hasil alokasi. ADR-015 accepted,
+schema/lock/port plan ditetapkan; harga input tetap positif. Belum ada mutation
+ledger pada penutupan baseline ini.

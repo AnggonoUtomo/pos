@@ -2,8 +2,8 @@
 
 ## Status
 
-Proposed. Scope posting dan layer baru disetujui user. Bagian dukungan layer
-biaya nol masih menunggu jawaban eksplisit; jangan menganggap seluruh ADR accepted.
+Accepted. User menyetujui scope posting, layer baru saat diterima, serta biaya
+nol hasil alokasi FIFO. Implementasi dan QA tetap bertahap, bukan klaim selesai.
 
 ## Tanggal
 
@@ -26,7 +26,7 @@ received_at lalu ULID dan partial rounding down scale6 dengan residual full drai
 - Kuantitas posted kumulatif tidak melebihi source line terjual.
 - Stok/status/audit atomic; replay tidak menggandakan stok.
 
-## Rancangan Untuk Implementasi
+## Keputusan Implementasi
 
 - Returns menjadi transaction boundary. Published writer/DTOs Stock memerlukan
   transaction default caller; tidak ada mutation event async.
@@ -48,11 +48,11 @@ received_at lalu ULID dan partial rounding down scale6 dengan residual full drai
 - HPP tetap privat pada Stock. Response Returns hanya metadata posted/receipt,
   bukan harga pokok atau nominal refund. Posted tidak dapat dimutasi via CRUD.
 
-## Keputusan Masih Terbuka: Biaya Nol
+## Biaya Nol Hasil Alokasi
 
 ADR-012 secara eksplisit mengakui partial HPP nol pada presisi mikro. Layer
 retur baru bisa berquantity positif/value nol. FifoAllocation dan ReceiptBalance
-existing saat ini menolak bentuk itu. Rekomendasi yang ditanyakan kepada user:
+existing perlu mendukung bentuk tersebut sesuai persetujuan user:
 
 - Dukung biaya nol yang berasal dari alokasi FIFO; nol quantity tetap wajib
   bernilai nol dan biaya/quantity negatif tetap ditolak.
@@ -60,7 +60,7 @@ existing saat ini menolak bentuk itu. Rekomendasi yang ditanyakan kepada user:
   layer nol/positif dan partial/full drain.
 - Input harga pokok stok awal/pembelian tetap positif. Harga jual tidak berubah.
 
-Alternatif: menolak retur dengan nilai turunan nol. Tidak boleh membulatkan
+Alternatif yang tidak dipilih: menolak retur bernilai turunan nol. Tidak membulatkan
 biaya naik atau menganggap biaya nol sebagai harga jual gratis.
 
 ## Verifikasi Yang Wajib
@@ -70,7 +70,14 @@ version dan posted guard; rollback audit Stock/Returns; privacy HPP; MySQL
 locking/current read/constraint/migration; QA browser desktop/tablet. Kasus
 dua unit jual barang sama harus tetap dibedakan berdasarkan source line.
 
-Tetapkan keputusan biaya nol dan test plan sebelum mengubah runtime.
+Harga pokok input tetap positif; hanya writer retur yang mengizinkan added value
+nol pada ReceiptBalance. Penerimaan pembelian memakai default positif existing.
+
+Schema rencana: Stock menyimpan stock_return_allocations dengan FK receipt line
+dan consumption asal, quantity20,6/value30,6 serta unique pasangan keduanya.
+Returns menambah receipt ID, posted_from_version, posted_at/by pada header.
+Writer mengunci gudang, source issue dan consumption, master unit/item terurut,
+saldo/layers. Semua sum cumulative memakai decimal exact/current read.
 
 ## Referensi
 
