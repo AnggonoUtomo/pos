@@ -4,8 +4,10 @@ namespace App\Modules\Sales\POS;
 
 use App\Modules\Sales\POS\Application\Contracts\InvoiceHistoryReader;
 use App\Modules\Sales\POS\Application\Contracts\InvoiceRepository;
+use App\Modules\Sales\POS\Application\Contracts\ReturnInvoiceLookup;
 use App\Modules\Sales\POS\Infrastructure\Persistence\Repositories\DatabaseInvoiceHistoryReader;
 use App\Modules\Sales\POS\Infrastructure\Persistence\Repositories\DatabaseInvoiceRepository;
+use App\Modules\Sales\POS\Infrastructure\Persistence\Repositories\DatabaseReturnInvoiceLookup;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -14,6 +16,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(InvoiceRepository::class, DatabaseInvoiceRepository::class);
         $this->app->bind(InvoiceHistoryReader::class, DatabaseInvoiceHistoryReader::class);
+        $this->app->bind(ReturnInvoiceLookup::class, DatabaseReturnInvoiceLookup::class);
     }
 
     public function boot(): void

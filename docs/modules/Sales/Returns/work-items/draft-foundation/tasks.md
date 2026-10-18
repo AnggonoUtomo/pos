@@ -18,14 +18,14 @@
 
 ## Increment 2: Backend Draft
 
-- [ ] Publikasikan lookup snapshot invoice minimal dari POS.
+- [x] Publikasikan lookup snapshot invoice minimal dari POS.
   - Acceptance: tidak ada HPP/payment/private adapter lintas module.
   - Verification: focused test privacy dan snapshot setelah master berubah.
-- [ ] Tambahkan schema, validasi kuantitas, save/delete/restore dan audit atomik.
+- [x] Tambahkan schema, validasi kuantitas, save/delete/restore dan audit atomik.
   - Acceptance: positif <= asal, exact base, duplikat/forgery/stale ditolak;
     invoice immutable, draft saja, no-op tidak menambah audit/version.
   - Verification: unit/feature test, audit rollback dan fingerprint ledger.
-- [ ] Tambahkan query, HTTP permission dan demo relasional.
+- [x] Tambahkan query, HTTP permission dan demo relasional.
   - Acceptance: bounded search/pagination; viewer tidak mutation; demo aman.
   - Verification: permission/validation/lifecycle/demo tests dan route:list.
 
@@ -55,3 +55,15 @@
 
 Increment 1: dry-run/generate PASS; ReturnsScaffoldTest PASS (1 test/1 assertion).
 Baseline direview dan git diff --check PASS sebelum commit.
+
+Increment 2: red awal 13 test (class/action belum ada), lalu focused
+ReturnQuantityTest/ReturnDraftTest/ReturnsScaffoldTest PASS 21 test/111 assertion.
+Pint scoped PASS; route:list --path=sales/returns PASS delapan route.
+Migration dieksekusi pada SQLite disposable melalui RefreshDatabase; native
+MySQL dan aktivasi lokal tetap menunggu increment 4. Tidak ada migration user
+yang dijalankan pada increment ini.
+
+Schema memakai header snapshot JSON dan snapshot per baris JSON untuk data asal
+immutable; qty/base qty tetap decimal20,6 MySQL, source invoice/line FK restrict,
+unique baris per draft. Harga asal disimpan sebagai string decimal exact di JSON,
+bukan hasil kalkulasi refund. Domain tidak mengimpor framework.
