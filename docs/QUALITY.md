@@ -99,6 +99,24 @@ git diff --check
 Full gate digunakan untuk perubahan lintas area, risiko tinggi, atau sebelum
 release. Jangan menjalankannya berulang tanpa perubahan source.
 
+## QA Writer Refund Finance
+
+`php scripts/qa/sale-refund-payment-mysql.php` memerlukan local/MySQL dan
+membuat database acak `pos_refund_pay_qa_` dengan suffix16 hex, bukan DB user.
+Gunakan sebelum mengklaim writer refund verified: migration/status/up-down,
+decimal30,2/native nominal28 digit, worker LOCK WAIT/replay satu payout,
+current read status/mapping, audit veto, guard master dan FK/down guard.
+Worker membaca database/source/split melalui stdin tanpa credential; config
+koneksi existing tidak dicetak dan cleanup database/proses berjalan pada finally.
+URL koneksi dinonaktifkan pada salinan config QA dan SELECT DATABASE() harus
+cocok dengan nama disposable sebelum menjalankan migration atau writer.
+
+Focused: `php artisan test --compact tests/Feature/Modules/Finance/Payments/RecordSaleRefundPaymentTest.php tests/Unit/Modules/Finance/Payments/RefundSettlementTest.php`.
+Tidak memasang dependency, menjalankan demo/payout di DB lokal, atau mengaktifkan
+endpoint refund. Migration lokal boleh Pending sampai aktivasi work item pada
+Increment 6; catat status ini, jangan disamakan dengan native disposable Ran.
+QA scope invoice/stale quote dan UI Returns tetap terpisah pada increment lanjut.
+
 ## QA Browser Dengan Chrome DevTools MCP
 
 Untuk perubahan UI/browser, agent wajib mencoba Chrome DevTools MCP lebih dulu.

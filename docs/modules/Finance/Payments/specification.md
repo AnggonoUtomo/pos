@@ -101,20 +101,46 @@ lookup aktif yang sama dengan sale, tanpa mengganti contract sale existing.
 Tidak ada route Finance pengeluaran bebas atau pengujian saldo kas berjalan.
 Detail [ADR014](../../../decisions/ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md).
 
-## Rencana Pengeluaran Refund (Belum Diimplementasi)
+## Writer Pengeluaran Refund Internal
 
 [ADR-016](../../../decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md) memilih
 ledger `payment_refunds`/`payment_refund_lines` decimal30,2 tersendiri agar
 refund tetap mendukung28 digit integer penjualan tanpa mengubah ledger
-pembelian decimal30,6 existing. Writer/DTOs `SaleRefundPaymentWriter` untuk
-Returns, snapshot aman, source sale_return, exact multi-payment, replay dan
-mandatory audit baru diimplementasi pada Increment 3 work item refund.
+pembelian decimal30,6 existing. Increment 3 menyediakan
+`RecordSaleRefundPayment`/`SaleRefundPaymentWriter`, DTOs request/result dan
+`SaleRefundPaymentMethods` dengan adapter pilihan metode existing. Consumer
+settlement/quote Returns baru dipasang pada Increment 4; tidak ada route payout.
+
+Writer memerlukan shared default transaction caller; total/split positif scale2,
+1..10 metode unik dengan jumlah tepat tanpa kembalian. RefundSettlement Domain
+memvalidasi aturan uang. Discovery assignment kemudian lock akun sorted/metode
+sorted dan current read; mapping berubah/nonaktif/trashed/type tidak cocok
+ditolak. Akun diturunkan dari master, bukan input caller.
+
+RefundRepository internal mengelola ledger sendiri. Header source_id unique,
+source_type sale_return, request_hash canonical tanpa actor, waktu server,
+paid_by nullable. Lines FK restrict header/metode/akun, unique header/metode dan
+header/line_number, snapshot code/name/type serta amount. Result publik hanya
+id/paidAt/snapshot total dan payments method_id/name/type/amount, tanpa account
+atau bank metadata. Retry identik memakai snapshot tersimpan sebelum validasi
+master live, tidak menambah payout/audit; isi berbeda ditolak. Audit event
+refunded wajib dan rollback bersama caller jika gagal/disabled/vetoed.
+
+Guard master memakai current read histori refund selain sale/purchase.
+Schema::hasTable melindungi akses histori refund sebelum migration additive
+diterapkan; setelah tabel ada, guard tidak melewati histori. Writer sendiri
+tidak mempunyai fallback penyimpanan ketika migration belum tersedia.
 
 Metode aktif boleh berbeda dari pembayaran asal; Finance menentukan akun.
 Settlement nol ditangani Returns tanpa writer/ledger uang. History nantinya
 menambah outgoing refund dengan path detail khusus tanpa mengganti path
-outgoing purchase. Schema, guard histori dan integrasi history belum berubah
-di Increment 2; lihat [rencana](../../../work-items/sale-return-refund/plan.md).
+outgoing purchase. Integrasi history belum dibuat pada Increment 3. Migration
+2026_10_19_000001_create_payment_refunds sudah diuji up/down/native disposable,
+tetapi masih Pending pada DB lokal; aktivasi aman dijadwalkan Increment 6.
+Tidak menjalankan demo/grant/payout atau mengubah DB user pada increment ini.
+QA: `php scripts/qa/sale-refund-payment-mysql.php` memakai DB random disposable,
+worker current read/replay, presisi28 digit dan audit/FK/down guard. Rincian
+[checklist](../../../work-items/sale-return-refund/tasks.md).
 
 ## HTTP Dan UI
 

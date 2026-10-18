@@ -718,9 +718,10 @@ barang rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
 
 ## Rencana Contract Refund Retur
 
-Status: desain Accepted pada ADR-016; pada Increment 2 hanya aturan Domain dan
-test valuasi yang tersedia. Endpoint, schema dan writer berikut **belum aktif**
-dan baru dibuat pada Increment 3..5 [work item](work-items/sale-return-refund/README.md).
+Status: desain Accepted pada ADR-016. Domain valuasi dan writer internal Finance
+tersedia sampai Increment 3; migration Finance lokal masih Pending. Endpoint,
+scope settlement Returns dan UI berikut **belum aktif**, dibuat Increment 4..5
+[work item](work-items/sale-return-refund/README.md).
 Bagian ini tidak mengubah contract route existing di atas/bawahnya.
 
 ### Ringkasan Invoice Internal
@@ -788,15 +789,20 @@ dan replay posting Stock tetap utuh; status uang berasal dari settlement.
 
 ### Writer Dan Riwayat Finance
 
-Rencana `SaleRefundPaymentWriter::pay(SaleRefundPaymentRequest)` memerlukan
+`SaleRefundPaymentWriter::pay(SaleRefundPaymentRequest)` tersedia pada Increment 3,
+memerlukan
 transaction default caller Returns. Request sourceId ULID return/sourceNumber
 max32/total positive scale2/payments1..10/actorId nullable; source_type server
 sale_return. `SaleRefundPaymentResult` id/paidAt/snapshot total/payments aman,
 tidak mengekspor account atau bank metadata. Canonical source/body tanpa actor;
 replay identik no-op sebelum lookup master, payload berbeda ditolak.
-`SaleRefundPaymentMethods::choices()` memberi maksimal1000 metode aktif yang
+`SaleRefundPaymentMethods::choices()` tersedia dan memberi maksimal1000 metode aktif yang
 akunnya aktif/kompatibel, hanya id/code/name/type; tidak mengekspos master CRUD.
 Schema/locking/audit/guard histori mengikuti [ADR-016](decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md).
+Writer baru hanya menyediakan mekanisme pengeluaran; pemeriksaan retur posted,
+hak nominal, scope invoice dan quote wajib dilakukan consumer Returns pada
+Increment 4. Tidak memanggil writer untuk nominal nol. Runtime port tidak
+membuka akses controller/repository/model privat ke module lain.
 
 History existing incoming/outgoing dipertahankan, dengan penambahan source_type
 sale/purchase/sale_return pada rows dan union refund sebagai outgoing scale2.

@@ -3,8 +3,9 @@
 ## Status
 
 Accepted untuk aturan dan desain Increment 2 berdasarkan scope interview user.
-Ledger, locking, endpoint dan UI masih rencana Increment 3..6; penerimaan ADR
-bukan bukti bahwa payout sudah tersedia atau aman dipakai.
+Writer/ledger Finance dan lock master diimplementasi pada Increment 3 serta
+diuji disposable. Scope invoice/settlement Returns, endpoint dan UI masih
+rencana Increment 4..6; penerimaan ADR bukan bukti payout siap operasional.
 
 ## Tanggal
 
@@ -194,6 +195,13 @@ Increment 2: unit valuasi/reconciliation/red-green, regresi Returns/POS/Finance,
 Pint dan review docs/API/boundary. Tidak ada migration/endpoint/UI refund aktif.
 Implementasi adapter/constraint/worker MySQL/QA browser tetap acceptance
 Increment 3..6, bukan dianggap PASS karena ADR ini Accepted.
+
+Increment 3 diuji pada 19 Oktober2026: schema decimal30,2/up-down disposable,
+worker nyata LOCK WAIT untuk replay satu payout, current read menolak metode
+nonaktif/assignment berubah, presisi28 digit/sen terakhir, audit veto, FK restrict
+dan down guard PASS. Guard master tetap berjalan sebelum tabel refund tersedia.
+Migration lokal masih Pending; tidak ada refund/demo/grant di DB user. Scope
+invoice/alokasi dan rollback Returns setelah Finance masih acceptance Increment 4.
 
 Referensi: [Work item](../work-items/sale-return-refund/README.md),
 [ADR-014](ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md),

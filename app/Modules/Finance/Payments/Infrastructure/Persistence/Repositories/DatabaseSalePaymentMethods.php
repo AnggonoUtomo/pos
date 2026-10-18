@@ -4,9 +4,10 @@ namespace App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
+use App\Modules\Finance\Payments\Application\Contracts\SaleRefundPaymentMethods;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentMethod;
 
-class DatabaseSalePaymentMethods implements PurchasePaymentMethods, SalePaymentMethods
+class DatabaseSalePaymentMethods implements PurchasePaymentMethods, SalePaymentMethods, SaleRefundPaymentMethods
 {
     public function choices(): array
     {

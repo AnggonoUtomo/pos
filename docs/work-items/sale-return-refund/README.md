@@ -2,7 +2,8 @@
 
 ## Status
 
-In Progress. Increment 1 dan 2 Passed; writer/endpoint/UI refund belum tersedia.
+In Progress. Increment 1..3 Passed; Increment 4..6 belum dimulai.
+Endpoint/UI refund belum tersedia.
 Increment 1 hanya dokumentasi, bukan aktivasi fitur refund.
 
 ## Owner Dan Lokasi
@@ -120,21 +121,23 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 | --- | --- | --- | --- |
 | 1 | Passed | Scope, ownership, rencana dan checklist sebelum coding | Review dokumen, 31 link lokal valid, whitespace PASS |
 | 2 | Passed | ADR-016, desain contract dan Domain valuasi exact | RED/GREEN, focused/regresi592 test, Pint |
-| 3 | Planned | Writer pengeluaran refund Finance dengan snapshot/replay | Feature Finance, migration disposable, guard master |
+| 3 | Passed | Writer pengeluaran refund Finance dengan snapshot/replay | Focused26/full618 test, native MySQL worker/schema/guard |
 | 4 | Planned | Quote dan penyelesaian Returns atomik, termasuk nol | Feature, audit veto, concurrency MySQL |
 | 5 | Planned | UI refund dan riwayat Finance yang benar | Typecheck/lint/build, DevTools desktop/tablet |
 | 6 | Planned | Regresi, aktivasi aman dan delivery | Full test, native/browser, migration dan Git remote |
 
 ## Handoff Saat Ini
 
-- Perubahan: dua value object Domain Returns, unit/feature tests dan ADR/desain
-  API. Tidak ada perubahan schema, endpoint, permission grant, UI atau DB user.
-- Verifikasi: full592 test/5188 assertion, feature Returns/POS/Finance102 test,
-  unit/focused76 test, scoped Pint; bukti RED/GREEN pada [tasks.md](tasks.md).
-- Browser QA SKIPPED: tidak ada perubahan UI/HTTP di increment ini. Native
-  locking/migration belum relevan sebelum implementasi writer/persistence.
-- Risiko terbuka: implementasi ledger/locking, stale quote operasional dan
-  compatibility history harus ditutup melalui Increment 3..6. Domain yang lulus
-  unit test tidak membuktikan concurrency writer atau keamanan payout runtime.
+- Perubahan: Domain valuasi Returns dan writer/DTOs/choices/schema refund
+  Finance, audit wajib/replay dan guard histori. Tidak ada endpoint/permission
+  grant/UI refund atau perubahan DB user. Migration lokal refund masih Pending.
+- Verifikasi terbaru: full618 test/5304 assertion, focused26 test/116 assertion,
+  native MySQL worker/status/schema/up-down/presisi/audit/FK; bukti RED/GREEN
+  pada [tasks.md](tasks.md). Scoped Pint dan pemeriksaan route juga dijalankan.
+- Browser QA SKIPPED: tidak ada perubahan UI/HTTP. Database native QA dibersihkan;
+  QA scope invoice, stale quote dan UI tetap dijadwalkan Increment 4..6.
+- Risiko terbuka: consumer settlement Returns, alokasi kuantitas/hak refund,
+  stale quote operasional, history/UI dan aktivasi lokal. Lulus writer Finance
+  tidak membuktikan hak refund atau membuat payout siap operasional.
 - Gap conformance: tidak ditemukan konflik struktural pada bagian yang dibaca;
   ini bukan audit menyeluruh repository. `Old-docs` dan file user tidak disentuh.

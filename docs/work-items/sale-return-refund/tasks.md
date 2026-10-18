@@ -53,15 +53,15 @@
 
 ## Increment 3: Writer Refund Finance
 
-- [ ] Tambah schema milik Finance dan published writer/DTOs untuk Returns.
+- [x] Tambah schema milik Finance dan published writer/DTOs untuk Returns.
   - Acceptance: source refund unik/terpisah dari purchase; shared transaction,
     immutable ledger, snapshot aman dan down guard posted.
   - Verification: migration up/down disposable dan feature tests Finance.
-- [ ] Validasi pembayaran tepat dengan metode/akun aktif dan kompatibel.
+- [x] Validasi pembayaran tepat dengan metode/akun aktif dan kompatibel.
   - Acceptance: 1..10 metode unik/positif scale2, tanpa kembalian; account caller,
     duplicate, nol, total mismatch dan konfigurasi berubah ditolak.
   - Verification: feature invalid-input/master-current-read/overflow.
-- [ ] Implementasikan canonical replay, mandatory audit dan guard histori master.
+- [x] Implementasikan canonical replay, mandatory audit dan guard histori master.
   - Acceptance: retry identik tanpa audit/payout baru; perubahan isi ditolak;
     audit veto rollback; rename tidak mengubah snapshot lama.
   - Verification: feature Finance dan regresi sale/purchase/master guards.
@@ -157,7 +157,7 @@ belum selesai kecuali diminta eksplisit.
 | `php artisan test --compact` Increment 2 | PASS | 592 test / 5188 assertion, 54,90 detik. |
 | `vendor/bin/pint --test` lima file dan `php artisan route:list --path=sales/returns` | PASS | Formatter lulus; sembilan route existing, belum ada quote/endpoint refund. |
 | Frontend build/typecheck/lint dan Chrome DevTools | SKIPPED | Increment 2 tidak mengubah UI/JS/CSS/HTTP; QA UI tetap wajib pada Increment 5. |
-| Migration/native concurrency refund | Belum dijalankan | Tidak ada migration/locking writer di Increment 2; wajib Increment 3..6. |
+| Migration/native concurrency pada Increment 2 | Belum dijalankan saat itu | Tidak ada migration/locking writer di Increment 2; hasil writer terbaru di bawah. |
 | Review staged scope/link/whitespace/boundary Increment 2 | PASS | 17 file terfokus, 12 dokumen/66 link lokal valid, dua Domain bebas framework; tidak ada file user/arsip ikut stage. |
 
 ## Handoff Increment 2
@@ -177,6 +177,39 @@ Checklist setelah Increment 2:
 - [x] Sembilan route existing tetap; tidak ada schema/endpoint/UI baru.
 - [x] Dokumen aktual dan batas QA yang belum dikerjakan dijelaskan.
 - [x] Review staged scope, link, whitespace, privacy dan arah dependency lulus.
+
+## Handoff Increment 3
+
+Implementasi pada 19 Oktober2026 milik Finance/Payments. Writer tidak menerima
+harga/HPP/akun bebas dan tidak memverifikasi hak retur sendiri; consumer Returns
+harus memeriksa posted, nominal dan quote di Increment 4 sebelum memanggil writer.
+Interface/DTOs writer/choices dipublikasikan untuk consumer yang telah dirancang
+tersebut, tanpa skeleton consumer/endpoint pura-pura pada increment ini.
+
+| Pemeriksaan | Hasil | Bukti ringkas |
+| --- | --- | --- |
+| TDD RED awal writer | EXPECTED FAIL | 11 test gagal karena DTO/writer/schema belum ada. |
+| TDD GREEN writer awal | PASS | 11 test / 94 assertion. |
+| Focused writer dan RefundSettlement | PASS | 26 test / 116 assertion. |
+| `php artisan test --compact` | PASS | 618 test / 5304 assertion, 56,91 detik. |
+| `php scripts/qa/sale-refund-payment-mysql.php` | PASS | DB random disposable, native migrate/status/empty down-up, decimal30,2, 3 worker LOCK WAIT, satu payout saat retry, current read status/mapping, nominal28 digit, audit veto, histori master dan FK/down guard. Cleanup selesai. |
+| `php artisan migrate:status` lokal | PASS untuk inspeksi | Migration refund baru Pending; semua migration lama Ran. Tidak menerapkan schema/payout di DB user; aktivasi Increment 6. |
+| Browser/JS build/lint/typecheck | SKIPPED | Tidak ada perubahan UI/HTTP/JS/CSS; Chrome DevTools dan matriks desktop/tablet dijalankan saat UI disentuh. |
+| Demo payout | SKIPPED dengan alasan | Refund bukan data master; QA menggunakan master kas/bank fiktif hanya di DB disposable. Tidak membuat seeder pembayaran otomatis. |
+| Scoped Pint dan `php artisan route:list --path=finance` | PASS | Enam belas file PHP terfokus; 15 route Finance existing, tidak menambah endpoint payout. |
+| QA native ulang setelah guard koneksi | PASS | URL override dinonaktifkan dan SELECT DATABASE() diverifikasi sebelum migration/writer; seluruh skenario native dan cleanup kembali lulus. |
+| Review staged diff/link/whitespace/boundary | PASS | 28 file terfokus, 12 dokumen/53 link lokal valid, 16 file PHP; Application tidak mengimpor adapter dan Domain bebas framework. Pemeriksaan pola credential lulus. |
+
+Checklist setelah Increment 3:
+
+- [x] Schema, validasi, snapshot/replay, audit dan histori master terverifikasi.
+- [x] Regresi sale/purchase/Returns tetap lulus; ledger lama tidak dipakai ulang.
+- [x] Migration lokal Pending dibedakan dari disposable yang sudah Ran/up-down.
+- [x] QA native selesai dan worker/database dibersihkan.
+- [x] Scoped Pint, route, review boundary, link dan staged diff akhir dicatat.
+
+Commit otomatis dilakukan setelah gate akhir lulus; identitas tersedia pada
+riwayat Git. Belum push karena work item refund belum selesai.
 
 Jangan menambahkan scope ke checklist tanpa persetujuan user. Commit otomatis
 setelah task/increment verified; push setelah keseluruhan work item selesai.

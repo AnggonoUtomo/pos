@@ -57,7 +57,9 @@ ledger, allocation dan metadata harus memiliki batas presisi/overflow eksplisit.
 
 ## Increment 3: Pengeluaran Refund Finance
 
-Status: Planned. Owner: Finance/Payments. Dependency: Increment 2.
+Status: Passed. Owner: Finance/Payments. Dependency: Increment 2.
+Focused26/full618 test dan native MySQL PASS. Migration lokal masih Pending;
+consumer Returns/endpoint/history/UI belum dipasang. Detail bukti pada tasks.
 
 Implementasikan public writer/DTOs minimal untuk consumer Returns dan adapter
 schema module sendiri. Shared transaction caller wajib, nominal refund scale2,
@@ -153,8 +155,8 @@ work item selesai atau diminta eksplisit. Buktikan SHA remote dan divergence.
 
 ## Batas Berhenti Dan Rollback
 
-Tahap saat ini berhenti setelah Increment 2. Writer/persistence/endpoint/UI
-Increment 3..6 menunggu instruksi berikutnya. Perubahan scope di luar README
+Tahap saat ini berhenti setelah Increment 3. Orkestrasi/endpoint/UI
+Increment 4..6 menunggu instruksi berikutnya. Perubahan scope di luar README
 perlu persetujuan user.
 
 Dokumentasi dapat dipulihkan melalui revert commit terfokus, bukan reset file
