@@ -50,7 +50,7 @@
 - [x] Perbarui API/module index, checklist dan hasil aktual.
   - Acceptance: klaim sesuai command; batas posting/refund tetap eksplisit.
   - Verification: review dokumen, diff --check, scoped commit.
-- [ ] Push seluruh work item dan verifikasi checkpoint remote.
+- [x] Push seluruh work item dan verifikasi checkpoint remote.
   - Acceptance: HEAD sama dengan origin/main, ahead/behind 0/0; file user tidak
     ikut commit dan tidak disentuh.
   - Verification: push, ls-remote, rev-list, status.
@@ -114,3 +114,9 @@ typecheck dan ESLint PASS; production build2735 PASS. Source dependency review
 tidak menemukan import model/adapter privat lintas module. Tidak ada perubahan
 dependency/stack/theme, Old-docs, SampleUI atau artefak LSP user. QA server milik
 pekerjaan sudah berhenti; URL aplikasi tetap virtual host Laragon.
+
+Delivery implementasi: push main sampai43f7ef9 PASS, ls-remote sama dengan HEAD,
+ahead/behind0/0. Commit increment4d0ccb0/e0bcd11/bc243f2/a6fce59/43f7ef9.
+File user tetap untracked: SampleUI/ dan empat artefak storage/framework/lsp-*.php;
+tidak ikut delivery. Penutupan checklist ini di-commit/push terpisah dan remote
+diverifikasi ulang pada handoff.

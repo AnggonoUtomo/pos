@@ -1,7 +1,7 @@
 # Fondasi Draft Retur Penjualan
 
-Status: implementasi/QA dan aktivasi lokal selesai; delivery remote diverifikasi
-pada checkpoint akhir. User menyetujui draft dahulu, tanpa efek ledger.
+Status: selesai dan terkirim; implementasi/QA, aktivasi lokal dan delivery remote
+terverifikasi. User menyetujui draft dahulu, tanpa efek ledger.
 
 Tujuan: operator mencatat permintaan retur berdasarkan snapshot invoice asli
 tanpa input ulang barang/harga dan tanpa mengubah transaksi posted.
