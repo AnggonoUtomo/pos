@@ -5,7 +5,9 @@ namespace Tests\Feature\Modules\Inventory\Stock;
 use App\Modules\Inventory\Stock\Application\Actions\IssueStock;
 use App\Modules\Inventory\Stock\Application\Actions\ManageOpening;
 use App\Modules\Inventory\Stock\Application\Actions\PostOpening;
+use App\Modules\Inventory\Stock\Application\Contracts\PurchaseStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\SaleReturnStockWriter;
+use App\Modules\Inventory\Stock\Application\DTOs\PurchaseStockRequest;
 use App\Modules\Inventory\Stock\Application\DTOs\SaleReturnStockRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -92,7 +94,7 @@ class SaleReturnStockTest extends TestCase
         }
     }
 
-    public function test_writer_rejects_foreign_sale_line_and_wrong_warehouse(): void
+    public function test_writer_rejects_foreign_sale_line(): void
     {
         $request = $this->request();
         $this->expectException(InvalidArgumentException::class);
@@ -127,5 +129,26 @@ class SaleReturnStockTest extends TestCase
         DB::shouldReceive('transactionLevel')->once()->andReturn(0);
         $this->expectException(\LogicException::class);
         $writer->receive($request);
+    }
+
+    public function test_return_to_a_different_warehouse_is_rejected(): void
+    {
+        $request = $this->request();
+        $warehouse = DB::table('warehouses')->where('code', 'WH-SECONDARY')->value('id');
+        $this->expectException(InvalidArgumentException::class);
+        DB::transaction(fn () => app(SaleReturnStockWriter::class)->receive(new SaleReturnStockRequest($warehouse, $request->sourceId, $request->sourceNumber, $request->invoiceId, $request->lines)));
+    }
+
+    public function test_one_sale_line_return_can_restore_two_different_original_cost_consumptions(): void
+    {
+        $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->sole();
+        DB::transaction(fn () => app(PurchaseStockWriter::class)->receive(
+            new PurchaseStockRequest($this->invoice['warehouse_id'], strtolower((string) Str::ulid()), 'PO-COST-LAYER',
+                [['source_line_id' => strtolower((string) Str::ulid()), 'item_id' => $item->id, 'base_unit_id' => $item->base_unit_id, 'base_quantity' => '2', 'total_value' => '1200000']])));
+        $sale = SalesReturnFixture::seed('UNIT', '7');
+        $receipt = DB::transaction(fn () => app(SaleReturnStockWriter::class)->receive(new SaleReturnStockRequest($sale['warehouse_id'], strtolower((string) Str::ulid()), 'SR-MIXED-COST', $sale['id'],
+            [['source_line_id' => strtolower((string) Str::ulid()), 'sale_line_id' => $sale['lines'][0]['id'], 'base_quantity' => '7']])));
+        $this->assertDatabaseHas('stock_receipt_lines', ['receipt_id' => $receipt->id, 'quantity' => '7.000000', 'total_value' => '3600000.000000']);
+        $this->assertDatabaseCount('stock_return_allocations', 2);
     }
 }

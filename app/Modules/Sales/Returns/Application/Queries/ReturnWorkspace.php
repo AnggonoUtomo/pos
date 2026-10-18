@@ -9,9 +9,9 @@ final class ReturnWorkspace
 {
     public function __construct(private ReturnDraftRepository $drafts, private ReturnInvoiceLookup $invoices) {}
 
-    public function records(int $page, string $search, bool $trashed): array
+    public function records(int $page, string $search, bool $trashed, string $status = 'all'): array
     {
-        return $this->drafts->paginate($page, $search, $trashed);
+        return $this->drafts->paginate($page, $search, $trashed, $status);
     }
 
     public function invoices(string $search): array

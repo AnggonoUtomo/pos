@@ -12,7 +12,7 @@ interface ReturnDraftRepository
 
     public function post(string $id, string $receiptId, string $postedAt, int $version, ?int $actorId): void;
 
-    public function paginate(int $page, string $search, bool $trashed): array;
+    public function paginate(int $page, string $search, bool $trashed, string $status = 'all'): array;
 
     public function demoExists(string $key): bool;
 }

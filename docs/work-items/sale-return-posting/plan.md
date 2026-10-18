@@ -12,7 +12,7 @@ Tidak membuat port/adapter/schema hanya untuk melengkapi diagram.
 
 ## Increment 2: Writer Stock Dan Valuasi
 
-Status: Planned.
+Status: Passed.
 
 Setelah keputusan domain accepted, buat unit test red untuk alokasi retur
 partial/full, residual, multiple cost layers dan batas kuantitas. Publikasikan
@@ -26,7 +26,7 @@ migration disposable, native MySQL termasuk peer race dan stale read.
 
 ## Increment 3: Posting Returns Dan UI
 
-Status: Planned.
+Status: In Progress.
 
 Action Returns mengunci revisi draft, memvalidasi sumber dan memanggil writer
 Stock pada shared transaction. Tambahkan permission posting terpisah melalui

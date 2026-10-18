@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
 
 final class SalesReturnFixture
 {
-    public static function seed(string $unitCode = 'UNIT', string $quantity = '2'): array
+    public static function seed(string $unitCode = 'UNIT', string $quantity = '2', bool $withBox = false): array
     {
         foreach ([WarehousesDemoSeeder::class, UnitsDemoSeeder::class, ItemsDemoSeeder::class,
             PartiesDemoSeeder::class, ItemPricesDemoSeeder::class, StockDemoSeeder::class, PaymentsDemoSeeder::class] as $seeder) {
@@ -29,11 +29,15 @@ final class SalesReturnFixture
         $unit = DB::table('units')->where('code', $unitCode)->value('id');
         $warehouse = DB::table('warehouses')->where('code', 'WH-MAIN')->value('id');
         $customer = DB::table('customers')->where('code', 'DEMO-INSTALLER')->value('id');
-        $quote = app(CheckCart::class)->handle($warehouse, $customer, [new CartLineData($item->id, $unit, $quantity)]);
+        $lines = [['item_id' => $item->id, 'unit_id' => $unit, 'quantity' => $quantity]];
+        if ($withBox) {
+            $lines[] = ['item_id' => $item->id, 'unit_id' => DB::table('units')->where('code', 'BOX')->value('id'), 'quantity' => '1'];
+        }
+        $quote = app(CheckCart::class)->handle($warehouse, $customer, array_map(fn ($line) => new CartLineData($line['item_id'], $line['unit_id'], $line['quantity']), $lines));
 
         return app(PostInvoice::class)->handle(['idempotency_key' => strtolower((string) Str::ulid()),
             'warehouse_id' => $warehouse, 'customer_id' => $customer, 'quote_fingerprint' => $quote['fingerprint'],
-            'lines' => [['item_id' => $item->id, 'unit_id' => $unit, 'quantity' => $quantity]],
+            'lines' => $lines,
             'payments' => [['method_id' => DB::table('payment_methods')->where('code', 'TUNAI')->value('id'), 'amount' => $quote['subtotal']]]], $actor->id);
     }
 

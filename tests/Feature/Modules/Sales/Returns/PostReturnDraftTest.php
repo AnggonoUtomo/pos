@@ -56,6 +56,9 @@ class PostReturnDraftTest extends TestCase
         $this->putJson('/sales/returns/'.$id, ['invoice_id' => $this->invoice['id'], 'version' => 2, 'lines' => [['invoice_line_id' => $this->invoice['lines'][0]['id'], 'quantity' => '1']]])->assertUnprocessable();
         $this->deleteJson('/sales/returns/'.$id, ['version' => 2])->assertUnprocessable();
         $rows = $this->getJson('/sales/returns/data')->assertOk()->json('data');
+        $this->getJson('/sales/returns/data?status=posted')->assertOk()->assertJsonPath('meta.total', 1);
+        $this->getJson('/sales/returns/data?status=draft')->assertOk()->assertJsonPath('meta.total', 0);
+        $this->getJson('/sales/returns/data?status=invalid')->assertUnprocessable();
         $json = json_encode($rows);
         foreach (['total_cost', 'total_value', 'request_hash', 'posted_by'] as $private) {
             $this->assertStringNotContainsString($private, $json);
@@ -114,5 +117,19 @@ class PostReturnDraftTest extends TestCase
         DB::table('items')->where('id', $this->invoice['lines'][0]['item_id'])->update(['is_active' => false]);
         $this->postJson('/sales/returns/'.$id.'/post', ['version' => 1])->assertUnprocessable();
         $this->assertDatabaseCount('stock_return_allocations', 0);
+    }
+
+    public function test_same_item_in_two_original_units_has_independent_limits_and_cost_traces(): void
+    {
+        $invoice = SalesReturnFixture::seed('UNIT', '2', withBox: true);
+        $input = ['invoice_id' => $invoice['id'], 'lines' => array_map(fn ($line) => ['invoice_line_id' => $line['id'],
+            'quantity' => $line['conversion_ratio'] === '4.000000' ? '0.125' : '0.5'], $invoice['lines'])];
+        $id = app(ManageReturnDraft::class)->save($input);
+        $this->postJson('/sales/returns/'.$id.'/post', ['version' => 1])->assertOk();
+        $this->assertDatabaseCount('stock_return_allocations', 2);
+        foreach (DB::table('stock_receipt_lines')->get() as $line) {
+            $this->assertSame('0.500000', $line->quantity);
+            $this->assertSame('250000.000000', $line->total_value);
+        }
     }
 }

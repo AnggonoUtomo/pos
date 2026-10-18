@@ -36,7 +36,7 @@
   - Acceptance: receipt/movement/layer immutable dan source unik; histori sale
     utuh; tidak membaca model/DB privat POS atau Returns.
   - Verification: feature test, migration disposable dan route inspection.
-- [ ] Buktikan locking, replay dan rollback audit.
+- [x] Buktikan locking, replay dan rollback audit.
   - Acceptance: dua draft bersaing tidak melewati sisa barang terjual; retry sama
     tidak menggandakan stok; audit gagal membatalkan seluruh mutation.
   - Verification: feature tests dan native MySQL disposable dengan cleanup.
@@ -53,7 +53,7 @@
 - [ ] Verifikasi desktop/tablet Light/Dark dan expanded/collapsed.
   - Acceptance: tidak overflow/overlap; permission visibility benar.
   - Verification: QA1440x1000,1024x768,768x1024; mobile di luar scope.
-- [ ] Pertimbangkan demo posting relasional yang eksplisit dan aman.
+- [x] Pertimbangkan demo posting relasional yang eksplisit dan aman.
   - Acceptance: local/testing, idempotent, tidak menimpa/posting draft user;
     alasan skip dicatat bila tidak ada fixture yang aman.
   - Verification: seeder test atau review alasan skip.
@@ -103,3 +103,18 @@ Stock memakai stock_receipts source_type sale_return dan stock_return_allocation
 untuk cumulative current read. Port internal receipt mendapat sourceType default
 purchase dan receiveLine mengembalikan ID; consumer purchase existing tetap
 kompatibel dan diuji. Published SaleReturnStockWriter dikonsumsi PostReturnDraft.
+
+Increment 2 native PASS: `php scripts/qa/sale-return-posting-mysql.php` memakai
+DB random pos_return_post_qa_ dan dua proses PHP independen. Dua draft berebut
+sisa penjualan: tepat satu posted dan satu ditolak, tanpa over-return. BOX/base
+dan HPP asal exact, replay no-op, audit veto rollback, source/Finance immutable,
+full residual conserved, guard rollback posted dan finally DROP DB QA PASS.
+Micro-cost nyata: stok awal positif -> sale berbiaya0 -> retur -> jual ulang
+seluruhnya, HPP0,000003 tetap terjaga pada MySQL native.
+
+Test tambahan PASS18 test/79 assertion untuk ReturnAllocation/Stock/Returns:
+barang sama dengan dua satuan asal ditelusuri per line, satu sale line dari dua
+cost consumption berbeda, gudang tujuan berbeda ditolak, filter status dan
+privacy HPP. Demo posted sengaja SKIPPED di seeder operasional: ReturnsDemoSeeder
+tetap hanya draft agar tidak otomatis memposting/mengubah stok draft user.
+Fixture QA disposable menyediakan skenario posted CCTV yang relevan.

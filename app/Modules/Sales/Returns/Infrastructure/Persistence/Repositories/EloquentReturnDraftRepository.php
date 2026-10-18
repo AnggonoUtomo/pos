@@ -99,9 +99,12 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         }
     }
 
-    public function paginate(int $page, string $search, bool $trashed): array
+    public function paginate(int $page, string $search, bool $trashed, string $status = 'all'): array
     {
         $query = $trashed ? SalesReturn::onlyTrashed() : SalesReturn::query();
+        if (in_array($status, ['draft', 'posted'], true)) {
+            $query->where('status', $status);
+        }
         if ($search !== '') {
             $like = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
             $query->where(fn ($q) => $q->whereRaw("number LIKE ? ESCAPE '!'", [$like])

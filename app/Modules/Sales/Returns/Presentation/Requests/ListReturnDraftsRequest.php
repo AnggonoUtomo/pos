@@ -14,11 +14,11 @@ class ListReturnDraftsRequest extends FormRequest
     public function rules(): array
     {
         return ['search' => ['nullable', 'string', 'max:150'], 'page' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
-            'trashed' => ['sometimes', 'boolean']];
+            'trashed' => ['sometimes', 'boolean'], 'status' => ['sometimes', 'in:all,draft,posted']];
     }
 
     public function filters(): array
     {
-        return ['search' => trim($this->validated('search') ?? ''), 'trashed' => (bool) $this->validated('trashed', false)];
+        return ['search' => trim($this->validated('search') ?? ''), 'trashed' => (bool) $this->validated('trashed', false), 'status' => $this->validated('status', 'all')];
     }
 }
