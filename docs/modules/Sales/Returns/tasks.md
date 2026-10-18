@@ -1,6 +1,9 @@
 # Checklist Retur Penjualan
 
 - [x] Fondasi draft terverifikasi dan aktif lokal.
-- [ ] Posting/refund disepakati pada pekerjaan terpisah.
+- [x] Scope posting barang layak jual disetujui pada pekerjaan terpisah.
+- [ ] Urutan FIFO/valuasi dikunci dan posting selesai diverifikasi.
+- [ ] Refund/karantina/tukar/reversal disepakati pada pekerjaan terpisah.
 
 Checklist rinci: [Fondasi draft](work-items/draft-foundation/tasks.md).
+Pekerjaan berikutnya: [Posting retur](../../../work-items/sale-return-posting/tasks.md).
