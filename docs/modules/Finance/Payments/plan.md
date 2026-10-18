@@ -11,6 +11,10 @@
    exact6, ledger terpisah/replay, consumer Purchasing, tanpa mutation Stock.
 4. [Riwayat pembayaran](work-items/payment-history/plan.md): baca dua arah,
    filter/snapshot/permission khusus, tanpa mutation/aggregate saldo.
-5. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
+5. [Refund retur lunas](../../../work-items/sale-return-refund/plan.md): scope
+   disetujui; rencana writer pengeluaran khusus refund, snapshot/replay/audit,
+   metode aktif bebas dari split asal dan integrasi riwayat. Belum diimplementasi;
+   penyelesaian nol milik Returns tanpa ledger uang. Bukan pembayaran purchase.
+6. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
 
 Jangan membuat saldo/payment record dari checklist fondasi master ini.

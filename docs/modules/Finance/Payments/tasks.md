@@ -20,3 +20,8 @@ Running balance, piutang/utang dan mutasi umum belum dikerjakan.
 - [x] Riwayat pembayaran dua arah readonly, filter/permission/detail snapshot,
   GET fingerprint dan QA backend/browser/native.
   Bukti [payment-history](work-items/payment-history/tasks.md).
+
+- [x] Scope pengeluaran refund retur lunas disetujui melalui interview.
+- [ ] Writer refund, histori, guard master dan QA lintas module diverifikasi;
+  ikuti [checklist refund](../../../work-items/sale-return-refund/tasks.md).
+  Tidak membuat payout dari checklist atau seeder ini.

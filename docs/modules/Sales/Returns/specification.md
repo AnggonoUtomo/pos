@@ -20,8 +20,8 @@
 
 Draft sendiri tidak mengubah stok/FIFO, refund atau invoice/pembayaran asal.
 Beberapa draft boleh menunjuk invoice sama; batas kumulatif diperiksa saat
-posting melalui writer Stock. Harga asal bukan nominal refund; kebijakan
-refund dan pembulatannya belum ditetapkan.
+posting melalui writer Stock. Harga asal bukan HPP atau uang yang otomatis
+dikembalikan; scope refund disetujui terpisah di bawah dan belum diimplementasi.
 
 Tidak ada endpoint edit invoice, hapus permanen, atau perubahan ledger bebas.
 Snapshot publik tidak memuat HPP, pembayaran, request hash, maupun credential.
@@ -46,6 +46,23 @@ atau audit ganda. First posting memerlukan master aktif; replay tidak bergantung
 master aktif. Finance/invoice/consumption asal immutable; refund, karantina,
 tukar, gudang tujuan bebas dan reversal tetap belum tersedia. HPP tidak menjadi
 props atau response Returns. Audit Returns dan Stock berada dalam satu transaction.
+
+## Rencana Refund Lunas (Belum Diimplementasi)
+
+Scope disetujui melalui interview pada [work item refund](../../../work-items/sale-return-refund/README.md).
+Hanya retur posted, satu penyelesaian penuh dengan multi-payment tepat tanpa
+kembalian. Nominal otomatis dari nilai bersih snapshot baris invoice asal,
+proporsional kuantitas, scale2/round down untuk sebagian dan residual pada
+penghabisan jumlah terjual. Tidak memakai harga master/HPP atau input total bebas.
+
+Metode aktif boleh berbeda dari pembayaran asal. Nilai Rp0,00 diselesaikan
+sebagai Tanpa pengembalian uang dengan permission/audit, tanpa metode atau
+ledger nol; alokasi kuantitas tetap tercatat. Refund tidak mengubah Stock/FIFO
+atau penerimaan invoice asal. Posted lama tidak otomatis menjadi sudah dibayar.
+
+Permission, quote/stale handling, persistence, published contract Finance dan
+QA mengikuti increment work item; belum ada route/schema baru dari rencana ini.
+Pembayaran parsial, kredit pelanggan, tukar barang dan reversal di luar scope.
 
 ## Demo Dan UI
 
