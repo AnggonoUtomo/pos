@@ -26,7 +26,7 @@ migration disposable, native MySQL termasuk peer race dan stale read.
 
 ## Increment 3: Posting Returns Dan UI
 
-Status: In Progress.
+Status: Passed.
 
 Action Returns mengunci revisi draft, memvalidasi sumber dan memanggil writer
 Stock pada shared transaction. Tambahkan permission posting terpisah melalui
@@ -42,7 +42,7 @@ Returns setelah Stock berhasil, browser DevTools dan desktop/tablet Light/Dark.
 
 ## Increment 4: Aktivasi Dan Delivery
 
-Status: Planned.
+Status: In Progress.
 
 Jalankan regresi, typecheck/lint/build, route/migration, native QA, dan review
 boundary. Aktivasi lokal hanya schema/katalog permission; fingerprint data lama

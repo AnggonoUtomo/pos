@@ -33,14 +33,16 @@ export type ReturnRow = {
     invoice_id: string;
     invoice_number: string;
     customer_name: string;
-    status: 'draft';
+    status: 'draft' | 'posted';
     version: number;
     notes: string | null;
     deleted_at: string | null;
+    posted_at: string | null;
+    stock_receipt_id: string | null;
     snapshot: InvoiceHeader;
     lines: { id: string; invoice_line_id: string; quantity: string; base_quantity: string; snapshot: InvoiceLine }[];
 };
-export type ReturnFilters = { search: string; trashed: boolean };
+export type ReturnFilters = { search: string; trashed: boolean; status: 'all' | 'draft' | 'posted' };
 export type ReturnPageProps = {
     records: { data: ReturnRow[]; meta: { current_page: number; last_page: number; total: number; per_page: number } };
     filters: ReturnFilters;

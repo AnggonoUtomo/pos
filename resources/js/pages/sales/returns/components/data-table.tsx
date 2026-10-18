@@ -2,17 +2,21 @@ import { MasterActions } from '@/components/shared/master-actions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Eye, RotateCcw } from 'lucide-react';
+import { CheckCheck, Eye, RotateCcw } from 'lucide-react';
 import type { ReturnRow } from '../types';
 
 export function DataTable({
     rows,
     canManage,
+    canPost,
+    onPost,
     onOpen,
     onLifecycle,
 }: {
     rows: ReturnRow[];
     canManage: boolean;
+    canPost: boolean;
+    onPost: (row: ReturnRow) => void;
     onOpen: (row: ReturnRow, readOnly: boolean) => void;
     onLifecycle: (row: ReturnRow) => void;
 }) {
@@ -33,7 +37,7 @@ export function DataTable({
                         <tr>
                             <td colSpan={6} className="text-muted-foreground px-4 py-16 text-center">
                                 <RotateCcw className="mx-auto mb-3 size-7 text-rose-600 dark:text-rose-300" />
-                                Tidak ada draft retur.
+                                Tidak ada retur.
                             </td>
                         </tr>
                     ) : (
@@ -47,8 +51,15 @@ export function DataTable({
                                 <td className="max-w-44 px-4 py-3 break-words">{row.snapshot.warehouse_name}</td>
                                 <td className="px-4 py-3">{row.lines.length}</td>
                                 <td className="px-4 py-3">
-                                    <Badge variant="outline" className="border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                                        {row.deleted_at ? 'Terhapus' : 'Draft'}
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            row.status === 'posted'
+                                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                                                : 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                                        }
+                                    >
+                                        {row.deleted_at ? 'Terhapus' : row.status === 'posted' ? 'Diterima' : 'Draft'}
                                     </Badge>
                                 </td>
                                 <td className="px-3 py-2">
@@ -66,6 +77,21 @@ export function DataTable({
                                             </TooltipTrigger>
                                             <TooltipContent>Detail</TooltipContent>
                                         </Tooltip>
+                                        {canPost && row.status === 'draft' && !row.deleted_at && (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        aria-label={`Terima ${row.number}`}
+                                                        onClick={() => onPost(row)}
+                                                    >
+                                                        <CheckCheck className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Terima barang retur</TooltipContent>
+                                            </Tooltip>
+                                        )}
                                         {canManage && row.status === 'draft' && (
                                             <MasterActions
                                                 record={{ id: row.id, name: row.number, is_active: true, deleted_at: row.deleted_at }}

@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Modules\Sales\Returns\Database\Seeders\ReturnsAccessSeeder;
+use Brick\Math\BigDecimal;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -18,10 +19,21 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
 if (isset($input['verify'])) {
-    if (! is_string($input['verify']) || ! hash_equals($input['verify'], SalesReturnFixture::fingerprint())) {
+    $posting = ($input['posting'] ?? false) === true;
+    if (! is_string($input['verify']) || ! hash_equals($input['verify'], $posting ? SalesReturnFixture::sourceFingerprint() : SalesReturnFixture::fingerprint())) {
         throw new RuntimeException('Operasi draft mengubah ledger asal.');
     }
-    echo json_encode(['ledger' => 'unchanged', 'drafts' => DB::table('sales_returns')->count(),
+    if ($posting) {
+        $posted = DB::table('sales_returns')->where('status', 'posted')->sole();
+        $line = DB::table('stock_receipt_lines')->where('receipt_id', $posted->stock_receipt_id)->sole();
+        $balance = DB::table('stock_balances')->where('item_id', $line->item_id)->where('warehouse_id', json_decode($posted->snapshot, true)['warehouse_id'])->sole();
+        if (! BigDecimal::of($line->quantity)->isEqualTo($input['expected_quantity'])
+            || ! BigDecimal::of($balance->quantity)->isEqualTo(BigDecimal::of($input['initial_balance'])->plus($line->quantity))
+            || DB::table('stock_return_allocations')->count() !== 1) {
+            throw new RuntimeException('Efek posting retur tidak sesuai.');
+        }
+    }
+    echo json_encode(['ledger' => $posting ? 'source unchanged; stock return verified' : 'unchanged', 'drafts' => DB::table('sales_returns')->count(),
         'events' => DB::table('activity_log')->where('log_name', 'sales.returns')->orderBy('id')->pluck('event')->all()]);
     exit;
 }
@@ -38,7 +50,11 @@ foreach (['manager', 'viewer', 'outsider'] as $role) {
     }
     if ($role === 'manager') {
         $user->givePermissionTo('sales.returns.manage');
+        if (($input['posting'] ?? false) === true) {
+            $user->givePermissionTo('sales.returns.post');
+        }
     }
 }
-echo json_encode(['fingerprint' => SalesReturnFixture::fingerprint(), 'number' => $invoice['number'],
+echo json_encode(['fingerprint' => ($input['posting'] ?? false) === true ? SalesReturnFixture::sourceFingerprint() : SalesReturnFixture::fingerprint(),
+    'initial_balance' => DB::table('stock_balances')->where('warehouse_id', $invoice['warehouse_id'])->where('item_id', $invoice['lines'][0]['item_id'])->value('quantity'), 'number' => $invoice['number'],
     'invoice_id' => $invoice['id'], 'sku' => $invoice['lines'][0]['sku']], JSON_THROW_ON_ERROR);

@@ -8,6 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const posting = process.argv.includes('--posting');
 assert(process.env.QA_PLAYWRIGHT_MODULE, 'Gunakan Playwright existing.');
 const { chromium } = createRequire(import.meta.url)(process.env.QA_PLAYWRIGHT_MODULE);
 const id = randomBytes(8).toString('hex');
@@ -17,7 +18,7 @@ const port = await new Promise((resolve, reject) => { const s = createServer(); 
 const url = `http://127.0.0.1:${port}`;
 const env = { ...process.env, APP_ENV: 'testing', APP_DEBUG: 'false', APP_URL: url, DB_CONNECTION: 'sqlite', DB_DATABASE: database, CACHE_STORE: 'array', SESSION_DRIVER: 'database', SESSION_COOKIE: `returns_${id}`, SESSION_DOMAIN: 'null', SESSION_SECURE_COOKIE: 'false', MAIL_MAILER: 'array' };
 const fixture = (input) => { const r = spawnSync('php', ['tests/Browser/sales-returns-fixture.php'], { cwd: root, env, input: JSON.stringify(input), encoding: 'utf8', windowsHide: true }); assert.equal(r.status, 0, 'Fixture/verifikasi retur gagal.'); return JSON.parse(r.stdout); };
-const password = randomBytes(32).toString('hex'); const setup = fixture({ password });
+const password = randomBytes(32).toString('hex'); const setup = fixture({ password, posting });
 console.log('QA: fixture retur siap.');
 const server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], { cwd: path.join(root, 'public'), env, stdio: 'ignore', windowsHide: true });
 const errors = []; const expected = []; const checks = []; let browser; let page; let expectedFailure = false;
@@ -36,7 +37,7 @@ try {
     };
     ({ target: page } = await open('manager'));
     await page.getByRole('link', { name: /Retur Penjualan/ }).click(); await page.getByRole('heading', { name: 'Retur penjualan', exact: true }).waitFor();
-    await page.getByText('Tidak ada draft retur.', { exact: true }).waitFor(); console.log('QA: halaman dan empty state siap.');
+    await page.getByText('Tidak ada retur.', { exact: true }).waitFor(); console.log('QA: halaman dan empty state siap.');
     const dialog = () => page.getByRole('dialog');
     const shot = async (name) => {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}: body overflow`);
@@ -51,16 +52,25 @@ try {
     let number = (await page.locator('tbody tr').first().innerText()).match(/SR-[A-Z0-9]{26}/)[0];
     await page.getByRole('button', { name: `Edit ${number}`, exact: true }).click(); await page.getByLabel(`Kuantitas retur ${setup.sku}`, { exact: true }).waitFor(); assert.equal(await page.getByLabel(`Kuantitas retur ${setup.sku}`, { exact: true }).inputValue(), '1,5');
     await page.getByLabel(`Kuantitas retur ${setup.sku}`, { exact: true }).fill('1'); await page.getByLabel('Catatan', { exact: true }).fill('QA pemeriksaan kamera'); await page.keyboard.press('Control+Enter'); await dialog().waitFor({ state: 'hidden' });
-    await page.getByRole('button', { name: `Hapus ${number}`, exact: true }).click(); await page.keyboard.press('Control+Enter'); await dialog().waitFor({ state: 'hidden' }); await page.getByText('Tidak ada draft retur.', { exact: true }).waitFor();
+    await page.getByRole('button', { name: `Hapus ${number}`, exact: true }).click(); await page.keyboard.press('Control+Enter'); await dialog().waitFor({ state: 'hidden' }); await page.getByText('Tidak ada retur.', { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Terhapus', exact: true }).click(); await page.getByRole('button', { name: `Pulihkan ${number}`, exact: true }).click(); await page.keyboard.press('Control+Enter'); await dialog().waitFor({ state: 'hidden' });
     await page.getByRole('button', { name: 'Data', exact: true }).click(); await page.getByRole('button', { name: `Detail ${number}`, exact: true }).waitFor(); console.log('QA: tambah/edit/hapus/pulihkan dan angka Indonesia PASS.');
-    await page.getByLabel('Cari retur', { exact: true }).fill('%'); await page.getByRole('button', { name: 'Cari', exact: true }).click(); await page.getByText('Tidak ada draft retur.', { exact: true }).waitFor();
+    await page.getByLabel('Cari retur', { exact: true }).fill('%'); await page.getByRole('button', { name: 'Cari', exact: true }).click(); await page.getByText('Tidak ada retur.', { exact: true }).waitFor();
     await page.getByLabel('Cari retur', { exact: true }).fill(''); await page.getByRole('button', { name: 'Cari', exact: true }).click(); await page.getByRole('button', { name: `Detail ${number}`, exact: true }).waitFor();
     expectedFailure = true; let fail = true;
     const sourceUrl = `**/sales/returns/invoices/${setup.invoice_id}`;
     await page.route(sourceUrl, (r) => fail ? (fail = false, r.fulfill({ status: 500, contentType: 'application/json', body: '{}' })) : r.continue());
     await page.getByRole('button', { name: `Edit ${number}`, exact: true }).click(); await page.getByRole('alert').filter({ hasText: 'Snapshot belum dapat dimuat.' }).waitFor();
     assert(await dialog().getByRole('button', { name: 'Simpan draft', exact: true }).isDisabled()); await page.getByRole('button', { name: 'Muat ulang snapshot', exact: true }).click(); await page.getByLabel(`Kuantitas retur ${setup.sku}`, { exact: true }).waitFor(); await page.keyboard.press('Escape'); await page.unroute(sourceUrl); expectedFailure = false;
+    if (posting) {
+        await page.getByRole('button', { name: `Terima ${number}`, exact: true }).click();
+        for (const [width, height] of [[1440, 1000], [1024, 768], [768, 1024]]) { await page.setViewportSize({ width, height }); await shot(`posting-confirm-${width}`); }
+        await page.keyboard.press('Control+Enter'); await dialog().waitFor({ state: 'hidden' }); await page.locator('tbody').getByText('Diterima', { exact: true }).waitFor();
+        for (const command of ['Edit', 'Hapus', 'Terima']) assert.equal(await page.getByRole('button', { name: `${command} ${number}`, exact: true }).count(), 0);
+        await page.getByRole('combobox', { name: 'Status retur', exact: true }).click(); await page.getByRole('option', { name: 'Draft', exact: true }).click(); await page.getByText('Tidak ada retur.', { exact: true }).waitFor();
+        await page.getByRole('combobox', { name: 'Status retur', exact: true }).click(); await page.getByRole('option', { name: 'Diterima', exact: true }).click(); await page.getByRole('button', { name: `Detail ${number}`, exact: true }).waitFor(); await page.reload();
+        checks.push('posting keyboard, readonly controls, status filter persisted: PASS');
+    } else assert.equal(await page.getByRole('button', { name: `Terima ${number}`, exact: true }).count(), 0);
     for (const mode of ['Light', 'Dark']) {
         await page.setViewportSize({ width: 1440, height: 1000 }); await page.getByRole('button', { name: 'Tema', exact: true }).click(); await page.getByRole('menuitem', { name: mode, exact: true }).click(); await page.keyboard.press('Escape');
         for (const [width, height] of [[1440, 1000], [1024, 768], [768, 1024]]) {
@@ -70,14 +80,16 @@ try {
                 if ((state === 'collapsed') !== collapsed) await page.locator('[data-sidebar="trigger"]').first().click(); await page.waitForTimeout(250);
                 await shot(`${mode.toLowerCase()}-${width}-${collapsed ? 'collapsed' : 'expanded'}`);
             }
-            await page.getByRole('button', { name: `Edit ${number}`, exact: true }).click(); await page.getByLabel(`Kuantitas retur ${setup.sku}`, { exact: true }).waitFor(); await shot(`${mode.toLowerCase()}-form-${width}`); await page.keyboard.press('Escape');
+            await page.getByRole('button', { name: `${posting ? 'Detail' : 'Edit'} ${number}`, exact: true }).click();
+            if (posting) await dialog().getByRole('heading', { name: 'Detail retur penjualan', exact: true }).waitFor(); else await page.getByLabel(`Kuantitas retur ${setup.sku}`, { exact: true }).waitFor();
+            await shot(`${mode.toLowerCase()}-form-${width}`); await page.keyboard.press('Escape');
         }
     }
     await page.keyboard.press('Control+k'); await dialog().getByPlaceholder('Cari menu atau operasi...').fill('Retur'); assert(await dialog().getByText('Retur Penjualan', { exact: true }).isVisible()); await page.keyboard.press('Escape');
     const viewer = await open('viewer'); await viewer.target.goto(`${url}/sales/returns`); assert.equal(await viewer.target.getByRole('button', { name: 'Tambah draft retur', exact: true }).count(), 0); await viewer.target.getByRole('button', { name: `Detail ${number}`, exact: true }).click(); assert.equal(await viewer.target.getByRole('button', { name: 'Simpan draft', exact: true }).count(), 0); await viewer.context.close();
     expectedFailure = true; const outsider = await open('outsider'); const denied = await outsider.target.goto(`${url}/sales/returns`); assert.equal(denied.status(), 403); await outsider.context.close(); expectedFailure = false;
-    const state = fixture({ verify: setup.fingerprint }); assert.deepEqual(state.events, ['created', 'updated', 'deleted', 'restored']); assert.deepEqual(errors, []);
-    const report = { status: 'PASS', checks: [...checks, 'CRUD, validation, source retry, permissions, shortcut/palette, unchanged invoice/stock/finance PASS'], console: errors, expectedFailures: expected.length, state, artifacts: path.relative(root, artifacts) }; await writeFile(path.join(artifacts, 'report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));
+    const state = fixture({ verify: setup.fingerprint, posting, expected_quantity: '1', initial_balance: setup.initial_balance }); assert.deepEqual(state.events, ['created', 'updated', 'deleted', 'restored', ...(posting ? ['posted'] : [])]); assert.deepEqual(errors, []);
+    const report = { status: 'PASS', posting, checks: [...checks, 'CRUD, validation, source retry, permissions, shortcut/palette, source ledger and stock delta verified PASS'], console: errors, expectedFailures: expected.length, state, artifacts: path.relative(root, artifacts) }; await writeFile(path.join(artifacts, 'report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));
 } catch (error) {
     if (page) await page.screenshot({ path: path.join(artifacts, 'failure.png'), fullPage: true }).catch(() => {});
     await writeFile(path.join(artifacts, 'report.json'), JSON.stringify({ status: 'FAIL', error: error.message, checks, console: errors }, null, 2)); throw error;

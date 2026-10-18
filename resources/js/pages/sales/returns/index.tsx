@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
@@ -15,6 +16,8 @@ import type { ReturnFilters, ReturnPageProps, ReturnRow } from './types';
 export default function Returns({ records, filters }: ReturnPageProps) {
     const { can } = usePermission();
     const canManage = can('sales.returns.manage');
+    const canPost = can('sales.returns.post');
+    const [posting, setPosting] = useState<ReturnRow | null>(null);
     const [dialog, setDialog] = useState<{ record: ReturnRow | null; readOnly: boolean } | null>(null);
     const [lifecycle, setLifecycle] = useState<ReturnRow | null>(null);
     const [search, setSearch] = useState(filters.search);
@@ -55,11 +58,16 @@ export default function Returns({ records, filters }: ReturnPageProps) {
             <Head title="Retur penjualan" />
             <WorkspaceShortcutDropdown
                 title="Retur penjualan"
-                description={`${records.meta.total} draft ${filters.trashed ? 'terhapus' : 'tersedia'}`}
+                description={`${records.meta.total} dokumen ${filters.trashed ? 'terhapus' : 'tersedia'}`}
                 shortcuts={[
                     { label: 'Cari', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
                     { label: 'Tambah', description: 'Tambah draft retur', keys: ['Ctrl/Cmd', 'Shift', 'N'], disabled: !canManage || filters.trashed },
-                    { label: 'Simpan / Konfirmasi', description: 'Operasi dialog aktif', keys: ['Ctrl/Cmd', 'Enter'], disabled: !canManage },
+                    {
+                        label: 'Simpan / Konfirmasi',
+                        description: 'Operasi dialog aktif',
+                        keys: ['Ctrl/Cmd', 'Enter'],
+                        disabled: !canManage && !canPost,
+                    },
                     { label: 'Tutup', description: 'Tutup dialog', keys: ['Esc'] },
                 ]}
             />
@@ -93,7 +101,17 @@ export default function Returns({ records, filters }: ReturnPageProps) {
                             <Search className="size-4 text-sky-600 dark:text-sky-300" />
                         </Button>
                     </form>
-                    <div className="flex rounded-md border p-1" role="group" aria-label="Tampilan draft">
+                    <Select value={filters.status} disabled={loading} onValueChange={(status: ReturnFilters['status']) => visit({ status })}>
+                        <SelectTrigger className="w-44" aria-label="Status retur">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Semua status</SelectItem>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="posted">Diterima</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div className="flex rounded-md border p-1" role="group" aria-label="Tampilan retur">
                         {[false, true].map((trashed) => (
                             <Button
                                 key={String(trashed)}
@@ -116,12 +134,14 @@ export default function Returns({ records, filters }: ReturnPageProps) {
                 <DataTable
                     rows={records.data}
                     canManage={canManage && !loading}
-                    onOpen={(record, readOnly) => setDialog({ record, readOnly })}
+                    canPost={canPost && !loading}
+                    onPost={setPosting}
+                    onOpen={(record, readOnly) => setDialog({ record, readOnly: readOnly || record.status === 'posted' })}
                     onLifecycle={setLifecycle}
                 />
                 <div className="text-muted-foreground flex items-center justify-between gap-3 text-sm">
                     <span>
-                        Halaman {records.meta.current_page} dari {records.meta.last_page} / {records.meta.total} draft
+                        Halaman {records.meta.current_page} dari {records.meta.last_page} / {records.meta.total} dokumen
                     </span>
                     <div className="flex gap-2">
                         <Button
@@ -149,6 +169,7 @@ export default function Returns({ records, filters }: ReturnPageProps) {
             </section>
             {dialog && <ReturnFormDialog record={dialog.record} readOnly={dialog.readOnly} onClose={() => setDialog(null)} />}
             {lifecycle && <LifecycleDialog record={lifecycle} onClose={() => setLifecycle(null)} />}
+            {posting && <LifecycleDialog record={posting} mode="post" onClose={() => setPosting(null)} />}
         </AppLayout>
     );
 }

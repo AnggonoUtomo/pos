@@ -10,6 +10,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 // Jalankan MCP yang sudah terpasang, tanpa npx install atau profil Chrome user.
 assert(process.env.QA_DEVTOOLS_ENTRY, 'QA_DEVTOOLS_ENTRY wajib menunjuk executable MCP existing.');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const posting = process.argv.includes('--posting');
 const mcp = spawn(process.execPath, [process.env.QA_DEVTOOLS_ENTRY, '--headless', '--isolated', '--no-usage-statistics'], { stdio: ['pipe', 'pipe', 'ignore'], windowsHide: true });
 let sequence = 0;
 const pending = new Map();
@@ -44,7 +45,7 @@ try {
         const url = `http://127.0.0.1:${port}`;
         const env = { ...process.env, APP_ENV: 'testing', APP_DEBUG: 'false', APP_URL: url, DB_CONNECTION: 'sqlite', DB_DATABASE: database, CACHE_STORE: 'array', SESSION_DRIVER: 'database', SESSION_COOKIE: `returns_mcp_${id}`, SESSION_DOMAIN: 'null', SESSION_SECURE_COOKIE: 'false', MAIL_MAILER: 'array' };
         const fixture = (input) => { const r = spawnSync('php', ['tests/Browser/sales-returns-fixture.php'], { cwd: root, env, input: JSON.stringify(input), encoding: 'utf8', windowsHide: true }); assert.equal(r.status, 0, 'Fixture MCP gagal.'); return JSON.parse(r.stdout); };
-        const password = randomBytes(32).toString('hex'); const setup = fixture({ password });
+        const password = randomBytes(32).toString('hex'); const setup = fixture({ password, posting });
         server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], { cwd: path.join(root, 'public'), env, stdio: 'ignore', windowsHide: true });
         let ready = false;
         for (let i = 0; i < 20; i++) { try { const r = await fetch(`${url}/login`, { signal: AbortSignal.timeout(2500) }); await r.arrayBuffer(); if (r.ok) { ready = true; break; } } catch { /* Await QA server. */ } await new Promise((r) => setTimeout(r, 250)); }
@@ -81,7 +82,13 @@ try {
         await click('button', 'Simpan draft');
         let number;
         for (let i = 0; i < 40; i++) { const text = await snapshot(); number = text.match(/SR-[A-Z0-9]{26}/)?.[0]; if (number && !text.includes('dialog "Tambah draft retur"')) break; await new Promise((r) => setTimeout(r, 250)); }
-        assert(number, 'Draft belum tersimpan.'); await click('button', `Detail ${number}`);
+        assert(number, 'Draft belum tersimpan.');
+        if (posting) {
+            await click('button', `Terima ${number}`); await click('button', 'Terima barang');
+            await locate('button', `Detail ${number}`);
+            assert(!(await snapshot()).includes(`button "Edit ${number}"`), 'Posted masih dapat diedit.');
+        }
+        await click('button', `Detail ${number}`);
         assert((await snapshot()).includes('1,25'), 'Format qty Indonesia tidak tampil.');
         const screenshots = [];
         for (const [width, height] of [[1440, 1000], [1024, 768], [768, 1024]]) {
@@ -94,8 +101,8 @@ try {
         assert(!/Uncaught|Warning:|TypeError|ReferenceError/i.test(consoleMessages), 'Error runtime DevTools.');
         const network = await tool('list_network_requests', { pageId, resourceTypes: ['document', 'xhr', 'fetch', 'script', 'stylesheet'] });
         assert(!network.split('\n').some((line) => line.includes(url) && /failed|status: [45]\d\d/i.test(line)), 'Request aplikasi DevTools gagal.');
-        const state = fixture({ verify: setup.fingerprint }); assert.deepEqual(state.events, ['created']);
-        const report = { status: 'PASS', method: 'Chrome DevTools MCP stdio existing, isolated profile', checks: ['login, source lookup, create, snapshot detail, Indonesian quantity, desktop/tablet framing', 'invoice/stock/FIFO/finance unchanged', 'console/runtime and internal network checked'], screenshots, artifacts: path.relative(root, artifacts) };
+        const state = fixture({ verify: setup.fingerprint, posting, expected_quantity: '1.25', initial_balance: setup.initial_balance }); assert.deepEqual(state.events, ['created', ...(posting ? ['posted'] : [])]);
+        const report = { status: 'PASS', posting, method: 'Chrome DevTools MCP stdio existing, isolated profile', checks: ['login, source lookup, create, optional posting/readonly, snapshot detail, Indonesian quantity, desktop/tablet framing', 'source invoice/consumption/finance unchanged; stock delta verified', 'console/runtime and internal network checked'], screenshots, artifacts: path.relative(root, artifacts) };
         await writeFile(path.join(artifacts, 'devtools-report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));
     }
 } finally {

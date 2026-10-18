@@ -108,7 +108,7 @@ const commandItems = [
     },
     {
         title: 'Retur Penjualan',
-        description: 'Draft retur berdasarkan invoice asal',
+        description: 'Retur penjualan berdasarkan invoice asal',
         url: '/sales/returns',
         permission: 'sales.returns.view',
         icon: RotateCcw,

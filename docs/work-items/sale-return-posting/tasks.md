@@ -47,10 +47,10 @@
   - Acceptance: shared transaction, stale ditolak, replay aman, posted tidak
     edit/hapus/restore; tidak menghitung atau mengeluarkan refund.
   - Verification: focused test termasuk super-system dan rollback lintas module.
-- [ ] Tambahkan konfirmasi, status/detail/filter, shortcut dan Sonner.
+- [x] Tambahkan konfirmasi, status/detail/filter, shortcut dan Sonner.
   - Acceptance: HPP tidak bocor; posted readonly; loading/error/retry berfungsi.
   - Verification: typecheck, ESLint, build, DevTools MCP dan screenshot.
-- [ ] Verifikasi desktop/tablet Light/Dark dan expanded/collapsed.
+- [x] Verifikasi desktop/tablet Light/Dark dan expanded/collapsed.
   - Acceptance: tidak overflow/overlap; permission visibility benar.
   - Verification: QA1440x1000,1024x768,768x1024; mobile di luar scope.
 - [x] Pertimbangkan demo posting relasional yang eksplisit dan aman.
@@ -60,7 +60,7 @@
 
 ## Increment 4: Penutupan
 
-- [ ] Jalankan full regression, formatter, frontend gate dan native MySQL.
+- [x] Jalankan full regression, formatter, frontend gate dan native MySQL.
   - Acceptance: semua command tercatat dengan hasil aktual; no-negative/FIFO
     penjualan dan pembelian existing tidak regresi.
   - Verification: test, Pint, tsc, ESLint, build, QA native/browser.
@@ -118,3 +118,23 @@ cost consumption berbeda, gudang tujuan berbeda ditolak, filter status dan
 privacy HPP. Demo posted sengaja SKIPPED di seeder operasional: ReturnsDemoSeeder
 tetap hanya draft agar tidak otomatis memposting/mengubah stok draft user.
 Fixture QA disposable menyediakan skenario posted CCTV yang relevan.
+
+Increment 3 Passed: `npx tsc --noEmit`, `npx eslint resources/js`, `npm run build`
+PASS2735 module. Chrome DevTools MCP namespace tidak diekspos sesi; server MCP
+existing diakses stdio isolated melalui script dengan roots hanya workspace,
+tanpa dependency/config/profil user berubah. `sales-returns-devtools.mjs --posting`
+PASS tambah/post/readonly, angka1,25, snapshot, framing1440/1024/768, console/
+network internal dan source fingerprint serta delta stok. Artefak:
+storage/framework/testing/sales-returns-browser-bf03c3fb5651bed6/.
+
+`sales-returns-browser.mjs --posting` PASS: CRUD draft, qty berlebih ditolak,
+source500 terkontrol/retry, posting keyboard, filter status bertahan setelah
+reload, posted tanpa edit/hapus/terima lagi, viewer readonly dan outsider403,
+shortcut/palette, Light/Dark desktop1440/tablet1024/768 expanded/collapsed,
+konfirmasi dan detail framing. Console unexpected kosong; dua error disengaja
+terpisah. Source invoice/consumption/Finance unchanged, delta stok dan satu
+trace benar, event created/updated/deleted/restored/posted. Screenshot direview.
+Artefak: storage/framework/testing/sales-returns-browser-8145b63ab67603a7/.
+
+Gate akhir sebelum aktivasi: `php artisan test --compact` PASS525 test/4057
+assertion; scoped Pint dan diff --check PASS. QA mobile di luar scope.

@@ -105,7 +105,15 @@ export function ReturnFormDialog({ record, readOnly, onClose }: { record: Return
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle>{readOnly ? 'Detail draft retur' : record ? 'Edit draft retur' : 'Tambah draft retur'}</DialogTitle>
+                    <DialogTitle>
+                        {readOnly
+                            ? record?.status === 'posted'
+                                ? 'Detail retur penjualan'
+                                : 'Detail draft retur'
+                            : record
+                              ? 'Edit draft retur'
+                              : 'Tambah draft retur'}
+                    </DialogTitle>
                     <DialogDescription className={record ? 'break-all' : 'sr-only'}>
                         {record ? `${record.number} / Revisi ${record.version}` : 'Draft retur penjualan'}
                     </DialogDescription>
@@ -237,8 +245,15 @@ export function ReturnFormDialog({ record, readOnly, onClose }: { record: Return
                         <InputError message={errors.notes} />
                     </div>
                     <DialogFooter className="items-center sm:justify-between">
-                        <Badge variant="outline" className="border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                            Draft
+                        <Badge
+                            variant="outline"
+                            className={
+                                record?.status === 'posted'
+                                    ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                                    : 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                            }
+                        >
+                            {record?.status === 'posted' ? 'Diterima' : 'Draft'}
                         </Badge>
                         <div className="flex gap-2">
                             <Button type="button" variant="outline" disabled={form.processing} onClick={onClose}>

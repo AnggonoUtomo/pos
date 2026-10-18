@@ -117,7 +117,7 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Retur Penjualan',
                 url: '/sales/returns',
                 icon: RotateCcw,
-                badge: 'Draft',
+                badge: 'Aktif',
                 badgeTone: 'rose',
                 permission: 'sales.returns.view',
             },
