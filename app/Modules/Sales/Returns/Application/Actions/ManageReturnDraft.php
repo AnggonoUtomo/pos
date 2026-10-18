@@ -49,9 +49,10 @@ final class ManageReturnDraft
                     'base_quantity' => $quantity->baseQuantity, 'snapshot' => $source];
             }
             usort($lines, fn ($a, $b) => strcmp($a['invoice_line_id'], $b['invoice_line_id']));
+            $notes = trim($data['notes'] ?? '');
             $header = ['invoice_id' => $invoice->header['id'], 'invoice_number' => $invoice->header['number'],
                 'customer_name' => $invoice->header['customer_name'], 'snapshot' => $invoice->header,
-                'notes' => trim($data['notes'] ?? '') ?: null];
+                'notes' => $notes === '' ? null : $notes];
             if ($demoKey !== null && $id === null) {
                 $header['demo_key'] = Validator::make(['key' => $demoKey], ['key' => ['required', 'string', 'max:64']])->validate()['key'];
             }

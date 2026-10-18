@@ -7,4 +7,7 @@ Lihat [Spesifikasi](specification.md), [Rencana](plan.md), dan
 Dependency publik: `Sales/POS/Application/Contracts/ReturnInvoiceLookup` untuk
 snapshot invoice asal, bukan model/repository privat POS.
 
-Status awal: disetujui untuk implementasi; belum aktif sampai verifikasi selesai.
+Status: Active untuk fondasi draft; posting/refund belum tersedia.
+URL `/sales/returns`, permission `sales.returns.view` dan `sales.returns.manage`.
+CRUD draft/version/audit, snapshot asli dan demo idempotent sudah diuji.
+Migration lokal Ran batch20; aktivasi additive tanpa demo/grant/reset akun.

@@ -148,6 +148,31 @@ Chrome DevTools QA: BLOCKED
 - Fallback:
 ```
 
+## QA Draft Retur Penjualan
+
+`php artisan test --filter='ReturnQuantityTest|ReturnDraftTest|ReturnsScaffoldTest'`:
+kuantitas/base exact, snapshot tanpa HPP, permission/super-system invariant,
+CRUD versioned/soft delete/restore, veto model/audit rollback, demo aman,
+pagination/literal search dan fingerprint source ledger. Native MySQL:
+`php scripts/qa/sales-returns-mysql.php`, database random pos_returns_qa_ di luar
+DB user, decimal20,6/JSON exact, peer lock timeout/current-read stale rejection,
+FK/unique, lifecycle/audit rollback, down/up disposable dan finally cleanup.
+
+DevTools: `node scripts/qa/sales-returns-devtools.mjs`, QA_DEVTOOLS_ENTRY menunjuk
+executable MCP yang sudah terpasang. Bila namespace tidak muncul, script ini
+memakai JSON-RPC stdio initialize/tools/list/tools/call dan roots/list hanya
+workspace POS. Chrome headless isolated, credential random stdin, SQLite QA,
+snapshot UID untuk operasi dan evaluate_script read-only untuk framing. Tidak
+menonaktifkan filesystem guard MCP: roots client didaftarkan agar screenshot
+di workspace diizinkan. Tidak memakai profil/session user atau install package.
+
+Playwright existing: `node scripts/qa/sales-returns-browser.mjs` dengan
+QA_PLAYWRIGHT_MODULE. Melengkapi CRUD/filter/invalid qty/retry500 terkontrol,
+permission readonly/403, keyboard/palette dan Light/Dark expanded/collapsed
+desktop1440/tablet1024/768. Tidak menguji mobile. Screenshot dan ledger
+fingerprint diverifikasi, console error disengaja dipisahkan dari unexpected.
+Bukti akhir: [work item](modules/Sales/Returns/work-items/draft-foundation/tasks.md).
+
 ## QA Riwayat Pembayaran
 
 `php artisan test --filter=PaymentHistoryTest`: permission khusus, filter split

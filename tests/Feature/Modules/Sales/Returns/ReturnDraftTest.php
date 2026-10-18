@@ -266,5 +266,7 @@ class ReturnDraftTest extends TestCase
         $this->assertSame(2, $row['version']);
         $this->assertSame('1', $row['notes']);
         $this->assertSame('99999999999998.000002', $row['lines'][0]['quantity']);
+        app(ManageReturnDraft::class)->save(array_replace($this->input, ['notes' => '0', 'version' => 2]), $id);
+        $this->assertDatabaseHas('sales_returns', ['id' => $id, 'notes' => '0', 'version' => 3]);
     }
 }

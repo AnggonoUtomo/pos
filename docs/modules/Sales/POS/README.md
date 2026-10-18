@@ -39,3 +39,9 @@ QA dan delivery remote terverifikasi; bukti rinci ada pada work item.
 detail snapshot dan cetak ulang. Post melihat miliknya, view melihat semua;
 tanpa grant baru, edit/hapus/void/retur atau HPP. QA akhir/delivery riwayat lulus
 17 Oktober2026, dicatat pada work item terpisah dari bukti checkout terdahulu.
+
+Published boundary `ReturnInvoiceLookup` + `ReturnInvoiceData` dikonsumsi
+Sales/Returns untuk draft retur: cari nomor maksimal25 dan snapshot invoice/line
+minimal tanpa HPP, payment, actor, atau request hash. Source merupakan posted
+immutable, tidak bergantung master aktif. Draft dimiliki Returns, tidak menambah
+endpoint koreksi invoice atau mutation Stock/Finance pada POS.

@@ -38,3 +38,38 @@ draft edited/trashed. Aktivasi lokal tidak menjalankan demo.
 
 Halaman admin memakai shadcn/ui, Sonner, format angka Indonesia, shortcut
 dropdown, navigasi sidebar/palette, desktop/tablet Light/Dark.
+
+## Schema Dan Contract
+
+`sales_returns`: ULID, nomor SR-ULID unique immutable, FK invoice_id restrict,
+invoice_number/customer_name untuk pencarian, header snapshot JSON safe,
+status draft, version integer, notes nullable500, demo_key unique nullable,
+timestamps dan deleted_at. `sales_return_lines`: ULID, FK sales_return_id dan
+invoice_line_id restrict, unique pasangan draft/baris asal, snapshot JSON flat
+unit/barang/rasio/qty/harga asal, quantity/base_quantity decimal20,6 exact.
+SQLite test memakai string decimal; MySQL target memakai decimal native.
+
+Harga/nominal asal dalam JSON adalah decimal string scale2; quantity/ratio
+scale6. Snapshot tidak memakai float. Perbandingan no-op menormalisasi urutan
+key MySQL JSON tetapi nilai string tetap strict untuk mencegah hilangnya
+perbedaan satu mikro pada angka besar.
+
+Permission catalog `ReturnsAccessSeeder` additive; demo memakai
+`ReturnsDemoSeeder` explicit. Key legacy sales.returns.create tidak dihapus atau
+dianggap memberikan view/manage. Tidak reset akun/role dari identity seeder.
+
+## Operasi Lokal Dan QA
+
+URL `/sales/returns`. Aktivasi aman: `php scripts/qa/activate-sales-returns-local.php`
+menjalankan migration module dan katalog permission saja, menjaga fingerprint
+data existing. Migrasi target Ran batch20; aktivasi dua kali lulus.
+
+`php artisan test --filter='ReturnQuantityTest|ReturnDraftTest|ReturnsScaffoldTest'`
+menguji domain/lifecycle/permission/snapshot/audit/demo. Native:
+`php scripts/qa/sales-returns-mysql.php` memakai DB random disposable dan cleanup.
+Browser: `node scripts/qa/sales-returns-devtools.mjs` dengan QA_DEVTOOLS_ENTRY
+menunjuk executable MCP existing; `node scripts/qa/sales-returns-browser.mjs`
+dengan QA_PLAYWRIGHT_MODULE menunjuk Playwright existing. Keduanya memakai
+fixture disposable, credential random stdin, bukan DB atau session user.
+
+Rincian bukti aktual: [Checklist pekerjaan](work-items/draft-foundation/tasks.md).

@@ -659,6 +659,38 @@ panggilan di luar transaction caller, tidak mengekspos account metadata atau
 PaymentsRepository. SalePaymentMethods::choices dipakai controller POS untuk
 opsi id/code/name/type aktif dan compatible, maksimal1000. Bukan payment gateway.
 
+## Draft Retur Penjualan Internal
+
+Session web/auth/verified. GET `/sales/returns` (Inertia sales/returns/index) dan
+`/data` (JSON {data,meta}) memerlukan sales.returns.view. Filter search literal
+max150 untuk nomor retur/invoice/pelanggan, trashed boolean, page1..1000000;
+pagination25 descending ID. GET tidak menulis ledger/audit.
+
+GET `/sales/returns/invoices?search=...` (max25 berdasarkan nomor invoice) dan
+`/invoices/{id}` (snapshot header+lines) memerlukan sales.returns.manage.
+Ini lookup sumber terpisah, bukan bypass route history POS; pengelola draft
+dapat memilih invoice posted tanpa sales.pos.invoices.view. Tidak memuat HPP,
+payment, actor, request hash atau kontak privat; master inactive/trashed tidak
+mengganti snapshot. Published POS ReturnInvoiceLookup::find/search dan
+ReturnInvoiceData hanya dibaca oleh Returns; tidak ada model privat lintas module.
+
+POST `/sales/returns` menerima invoice_id ULID, notes nullable500,
+lines1..100 {invoice_line_id ULID distinct, quantity decimal string positif
+max14integer/6fraction}. PUT `/{id}` menambah version1..2147483646, invoice_id
+immutable. DELETE `/{id}` dan POST `/{id}/restore` menerima version; seluruh
+mutation memerlukan sales.returns.manage. Route names sales.returns.index/data/
+invoices/invoice/store/update/destroy/restore. Nomor/status/harga/rasio server
+authoritative; extra header tidak digunakan, extra key baris ditolak422.
+
+Qty <= terjual pada source line dan exact conversion base6; bukan batas
+kumulatif draft lain. Invalid/stale/non-draft422, missing/trashed update404,
+guest401 JSON/redirect login HTML, forbidden403. JSON create201 {id}, update/
+delete/restore200 {id}; HTML redirect dengan feedback. Audit atomic created/
+updated/deleted/restored berisi ID/nomor/status/version/count, bukan notes.
+No-op tidak menaikkan version/audit. Draft soft delete dan restore mempertahankan
+snapshot. Tidak ada post/void/refund endpoint, pengurangan/penambahan stok,
+reservasi, kalkulasi nominal refund, atau perubahan invoice/payment asal.
+
 ## Riwayat Pembayaran Internal
 
 Session web/auth/verified, permission finance.payments.history.view khusus

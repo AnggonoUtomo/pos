@@ -41,15 +41,19 @@
 
 ## Increment 4: Penutupan
 
-- [ ] Verifikasi native MySQL schema/precision/version/audit rollback.
+- [x] Verifikasi native MySQL schema/precision/version/audit rollback.
   - Acceptance: database disposable dibersihkan; ledger asal tidak berubah.
   - Verification: script QA native dan focused/full regression.
-- [ ] Aktifkan migration dan permission lokal secara aman dan idempotent.
+- [x] Aktifkan migration dan permission lokal secara aman dan idempotent.
   - Acceptance: tidak seed demo/grant/reset user; fingerprint existing sama.
   - Verification: activation dua kali dan migrate:status.
-- [ ] Perbarui API/module index, checklist dan hasil aktual.
+- [x] Perbarui API/module index, checklist dan hasil aktual.
   - Acceptance: klaim sesuai command; batas posting/refund tetap eksplisit.
-  - Verification: diff --check, scoped commit, push, divergence 0/0.
+  - Verification: review dokumen, diff --check, scoped commit.
+- [ ] Push seluruh work item dan verifikasi checkpoint remote.
+  - Acceptance: HEAD sama dengan origin/main, ahead/behind 0/0; file user tidak
+    ikut commit dan tidak disentuh.
+  - Verification: push, ls-remote, rev-list, status.
 
 ## Bukti Verifikasi
 
@@ -90,3 +94,23 @@ Schema memakai header snapshot JSON dan snapshot per baris JSON untuk data asal
 immutable; qty/base qty tetap decimal20,6 MySQL, source invoice/line FK restrict,
 unique baris per draft. Harga asal disimpan sebagai string decimal exact di JSON,
 bukan hasil kalkulasi refund. Domain tidak mengimpor framework.
+
+Increment 4: native MySQL PASS, decimal20,6/BOX0,123456 => base0,493824,
+JSON no-op/version, FK/unique, peer row lock timeout1205 dan current-read stale
+snapshot, audit veto rollback, soft delete/restore, down/up disposable,
+fingerprint sumber unchanged, finally DROP DB QA. Tidak mengklaim reservasi
+kuantitas antar draft atau writer retur posted yang belum dibuat.
+
+Aktivasi `php scripts/qa/activate-sales-returns-local.php` dua kali PASS;
+`php artisan migrate:status` seluruh migration Ran, retur batch20. Data existing,
+user/role/permission existing, ledger/audit dan metadata migration lama identik.
+Hanya schema baru dan dua permission catalog ditambahkan; tidak grant, demo,
+reset, atau posting transaksi user. URL virtual host pos.test/sales/returns
+merespons302 login bagi guest (expected).
+
+Gate akhir: focused24 test/125 assertion, full504 test/3970 assertion PASS
+sesudah koreksi catatan numeric0 agar tidak dianggap kosong. Scoped Pint PASS,
+typecheck dan ESLint PASS; production build2735 PASS. Source dependency review
+tidak menemukan import model/adapter privat lintas module. Tidak ada perubahan
+dependency/stack/theme, Old-docs, SampleUI atau artefak LSP user. QA server milik
+pekerjaan sudah berhenti; URL aplikasi tetap virtual host Laragon.
