@@ -1,8 +1,7 @@
 # Posting Retur Penjualan Layak Jual
 
-Status: implementasi, QA dan aktivasi lokal selesai; delivery remote menunggu
-verifikasi checkpoint akhir. Scope, layer baru dan biaya nol hasil alokasi
-disetujui 18 Oktober 2026.
+Status: Done. Implementasi, QA, aktivasi lokal dan delivery remote terverifikasi.
+Scope, layer baru dan biaya nol hasil alokasi disetujui 18 Oktober 2026.
 
 ## Tujuan Dan Scope
 

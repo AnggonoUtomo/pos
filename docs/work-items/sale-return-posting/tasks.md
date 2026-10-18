@@ -71,7 +71,7 @@
 - [x] Perbarui API/module/ADR dan checklist, scoped commit.
   - Acceptance: klaim sesuai bukti; remote sama HEAD; file user tidak ikut.
   - Verification: diff --check, review staged dan link relatif dokumen.
-- [ ] Push dan verifikasi checkpoint remote.
+- [x] Push dan verifikasi checkpoint remote.
   - Acceptance: HEAD sama remote main, ahead/behind 0/0; file user tetap terpisah.
   - Verification: push, ls-remote, rev-list dan status.
 
@@ -148,3 +148,8 @@ pekerjaan sudah selesai; aplikasi memakai virtual host Laragon existing.
 Review boundary/privacy/transaction dan scope staging dilakukan sebelum commit.
 Tidak ada dependency/stack/theme/Old-docs atau file user yang diubah. Generator
 tidak diperlukan karena tidak membuat module atau mengubah struktur canonical.
+
+Delivery: push main sampai f46262b PASS; ls-remote identik dengan HEAD dan
+ahead/behind 0/0. Save point 3fcabf3,4ec47eb,64f0b0d,09182d8,7742916,7132967,
+f46262b. SampleUI/ dan empat artefak LSP user tetap untracked/tidak disentuh.
+Penutupan checklist di-commit/push terpisah, lalu remote diverifikasi ulang.
