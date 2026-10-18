@@ -19,6 +19,7 @@ Dokumen ini menjadi indeks singkat ADR yang berlaku.
 | [ADR-013](decisions/ADR-013-PURCHASE-RECEIPT-LEDGER.md) | Receipt pembelian terpisah, anchor saldo opsional dan ledger immutable atomic | Accepted |
 | [ADR-014](decisions/ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md) | Ledger pengeluaran pembelian exact6 terpisah, lunas sesudah receipt dan replay aman | Accepted |
 | [ADR-015](decisions/ADR-015-SALE-RETURN-COST-AND-FIFO-LAYERS.md) | Layer retur baru dengan biaya FIFO asal, residual exact dan biaya nol hasil alokasi | Accepted |
+| [ADR-016](decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md) | Refund exact2 dari snapshot bersih, residual/nol, scope invoice dan ledger Finance khusus | Accepted |
 
 Tambahkan ADR baru hanya untuk keputusan yang mahal, sulit dibalik, atau
 mengubah baseline arsitektur/domain.

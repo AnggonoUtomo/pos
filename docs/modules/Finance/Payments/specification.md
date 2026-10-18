@@ -101,6 +101,21 @@ lookup aktif yang sama dengan sale, tanpa mengganti contract sale existing.
 Tidak ada route Finance pengeluaran bebas atau pengujian saldo kas berjalan.
 Detail [ADR014](../../../decisions/ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md).
 
+## Rencana Pengeluaran Refund (Belum Diimplementasi)
+
+[ADR-016](../../../decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md) memilih
+ledger `payment_refunds`/`payment_refund_lines` decimal30,2 tersendiri agar
+refund tetap mendukung28 digit integer penjualan tanpa mengubah ledger
+pembelian decimal30,6 existing. Writer/DTOs `SaleRefundPaymentWriter` untuk
+Returns, snapshot aman, source sale_return, exact multi-payment, replay dan
+mandatory audit baru diimplementasi pada Increment 3 work item refund.
+
+Metode aktif boleh berbeda dari pembayaran asal; Finance menentukan akun.
+Settlement nol ditangani Returns tanpa writer/ledger uang. History nantinya
+menambah outgoing refund dengan path detail khusus tanpa mengganti path
+outgoing purchase. Schema, guard histori dan integrasi history belum berubah
+di Increment 2; lihat [rencana](../../../work-items/sale-return-refund/plan.md).
+
 ## HTTP Dan UI
 
 Prefix /finance/payment-accounts (finance.payment-accounts.*) dan

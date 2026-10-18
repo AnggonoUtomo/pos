@@ -22,6 +22,8 @@ Running balance, piutang/utang dan mutasi umum belum dikerjakan.
   Bukti [payment-history](work-items/payment-history/tasks.md).
 
 - [x] Scope pengeluaran refund retur lunas disetujui melalui interview.
+- [x] Desain ledger refund khusus decimal30,2 dan boundary consumer Returns
+  tercatat pada ADR-016; bukan klaim writer/schema Finance telah tersedia.
 - [ ] Writer refund, histori, guard master dan QA lintas module diverifikasi;
   ikuti [checklist refund](../../../work-items/sale-return-refund/tasks.md).
   Tidak membuat payout dari checklist atau seeder ini.

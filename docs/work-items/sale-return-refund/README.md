@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready. Scope disetujui melalui interview; implementasi belum dimulai.
+In Progress. Increment 1 dan 2 Passed; writer/endpoint/UI refund belum tersedia.
 Increment 1 hanya dokumentasi, bukan aktivasi fitur refund.
 
 ## Owner Dan Lokasi
@@ -109,15 +109,17 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
   ADR-015 tetap terpisah dari nominal refund pelanggan.
 - Keputusan interview dalam scope di atas disetujui user. PRD tambahan tidak
   diperlukan saat ini karena kebutuhan dan non-scope sudah eksplisit.
-- ADR desain persistence/locking/ledger refund disusun pada Increment 2;
-  dokumentasi ini tidak mengklaim schema atau public contract baru sudah ada.
+- [ADR-016](../../decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md) mengunci
+  valuasi, ledger refund decimal30,2, scope invoice dan contract yang dirancang.
+  Interface/DTOs runtime diterbitkan saat consumer operasional tersedia pada
+  Increment 3/4; tidak membuat abstraction kosong pada Increment 2.
 
 ## Increment
 
 | No | Status | Hasil | Verifikasi |
 | --- | --- | --- | --- |
 | 1 | Passed | Scope, ownership, rencana dan checklist sebelum coding | Review dokumen, 31 link lokal valid, whitespace PASS |
-| 2 | Planned | ADR, contract yang dirancang dan aturan valuasi exact | Unit test alokasi dan review boundary |
+| 2 | Passed | ADR-016, desain contract dan Domain valuasi exact | RED/GREEN, focused/regresi592 test, Pint |
 | 3 | Planned | Writer pengeluaran refund Finance dengan snapshot/replay | Feature Finance, migration disposable, guard master |
 | 4 | Planned | Quote dan penyelesaian Returns atomik, termasuk nol | Feature, audit veto, concurrency MySQL |
 | 5 | Planned | UI refund dan riwayat Finance yang benar | Typecheck/lint/build, DevTools desktop/tablet |
@@ -125,11 +127,14 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 
 ## Handoff Saat Ini
 
-- Perubahan: rencana dokumentasi; tidak ada coding, migration atau perubahan DB.
-- Verifikasi dokumen: review, 31 link lokal pada 8 dokumen, whitespace dan
-  staged scope PASS; rincian pada [tasks.md](tasks.md).
-- Runtime QA: belum dijalankan untuk fitur refund karena belum diimplementasi.
-- Risiko terbuka: desain ledger/locking, stale quote, konservasi pembulatan dan
-  compatibility histori harus ditutup melalui Increment 2..6, bukan diasumsikan.
+- Perubahan: dua value object Domain Returns, unit/feature tests dan ADR/desain
+  API. Tidak ada perubahan schema, endpoint, permission grant, UI atau DB user.
+- Verifikasi: full592 test/5188 assertion, feature Returns/POS/Finance102 test,
+  unit/focused76 test, scoped Pint; bukti RED/GREEN pada [tasks.md](tasks.md).
+- Browser QA SKIPPED: tidak ada perubahan UI/HTTP di increment ini. Native
+  locking/migration belum relevan sebelum implementasi writer/persistence.
+- Risiko terbuka: implementasi ledger/locking, stale quote operasional dan
+  compatibility history harus ditutup melalui Increment 3..6. Domain yang lulus
+  unit test tidak membuktikan concurrency writer atau keamanan payout runtime.
 - Gap conformance: tidak ditemukan konflik struktural pada bagian yang dibaca;
   ini bukan audit menyeluruh repository. `Old-docs` dan file user tidak disentuh.

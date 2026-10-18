@@ -7,10 +7,10 @@
 - [x] Dokumen Returns/Payments dan source posting/lookup/writer/history ditinjau.
 - [x] User menyetujui scope lunas, nominal otomatis, metode berbeda dan hasil nol.
 - [x] Target Returns dan Finance diumumkan sebelum perubahan dokumen.
-- [x] Scope tahap ini dibatasi dokumentasi; tidak coding/runtime/DB change.
+- [x] Scope Increment 1 dibatasi dokumentasi; tidak coding/runtime/DB change.
 - [x] Ownership, dependency, acceptance dan QA automated ditetapkan.
 - [x] Dampak schema/route/permission/UI/audit/demo/ledger/Stock/pricing dicatat.
-- [ ] Sebelum coding, baca ulang worktree, dokumen QA dan source target terkini;
+- [x] Sebelum coding, baca ulang worktree, dokumen QA dan source target terkini;
   tutup desain schema/contract/locking pada Increment 2, bukan mengandalkan asumsi.
 
 ## Increment 1: Baseline Dan Checklist
@@ -34,19 +34,19 @@
 
 ## Increment 2: Valuasi Dan Desain Contract
 
-- [ ] Baca ulang QA, source dan baseline yang relevan sebelum coding.
+- [x] Baca ulang QA, source dan baseline yang relevan sebelum coding.
   - Acceptance: tidak ada konflik struktural; konflik dilaporkan sebelum edit.
   - Verification: review architecture/folder/source/`git status --short`.
-- [ ] Kunci ADR persistence/locking, payload quote dan settlement, serta replay.
+- [x] Kunci ADR persistence/locking, payload quote dan settlement, serta replay.
   - Acceptance: ownership alokasi/ledger, source refund, version/canonical hash,
     stale quote dan lock invoice lintas retur eksplisit; tidak mengakses model
     privat POS/Stock/Finance dari module lain.
   - Verification: review ADR/kontrak/API dan daftar consumer nyata.
-- [ ] Tambah test red lalu aturan valuasi decimal murni.
+- [x] Tambah test red lalu aturan valuasi decimal murni.
   - Acceptance: partial/full/residual/zero, nominal besar/overflow, original net
     invalid, multi-line/satuan serta urutan refund berbeda diuji; tidak float.
   - Verification: unit tests Returns; bukti red-green dan scoped Pint.
-- [ ] Tetapkan rekonsiliasi nilai net baris dengan invoice/penerimaan asal.
+- [x] Tetapkan rekonsiliasi nilai net baris dengan invoice/penerimaan asal.
   - Acceptance: tidak refund tendered cash/kembalian/HPP; snapshot unsupported
     ditolak tanpa mutation dan tidak diam-diam kehilangan diskon/pajak.
   - Verification: unit/contract tests dan review public lookup POS.
@@ -131,7 +131,7 @@ Commit otomatis dilakukan setelah review staged scope dan whitespace lulus;
 identitas commit tersedia pada riwayat Git. Tidak push selama work item refund
 belum selesai kecuali diminta eksplisit.
 
-## Sesudah Coding (Belum Dimulai)
+## Sesudah Coding Keseluruhan Work Item
 
 - [ ] Semua acceptance refund terpenuhi dan increment implementasi verified.
 - [ ] Unit/feature/full test dan native MySQL PASS.
@@ -146,10 +146,37 @@ belum selesai kecuali diminta eksplisit.
 | Pemeriksaan | Hasil | Catatan |
 | --- | --- | --- |
 | Review source/dokumen/interview | PASS | Baseline disusun; refund belum ada di runtime. |
-| `git diff --check` | PASS | Dokumen tracked tidak memiliki whitespace error. |
-| Pemeriksaan link/whitespace seluruh dokumen target | PASS | Node memeriksa 8 dokumen dan 31 link lokal valid, termasuk file baru. |
-| `git diff --cached --name-only` dan `git diff --cached --check` | PASS | Hanya 8 dokumen target, tanpa source/DB/file user/arsip. |
-| Test/build/browser/migration refund | Belum dijalankan | Tidak relevan untuk perubahan dokumen saja; wajib saat implementasi. |
+| `git diff --check` Increment 1 | PASS | Dokumen tracked tidak memiliki whitespace error. |
+| Pemeriksaan link/whitespace Increment 1 | PASS | Node memeriksa 8 dokumen dan 31 link lokal valid, termasuk file baru. |
+| Staged scope/whitespace Increment 1 | PASS | Hanya 8 dokumen target, tanpa source/DB/file user/arsip. |
+| TDD RED, dua test Domain sebelum implementasi | EXPECTED FAIL | 59 gagal karena dua class belum ada; bukan kegagalan gate akhir. |
+| TDD GREEN awal | PASS | 59 test / 86 assertion setelah implementasi Domain. |
+| Unit Returns dan feature basis invoice | PASS | 76 test / 1142 assertion setelah tambahan tipe non-string dan konservasi500 alokasi. |
+| Feature Returns/POS/Finance | PASS | 102 test / 898 assertion; sumber posted, pembayaran bersih dan privacy lookup draft. |
+| Scoped Pint lima file PHP | PASS | Dua value object dan tiga file test. |
+| `php artisan test --compact` Increment 2 | PASS | 592 test / 5188 assertion, 54,90 detik. |
+| `vendor/bin/pint --test` lima file dan `php artisan route:list --path=sales/returns` | PASS | Formatter lulus; sembilan route existing, belum ada quote/endpoint refund. |
+| Frontend build/typecheck/lint dan Chrome DevTools | SKIPPED | Increment 2 tidak mengubah UI/JS/CSS/HTTP; QA UI tetap wajib pada Increment 5. |
+| Migration/native concurrency refund | Belum dijalankan | Tidak ada migration/locking writer di Increment 2; wajib Increment 3..6. |
+| Review staged scope/link/whitespace/boundary Increment 2 | PASS | 17 file terfokus, 12 dokumen/66 link lokal valid, dua Domain bebas framework; tidak ada file user/arsip ikut stage. |
+
+## Handoff Increment 2
+
+- Review sebelum coding selesai; tidak ditemukan konflik struktur pada scope.
+- Class runtime baru hanya `RefundAllocation` dan `RefundInvoiceBasis`, bebas
+  Laravel/HTTP/Eloquent; consumer operasional dipasang pada increment berikutnya.
+- Tiga file test memakai unit PHPUnit dan fixture POS CCTV/kelistrikan di SQLite
+  testing. Tidak menyentuh database/session user atau membuat payout demo.
+- Contract dan schema pada ADR/API berstatus desain, belum endpoint aktif.
+- Tidak push karena Increment 3..6 belum selesai. Commit otomatis setelah
+  review akhir link/whitespace/boundary/staged scope lulus.
+
+Checklist setelah Increment 2:
+
+- [x] Unit/feature/full test dan scoped Pint lulus.
+- [x] Sembilan route existing tetap; tidak ada schema/endpoint/UI baru.
+- [x] Dokumen aktual dan batas QA yang belum dikerjakan dijelaskan.
+- [x] Review staged scope, link, whitespace, privacy dan arah dependency lulus.
 
 Jangan menambahkan scope ke checklist tanpa persetujuan user. Commit otomatis
 setelah task/increment verified; push setelah keseluruhan work item selesai.

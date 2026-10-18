@@ -18,7 +18,9 @@ migration atau perubahan data pada increment ini.
 
 ## Increment 2: Valuasi, Contract Dan ADR
 
-Status: Planned. Owner: Returns; Finance meninjau boundary ledger.
+Status: Passed. Owner: Returns; desain boundary Finance tercatat pada ADR-016.
+Domain valuasi, reconciliation dan test selesai; kontrak runtime/migration/
+writer belum dibuat. Full592 test/5188 assertion dan scoped Pint PASS.
 
 Mulai dari test red aturan murni dan kunci desain sebelum menambah persistence:
 
@@ -151,8 +153,9 @@ work item selesai atau diminta eksplisit. Buktikan SHA remote dan divergence.
 
 ## Batas Berhenti Dan Rollback
 
-Tahap saat ini berhenti pada Increment 1. Implementasi Increment 2 menunggu
-instruksi berikutnya. Perubahan scope di luar README perlu persetujuan user.
+Tahap saat ini berhenti setelah Increment 2. Writer/persistence/endpoint/UI
+Increment 3..6 menunggu instruksi berikutnya. Perubahan scope di luar README
+perlu persetujuan user.
 
 Dokumentasi dapat dipulihkan melalui revert commit terfokus, bukan reset file
 user. Setelah ada settlement, down migration tidak boleh menghapus ledger atau

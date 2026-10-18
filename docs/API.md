@@ -716,6 +716,97 @@ input stok awal/pembelian tetap positif. Lock/current read menjaga dua draft
 bersaing; gagal audit salah satu module membatalkan seluruh posting. Refund,
 barang rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
 
+## Rencana Contract Refund Retur
+
+Status: desain Accepted pada ADR-016; pada Increment 2 hanya aturan Domain dan
+test valuasi yang tersedia. Endpoint, schema dan writer berikut **belum aktif**
+dan baru dibuat pada Increment 3..5 [work item](work-items/sale-return-refund/README.md).
+Bagian ini tidak mengubah contract route existing di atas/bawahnya.
+
+### Ringkasan Invoice Internal
+
+Rencana `ReturnInvoiceLookup::refundBasis(id): ?ReturnRefundBasisData` dipakai
+Returns. DTO header {id,subtotal,discount_amount,tax_amount,total,paid_total};
+lines1..100 {id,quantity,subtotal,discount_amount,tax_amount}. Money decimal string
+max28integer/2fraction, quantity max14integer/6fraction. Parser POS memproyeksikan
+paid_total dari snapshot `sales_invoices.payments.total`, bukan tendered/change;
+tidak membaca tabel Finance atau mengembalikan split pembayaran/HPP/actor/hash.
+Snapshot invalid ditolak tanpa refund. `find/search/toArray` draft tetap utuh.
+
+Domain Returns memeriksa seluruh jumlah kolom baris sesuai header dan net
+subtotal-diskon+pajak = total = paid_total positif. Setiap net baris nonnegatif,
+diskon <= subtotal. Header discount/tax yang tidak dialokasikan pada baris
+ditolak; jangan mengarang alokasi. Quantity/net per line dipakai RefundAllocation
+dengan remaining quantity/amount, partial round down2 dan full residual.
+
+### Quote Dan Settlement
+
+Rencana GET `/sales/returns/{id}/refund-quote` (sales.returns.refund-quote) dan
+POST `/sales/returns/{id}/refund` (sales.returns.refund) memakai web/auth/verified
+serta `can:sales.returns.refund`; POST memakai CSRF. Catalog additive tanpa grant.
+Tidak membuka route mutation Finance bebas atau menambah izin lookup draft.
+
+Quote GET readonly untuk retur posted belum settled, mengembalikan:
+
+```text
+id, version, invoice_revision, quote_fingerprint (64 lowercase hex), total,
+lines [{sales_return_line_id, invoice_line_id, quantity, amount}],
+methods [{id, code, name, type}]
+```
+
+Tidak membuat scope row/reservasi/audit saat GET. Quantity scale6, uang scale2
+string; tampilan UI memakai format Indonesia, bukan mengubah representasi API.
+Scope revision0 saat belum ada settlement invoice. Total nol tetap quote valid
+dengan lines yang mengonsumsi kuantitas; UI tidak meminta metode untuk nol.
+
+POST hanya menerima version1..2147483646, quote_fingerprint dan payments list
+{method_id ULID,amount decimal string max28integer/2fraction}. Tolak field asing.
+Untuk total positif: 1..10 metode unik, setiap amount positif dan sum tepat.
+Untuk total nol: payments wajib []. Jangan menerima invoice_id, quantity, total,
+price, account_id atau actor dari client sebagai sumber kebenaran.
+
+Recompute quote di bawah scope lock invoice dan current read. Fingerprint stale
+atau version berbeda422 walaupun jumlah kebetulan sama; kasir harus memuat quote
+dan mengonfirmasi ulang. Bukan membulatkan naik/menurunkan pembayaran diam-diam.
+Missing404, guest401 JSON/redirect HTML, forbidden403, non-posted/trashed/already
+settled quote422. Retry POST identik pada dokumen selesai tetap200 dengan hasil
+tersimpan; body canonical berbeda422. Tidak memvalidasi ulang master live saat
+replay dan tidak menambah ledger/audit. Actor retry tetap wajib permission.
+
+Hasil POST JSON200:
+
+```text
+id, status (posted), version (tidak berubah karena settlement),
+settlement {id, outcome (refunded|no_payment), total, finance_refund_id|null,
+settled_at, payments [{method_id, method_name, method_type, amount}]}
+```
+
+HTML redirect feedback/Sonner. Outcome no_payment wajib total0.00,
+finance_refund_id null dan payments []; quantity allocation/audit tetap ada.
+Tidak ada HPP, rekening, actor atau request_hash di response. Status fisik posted
+dan replay posting Stock tetap utuh; status uang berasal dari settlement.
+
+### Writer Dan Riwayat Finance
+
+Rencana `SaleRefundPaymentWriter::pay(SaleRefundPaymentRequest)` memerlukan
+transaction default caller Returns. Request sourceId ULID return/sourceNumber
+max32/total positive scale2/payments1..10/actorId nullable; source_type server
+sale_return. `SaleRefundPaymentResult` id/paidAt/snapshot total/payments aman,
+tidak mengekspor account atau bank metadata. Canonical source/body tanpa actor;
+replay identik no-op sebelum lookup master, payload berbeda ditolak.
+`SaleRefundPaymentMethods::choices()` memberi maksimal1000 metode aktif yang
+akunnya aktif/kompatibel, hanya id/code/name/type; tidak mengekspos master CRUD.
+Schema/locking/audit/guard histori mengikuti [ADR-016](decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md).
+
+History existing incoming/outgoing dipertahankan, dengan penambahan source_type
+sale/purchase/sale_return pada rows dan union refund sebagai outgoing scale2.
+Rencana GET `/finance/payments/history/refunds/{id}`
+(finance.payments.history.refund) khusus detail ledger refund, permission
+finance.payments.history.view. Snapshot/filter mengikuti history existing;
+refund detail tendered/change null, payments.amount scale2. Path khusus mencegah
+ambiguitas ID ledger terpisah tanpa mengubah detail purchase outgoing existing.
+Settlement nol tidak masuk union history uang. Tidak ada saldo/transfer bank nyata.
+
 ## Riwayat Pembayaran Internal
 
 Session web/auth/verified, permission finance.payments.history.view khusus

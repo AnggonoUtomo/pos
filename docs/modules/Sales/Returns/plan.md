@@ -8,7 +8,8 @@
    refund, nominal refund dan Finance tidak termasuk.
 3. [Refund lunas](../../../work-items/sale-return-refund/README.md): scope
    disetujui, nominal otomatis scale2/residual, metode aktif boleh berbeda,
-   penyelesaian nol tanpa ledger. Dokumentasi awal disusun; belum diimplementasi.
+   penyelesaian nol tanpa ledger. Increment 2 menambahkan Domain valuasi dan
+   ADR-016; writer, endpoint, schema dan UI refund belum diimplementasi.
 4. Karantina/tukar/reversal masih pending persetujuan pada pekerjaan terpisah.
 
 Tahap posting memakai checklist pekerjaan sendiri, bukan checklist draft.

@@ -21,7 +21,7 @@
 Draft sendiri tidak mengubah stok/FIFO, refund atau invoice/pembayaran asal.
 Beberapa draft boleh menunjuk invoice sama; batas kumulatif diperiksa saat
 posting melalui writer Stock. Harga asal bukan HPP atau uang yang otomatis
-dikembalikan; scope refund disetujui terpisah di bawah dan belum diimplementasi.
+dikembalikan; scope refund disetujui terpisah di bawah dan belum aktif.
 
 Tidak ada endpoint edit invoice, hapus permanen, atau perubahan ledger bebas.
 Snapshot publik tidak memuat HPP, pembayaran, request hash, maupun credential.
@@ -47,7 +47,7 @@ master aktif. Finance/invoice/consumption asal immutable; refund, karantina,
 tukar, gudang tujuan bebas dan reversal tetap belum tersedia. HPP tidak menjadi
 props atau response Returns. Audit Returns dan Stock berada dalam satu transaction.
 
-## Rencana Refund Lunas (Belum Diimplementasi)
+## Rencana Refund Lunas (Belum Aktif)
 
 Scope disetujui melalui interview pada [work item refund](../../../work-items/sale-return-refund/README.md).
 Hanya retur posted, satu penyelesaian penuh dengan multi-payment tepat tanpa
@@ -63,6 +63,14 @@ atau penerimaan invoice asal. Posted lama tidak otomatis menjadi sudah dibayar.
 Permission, quote/stale handling, persistence, published contract Finance dan
 QA mengikuti increment work item; belum ada route/schema baru dari rencana ini.
 Pembayaran parsial, kredit pelanggan, tukar barang dan reversal di luar scope.
+
+Increment 2 menyediakan `RefundInvoiceBasis` untuk rekonsiliasi semua baris
+terhadap header/paid_total bersih dan `RefundAllocation` untuk alokasi
+remaining amount/quantity exact. Keduanya Domain murni tanpa persistence/HTTP.
+Source summary khusus refund dan consumer quote/settlement belum dipasang;
+lookup draft existing tidak mendapat field pembayaran baru.
+Desain ledger khusus Finance, scope invoice, stale quote dan outcome nol
+dikunci di [ADR-016](../../../decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md).
 
 ## Demo Dan UI
 

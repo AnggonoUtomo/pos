@@ -13,7 +13,8 @@
    filter/snapshot/permission khusus, tanpa mutation/aggregate saldo.
 5. [Refund retur lunas](../../../work-items/sale-return-refund/plan.md): scope
    disetujui; rencana writer pengeluaran khusus refund, snapshot/replay/audit,
-   metode aktif bebas dari split asal dan integrasi riwayat. Belum diimplementasi;
+   metode aktif bebas dari split asal dan integrasi riwayat. Desain ledger
+   khusus decimal30,2 dikunci pada ADR-016; writer refund belum diimplementasi;
    penyelesaian nol milik Returns tanpa ledger uang. Bukan pembayaran purchase.
 6. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
 
