@@ -3,8 +3,9 @@
 ## Status
 
 Scope produk Disetujui. Increment 2 telah mengimplementasikan scaffold, schema
-draft dan value object quantity. Lookup, persistence use case, lifecycle,
-permission, audit, demo, route bisnis dan UI masih rencana.
+draft dan value object quantity. Increment 3 menyediakan lookup, persistence,
+permission, query, route data/source, create/update dan audit. Lifecycle soft
+delete/restore, demo dan UI masih rencana.
 
 ## Tujuan Dan Scope
 
@@ -61,11 +62,12 @@ dua draft tidak mengonsumsi hak retur satu sama lain. Tidak ada klaim batas
 kumulatif posting, ketersediaan stok atau FIFO sampai writer posting retur
 dirancang terpisah. Label UI wajib membedakan permintaan draft dari retur selesai.
 
-## Contract Yang Direncanakan
+## Published Contract
 
-Nama kerja published lookup PurchaseOrders: ReturnPurchaseLookup::find(id) dan
-search(search), mengembalikan ReturnPurchaseData/header serta lines minimal.
-Dibuat hanya bersama consumer query/action Returns yang nyata.
+PurchaseOrders mempublikasikan `Application/Contracts/ReturnPurchaseLookup` dan
+`Application/DTOs/ReturnPurchaseData` bersama consumer nyata di Returns.
+Method `findEligible(id)` memberi satu DTO atau null; `searchEligible(search)`
+memberi maksimal25 DTO.
 
 Projection sumber yang dibutuhkan:
 
@@ -74,12 +76,19 @@ Projection sumber yang dibutuhkan:
   quantity/base_quantity/conversion_ratio/unit_cost/total_value asal.
 - Decimal string exact6; tidak mengekspor notes sumber, actor, demo_key,
   request_hash, payment_snapshot, bank, split pembayaran, FIFO layer/consumption.
-- Query hanya sumber eligible, pencarian literal bounded, snapshot tidak join
-  master live untuk mengganti nilai historis. Detail draft membaca snapshot lokal.
+- Eligibility memerlukan status posted, tidak soft-deleted, stock receipt
+  terpasang, dan receipt cocok pada source type/id/nomor/gudang/waktu posting.
+  Jumlah baris receipt harus sama; tiap baris harus cocok pada source line/item/
+  base unit/kuantitas dasar/nilai total.
+- Query memakai snapshot order/baris, pencarian literal max150 dan limit25; tidak
+  join master live untuk mengganti nilai historis. Tidak mengekspor notes,
+  posted/paid actor, request hash atau payment snapshot. Detail draft membaca
+  snapshot lokal.
 
-Rencana input save: purchase_order_id, notes, lines[{purchase_order_line_id,
-quantity}], ditambah version pada update. ID/nomor/status/snapshot/harga/rasio/
-gudang/actor/demo_key bukan authority dari client. Lifecycle hanya version.
+Input save: `purchase_order_id`, `notes`, `lines[{purchase_order_line_id,
+quantity}]`, ditambah `version` pada update. Baris menolak key tambahan. ID/nomor/
+status/snapshot/harga/rasio/gudang/actor/demo_key bukan authority dari client.
+Source order tidak dapat diganti pada update. Lifecycle delete/restore menyusul.
 Validasi membership/quantity/snapshot di backend termasuk bagi super-system.
 Rencana error: guest login/JSON401, forbidden403, missing404, input/stale422;
 audit gagal membatalkan mutation, bukan success palsu.
@@ -102,12 +111,13 @@ movement/layer/payment atau field "sudah refund".
 
 ## Authorization Dan Audit
 
-Rencana key purchasing.returns.view untuk index/data/detail snapshot draft;
-purchasing.returns.manage untuk lookup sumber/create/update/delete/restore.
+`purchasing.returns.view` untuk data daftar; `purchasing.returns.manage` untuk
+lookup sumber dan create/update.
 Manage tidak otomatis memberi view, dan izin PurchaseOrders bukan bypass Returns.
 Lookup sumber melalui Returns tidak mengharuskan hak CRUD PurchaseOrders/Finance;
 permission manage mengizinkan projection terbatas, bukan seluruh detail pembelian.
-Controller HasMiddleware dengan can per action; usePermission/isSuperSystem hanya UX.
+Controller HasMiddleware dengan `can` per action; usePermission/isSuperSystem
+hanya UX. `ReturnsAccessSeeder` mendaftarkan catalog permission tanpa grant.
 
 Audit purchasing.returns created/updated/deleted/restored, subject ULID,
 actor dari auth atau null untuk demo/QA. Audit wajib satu transaction dengan
@@ -117,13 +127,15 @@ kontak supplier, credential, payment payload atau salinan snapshot penuh.
 
 ## HTTP Dan UI Yang Direncanakan
 
-Prefix /purchasing/returns, name purchasing.returns.*; web/auth/verified dan CSRF.
-GET index/data, lookup purchases dan purchases/{id}, POST store,
-PUT {id}, DELETE {id}, POST {id}/restore. Tidak ada route post/pay/refund/void.
-Detail draft boleh lewat data snapshot daftar seperti pola Returns existing;
-nama method/controller/response final dikunci bersama implementasi dan docs/API.md.
-Pagination25, eager lines bounded100, search literal nomor retur/pembelian/supplier,
-trashed dan page. Tidak menampilkan jumlah total refund atau status kas/utang.
+Prefix `/purchasing/returns`, name `purchasing.returns.*`; web/auth/verified dan
+CSRF. `GET /data` memerlukan view; `GET /purchases`, `GET /purchases/{id}`,
+`POST /`, dan `PUT /{id}` memerlukan manage. Data JSON `{data,meta}`, pagination25,
+search literal max150 atas nomor retur/pembelian/supplier, status all/draft,
+trashed0/1 dan page. Purchase search mengembalikan maksimal25 snapshot aman.
+Input create/update dan response JSON didokumentasikan di [API](../../../API.md).
+Inertia `GET /` akan ditambahkan bersama halaman pada Increment 5. Belum ada
+route delete/restore. Tidak ada route post/pay/refund/void. Tidak menampilkan
+jumlah total refund atau status kas/utang.
 
 Page purchasing/returns/index; components/hooks/types lokal bila diperlukan.
 Pakai shadcn/ui, Lucide semantic dengan tooltip, Sonner success/error CRUD,

@@ -14,7 +14,7 @@ keputusan FIFO/uang yang belum disepakati.
 | --- | --- | --- | --- | --- | --- |
 | 1 | Passed | Baseline | README/spec/plan/tasks module dan work item; module index/source roadmap | Scope, non-scope, dependency, presisi dan QA jelas tanpa runtime change | Review, 10 dokumen/22 link, whitespace PASS |
 | 2 | Passed | Fondasi teknis | Dry-run/generator, discovery, schema draft dan quantity Domain | Route/database module canonical, exact6, batas schema, tanpa mutation ledger | 78 focused tests/139 assertions, 712 full tests/5628 assertions, Pint, route/status |
-| 3 | Planned | Alur simpan | Published source lookup/DTOs dengan query/action consumer, catalog permission, persistence dan HTTP create/update/read | Sumber received/snapshot safe, harga bukan input, create/update audited/versioned | Feature privacy/input/membership/atomic dan route |
+| 3 | Passed | Alur simpan | Published source lookup/DTOs, permission catalog, query/route JSON, persistence, create/update | Sumber receipt cocok/snapshot safe, harga bukan input, create/update atomic/audited/versioned | 87 tests/218 assertions, Pint, route:list, diff check |
 | 4 | Planned | Lifecycle/demo | Soft delete/restore, stale/no-op/audit hardening dan demo module | Draft saja, tidak mereset user, fingerprint ledger tetap | Feature lifecycle/audit/seeder/native current-read bila perlu |
 | 5 | Planned | UI | List/form/detail/lifecycle, source picker, nav/palette dan shortcut | Permission UX, loading/error/retry/readonly, format Indonesia tanpa klaim posted/refund | TS/lint/build, DevTools/Playwright |
 | 6 | Planned | Penutupan | Native MySQL, regresi, aktivasi lokal aman, docs dan delivery | Semua acceptance verified, aktivasi2x tanpa grant/demo/mutation sumber, remote sama HEAD | Full suite/native/browser/status/Git |
@@ -27,12 +27,12 @@ lalu implementasi Domain murni; seluruhnya sudah lulus pada disposable.
 Scaffold default tidak boleh menjadi endpoint publik tanpa authorization atau
 memberi kesan CRUD selesai. Tidak membuat published port kosong.
 
-Increment 3 membuat lookup/DTOs PurchaseOrders bersama consumer query/action
-Returns. Projection hanya data posted yang dibutuhkan; own adapter membaca own
-tables. Uji source draft/trashed/metadata receipt invalid dan nilai setelah
-master rename/inactive. Pembayaran PO tidak boleh membuat draft berubah harga.
-Tulis tests save terlebih dahulu, termasuk quantity/member/forgery/version dan
-rollback audit. Query/HTTP berizin menjadi alur yang dapat diverifikasi.
+Increment 3 membuat lookup/DTOs PurchaseOrders bersama consumer nyata di Returns.
+Projection hanya data received posted yang dibutuhkan; adapter membaca snapshot
+own tables dan memvalidasi receipt. Uji source draft/trashed/receipt invalid,
+search bounded/literal, nilai setelah master rename, quantity/member/forgery,
+version/no-op, permission terpisah dan rollback audit. JSON data/source/create/
+update routes tersedia; Inertia index masuk Increment 5.
 
 Increment 4 melengkapi delete/restore dan batas no-op (JSON key order MySQL,
 decimal panjang dan notes numeric-string "0" dibandingkan strict). Demo hanya
@@ -84,8 +84,8 @@ hanya migration/catalog, seluruh data/audit existing harus identik.
 
 ## Batas Berhenti Dan Rollback
 
-User menyetujui Increment 2 scaffold/schema/Domain. Tahap ini berhenti setelah
-verifikasi dan commit save point; Increment 3..6 menunggu arahan. Scope
+User menyetujui Increment 3 source lookup dan draft create/update. Tahap ini
+berhenti setelah verifikasi dan commit save point; Increment 4..6 menunggu arahan. Scope
 posting/FIFO/uang supplier tidak boleh diambil dari roadmap tanpa interview/
 approval terpisah.
 Pemulihan dokumen melalui commit terfokus, bukan reset perubahan user. Setelah

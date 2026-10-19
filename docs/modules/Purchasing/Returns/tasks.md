@@ -5,7 +5,7 @@
 - [x] Scope dibedakan dari pengeluaran stok, FIFO dan uang kembali supplier.
 - [x] Baseline dokumen dan checklist increment selesai diverifikasi.
 - [x] Scaffold/schema dan Domain quantity verified pada disposable.
-- [ ] Published source lookup dengan consumer nyata dan alur simpan verified.
+- [x] Published source lookup dengan consumer nyata dan alur simpan verified.
 - [ ] Lifecycle/version/no-op, audit dan demo aman verified.
 - [ ] UI/nav/palette/shortcut serta browser desktop/tablet verified.
 - [ ] Native MySQL, regresi, aktivasi additive dan delivery verified.

@@ -141,6 +141,54 @@ Purchasing atomic dalam transaction retry3; Stock/FIFO tidak berubah. Existing
 tidak otomatis lunas atau dibuatkan utang; saldo kas berjalan belum tersedia.
 Rincian [spesifikasi PurchaseOrders](modules/Purchasing/PurchaseOrders/specification.md).
 
+## Endpoint Internal Retur Pembelian
+
+Purchasing/Returns memakai session web/auth/verified/CSRF, bukan token API.
+Prefix `/purchasing/returns`, name `purchasing.returns.*`:
+
+| Method | Path relatif | Nama | Permission |
+| --- | --- | --- | --- |
+| GET | /data | data | purchasing.returns.view |
+| GET | /purchases | purchases | purchasing.returns.manage |
+| GET | /purchases/{id} | purchase | purchasing.returns.manage |
+| POST | / | store | purchasing.returns.manage |
+| PUT | /{id} | update | purchasing.returns.manage |
+
+Belum ada GET root Inertia, DELETE atau restore; halaman dan lifecycle masuk
+increment berikutnya. GET `/data` memberi `{data,meta}`, pagination25 descending
+id, search literal maksimal150 pada number/purchase_order_number/supplier_name,
+status all/draft, trashed0/1 dan page positif. Setiap record berisi ID/nomor,
+source PO/supplier snapshot, status/version/notes/timestamp dan maksimal100 line
+snapshot. Response tidak memuat demo_key, actor atau nilai payment.
+
+GET `/purchases` menerima search nullable max150 dan mengembalikan maksimal25
+pembelian eligible dengan snapshot header/baris. Eligible hanya PO posted aktif
+yang receipt source type/id/nomor/gudang/waktu cocok dan semua baris receipt sama
+dengan source line/item/base unit/kuantitas dasar/nilai total. GET `/purchases/{id}` memberi
+projection yang sama atau404. Projection memakai snapshot PurchaseOrders, tidak
+join master live, dan tidak mengirim notes, actor, payment snapshot, rekening,
+request hash atau metadata FIFO. Decimal quantity, ratio, unit cost dan nilai
+baris berupa string scale6.
+
+POST `/` menerima `purchase_order_id` ULID, `notes` nullable max500, dan `lines`
+list1..100 berisi hanya `{purchase_order_line_id,quantity}`. PUT `/{id}` menerima
+payload sama ditambah `version` wajib positif. ID/nomor/status/version create/
+snapshot/rasio/harga/gudang/actor/demo_key dari client bukan authority. Baris
+tambahan ditolak; source line harus milik PO terpilih; duplicate ditolak.
+Quantity decimal string positif maksimal14 digit integer/6 pecahan dan tidak
+melebihi quantity diterima. `base_quantity` dihitung exact6 server. POST memberi
+201 `{id}`; PUT memberi200 `{id}`; request browser redirect membawa success flash.
+Toast dan halaman Inertia diperiksa bersama UI pada Increment 5.
+Input/stale/source tidak eligible422; resource tak ditemukan404; forbidden403;
+guest JSON401 atau redirect login. Audit wajib satu transaksi dengan header dan
+baris; no-op update tidak mengubah version/audit. Soft delete/restore belum ada.
+
+Permission `purchasing.returns.view/manage` didaftarkan additive oleh
+`ReturnsAccessSeeder`; tidak ada auto-grant. Manage tidak memberi view dan
+PurchaseOrders permissions tidak diperlukan untuk source lookup. Super-system
+tetap tunduk validasi bisnis. Detail module:
+[spesifikasi Returns](modules/Purchasing/Returns/specification.md).
+
 ## Endpoint Internal POS
 
 Route module Sales/POS, session web/auth/CSRF. URL/name existing /pos (pos.index)

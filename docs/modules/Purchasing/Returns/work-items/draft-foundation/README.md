@@ -2,15 +2,15 @@
 
 ## Status
 
-In Progress. Increment 1 dokumentasi dan Increment 2 scaffold/schema/Domain
-Passed. Increment 3..6 belum dimulai. Migration lokal masih Pending dan belum
-dijalankan.
+In Progress. Increment 1 dokumentasi, Increment 2 scaffold/schema/Domain, dan
+Increment 3 backend source lookup serta draft create/update Passed. Increment
+4..6 belum dimulai. Migration lokal masih Pending dan belum dijalankan.
 
 ## Owner Dan Lokasi
 
 - Owner utama: Purchasing/Returns, app/Modules/Purchasing/Returns.
-- PurchaseOrders: calon penyedia published source lookup, bukan akses repository
-  atau model privat; kontrak dibuat bersama consumer nyata, belum sekarang.
+- PurchaseOrders: published source lookup milik provider dan DTO aman; Returns
+  mengonsumsinya tanpa akses repository atau model privat.
 - Frontend rencana: resources/js/pages/purchasing/returns dan components lokal.
 - Dokumen: [specification](../../specification.md), [plan](plan.md), [tasks](tasks.md).
 
@@ -20,7 +20,8 @@ PurchaseOrders memiliki draft, penerimaan penuh posted/receipt dan pembayaran
 lunas terpisah. PostPurchaseOrder menjaga snapshot baris serta receipt immutable;
 PayPurchaseOrder menaikkan version header tanpa mengganti nilai baris.
 quantity/conversion_ratio/unit_cost/base_quantity memakai decimal20,6 dan
-total_value decimal30,6. Belum ada public lookup untuk consumer retur pembelian.
+total_value decimal30,6. Lookup return source sekarang memproyeksikan snapshot
+eligible tanpa field payment/actor/notes.
 Sales/Returns menjadi contoh pola draft/snapshot/audit, bukan dependency privat
 atau aturan FIFO/uang yang boleh disalin tanpa keputusan.
 
@@ -73,21 +74,20 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 | --- | --- | --- | --- |
 | 1 | Passed | Baseline module/work item dan source review | 10 dokumen/22 link lokal valid, whitespace dan scope review |
 | 2 | Passed | Scaffold canonical, dua tabel draft, dan Domain quantity exact6 | 78 test/139 assertion lulus; Pint, route absence, migration Pending, diff check |
-| 3 | Planned | Lookup sumber dan simpan draft melalui HTTP | Published boundary/privacy, feature create/update/query |
+| 3 | Passed | Lookup sumber, permission, dan simpan draft melalui HTTP JSON | 87 tests/218 assertions, route/permission, snapshot, audit, no-op |
 | 4 | Planned | Lifecycle/version/audit/demo | Feature stale/no-op/rollback/seeder dan fingerprint |
 | 5 | Planned | UI/nav/shortcut/browser | TS/lint/build, DevTools dan desktop/tablet |
 | 6 | Planned | Native QA, aktivasi dan delivery | MySQL, full regresi, fingerprint lokal dan Git remote |
 
 ## Handoff Saat Ini
 
-- Perubahan: scaffold module melalui generator, provider discovery, migration
-  header/baris draft, dan Domain ReturnQuantity; tidak ada route bisnis atau
-  permission yang didaftarkan.
-- Verifikasi: rincian test, Pint, generator dry-run, route:list, migration status,
-  dan scope commit dicatat di tasks. Test schema berjalan di SQLite disposable.
-- Browser: SKIPPED karena Increment 2 tidak mengubah UI atau route bisnis.
-- Risiko: lookup/simpan draft, stale/no-op, audit rollback dan demo aman belum
-  dibuat; semuanya tetap pada increment berikutnya. Migration native MySQL belum
-  dijalankan.
+- Perubahan: published ReturnPurchaseLookup/DTOs, source adapter validasi receipt,
+  Returns query/repository/action, create/update API, access catalog, permission
+  per action, audit dan version/no-op guard.
+- Verifikasi: 18 focused feature tests/137 assertions, full suite, Pint, route:list
+  dan `git diff --check`; migration tetap Pending, tidak dijalankan pada DB lokal.
+- Browser: SKIPPED karena halaman UI belum masuk scope hingga Increment 5.
+- Risiko: lifecycle delete/restore, seeder demo, UI, native MySQL dan aktivasi
+  additive belum dibuat atau diverifikasi.
 - Old-docs, SampleUI dan artefak user tidak disentuh. Commit tiap increment
   setelah verified; push hanya work item selesai atau diminta eksplisit.

@@ -2,10 +2,9 @@
 
 ## Status
 
-In Progress. Scope fondasi draft disetujui user. Scaffold module, migration
-draft, dan aturan quantity murni sudah tersedia serta diverifikasi pada
-Increment 2. Belum ada contract sumber, route bisnis, permission, CRUD, audit,
-demo draft, atau UI.
+In Progress. Increment 2 fondasi teknis dan Increment 3 backend lookup serta
+create/update draft sudah terverifikasi. Belum ada lifecycle soft delete/restore,
+demo draft atau UI; Inertia index akan hadir pada Increment 5.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
 [struktur canonical](../../../FOLDER-STRUCTURE.md).
 
@@ -27,18 +26,20 @@ posted. Spesifikasi: [specification.md](specification.md).
 
 Belum ada public contract/DTOs/event milik Returns yang diperlukan module lain.
 Jangan menambahkan port/event untuk consumer hipotetis.
-Dependency yang direncanakan: lookup snapshot published milik
-Purchasing/PurchaseOrders, dibuat bersama consumer nyata pada increment backend.
-Nama kerja `Application/Contracts/ReturnPurchaseLookup` dan DTOs
-`Application/DTOs/ReturnPurchaseData`; keduanya belum diimplementasikan.
+Returns mengonsumsi published `PurchaseOrders\Application\Contracts\ReturnPurchaseLookup`
+dan DTO `PurchaseOrders\Application\DTOs\ReturnPurchaseData` untuk lookup dan
+save. Adapter query tetap dimiliki PurchaseOrders.
 Tidak membaca model/repository/Domain privat PurchaseOrders atau Sales/Returns.
 Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
 
 ## Permission, Data Dan Seeder
 
-- Rencana permission: purchasing.returns.view dan purchasing.returns.manage,
-  catalog module tanpa auto-grant. Super-system tetap tunduk invariant.
-- Rencana route: /purchasing/returns, belum aktif.
+- `ReturnsAccessSeeder` mendaftarkan `purchasing.returns.view` dan
+  `purchasing.returns.manage` tanpa memberi role/grant. Permission dibedakan per
+  action; super-system tetap tunduk invariant.
+- Backend route aktif: `/purchasing/returns/data`, `/purchasing/returns/purchases`,
+  `/purchasing/returns/purchases/{id}`, `POST /purchasing/returns`, dan
+  `PUT /purchasing/returns/{id}`. Inertia root, delete dan restore belum aktif.
 - Source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/ dan
   Database/Seeders/ ada di dalam module. Provider terdaftar dan memuat route
   serta migration module.

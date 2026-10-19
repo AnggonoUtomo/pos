@@ -54,6 +54,14 @@ nonaktif master; draft tetap terbaca via snapshot meski master berubah. Tidak
 ada history/usage port baru Supplier; posted memakai snapshot dan FK restrict.
 Supplier boleh nonaktif/soft delete setelah posted, tanpa mengubah histori.
 
+PurchaseOrders mempublikasikan `Application/Contracts/ReturnPurchaseLookup` dan
+`Application/DTOs/ReturnPurchaseData` untuk consumer retur pembelian nyata.
+`findEligible(id)` dan `searchEligible(search)` hanya mengembalikan order posted,
+aktif, dengan receipt yang cocok pada source type/id/nomor/gudang/waktu. Projection
+menggunakan snapshot header/baris exact6 tanpa notes, actor, request hash,
+payment snapshot atau data rekening. Adapter berada di PurchaseOrders dan tidak
+mengembalikan model/repository. Search literal max150, maksimal25 sumber.
+
 Posting full melalui PostPurchaseOrder dan public Stock/PurchaseStockWriter,
 DTOs PurchaseStockRequest/PurchaseStockResult, bukan repository privat.
 Lock dokumen/baris, gudang, supplier, selected/base units sorted, items sorted,

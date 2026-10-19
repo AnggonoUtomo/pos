@@ -22,7 +22,7 @@ Bukti penerimaan: [purchase-full-receipt](../../../work-items/purchase-full-rece
 Bukti pembayaran: [purchase-paid-settlement](../../../work-items/purchase-paid-settlement/tasks.md).
 
 - [x] Kebutuhan projection posted untuk draft retur disepakati dan direncanakan.
-- [ ] Published lookup/DTOs minimal dengan consumer Returns nyata dan privacy tests
+- [x] Published lookup/DTOs minimal dengan consumer Returns nyata dan privacy tests
   diimplementasikan; bukan akses model/repository privat atau mutation sumber.
 
 Pekerjaan penyedia snapshot mengikuti

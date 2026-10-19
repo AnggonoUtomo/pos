@@ -12,6 +12,8 @@
 - [x] QA automated/native/browser/aktivasi aman direncanakan.
 - [x] Scope tahap ini hanya dokumentasi, tidak coding atau DB/runtime change.
 - [x] Sebelum Increment 2, baca ulang source/generator/QA dan status Git terkini.
+- [x] Sebelum Increment 3, baca ulang API/module docs, boundary PurchaseOrders,
+  source/routes, QA dan status Git; target PurchaseOrders/Returns diumumkan.
 
 ## Increment 1: Baseline Dokumentasi
 
@@ -49,20 +51,20 @@
 
 ## Increment 3: Sumber Dan Alur Simpan
 
-- [ ] Publikasikan source lookup/DTOs PurchaseOrders bersama consumer query nyata.
+- [x] Publikasikan source lookup/DTOs PurchaseOrders bersama consumer nyata.
   - Acceptance: eligible posted+receipt, projection safe/exact6 dan search bounded;
     tidak bergantung master live atau mengekspor payment/actor/bank/notes sumber.
   - Verification: projection/privacy/source invalid dan master-change tests.
-- [ ] Buat query/route baca berizin sebagai consumer lookup dan daftar snapshot.
-  - Acceptance: index/data/lookup dibatasi view/manage sesuai spec; source lookup
+- [x] Buat query/route baca berizin sebagai consumer lookup dan daftar snapshot.
+  - Acceptance: data/source lookup dibatasi view/manage sesuai spec; source lookup
     tidak membutuhkan akses repository/CRUD PurchaseOrders/Finance. Catalog
     permission module didaftarkan tanpa grant bersama consumer HTTP ini.
   - Verification: HTTP guest/viewer/manager/outsider, pagination/search literal.
-- [ ] Implementasikan create draft atomic setelah test red.
+- [x] Implementasikan create draft atomic setelah test red.
   - Acceptance: membership/duplicate/quantity/forgery ditangani server; ID/nomor/
     snapshot/harga/rasio authoritative; satu audit wajib bersama baris/header.
   - Verification: feature create, invalid input dan audit veto/null rollback.
-- [ ] Implementasikan update/version/no-op tanpa mengganti sumber pembelian.
+- [x] Implementasikan update/version/no-op tanpa mengganti sumber pembelian.
   - Acceptance: stale ditolak termasuk super-system; harga asal tetap walau
     PO dibayar/master berubah, no-op tidak menambah audit/version.
   - Verification: feature update/tamper/source immutable dan route:list.
@@ -143,8 +145,11 @@
 | Review source/template/scope (Increment 1) | PASS | Baseline pola received penuh dan presisi6 ditemukan; tidak ada source Returns pembelian atau published lookup yang diklaim tersedia. |
 | Generator dry-run dan scaffold | PASS | `php artisan module:make Purchasing Returns --dry-run --with-tests`; provider, Routes, Database/Migrations, Seeders dan test scaffold ditemukan. Tidak ada route bisnis. |
 | Domain quantity dan schema disposable | PASS | `php artisan test --compact tests/Unit/Modules/Purchasing/Returns tests/Feature/Modules/Purchasing/Returns tests/Feature/Console/MakeModuleCommandTest.php`: 78 tests, 139 assertions. Quantity exact6, batas, unique/FK, soft delete marker, down populated dan source fingerprint lulus. |
-| Regresi penuh | PASS | `php artisan test --compact`: 712 tests, 5628 assertions. |
+| Regresi penuh (Increment 2) | PASS | `php artisan test --compact`: 712 tests, 5628 assertions. |
 | Pint dan route/status | PASS | Pint scoped lulus setelah format; route:list tidak menemukan route Returns; migrate:status menunjukkan migration baru Pending. Migration tidak dijalankan pada database lokal. |
+| Lookup source dan draft backend | PASS | `php artisan test --compact tests/Feature/Modules/Purchasing/Returns tests/Feature/Modules/Purchasing/PurchaseOrders/ReturnPurchaseLookupTest.php tests/Unit/Modules/Purchasing/Returns`: 87 tests, 218 assertions; source/privacy/receipt/header+line consistency/search, HTTP permission/catalog no-grant, exact snapshot, audit veto/no-op/version lulus. |
+| Regresi penuh (Increment 3) | PASS | `php artisan test --compact`: 724 tests, 5727 assertions. |
+| Route Increment 3 | PASS | `php artisan route:list --path=purchasing/returns`: data, purchases, purchase, store, update; GET root belum ada sampai UI Increment 5. |
 | Whitespace | PASS | `git diff --check` lulus. |
 | Link/whitespace (Increment 1) | PASS | Node memeriksa 10 dokumen dan 22 link lokal, tanpa trailing whitespace; git diff --check lulus. |
 | Staged scope/save point (Increment 1) | PASS | Sepuluh file docs terfokus, tanpa source/user/artifact/arsip atau pola credential. Scoped commit dibuat; tidak push work item yang belum selesai. |
@@ -158,6 +163,15 @@ baris per draft; rollback berisi draft ditolak. ReturnQuantity menjaga decimal
 tanpa float dan konversi exact6. Verifikasi test menggunakan SQLite disposable;
 migration lokal terbukti Pending dan tidak dijalankan. Route bisnis belum dibuat.
 Increment 3 berikutnya mulai published source lookup hanya bersama consumer nyata.
+
+## Handoff Increment 3
+
+PurchaseOrders kini menerbitkan ReturnPurchaseLookup/ReturnPurchaseData dari
+snapshot order/baris yang receipt metadata-nya cocok. Returns memakai boundary
+tersebut untuk lookup, list data, create dan update draft. Validasi source,
+membership, kuantitas, permission, version/no-op dan audit satu transaksi diuji;
+PO/receipt/Stock/FIFO/Finance tidak berubah. Route Inertia root dan lifecycle
+delete/restore belum dibuat. Migration lokal tetap Pending.
 
 ## Handoff Increment 1
 

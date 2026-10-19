@@ -9,6 +9,9 @@ Public dependency: Suppliers/SupplierLookup, Warehouses/WarehouseLookup,
 Items/ItemStockLookup, Units/UnitLookup, Stock/PurchaseStockWriter.
 Finance/Payments menyediakan PurchasePaymentWriter dan PurchasePaymentMethods.
 Tidak mengambil model privat module lain.
+`ReturnPurchaseLookup`/`ReturnPurchaseData` mempublikasikan projection aman
+pembelian received untuk consumer Purchasing/Returns; adapter membaca snapshot
+order/baris dan mencocokkan metadata receipt, tanpa payment/actor/notes.
 
 Lihat [spesifikasi](specification.md), [rencana](plan.md), [checklist](tasks.md)
 dan [fondasi draft](work-items/draft-foundation/README.md), serta

@@ -2,13 +2,15 @@
 
 namespace App\Modules\Purchasing\Returns;
 
+use App\Modules\Purchasing\Returns\Application\Contracts\ReturnDraftRepository;
+use App\Modules\Purchasing\Returns\Infrastructure\Persistence\Repositories\EloquentReturnDraftRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(ReturnDraftRepository::class, EloquentReturnDraftRepository::class);
     }
 
     public function boot(): void
