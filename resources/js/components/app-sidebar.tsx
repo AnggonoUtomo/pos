@@ -142,6 +142,14 @@ const mainNavGroups: NavGroup[] = [
                 badge: 'Aktif',
                 badgeTone: 'amber',
             },
+            {
+                title: 'Retur Pembelian',
+                url: '/purchasing/returns',
+                icon: RotateCcw,
+                permission: 'purchasing.returns.view',
+                badge: 'Draft',
+                badgeTone: 'violet',
+            },
         ],
     },
     {

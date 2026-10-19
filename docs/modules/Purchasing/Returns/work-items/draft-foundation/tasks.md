@@ -19,6 +19,14 @@
   dipastikan tetap di luar scope.
 - [x] Batas Increment 4 dipastikan hanya lifecycle draft dan demo dari source
   posted existing; tidak membuat source, receipt, pembayaran, grant atau ledger.
+- [x] Sebelum Increment 5, baca ulang panduan UI/Quality, Return API/DTO dan
+  query, pola Purchasing/Sales, permission/shortcut/navigasi, formatter angka,
+  status Git serta user artifacts; target Purchasing/Returns diumumkan.
+- [x] Kontrak UI dikunci: Inertia page berizin view, JSON source lookup manage,
+  operasi CRUD draft memakai Laravel/Inertia form, harga asal readonly, dan
+  daftar mengambil snapshot dari query yang sama dengan endpoint data.
+- [x] QA Increment 5 dibatasi desktop/tablet; Chrome DevTools MCP dicoba lebih
+  dahulu, tanpa mengubah data bisnis lokal atau menguji mobile.
 
 ## Increment 1: Baseline Dokumentasi
 
@@ -97,22 +105,29 @@
 
 ## Increment 5: UI Dan Browser
 
-- [ ] Buat list/source picker/form/detail/lifecycle lokal.
+- [x] Buat list/source picker/form/detail/lifecycle lokal.
   - Acceptance: shadcn/Lucide/Sonner, quantity Indonesia, harga asal readonly,
     tidak ada tombol/status yang mengklaim posting stok atau refund supplier.
   - Verification: typecheck/ESLint/build dan browser CRUD/restore/decimal.
-- [ ] Lengkapi permission, shortcut dan navigasi.
+- [x] Lengkapi permission, shortcut dan navigasi.
   - Acceptance: usePermission/isSuperSystem hanya UX, dropdown di atas workspace,
     nav/palette existing; Ctrl/Cmd+Enter bekerja dari dialog, Esc saat aman.
   - Verification: keyboard, tooltip, viewer readonly, outsider403 dan backend tests.
-- [ ] Lengkapi loading/empty/error/stale/retry dan request race.
+- [x] Lengkapi loading/empty/error/stale/retry dan request race.
   - Acceptance: abort sumber lama tidak menimpa pilihan baru, double submit dicegah,
     422/error mempertahankan koreksi tanpa sukses palsu; konflik butuh reload.
-  - Verification: browser controlled403/422/500/network, invalid source dan retry.
-- [ ] Jalankan matriks desktop/tablet dan inspeksi screenshot.
+  - Verification: DevTools offline/500/retry/race/double-submit dan batas kuantitas;
+    backend HTTP 403/422/stale, invalid source dan error form.
+- [x] Jalankan matriks desktop/tablet dan inspeksi screenshot.
   - Acceptance: 1440x1000,1024x768,768x1024 Light/Dark expanded/collapsed tanpa
     overlap/body overflow; console/network tak terduga kosong. Mobile out of scope.
   - Verification: DevTools MCP dahulu; alasan dan fallback existing bila blocked.
+
+- [x] Perbaiki temuan aksesibilitas input dan tutup QA Increment 5.
+  - Acceptance: setiap field input punya identitas stabil `id` atau `name`; tidak
+    ada warning/error runtime baru; seluruh hasil QA tercatat di bawah.
+  - Verification: Chrome DevTools issue scan, typecheck/ESLint/build, focused test,
+    `git diff --check`, dan review scope sebelum commit.
 
 ## Increment 6: Native QA, Aktivasi Dan Delivery
 
@@ -165,6 +180,13 @@
 | Demo dan fingerprint (Increment 4) | PASS | Demo returns eligible CCTV/kelistrikan existing, no-source skip, edited/trashed idempotency, no grants; source/receipt/Stock/FIFO/Finance/master/audit-source fingerprint identik. |
 | Regresi penuh (Increment 4) | PASS | `php artisan test --compact`: 733 tests, 5800 assertions. |
 | Pint dan routes (Increment 4) | PASS | Pint scoped lulus; `route:list --path=purchasing/returns` menunjukkan 7 route termasuk DELETE dan restore. |
+| UI, permission dan browser flow (Increment 5) | PASS | Chrome DevTools isolated context: create `1,5`, detail readonly, edit `1,25`, soft delete, filter trashed, restore; revisi dan Sonner sesuai. Viewer hanya baca, shortcut dropdown/command palette tampil, Ctrl/Cmd+Enter menyimpan dan Esc menutup. |
+| Validasi/error dan concurrency (Increment 5) | PASS | Kuantitas di atas sumber ditolak dan koreksi tetap ada; double-click hanya membuat satu draft. Offline dan HTTP 500 menampilkan error, retry pulih. Respons lookup pertama ditunda, sumber kedua dipilih, lalu respons lama tidak mengganti pilihan. HTTP 403/422/stale dicakup feature tests. |
+| Matriks desktop/tablet (Increment 5) | PASS | Light/Dark, sidebar expanded/collapsed, 1440x1000, 1024x768, 768x1024; lebar dokumen sama viewport, tabel scroll internal, dialog tablet di dalam viewport. Tidak ada temuan console error/warning pada reload final. |
+| Aksesibilitas input (Increment 5) | PASS | DevTools menemukan input pencarian tanpa `id`/`name`; ditambahkan `id="return-search" name="search"`. Reload final: 0 input tanpa identitas dan 0 console error/warning/issue. |
+| Typecheck/lint/build (Increment 5) | PASS | `npx tsc --noEmit`, ESLint scope UI, dan `npm run build` lulus setelah perbaikan aksesibilitas. |
+| Test HTTP/focused (Increment 5) | PASS | `php artisan test --compact tests/Feature/Modules/Purchasing/Returns`: 26 tests, 219 assertions; `php artisan test --compact`: 734 tests, 5824 assertions setelah perubahan UI. |
+| Fixture dan cleanup (Increment 5) | PASS | SQLite disposable hanya di `storage/framework/testing`; fingerprint stock/FIFO/payment sebelum dan sesudah sama (`7235da28...fc74`). Server port 18767 dan file SQLite QA telah dihentikan/dihapus. |
 | Whitespace | PASS | `git diff --check` lulus. |
 | Link/whitespace (Increment 1) | PASS | Node memeriksa 10 dokumen dan 22 link lokal, tanpa trailing whitespace; git diff --check lulus. |
 | Staged scope/save point (Increment 1) | PASS | Sepuluh file docs terfokus, tanpa source/user/artifact/arsip atau pola credential. Scoped commit dibuat; tidak push work item yang belum selesai. |

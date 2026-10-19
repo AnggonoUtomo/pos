@@ -18,7 +18,7 @@ class PurchaseReturnSchemaTest extends StockTestCase
 {
     private const MIGRATION = 'Modules/Purchasing/Returns/Database/Migrations/2026_10_19_000003_create_purchase_return_drafts.php';
 
-    public function test_provider_discovers_schema_without_business_endpoints_or_demo_mutation(): void
+    public function test_provider_discovers_schema_and_authorized_page_without_demo_mutation(): void
     {
         $this->assertTrue(app()->getLoadedProviders()[ServiceProvider::class] ?? false);
         foreach (['purchase_returns', 'purchase_return_lines'] as $table) {
@@ -28,8 +28,8 @@ class PurchaseReturnSchemaTest extends StockTestCase
         }
         $this->assertFalse(Schema::hasColumn('purchase_returns', 'finance_refund_id'));
         $this->assertFalse(Schema::hasColumn('purchase_return_lines', 'total_value'));
-        $this->getJson('/purchasing/returns')->assertMethodNotAllowed();
-        $this->assertCount(7, collect(app('router')->getRoutes())->filter(fn ($route) => str_starts_with($route->uri(), 'purchasing/returns')));
+        $this->getJson('/purchasing/returns')->assertForbidden();
+        $this->assertCount(8, collect(app('router')->getRoutes())->filter(fn ($route) => str_starts_with($route->uri(), 'purchasing/returns')));
         $before = $this->fingerprint();
         app(ReturnsDemoSeeder::class)->run();
         $this->assertSame($before, $this->fingerprint());

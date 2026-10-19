@@ -13,13 +13,25 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Inertia\Inertia;
+use Inertia\Response;
 
 final class PurchaseReturnController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
     {
-        return [new Middleware('can:purchasing.returns.view', only: ['data']),
+        return [new Middleware('can:purchasing.returns.view', only: ['index', 'data']),
             new Middleware('can:purchasing.returns.manage', only: ['purchases', 'purchase', 'store', 'update', 'destroy', 'restore'])];
+    }
+
+    public function index(ListPurchaseReturnDraftsRequest $request, ReturnWorkspace $query): Response
+    {
+        $filters = $request->filters();
+
+        return Inertia::render('purchasing/returns/index', [
+            'records' => $query->records((int) $request->validated('page', 1), $filters),
+            'filters' => $filters,
+        ]);
     }
 
     public function data(ListPurchaseReturnDraftsRequest $request, ReturnWorkspace $query): JsonResponse

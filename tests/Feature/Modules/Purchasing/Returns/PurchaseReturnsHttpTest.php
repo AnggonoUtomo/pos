@@ -59,7 +59,7 @@ class PurchaseReturnsHttpTest extends StockTestCase
         $this->putJson(self::URL.'/'.$id, $updated)->assertOk();
         $this->getJson(self::URL.'/data')->assertJsonPath('data.0.version', 2)->assertJsonPath('data.0.lines.0.base_quantity', '3.000000');
         $this->putJson(self::URL.'/'.$id, $updated)->assertUnprocessable()->assertJsonValidationErrors('version');
-        $this->getJson(self::URL)->assertMethodNotAllowed();
+        $this->get(self::URL)->assertOk()->assertInertia(fn ($page) => $page->component('purchasing/returns/index')->has('records.data'));
     }
 
     public function test_manage_can_delete_and_restore_only_through_current_draft_version(): void
@@ -129,6 +129,18 @@ class PurchaseReturnsHttpTest extends StockTestCase
         $invalid = $this->input($purchaseId, $lineId);
         $invalid['lines'][0]['quantity'] = '3';
         $this->postJson(self::URL, $invalid)->assertUnprocessable()->assertJsonValidationErrors('lines.0.quantity');
+    }
+
+    public function test_inertia_page_uses_view_permission_and_does_not_expose_it_to_manager_only(): void
+    {
+        $viewer = User::factory()->create();
+        $viewer->givePermissionTo('purchasing.returns.view');
+        $this->actingAs($viewer)->get(self::URL)->assertOk()
+            ->assertInertia(fn ($page) => $page->component('purchasing/returns/index')->has('records.data')->where('filters.trashed', false));
+
+        $manager = User::factory()->create();
+        $manager->givePermissionTo('purchasing.returns.manage');
+        $this->actingAs($manager)->get(self::URL)->assertForbidden();
     }
 
     public function test_guest_and_lookup_validation_are_enforced(): void

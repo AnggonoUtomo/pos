@@ -4,6 +4,7 @@ use App\Modules\Purchasing\Returns\Presentation\Controllers\PurchaseReturnContro
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified'])->prefix('purchasing/returns')->name('purchasing.returns.')->group(function (): void {
+    Route::get('/', [PurchaseReturnController::class, 'index'])->name('index');
     Route::get('data', [PurchaseReturnController::class, 'data'])->name('data');
     Route::get('purchases', [PurchaseReturnController::class, 'purchases'])->name('purchases');
     Route::get('purchases/{id}', [PurchaseReturnController::class, 'purchase'])->whereUlid('id')->name('purchase');

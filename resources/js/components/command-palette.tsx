@@ -131,6 +131,14 @@ const commandItems = [
         tone: 'text-orange-600 dark:text-orange-300',
     },
     {
+        title: 'Retur Pembelian',
+        description: 'Draft retur dari pembelian yang sudah diterima',
+        url: '/purchasing/returns',
+        permission: 'purchasing.returns.view',
+        icon: RotateCcw,
+        tone: 'text-violet-600 dark:text-violet-300',
+    },
+    {
         title: 'Pembayaran',
         description: 'Riwayat kas masuk dan pengeluaran tercatat',
         url: '/finance/payments/history',
