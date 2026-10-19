@@ -2,8 +2,10 @@
 
 ## Status
 
-Planned. Scope fondasi draft disetujui user; baseline dokumentasi tersedia,
-belum ada source module, contract sumber, route, migration, permission atau UI.
+In Progress. Scope fondasi draft disetujui user. Scaffold module, migration
+draft, dan aturan quantity murni sudah tersedia serta diverifikasi pada
+Increment 2. Belum ada contract sumber, route bisnis, permission, CRUD, audit,
+demo draft, atau UI.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
 [struktur canonical](../../../FOLDER-STRUCTURE.md).
 
@@ -37,17 +39,24 @@ Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
 - Rencana permission: purchasing.returns.view dan purchasing.returns.manage,
   catalog module tanpa auto-grant. Super-system tetap tunduk invariant.
 - Rencana route: /purchasing/returns, belum aktif.
-- Rencana source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/
-  dan Database/Seeders/ tetap di dalam module.
-- Header draft soft delete; baris mengikuti lifecycle header. Semua ID utama ULID.
+- Source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/ dan
+  Database/Seeders/ ada di dalam module. Provider terdaftar dan memuat route
+  serta migration module.
+- Schema draft: header soft delete, baris mengikuti lifecycle header, ULID,
+  version, snapshot JSON dan unique baris sumber per draft. Foreign key sumber
+  memakai restrict. Rollback migration ditolak selama header/baris masih ada.
+- Domain ReturnQuantity menerima decimal string positif maksimal14/6, memastikan
+  retur tidak melebihi kuantitas diterima dan menghasilkan base quantity exact6
+  tanpa float.
 - Demo CCTV/kelistrikan hanya draft dari sumber posted existing; bila tidak ada
   sumber relevan, skip tanpa membuat penerimaan/pembayaran atau seed module lain.
 
 ## Operasi Dan Verifikasi
 
-Belum ada aktivasi, command QA native/browser khusus, atau migration yang boleh
-dijalankan pada database user untuk module ini. Rencana command dan hasil aktual
-dibedakan di [work item fondasi](work-items/draft-foundation/README.md).
+Migration lokal masih Pending dan tidak dijalankan pada Increment 2. Belum ada
+aktivasi, command QA native/browser khusus, atau migration yang dijalankan pada
+database user untuk module ini. Rencana command dan hasil aktual dibedakan di
+[work item fondasi](work-items/draft-foundation/README.md).
 Gunakan [plan](plan.md) dan [checklist module](tasks.md) untuk urutan capability.
 Implementasi harus memakai generator project setelah dry-run, test terfokus,
 route/status, QA browser desktop/tablet dan aktivasi additive yang terverifikasi.

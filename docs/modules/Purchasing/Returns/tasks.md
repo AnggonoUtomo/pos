@@ -4,7 +4,7 @@
   snapshot satuan/harga, batas kuantitas, CRUD/restore, permission dan audit.
 - [x] Scope dibedakan dari pengeluaran stok, FIFO dan uang kembali supplier.
 - [x] Baseline dokumen dan checklist increment selesai diverifikasi.
-- [ ] Scaffold/schema dan Domain quantity verified pada disposable.
+- [x] Scaffold/schema dan Domain quantity verified pada disposable.
 - [ ] Published source lookup dengan consumer nyata dan alur simpan verified.
 - [ ] Lifecycle/version/no-op, audit dan demo aman verified.
 - [ ] UI/nav/palette/shortcut serta browser desktop/tablet verified.

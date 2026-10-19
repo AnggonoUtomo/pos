@@ -2,12 +2,13 @@
 
 ## Status
 
-Ready. Scope disetujui user; Increment 1 dokumentasi Passed. Increment 2..6
-belum dikerjakan. Tidak ada source/runtime/DB change untuk Returns pembelian.
+In Progress. Increment 1 dokumentasi dan Increment 2 scaffold/schema/Domain
+Passed. Increment 3..6 belum dimulai. Migration lokal masih Pending dan belum
+dijalankan.
 
 ## Owner Dan Lokasi
 
-- Owner utama: Purchasing/Returns, app/Modules/Purchasing/Returns (belum ada).
+- Owner utama: Purchasing/Returns, app/Modules/Purchasing/Returns.
 - PurchaseOrders: calon penyedia published source lookup, bukan akses repository
   atau model privat; kontrak dibuat bersama consumer nyata, belum sekarang.
 - Frontend rencana: resources/js/pages/purchasing/returns dan components lokal.
@@ -71,7 +72,7 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 | No | Status | Hasil | Verifikasi |
 | --- | --- | --- | --- |
 | 1 | Passed | Baseline module/work item dan source review | 10 dokumen/22 link lokal valid, whitespace dan scope review |
-| 2 | Planned | Scaffold/schema/Domain quantity | Generator dry-run, test discovery/unit, migration disposable |
+| 2 | Passed | Scaffold canonical, dua tabel draft, dan Domain quantity exact6 | 78 test/139 assertion lulus; Pint, route absence, migration Pending, diff check |
 | 3 | Planned | Lookup sumber dan simpan draft melalui HTTP | Published boundary/privacy, feature create/update/query |
 | 4 | Planned | Lifecycle/version/audit/demo | Feature stale/no-op/rollback/seeder dan fingerprint |
 | 5 | Planned | UI/nav/shortcut/browser | TS/lint/build, DevTools dan desktop/tablet |
@@ -79,11 +80,14 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 
 ## Handoff Saat Ini
 
-- Perubahan: dokumentasi rencana, bukan scaffold atau implementasi.
-- Verifikasi: 10 dokumen/22 link lokal dan whitespace lulus, source/template/scope
-  direview. Bukti pada tasks; QA runtime belum dijalankan.
-- Browser: SKIPPED tahap dokumentasi karena tidak ada UI/HTTP change.
-- Risiko: snapshot vs master, perbedaan presisi pembelian, stale/no-op, audit
-  rollback dan seed salah source; semuanya memiliki checklist verifikasi.
+- Perubahan: scaffold module melalui generator, provider discovery, migration
+  header/baris draft, dan Domain ReturnQuantity; tidak ada route bisnis atau
+  permission yang didaftarkan.
+- Verifikasi: rincian test, Pint, generator dry-run, route:list, migration status,
+  dan scope commit dicatat di tasks. Test schema berjalan di SQLite disposable.
+- Browser: SKIPPED karena Increment 2 tidak mengubah UI atau route bisnis.
+- Risiko: lookup/simpan draft, stale/no-op, audit rollback dan demo aman belum
+  dibuat; semuanya tetap pada increment berikutnya. Migration native MySQL belum
+  dijalankan.
 - Old-docs, SampleUI dan artefak user tidak disentuh. Commit tiap increment
   setelah verified; push hanya work item selesai atau diminta eksplisit.

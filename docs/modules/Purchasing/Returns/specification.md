@@ -2,9 +2,9 @@
 
 ## Status
 
-Scope produk Disetujui. Dokumen ini baseline rencana, bukan bukti Implemented.
-Belum ada module runtime. Detail schema/contract dikonfirmasi terhadap generator
-dan source terkini sebelum implementasi, tanpa mengubah scope diam-diam.
+Scope produk Disetujui. Increment 2 telah mengimplementasikan scaffold, schema
+draft dan value object quantity. Lookup, persistence use case, lifecycle,
+permission, audit, demo, route bisnis dan UI masih rencana.
 
 ## Tujuan Dan Scope
 
@@ -86,16 +86,19 @@ audit gagal membatalkan mutation, bukan success palsu.
 
 ## Data Yang Direncanakan
 
-Header purchase_returns: ULID, nomor unique, purchase_order_id, nomor/supplier
-snapshot untuk pencarian, snapshot JSON safe, status draft, version, notes,
-demo_key internal nullable unique, timestamps dan deleted_at.
-Lines purchase_return_lines: ULID, purchase_return_id, purchase_order_line_id,
-quantity/base_quantity decimal20,6 dan snapshot JSON baris asal. Unique pasangan
-draft/baris sumber; tidak unique sumber lintas draft. Baris tidak soft delete
-independen; save mengganti isi baris secara atomik, soft delete melalui header.
-FK restrict direncanakan untuk menjaga referensi sumber; kunci schema/migration
-final saat Increment 2, termasuk perilaku rollback berisi draft dan SQLite tests.
-Tidak ada tabel movement/layer/payment atau field "sudah refund" palsu.
+Header purchase_returns: ULID, nomor unique, purchase_order_id dengan FK restrict,
+nomor/supplier snapshot terindeks, snapshot JSON, status draft, version, notes,
+demo_key nullable unique, timestamps dan deleted_at. Baris
+purchase_return_lines: ULID, FK restrict ke header dan purchase_order_line,
+quantity/base_quantity decimal20,6 (SQLite string panjang21) dan snapshot JSON.
+Unique pasangan draft/baris sumber; sumber tidak unique lintas draft. Baris tidak
+soft delete independen. Migration down menolak jika masih ada header termasuk
+yang soft-deleted, atau baris tersisa, dan hanya menghapus tabel milik Returns.
+Domain ReturnQuantity memvalidasi string decimal positif maksimal14 digit integer
+dan6 pecahan, quantity <= received, rasio >=1, hasil base quantity exact6 dan
+kapasitas decimal20,6. Tidak memakai float. Schema diuji pada SQLite disposable;
+migration lokal tetap Pending dan belum dieksekusi. Tidak ada tabel
+movement/layer/payment atau field "sudah refund".
 
 ## Authorization Dan Audit
 

@@ -13,7 +13,7 @@ keputusan FIFO/uang yang belum disepakati.
 | No | Status | Nama | Perubahan | Acceptance | Verifikasi |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Passed | Baseline | README/spec/plan/tasks module dan work item; module index/source roadmap | Scope, non-scope, dependency, presisi dan QA jelas tanpa runtime change | Review, 10 dokumen/22 link, whitespace PASS |
-| 2 | Planned | Fondasi teknis | Dry-run/generator, discovery, schema draft dan quantity Domain | Route/database module canonical, exact6, batas schema, tanpa mutation ledger | Scaffold/unit, migrate up/down disposable |
+| 2 | Passed | Fondasi teknis | Dry-run/generator, discovery, schema draft dan quantity Domain | Route/database module canonical, exact6, batas schema, tanpa mutation ledger | 78 focused tests/139 assertions, 712 full tests/5628 assertions, Pint, route/status |
 | 3 | Planned | Alur simpan | Published source lookup/DTOs dengan query/action consumer, catalog permission, persistence dan HTTP create/update/read | Sumber received/snapshot safe, harga bukan input, create/update audited/versioned | Feature privacy/input/membership/atomic dan route |
 | 4 | Planned | Lifecycle/demo | Soft delete/restore, stale/no-op/audit hardening dan demo module | Draft saja, tidak mereset user, fingerprint ledger tetap | Feature lifecycle/audit/seeder/native current-read bila perlu |
 | 5 | Planned | UI | List/form/detail/lifecycle, source picker, nav/palette dan shortcut | Permission UX, loading/error/retry/readonly, format Indonesia tanpa klaim posted/refund | TS/lint/build, DevTools/Playwright |
@@ -21,9 +21,9 @@ keputusan FIFO/uang yang belum disepakati.
 
 ## Rincian Checkpoint
 
-Increment 2 mengonfirmasi schema/FK/JSON/decimal/rollback berdasarkan source,
-baru membuat migration. Jangan menyalin nomor migration yang sudah dipakai.
-Tulis test red quantity/base overflow/nonexact, lalu implementasi Domain murni.
+Increment 2 mengonfirmasi schema/FK/JSON/decimal/rollback berdasarkan source.
+Migration memakai nomor yang tersedia. Test red quantity/base overflow/nonexact
+lalu implementasi Domain murni; seluruhnya sudah lulus pada disposable.
 Scaffold default tidak boleh menjadi endpoint publik tanpa authorization atau
 memberi kesan CRUD selesai. Tidak membuat published port kosong.
 
@@ -84,9 +84,10 @@ hanya migration/catalog, seluruh data/audit existing harus identik.
 
 ## Batas Berhenti Dan Rollback
 
-Tahap sekarang berhenti setelah Increment 1 dokumentasi dan commit save point.
-Increment 2..6 menunggu arahan lanjut user. Scope posting/FIFO/uang supplier tidak
-boleh diambil dari roadmap tanpa interview/approval terpisah.
+User menyetujui Increment 2 scaffold/schema/Domain. Tahap ini berhenti setelah
+verifikasi dan commit save point; Increment 3..6 menunggu arahan. Scope
+posting/FIFO/uang supplier tidak boleh diambil dari roadmap tanpa interview/
+approval terpisah.
 Pemulihan dokumen melalui commit terfokus, bukan reset perubahan user. Setelah
 ada data, rollback schema harus mengikuti guard/keputusan Increment 2; jangan
 drop tabel populated atau menghapus draft user untuk memaksa migration ulang.

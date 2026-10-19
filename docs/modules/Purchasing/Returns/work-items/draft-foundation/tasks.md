@@ -11,7 +11,7 @@
 - [x] Dampak schema/route/permission/UI/demo/audit/soft delete/ledger ditentukan.
 - [x] QA automated/native/browser/aktivasi aman direncanakan.
 - [x] Scope tahap ini hanya dokumentasi, tidak coding atau DB/runtime change.
-- [ ] Sebelum Increment 2, baca ulang source/generator/QA dan status Git terkini.
+- [x] Sebelum Increment 2, baca ulang source/generator/QA dan status Git terkini.
 
 ## Increment 1: Baseline Dokumentasi
 
@@ -34,15 +34,15 @@
 
 ## Increment 2: Scaffold, Schema Dan Kuantitas
 
-- [ ] Cocokkan preview generator lalu generate module canonical.
+- [x] Cocokkan preview generator lalu generate module canonical.
   - Acceptance: app/Modules/Purchasing/Returns berisi provider/Routes/Database
     Migrations/Seeders serta tests yang benar; tidak membuka route dummy publik.
   - Verification: module:make --dry-run, --with-tests dan scaffold discovery test.
-- [ ] Kunci schema draft/reference/decimal dan kebijakan rollback populated.
+- [x] Kunci schema draft/reference/decimal dan kebijakan rollback populated.
   - Acceptance: ULID/soft delete/version/JSON/unique per draft, bukan unique
     baris sumber lintas draft; migration tetap di module, tidak merusak sumber.
   - Verification: schema tests dan up/down pada DB disposable, review spec.
-- [ ] Tulis red-green aturan quantity/base quantity murni.
+- [x] Tulis red-green aturan quantity/base quantity murni.
   - Acceptance: positif <= source, max14/6, exact base scale6, invalid/overflow/
     nonexact ditolak; tidak float atau import framework/Domain module lain.
   - Verification: unit quantity, batas besar dan kasus meter/rol/kemasan.
@@ -140,11 +140,24 @@
 
 | Pemeriksaan | Hasil | Catatan |
 | --- | --- | --- |
-| Review source/template/scope | PASS | Baseline pola received penuh dan presisi6 ditemukan; tidak ada source Returns pembelian atau published lookup yang diklaim tersedia. |
-| Link/whitespace | PASS | Node memeriksa 10 dokumen dan 22 link lokal, tanpa trailing whitespace; git diff --check lulus. |
-| Staged scope/save point | PASS | Sepuluh file docs terfokus, tanpa source/user/artifact/arsip atau pola credential. Scoped commit otomatis setelah pemeriksaan, identitas tersedia pada riwayat Git; tidak push work item yang belum selesai. |
-| Backend test/generator/migration/route | SKIPPED tahap dokumentasi | Tidak mengubah PHP, schema atau runtime; wajib pada increment implementasi. |
-| Typecheck/lint/build/DevTools | SKIPPED tahap dokumentasi | Tidak ada perubahan JS/CSS/UI; QA desktop/tablet tetap wajib Increment 5. |
+| Review source/template/scope (Increment 1) | PASS | Baseline pola received penuh dan presisi6 ditemukan; tidak ada source Returns pembelian atau published lookup yang diklaim tersedia. |
+| Generator dry-run dan scaffold | PASS | `php artisan module:make Purchasing Returns --dry-run --with-tests`; provider, Routes, Database/Migrations, Seeders dan test scaffold ditemukan. Tidak ada route bisnis. |
+| Domain quantity dan schema disposable | PASS | `php artisan test --compact tests/Unit/Modules/Purchasing/Returns tests/Feature/Modules/Purchasing/Returns tests/Feature/Console/MakeModuleCommandTest.php`: 78 tests, 139 assertions. Quantity exact6, batas, unique/FK, soft delete marker, down populated dan source fingerprint lulus. |
+| Regresi penuh | PASS | `php artisan test --compact`: 712 tests, 5628 assertions. |
+| Pint dan route/status | PASS | Pint scoped lulus setelah format; route:list tidak menemukan route Returns; migrate:status menunjukkan migration baru Pending. Migration tidak dijalankan pada database lokal. |
+| Whitespace | PASS | `git diff --check` lulus. |
+| Link/whitespace (Increment 1) | PASS | Node memeriksa 10 dokumen dan 22 link lokal, tanpa trailing whitespace; git diff --check lulus. |
+| Staged scope/save point (Increment 1) | PASS | Sepuluh file docs terfokus, tanpa source/user/artifact/arsip atau pola credential. Scoped commit dibuat; tidak push work item yang belum selesai. |
+| Backend/typecheck/browser (Increment 1) | SKIPPED | Increment 1 hanya dokumentasi. Browser QA desktop/tablet tetap wajib Increment 5. |
+
+## Handoff Increment 2
+
+Generator canonical menghasilkan scaffold Purchasing/Returns. Schema header/baris
+mengunci ULID, snapshot, version, soft delete header, FK restrict dan unique
+baris per draft; rollback berisi draft ditolak. ReturnQuantity menjaga decimal
+tanpa float dan konversi exact6. Verifikasi test menggunakan SQLite disposable;
+migration lokal terbukti Pending dan tidak dijalankan. Route bisnis belum dibuat.
+Increment 3 berikutnya mulai published source lookup hanya bersama consumer nyata.
 
 ## Handoff Increment 1
 
