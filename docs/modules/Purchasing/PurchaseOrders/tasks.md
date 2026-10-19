@@ -20,3 +20,10 @@ Bukti penerimaan: [purchase-full-receipt](../../../work-items/purchase-full-rece
 - [x] QA backend/browser/native dan aktivasi additive tanpa membayar data user.
 
 Bukti pembayaran: [purchase-paid-settlement](../../../work-items/purchase-paid-settlement/tasks.md).
+
+- [x] Kebutuhan projection posted untuk draft retur disepakati dan direncanakan.
+- [ ] Published lookup/DTOs minimal dengan consumer Returns nyata dan privacy tests
+  diimplementasikan; bukan akses model/repository privat atau mutation sumber.
+
+Pekerjaan penyedia snapshot mengikuti
+[fondasi draft retur](../Returns/work-items/draft-foundation/tasks.md).

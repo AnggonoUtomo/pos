@@ -1,0 +1,16 @@
+# Checklist Retur Pembelian
+
+- [x] User menyetujui fondasi draft dari pembelian yang sudah diterima,
+  snapshot satuan/harga, batas kuantitas, CRUD/restore, permission dan audit.
+- [x] Scope dibedakan dari pengeluaran stok, FIFO dan uang kembali supplier.
+- [x] Baseline dokumen dan checklist increment selesai diverifikasi.
+- [ ] Scaffold/schema dan Domain quantity verified pada disposable.
+- [ ] Published source lookup dengan consumer nyata dan alur simpan verified.
+- [ ] Lifecycle/version/no-op, audit dan demo aman verified.
+- [ ] UI/nav/palette/shortcut serta browser desktop/tablet verified.
+- [ ] Native MySQL, regresi, aktivasi additive dan delivery verified.
+
+Bukti terperinci: [fondasi draft](work-items/draft-foundation/tasks.md).
+
+Posting stok, pemilihan FIFO layer, refund supplier dan reversal memerlukan
+scope/work item tersendiri; tidak dianggap disetujui oleh checklist ini.
