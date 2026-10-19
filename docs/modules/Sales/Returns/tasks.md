@@ -13,7 +13,7 @@
   dan browser desktop/tablet verified.
 - [x] Increment 6: regresi dan aktivasi lokal dua kali Ran batch22,
   fingerprint data/role/grant/source/Stock/audit identik, tanpa demo/payout.
-- [ ] Implementasi dan QA refund selesai; ikuti
+- [x] Implementasi dan QA refund selesai; ikuti
   [checklist refund](../../../work-items/sale-return-refund/tasks.md).
 - [ ] Karantina/tukar/reversal disepakati pada pekerjaan terpisah.
 

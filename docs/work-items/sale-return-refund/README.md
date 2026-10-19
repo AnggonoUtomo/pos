@@ -2,8 +2,8 @@
 
 ## Status
 
-In Progress. Increment 1..5 Passed; QA dan aktivasi Increment 6 Passed, delivery
-Git sedang ditutup. Dua migration refund lokal Ran batch22, catalog aktif tanpa
+Passed. Increment 1..6 selesai, QA/aktivasi dan delivery Git terverifikasi.
+Dua migration refund lokal Ran batch22, catalog aktif tanpa
 grant/demo/payout. Fingerprint existing terjaga pada dua aktivasi.
 Increment 1 hanya dokumentasi, bukan aktivasi fitur refund.
 
@@ -84,7 +84,7 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
   histori penerimaan dan pembelian existing tidak berubah makna/presisinya.
 - [x] UI menampilkan nominal/status sebenarnya, Sonner, shortcut, permission,
   serta state loading/error/readonly pada desktop dan tablet.
-- [ ] Aktivasi lokal additive menjaga data existing; seluruh QA yang relevan
+- [x] Aktivasi lokal additive menjaga data existing; seluruh QA yang relevan
   selesai, checklist berbukti, commit dan remote delivery terverifikasi.
 
 ## Dampak Yang Direncanakan
@@ -158,7 +158,7 @@ work item reversal yang disetujui; reversal belum tersedia.
 | 3 | Passed | Writer pengeluaran refund Finance dengan snapshot/replay | Focused26/full618 test, native MySQL worker/schema/guard |
 | 4 | Passed | Quote dan penyelesaian Returns atomik, termasuk nol | Focused15/full633 test, empat worker native, audit/FK/down guard |
 | 5 | Passed | UI refund/recovery/nol dan riwayat Finance snapshot | Full637 test, native history, DevTools/Playwright desktop/tablet, TS/lint/build |
-| 6 | In Progress | Regresi dan aktivasi aman lulus; menunggu bukti remote | Full637 test, tiga native refund/history + native aktivasi, browser, batch22 |
+| 6 | Passed | Regresi, aktivasi aman dan delivery terverifikasi | Full637 test, tiga native refund/history + native aktivasi, browser, batch22, remote0/0 |
 
 ## Handoff Saat Ini
 
@@ -175,7 +175,10 @@ work item reversal yang disetujui; reversal belum tersedia.
   pivot, source/Stock/Finance/audit identik. Theme dan package tidak diubah.
 - QA Increment 6: full637/5509, native writer/settlement/history/aktivasi, DevTools
   dan Playwright terbaru PASS; bukti pada tasks. Tidak ada seeder payout otomatis.
-- Delivery Git menunggu commit/push dan verifikasi SHA remote. Batas tersisa adalah
+- Delivery Git terverifikasi: checkpoint cabae83 dipush ke origin/main, SHA remote
+  cocok dengan lokal dan divergence0/0. Dokumen penutup ikut commit/push dengan
+  pemeriksaan remote ulang; identitas final tersedia pada riwayat Git.
+  Batas tersisa adalah
   non-scope (parsial, kredit, tukar, reversal, running balance dan transfer bank
   nyata), bukan fitur yang diam-diam dianggap selesai.
 - Gap conformance: tidak ditemukan konflik struktural pada bagian yang dibaca;

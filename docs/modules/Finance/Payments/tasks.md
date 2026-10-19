@@ -30,6 +30,6 @@ Running balance, piutang/utang dan mutasi umum belum dikerjakan.
   precision2/6, filter, readiness, privacy dan browser/native MySQL PASS.
 - [x] Increment 6: regresi/native/browser dan aktivasi lokal dua kali dengan
   fingerprint existing identik; migration refund Ran batch22, tanpa payout/grant.
-- [ ] Writer refund, histori, guard master dan QA lintas module diverifikasi;
+- [x] Writer refund, histori, guard master dan QA lintas module diverifikasi;
   ikuti [checklist refund](../../../work-items/sale-return-refund/tasks.md).
   Tidak membuat payout dari checklist atau seeder ini.

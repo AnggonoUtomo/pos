@@ -117,7 +117,7 @@
   - Acceptance: demo master CCTV/kelistrikan dipertahankan; skenario refund
     relasional ada di fixture disposable, bukan pembayaran dari DB user.
   - Verification: review seeder/fixture dan laporan aktivasi.
-- [ ] Tutup dokumen aktual dan lakukan commit/push keseluruhan work item.
+- [x] Tutup dokumen aktual dan lakukan commit/push keseluruhan work item.
   - Acceptance: checklist berbukti, README/spec/API/QA/module index akurat,
     file user dikecualikan, SHA remote sama HEAD dan divergence 0/0.
   - Verification: staged diff, `git diff --check`, push dan remote/status check.
@@ -133,13 +133,13 @@ belum selesai kecuali diminta eksplisit.
 
 ## Sesudah Coding Keseluruhan Work Item
 
-- [ ] Semua acceptance refund terpenuhi dan increment implementasi verified.
+- [x] Semua acceptance refund terpenuhi dan increment implementasi verified.
 - [x] Unit/feature/full test dan native MySQL PASS.
 - [x] Typecheck, lint, build dan scoped Pint PASS.
 - [x] Migration/status dan route PASS.
 - [x] Chrome DevTools QA PASS atau BLOCKED/SKIPPED dengan alasan dan fallback.
 - [x] Fingerprint Stock/FIFO/invoice/payment asal serta aktivasi lokal PASS.
-- [ ] Dokumen aktual, risiko terbuka dan remote delivery diperbarui.
+- [x] Dokumen aktual, risiko terbuka dan remote delivery diperbarui.
 
 ## Hasil Verifikasi
 
@@ -310,6 +310,7 @@ tidak mengubah business rule, contract/route/permission key, UI/theme atau packa
 | Route/status | PASS | 11 route Returns, 16 route Finance; migrate:status seluruhnya Ran, dua refund batch22. Tidak ada migration lain dijalankan. |
 | Alasan skip demo refund | PASS | Payout bukan master; tidak membuat seeder transaksi uang otomatis. Master CCTV/kelistrikan dipertahankan; relasi refund hanya fixture disposable. |
 | Review staged scope/link/whitespace | PASS | 19 file Increment 6, 17 dokumen/74 link lokal valid; 80 file keseluruhan delivery diperiksa, tanpa arsip/file user/artifact atau pola credential. Whitespace lulus; branch main dan origin benar. |
+| Git delivery checkpoint | PASS | Commit cabae835ba6f50c4ec63a81dfa8397419a0f0649 berhasil dipush dari 4c37c14 ke origin/main; git ls-remote sama dengan HEAD, divergence0/0. Lima file untracked user tetap dikecualikan. |
 
 Artifact terbaru ignored:
 
@@ -323,7 +324,9 @@ guard gagal; koreksi posted hanya forward fix atau reversal yang disetujui.
 Normal user tetap perlu grant eksplisit melalui pengelolaan akses existing;
 super-system hanya bypass permission, bukan invariant atau validasi.
 
-Delivery Git masih menunggu review staged scope, commit/push dan bukti SHA remote.
+Delivery checkpoint sudah terverifikasi; commit dokumen penutup mengikuti dengan
+push dan pemeriksaan remote ulang. Identitas final tersedia pada riwayat Git,
+bukan SHA yang disisipkan ke commit itu sendiri.
 Old-docs dan file user tidak dibaca/diubah; tidak membuat branch/dependency baru.
 
 Jangan menambahkan scope ke checklist tanpa persetujuan user. Commit otomatis

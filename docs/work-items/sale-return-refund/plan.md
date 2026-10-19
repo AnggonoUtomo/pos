@@ -133,7 +133,7 @@ diperbaiki pada level dialog; rerun GREEN. Bukti rinci pada tasks.md.
 
 ## Increment 6: QA, Aktivasi Dan Delivery
 
-Status: In Progress. Owner: Returns dan Finance. Dependency: seluruh increment.
+Status: Passed. Owner: Returns dan Finance. Dependency: seluruh increment.
 
 Jalankan seluruh regresi dan review diff/boundary. Siapkan aktivasi local/MySQL
 additive yang hanya menjalankan migration baru dan catalog permission. Fingerprint
@@ -146,7 +146,9 @@ native aktivasi berulang sebelum/sesudah settlement lulus pada DB disposable.
 DevTools dan Playwright desktop/tablet terbaru lulus. Aktivasi lokal dua kali
 Ran batch22 dengan fingerprint seluruh kolom/data existing, metadata existing,
 user/role/pivot, source/Stock/Finance/audit identik. Tidak grant/reset/demo/payout.
-Delivery ditutup setelah bukti SHA remote; hasil command ada pada tasks.md.
+Checkpoint delivery cabae83 sudah cocok dengan remote origin/main, divergence0/0.
+Commit dokumentasi penutup mengikuti dengan pemeriksaan remote ulang;
+hasil command ada pada tasks.md dan riwayat Git.
 
 Dokumen API/spec/module index/QA diperbarui mengikuti bukti aktual, bukan rencana.
 Commit otomatis setiap task/increment verified; push hanya setelah keseluruhan
