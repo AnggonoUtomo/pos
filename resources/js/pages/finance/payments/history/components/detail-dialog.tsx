@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { formatDecimalInput as format } from '@/lib/decimal-input';
 import { LoaderCircle, RefreshCw } from 'lucide-react';
 import type { usePaymentDetail } from '../hooks/use-payment-detail';
-import { dateLabel, directionLabel } from '../types';
+import { dateLabel, directionLabel, sourceLabel } from '../types';
 
 export function DetailDialog({ state }: { state: ReturnType<typeof usePaymentDetail> }) {
     const { selected, detail, loading, error, close, retry } = state;
@@ -36,6 +36,8 @@ export function DetailDialog({ state }: { state: ReturnType<typeof usePaymentDet
                 {detail && (
                     <div className="min-w-0 space-y-4">
                         <dl className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm">
+                            <dt className="text-muted-foreground">Sumber</dt>
+                            <dd>{sourceLabel(detail.source_type)}</dd>
                             <dt className="text-muted-foreground">Arah</dt>
                             <dd>{directionLabel(detail.direction)}</dd>
                             <dt className="text-muted-foreground">Waktu (WIB)</dt>

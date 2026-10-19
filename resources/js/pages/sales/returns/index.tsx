@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DataTable } from './components/data-table';
 import { LifecycleDialog } from './components/lifecycle-dialog';
+import { RefundDialog } from './components/refund-dialog';
 import { ReturnFormDialog } from './components/return-form-dialog';
 import type { ReturnFilters, ReturnPageProps, ReturnRow } from './types';
 
@@ -17,6 +18,8 @@ export default function Returns({ records, filters }: ReturnPageProps) {
     const { can } = usePermission();
     const canManage = can('sales.returns.manage');
     const canPost = can('sales.returns.post');
+    const canRefund = can('sales.returns.refund');
+    const [refund, setRefund] = useState<ReturnRow | null>(null);
     const [posting, setPosting] = useState<ReturnRow | null>(null);
     const [dialog, setDialog] = useState<{ record: ReturnRow | null; readOnly: boolean } | null>(null);
     const [lifecycle, setLifecycle] = useState<ReturnRow | null>(null);
@@ -66,7 +69,7 @@ export default function Returns({ records, filters }: ReturnPageProps) {
                         label: 'Simpan / Konfirmasi',
                         description: 'Operasi dialog aktif',
                         keys: ['Ctrl/Cmd', 'Enter'],
-                        disabled: !canManage && !canPost,
+                        disabled: !canManage && !canPost && !canRefund,
                     },
                     { label: 'Tutup', description: 'Tutup dialog', keys: ['Esc'] },
                 ]}
@@ -135,6 +138,8 @@ export default function Returns({ records, filters }: ReturnPageProps) {
                     rows={records.data}
                     canManage={canManage && !loading}
                     canPost={canPost && !loading}
+                    canRefund={canRefund && !loading}
+                    onRefund={setRefund}
                     onPost={setPosting}
                     onOpen={(record, readOnly) => setDialog({ record, readOnly: readOnly || record.status === 'posted' })}
                     onLifecycle={setLifecycle}
@@ -170,6 +175,16 @@ export default function Returns({ records, filters }: ReturnPageProps) {
             {dialog && <ReturnFormDialog record={dialog.record} readOnly={dialog.readOnly} onClose={() => setDialog(null)} />}
             {lifecycle && <LifecycleDialog record={lifecycle} onClose={() => setLifecycle(null)} />}
             {posting && <LifecycleDialog record={posting} mode="post" onClose={() => setPosting(null)} />}
+            {refund && (
+                <RefundDialog
+                    record={refund}
+                    onClose={() => {
+                        setRefund(null);
+                        router.reload({ only: ['records'] });
+                    }}
+                    onSettled={() => router.reload({ only: ['records'] })}
+                />
+            )}
         </AppLayout>
     );
 }

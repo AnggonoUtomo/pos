@@ -781,6 +781,29 @@ Jalankan composer audit --locked/validate --strict dan full backend/browser
 setelah perubahan package HTTP. Test bounded in-memory, bukan DoS server hidup
 atau klaim benchmark seluruh regex/input. Tidak patch vendor manual.
 
+## QA UI Refund Dan Riwayat
+
+`node scripts/qa/sale-return-refund-devtools.mjs` memakai QA_DEVTOOLS_ENTRY
+untuk executable MCP existing, stdio/headless/isolated tanpa install atau profile
+user. `node scripts/qa/sale-return-refund-browser.mjs` memakai
+QA_PLAYWRIGHT_MODULE untuk Playwright existing. Keduanya membuat SQLite disposable,
+credential random stdin, server dan session terpisah, kemudian cleanup; artifact
+di storage/framework/testing diabaikan Git. Tidak menjalankan payout di DB user.
+
+Smoke DevTools: login, quote/konfirmasi positif dan nol, hasil readonly, history
+refund, console/network serta framing1440/1024/768. Playwright: angka Indonesia,
+unique split, error403/500, stale quote nyata, abort quote, timeout30s (clock),
+5xx dan respons hilang setelah commit, retry body identik/no-duplicate, nol/sen
+terakhir, permission/readonly, Light/Dark dan sidebar expanded/collapsed.
+Ctrl+Enter harus berfungsi dari level dialog, termasuk nol tanpa input fokus.
+Screenshot diperiksa visual; mobile tidak termasuk scope.
+
+`php scripts/qa/payment-history-mysql.php` juga menguji refund28digit/scale2
+melalui UNION dengan sale scale2 dan purchase scale6, source_type/detail terpisah,
+filter snapshot dan privacy. Pastikan SELECT DATABASE() adalah nama random QA
+sebelum migrate; URL koneksi tidak boleh menimpa database disposable.
+Bukti aktual pada [checklist refund](work-items/sale-return-refund/tasks.md).
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

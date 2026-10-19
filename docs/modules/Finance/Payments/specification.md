@@ -132,9 +132,11 @@ diterapkan; setelah tabel ada, guard tidak melewati histori. Writer sendiri
 tidak mempunyai fallback penyimpanan ketika migration belum tersedia.
 
 Metode aktif boleh berbeda dari pembayaran asal; Finance menentukan akun.
-Settlement nol ditangani Returns tanpa writer/ledger uang. History nantinya
+Settlement nol ditangani Returns tanpa writer/ledger uang. History Increment 5
 menambah outgoing refund dengan path detail khusus tanpa mengganti path
-outgoing purchase. Integrasi history belum dibuat pada Increment 3. Migration
+outgoing purchase. Source_type sale/purchase/sale_return membedakan sumber,
+refund scale2; schema Pending diabaikan hanya pada read union/options dan detail404.
+Tidak mengarang payout atau status pembayaran lama. Migration
 2026_10_19_000001_create_payment_refunds sudah diuji up/down/native disposable,
 tetapi masih Pending pada DB lokal; aktivasi aman dijadwalkan Increment 6.
 Tidak menjalankan demo/grant/payout atau mengubah DB user pada increment ini.
@@ -183,18 +185,19 @@ tanpa join model privat POS/Purchasing atau master live. GET index/data/show
 memakai permission finance.payments.history.view (semua histori single company),
 terpisah dari master view/manage dan permission transaksi. GET tidak mengaudit.
 
-Satu row per header payment_receipts/disbursements, UNION ALL pagination25 urut
+Satu row per header payment_receipts/disbursements/refunds, UNION ALL pagination25 urut
 occurred_at descending, direction ascending, id descending. CAST total AS CHAR
-sebelum union mempertahankan sale28digit/scale2 dan purchase24digit/scale6.
+sebelum union mempertahankan sale/refund28digit scale2 dan purchase24digit scale6.
 Filter nomor literal max150, direction all/incoming/outgoing, account_id/method_id
 ULID, tanggal inklusif Asia/Jakarta dengan boundary akhir exclusive hari berikutnya
 yang dikonversi ke timezone storage config app. Kedua filter split harus cocok
 pada baris yang sama, tidak menggandakan header. Nominal adalah Total dokumen,
 bukan agregat akun/metode terfilter; tidak ada saldo/net atau laporan accounting.
 
-Detail berisi id/direction/source_number/occurred_at/total/tendered/change/payments.
+Detail berisi id/direction/source_type/source_number/occurred_at/total/tendered/change/payments.
 Incoming amount memakai applied_amount, bukan uang diserahkan sebelum kembalian;
-tendered/change header dan tiap split tersedia. Outgoing memakai amount exact6,
+tendered/change header dan tiap split tersedia. Outgoing purchase memakai amount
+exact6 dan refund exact2 melalui GET history/refunds/{id}; keduanya
 tendered/change null. Snapshot id/code/name/type akun+metode boleh dibaca pemegang
 history, bukan bank_name/account_number/account_holder, actor atau request_hash.
 Pilihan filter dari snapshot ledger (nama representatif MAX, bukan nama terkini),

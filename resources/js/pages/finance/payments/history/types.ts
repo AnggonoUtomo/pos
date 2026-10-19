@@ -4,6 +4,7 @@ export type Direction = 'incoming' | 'outgoing';
 export interface PaymentRow {
     id: string;
     direction: Direction;
+    source_type: 'sale' | 'purchase' | 'sale_return';
     source_number: string;
     occurred_at: string;
     total: string;
@@ -43,5 +44,6 @@ export interface HistoryProps {
     options: HistoryOptions;
 }
 export const directionLabel = (direction: Direction) => (direction === 'incoming' ? 'Kas masuk' : 'Kas keluar');
+export const sourceLabel = (source: PaymentRow['source_type']) => ({ sale: 'Penjualan', purchase: 'Pembelian', sale_return: 'Refund retur' })[source];
 export const dateLabel = (value: string) =>
     new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jakarta' }).format(new Date(value));

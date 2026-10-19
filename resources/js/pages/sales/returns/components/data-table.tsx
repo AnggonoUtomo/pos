@@ -2,13 +2,15 @@ import { MasterActions } from '@/components/shared/master-actions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { CheckCheck, Eye, RotateCcw } from 'lucide-react';
+import { Banknote, CheckCheck, Eye, ReceiptText, RotateCcw } from 'lucide-react';
 import type { ReturnRow } from '../types';
 
 export function DataTable({
     rows,
     canManage,
     canPost,
+    canRefund,
+    onRefund,
     onPost,
     onOpen,
     onLifecycle,
@@ -16,6 +18,8 @@ export function DataTable({
     rows: ReturnRow[];
     canManage: boolean;
     canPost: boolean;
+    canRefund: boolean;
+    onRefund: (row: ReturnRow) => void;
     onPost: (row: ReturnRow) => void;
     onOpen: (row: ReturnRow, readOnly: boolean) => void;
     onLifecycle: (row: ReturnRow) => void;
@@ -61,9 +65,39 @@ export function DataTable({
                                     >
                                         {row.deleted_at ? 'Terhapus' : row.status === 'posted' ? 'Diterima' : 'Draft'}
                                     </Badge>
+                                    {row.status === 'posted' && (
+                                        <span className="text-muted-foreground mt-1 block text-xs">
+                                            {row.settlement
+                                                ? row.settlement.outcome === 'no_payment'
+                                                    ? 'Tanpa pengembalian uang'
+                                                    : 'Refund lunas'
+                                                : row.refund_available
+                                                  ? 'Belum refund'
+                                                  : 'Refund belum aktif'}
+                                        </span>
+                                    )}
                                 </td>
                                 <td className="px-3 py-2">
                                     <div className="flex justify-end gap-1">
+                                        {row.status === 'posted' && !row.deleted_at && (row.settlement || (canRefund && row.refund_available)) && (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        aria-label={`${row.settlement ? 'Hasil refund' : 'Refund'} ${row.number}`}
+                                                        onClick={() => onRefund(row)}
+                                                    >
+                                                        {row.settlement ? (
+                                                            <ReceiptText className="size-4 text-sky-600 dark:text-sky-300" />
+                                                        ) : (
+                                                            <Banknote className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                                        )}
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>{row.settlement ? 'Hasil refund' : 'Refund retur'}</TooltipContent>
+                                            </Tooltip>
+                                        )}
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <Button

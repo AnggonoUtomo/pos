@@ -5,7 +5,7 @@
 Accepted untuk aturan dan desain Increment 2 berdasarkan scope interview user.
 Writer/ledger Finance dan lock master diimplementasi pada Increment 3 serta
 diuji disposable. Scope invoice/settlement Returns dan endpoint tersedia pada
-Increment 4. UI/history dan aktivasi lokal masih rencana Increment 5..6;
+Increment 4. UI/history tersedia Increment 5; aktivasi lokal masih Increment 6;
 penerimaan ADR bukan bukti payout siap operasional.
 
 ## Tanggal

@@ -26,6 +26,8 @@ Running balance, piutang/utang dan mutasi umum belum dikerjakan.
   tercatat pada ADR-016; bukti implementasi mengikuti checklist Increment 3.
 - [x] Increment 3: writer refund/DTOs/choices, schema disposable, replay/audit
   dan guard histori master diverifikasi; migration lokal belum diaktifkan.
+- [x] Increment 5: riwayat refund snapshot/source_type/detail route terpisah,
+  precision2/6, filter, readiness, privacy dan browser/native MySQL PASS.
 - [ ] Writer refund, histori, guard master dan QA lintas module diverifikasi;
   ikuti [checklist refund](../../../work-items/sale-return-refund/tasks.md).
   Tidak membuat payout dari checklist atau seeder ini.

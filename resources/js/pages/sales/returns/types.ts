@@ -40,8 +40,29 @@ export type ReturnRow = {
     posted_at: string | null;
     stock_receipt_id: string | null;
     snapshot: InvoiceHeader;
+    refund_available: boolean;
+    settlement: RefundSettlement | null;
     lines: { id: string; invoice_line_id: string; quantity: string; base_quantity: string; snapshot: InvoiceLine }[];
 };
+export type RefundPayment = { method_id: string; amount: string };
+export type RefundSettlement = {
+    id: string;
+    outcome: 'refunded' | 'no_payment';
+    total: string;
+    finance_refund_id: string | null;
+    settled_at: string;
+    payments: (RefundPayment & { method_name: string; method_type: string })[];
+};
+export type RefundQuote = {
+    id: string;
+    version: number;
+    invoice_revision: number;
+    total: string;
+    quote_fingerprint: string;
+    lines: { sales_return_line_id: string; invoice_line_id: string; quantity: string; amount: string }[];
+    methods: { id: string; code: string; name: string; type: string }[];
+};
+export type RefundInput = { version: number; quote_fingerprint: string; payments: RefundPayment[] };
 export type ReturnFilters = { search: string; trashed: boolean; status: 'all' | 'draft' | 'posted' };
 export type ReturnPageProps = {
     records: { data: ReturnRow[]; meta: { current_page: number; last_page: number; total: number; per_page: number } };

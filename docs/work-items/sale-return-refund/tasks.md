@@ -87,19 +87,19 @@
 
 ## Increment 5: UI Dan Riwayat
 
-- [ ] Tambahkan UI quote/konfirmasi pembayaran serta hasil tanpa uang.
+- [x] Tambahkan UI quote/konfirmasi pembayaran serta hasil tanpa uang.
   - Acceptance: nominal otomatis format Indonesia, split tepat, permission,
     readonly, Sonner, shortcut dropdown dan icon tooltip semantic.
   - Verification: typecheck/lint/build dan browser alur positif/nol.
-- [ ] Lengkapi state loading/error/retry/stale dan timeout recovery.
+- [x] Lengkapi state loading/error/retry/stale dan timeout recovery.
   - Acceptance: tidak submit ganda atau menimpa pilihan baru dengan quote lama;
     retry tidak dianggap payout baru dan tidak menampilkan sukses palsu.
   - Verification: browser controlled 403/422/500/network dan feature replay.
-- [ ] Integrasikan pengeluaran refund positif ke riwayat Finance existing.
+- [x] Integrasikan pengeluaran refund positif ke riwayat Finance existing.
   - Acceptance: sumber dapat dikenali; filter/detail snapshot benar tanpa HPP,
     rekening/hash; sale scale2/purchase scale6 tidak rusak; nol tidak masuk ledger.
   - Verification: history feature tests dan browser snapshot/filter/detail.
-- [ ] Jalankan QA desktop/tablet Light/Dark dan sidebar expanded/collapsed.
+- [x] Jalankan QA desktop/tablet Light/Dark dan sidebar expanded/collapsed.
   - Acceptance: 1440x1000, 1024x768 dan 768x1024 tanpa overlap/overflow; console
     dan network tak terduga bersih. Mobile di luar scope.
   - Verification: Chrome DevTools MCP dahulu; fallback dan alasan dicatat bila perlu.
@@ -242,6 +242,51 @@ Checklist setelah Increment 4:
 Commit otomatis setelah gate akhir lulus, tanpa push sampai keseluruhan work item
 selesai. UI/history dan aktivasi tetap pekerjaan berikutnya, bukan scope tambahan
 yang dikerjakan diam-diam pada increment ini.
+
+## Handoff Increment 5
+
+Implementasi 19 Oktober2026 melengkapi UI Returns dan read history Finance.
+Read projection settlement di-whitelist; tidak mengekspos hash/aktor/HPP/rekening.
+View boleh melihat hasil readonly; quote/payout tetap permission refund tersendiri.
+Schema Pending tidak merusak daftar lama. Tidak mengubah writer/Domain/locking,
+theme, dependency, permission grant, ledger asal atau Stock.
+
+| Pemeriksaan | Hasil | Bukti ringkas |
+| --- | --- | --- |
+| TDD RED read projection/history | EXPECTED FAIL | Tiga test gagal: route refund404 dan field refund_available belum ada; satu kompatibilitas legacy sudah PASS. |
+| Focused read projection/history GREEN | PASS | Empat test baru; dilengkapi filter metode hanya-refund, privacy dan pending schema. |
+| Feature Finance dan Returns | PASS | 93 test/874 assertion. |
+| `php artisan test --compact` | PASS | 637 test/5509 assertion, 63,96 detik. |
+| `php scripts/qa/payment-history-mysql.php` | PASS | Koneksi disposable diverifikasi sebelum migration; UNION tiga ledger, nominal besar exact, filter snapshot, privacy/readonly, cleanup. |
+| `npx tsc --noEmit`, `npx eslint resources/js`, `npm run build` | PASS | Ulang setelah perbaikan shortcut dialog; tidak memakai lint --fix global. |
+| Scoped Pint | PASS | Delapan file PHP target, termasuk fixture dan native QA; formatting hanya file scope. |
+| Chrome DevTools MCP | PASS | Tool langsung sempat terhubung lalu hilang setelah interupsi; executable MCP existing dipakai lewat stdio/headless/isolated. Login, refund positif/nol, hasil readonly, detail Finance, fingerprint/audit, console/network dan framing tiga viewport PASS. |
+| Playwright automated | PASS | 403/500 quote + reload, abort quote lama, angka Indonesia, unique split, timeout client30001ms, 5xx sebelum commit, respons hilang sesudah commit, empat body retry identik dan satu payout. Stale setelah sibling settlement perlu konfirmasi ulang; nol + sen akhir, history search/detail dan viewer readonly PASS. |
+| Regresi shortcut browser | RED lalu GREEN | Ctrl+Enter pada nol awalnya gagal saat fokus di Close; penanganan dipindah ke dialog. Rerun menyelesaikan nol dengan keyboard tanpa metode/ledger nol. Dua selector harness ambigu juga diperbaiki sebelum PASS. |
+| Matriks UI dan inspeksi visual | PASS | 1440x1000,1024x768,768x1024; Light/Dark expanded/collapsed, hasil dialog serta detail Finance. Tidak body overflow/dialog keluar layar; console/network tak terduga kosong. Mobile tidak diuji. |
+| Route dan status lokal | PASS untuk inspeksi | Empat route history termasuk refunds/{id}; incoming/outgoing existing tetap. Dua migration refund masih Pending, semua migration lama Ran. Tidak menjalankan migration/catalog/grant/demo/payout di DB user. |
+| Review staged scope/boundary/link/whitespace | PASS | 35 file terfokus, 15 dokumen/70 link lokal valid; delapan PHP lulus Pint. Query adapter hanya membaca tabel module sendiri; tidak ada model privat lintas module atau pola credential. File user/arsip/artifact dikecualikan. |
+
+Artifact ignored:
+
+- DevTools: `storage/framework/testing/return-refund-browser-9f4f72828a3e5eb0/devtools-report.json`.
+- Playwright: `storage/framework/testing/return-refund-browser-5615d4d73df264d6/report.json`.
+- Gambar desktop Light, hasil Dark tablet dan detail Finance diperiksa visual.
+- Lima settlement/empat payout dan audit exact; fingerprint sumber/stok sama.
+  Server/profil/database QA dibersihkan; screenshot/report tidak di-commit.
+
+Checklist setelah Increment 5:
+
+- [x] Seluruh task UI/history dan browser state pada increment ini terverifikasi.
+- [x] Backend focused/full/native history dan frontend gates lulus.
+- [x] QA menggunakan fixture disposable CCTV/kelistrikan dan credential random
+  lewat stdin; tidak memakai akun/session/data user.
+- [x] Dokumen API/spec/module/work item mengikuti runtime dan batas Pending.
+- [x] Review akhir staged scope/link/whitespace; save point dibuat otomatis
+  setelah verifikasi, identitasnya tersedia pada riwayat Git.
+
+Increment 6 tetap Planned: aktivasi aman dua kali, regresi delivery dan push
+keseluruhan. Tidak menganggap feature aktif lokal hanya karena UI sudah tersedia.
 
 Jangan menambahkan scope ke checklist tanpa persetujuan user. Commit otomatis
 setelah task/increment verified; push setelah keseluruhan work item selesai.

@@ -10,7 +10,8 @@
    disetujui, nominal otomatis scale2/residual, metode aktif boleh berbeda,
    penyelesaian nol tanpa ledger. Increment 2 menambahkan Domain valuasi dan
    ADR-016. Increment 3 writer Finance dan Increment 4 backend quote/settlement
-   sudah diverifikasi; UI/history dan aktivasi lokal belum dikerjakan.
+   sudah diverifikasi; UI/history Increment 5 tersedia. Aktivasi lokal dan delivery
+   keseluruhan tetap Increment 6.
 4. Karantina/tukar/reversal masih pending persetujuan pada pekerjaan terpisah.
 
 Tahap posting memakai checklist pekerjaan sendiri, bukan checklist draft.

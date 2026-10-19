@@ -54,7 +54,7 @@ Playwright desktop/tablet dan native MySQL tercatat pada work item tersebut.
 ## Riwayat Pembayaran
 
 Halaman [Pembayaran](http://pos.test/finance/payments/history) menyediakan daftar
-kas masuk penjualan dan pengeluaran pembelian readonly. Permission khusus
+kas masuk penjualan, pengeluaran pembelian dan refund retur readonly. Permission khusus
 finance.payments.history.view, bukan implikasi view/manage master. Filter nomor,
 tanggal WIB, arah, akun dan metode; detail snapshot tanpa metadata rekening.
 Satu baris per dokumen; Total dokumen tidak berubah menjadi total akun terfilter.
@@ -70,6 +70,8 @@ menyediakan writer internal/DTOs/choices dan ledger refund khusus decimal30,2,
 canonical replay, audit wajib serta guard histori master. Bukan endpoint payout
 bebas, bukan pembayaran purchase dan bukan klaim fitur refund siap UI.
 Consumer settlement Returns dan quote tersedia sejak Increment 4;
-riwayat refund dan UI masih increment lanjut.
+riwayat refund dan UI Returns tersedia pada Increment 5. Source sale_return
+memakai path detail refunds/{id}, bukan outgoing purchase; hasil nol hanya di
+Returns tanpa ledger uang. History tetap berfungsi sebelum schema baru aktif.
 Migration refund lokal Pending; QA schema dan native worker hanya pada database
 disposable, tanpa payout/demo/grant di DB user.

@@ -713,15 +713,16 @@ Histori invoice/issue/consumption/payment asal tidak ditulis ulang.
 Partial cost memakai sisa nilai/quantity consumption asal round down6, full drain
 residual exact. Layer berbiaya nol hasil alokasi sah dan bisa dijual kembali;
 input stok awal/pembelian tetap positif. Lock/current read menjaga dua draft
-bersaing; gagal audit salah satu module membatalkan seluruh posting. Refund,
-barang rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
+bersaing; gagal audit salah satu module membatalkan seluruh posting. Posting
+fisik tidak melakukan refund; contract refund terpisah di bawah. Barang
+rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
 
 ## Contract Refund Retur
 
 Backend quote/settlement tersedia pada Increment 4 sesuai ADR-016; Domain dan
 writer Finance sudah tersedia sebelumnya. Dua migration refund lokal masih
-Pending sampai aktivasi Increment 6. UI dan riwayat refund belum diimplementasi
-(Increment 5 [work item](work-items/sale-return-refund/README.md)). Endpoint
+Pending sampai aktivasi Increment 6. UI dan riwayat refund tersedia pada
+Increment 5 [work item](work-items/sale-return-refund/README.md). Endpoint
 menolak422 refund bila schema Returns belum tersedia, tanpa membuat payout.
 Contract lookup draft dan route existing di atas/bawahnya tetap utuh.
 
@@ -788,6 +789,17 @@ finance_refund_id null dan payments []; quantity allocation/audit tetap ada.
 Tidak ada HPP, rekening, actor atau request_hash di response. Status fisik posted
 dan replay posting Stock tetap utuh; status uang berasal dari settlement.
 
+GET index/data Returns menambah `refund_available` boolean dan `settlement`
+nullable (projection hasil safe seperti response POST, tanpa outer id/status/version).
+View permission boleh membaca hasil readonly, tidak memberi hak refund.
+Sebelum ketiga tabel Returns tersedia, refund_available false dan settlement null;
+daftar existing tetap berfungsi dan UI tidak menawarkan payout.
+Dialog membatalkan quote saat ditutup/pindah dokumen. Setelah 422, quote harus
+dimuat dan dikonfirmasi ulang. Timeout/network/5xx atau respons sukses malformed
+menjaga payload pertama terkunci; tombol Periksa ulang hasil mengirim ulang body
+yang sama, bukan mengganti metode/quote. Hasil hanya ditampilkan sukses setelah
+response settlement terkonfirmasi. Refresh daftar membaca settlement persisted.
+
 ### Writer Dan Riwayat Finance
 
 `SaleRefundPaymentWriter::pay(SaleRefundPaymentRequest)` tersedia pada Increment 3,
@@ -805,15 +817,17 @@ hak nominal, scope invoice dan quote wajib dilakukan consumer Returns pada
 Increment 4. Consumer tersebut tersedia dan tidak memanggil writer untuk nominal nol. Runtime port tidak
 membuka akses controller/repository/model privat ke module lain.
 
-Rencana Increment 5: history existing incoming/outgoing dipertahankan, dengan
+Increment 5: history existing incoming/outgoing dipertahankan, dengan
 penambahan source_type sale/purchase/sale_return pada rows dan union refund
-sebagai outgoing scale2; belum diimplementasi pada Increment 4.
-Rencana GET `/finance/payments/history/refunds/{id}`
+sebagai outgoing scale2.
+GET `/finance/payments/history/refunds/{id}`
 (finance.payments.history.refund) khusus detail ledger refund, permission
 finance.payments.history.view. Snapshot/filter mengikuti history existing;
 refund detail tendered/change null, payments.amount scale2. Path khusus mencegah
 ambiguitas ID ledger terpisah tanpa mengubah detail purchase outgoing existing.
 Settlement nol tidak masuk union history uang. Tidak ada saldo/transfer bank nyata.
+Saat schema refund belum tersedia, union/options mengabaikan ledger baru dan
+detail refund404; history penjualan/pembelian tetap berfungsi.
 
 ## Riwayat Pembayaran Internal
 
@@ -830,8 +844,10 @@ Unknown/invalid filters422, detail tidak ditemukan404, forbidden403/guest login.
 Tanggal Asia/Jakarta inklusif; date_to diubah hari berikutnya exclusive sebelum
 konversi ke timezone storage. Account+method harus cocok pada baris split sama.
 
-Row id/direction/source_number/occurred_at ISO/total decimal string scale2 sale,
-scale6 purchase. Satu baris per dokumen, total header penuh meski difilter akun;
+Row id/direction/source_type/source_number/occurred_at ISO/total decimal string
+scale2 sale/sale_return, scale6 purchase. source_type sale/purchase/sale_return
+membedakan sumber dan route detail; route refund khusus dijelaskan di atas.
+Satu baris per dokumen, total header penuh meski difilter akun;
 tidak ada agregat/saldo. Detail menambah tendered/change header (outgoing null)
 dan payments snapshot method/account id/code/name/type, amount bersih (sale
 applied_amount) serta tendered_amount/change_amount untuk incoming. Tanpa

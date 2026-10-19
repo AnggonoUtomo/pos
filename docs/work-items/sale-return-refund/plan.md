@@ -101,7 +101,7 @@ duplicate source dan current read, bukan hanya simulasi SQLite berurutan.
 
 ## Increment 5: UI Refund Dan History
 
-Status: Planned. Owner: Returns dan Finance. Dependency: Increment 4.
+Status: Passed. Owner: Returns dan Finance. Dependency: Increment 4.
 
 Form/modal lokal Returns menampilkan quote uang format Indonesia, pilihan metode
 aktif dan sisa tagihan; nominal total bukan field bebas. Quote stale memerlukan
@@ -122,6 +122,14 @@ saldo berjalan tidak ditampilkan. Penyelesaian nol hanya di Returns.
 Verifikasi: typecheck/lint/build dan browser authenticated menggunakan fixture
 disposable pada desktop1440x1000, tablet1024x768 dan768x1024; Light/Dark serta
 sidebar expanded/collapsed. Tidak ada QA mobile pada scope ini.
+
+Hasil aktual: full637 test/5509 assertion, focused93/874, native history exact
+sale/refund28digit scale2 dan purchase24digit scale6 PASS. Chrome DevTools MCP
+existing stdio isolated authenticated positif/nol/history dan framing PASS;
+Playwright timeout30s, 5xx, respons hilang setelah commit, replay identik, stale
+quote nyata, nol/residual, readonly/permission, Light/Dark dan sidebar PASS.
+Bug shortcut nol saat fokus di luar form ditemukan RED pada browser lalu
+diperbaiki pada level dialog; rerun GREEN. Bukti rinci pada tasks.md.
 
 ## Increment 6: QA, Aktivasi Dan Delivery
 
@@ -157,8 +165,8 @@ work item selesai atau diminta eksplisit. Buktikan SHA remote dan divergence.
 
 ## Batas Berhenti Dan Rollback
 
-Tahap saat ini berhenti setelah Increment 4. UI/history dan aktivasi/delivery
-Increment 5..6 menunggu instruksi berikutnya. Perubahan scope di luar README
+User menyetujui lanjut Increment 5: UI/history. Aktivasi/delivery Increment 6
+tetap terpisah; migration lokal belum dijalankan. Perubahan scope di luar README
 perlu persetujuan user.
 
 Dokumentasi dapat dipulihkan melalui revert commit terfokus, bukan reset file

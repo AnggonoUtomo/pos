@@ -34,4 +34,9 @@ class PaymentHistoryController extends Controller implements HasMiddleware
     {
         return response()->json($query->detail($direction, $id));
     }
+
+    public function refund(string $id, ListPaymentHistory $query): JsonResponse
+    {
+        return response()->json($query->detail('refund', $id));
+    }
 }

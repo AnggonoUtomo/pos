@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress. Increment 1..4 Passed; UI/history dan aktivasi Increment 5..6 belum.
+In Progress. Increment 1..5 Passed; aktivasi dan delivery Increment 6 belum.
 Backend endpoint tersedia, tetapi dua migration lokal masih Pending.
 Increment 1 hanya dokumentasi, bukan aktivasi fitur refund.
 
@@ -79,9 +79,9 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
   settlement ditolak sesuai contract yang dikunci sebelum implementasi.
 - [x] Audit gagal membatalkan seluruh settlement dan ledger, termasuk setelah
   writer Finance berhasil.
-- [ ] Histori refund tetap terbaca dari snapshot setelah rename master;
+- [x] Histori refund tetap terbaca dari snapshot setelah rename master;
   histori penerimaan dan pembelian existing tidak berubah makna/presisinya.
-- [ ] UI menampilkan nominal/status sebenarnya, Sonner, shortcut, permission,
+- [x] UI menampilkan nominal/status sebenarnya, Sonner, shortcut, permission,
   serta state loading/error/readonly pada desktop dan tablet.
 - [ ] Aktivasi lokal additive menjaga data existing; seluruh QA yang relevan
   selesai, checklist berbukti, commit dan remote delivery terverifikasi.
@@ -123,22 +123,22 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 | 2 | Passed | ADR-016, desain contract dan Domain valuasi exact | RED/GREEN, focused/regresi592 test, Pint |
 | 3 | Passed | Writer pengeluaran refund Finance dengan snapshot/replay | Focused26/full618 test, native MySQL worker/schema/guard |
 | 4 | Passed | Quote dan penyelesaian Returns atomik, termasuk nol | Focused15/full633 test, empat worker native, audit/FK/down guard |
-| 5 | Planned | UI refund dan riwayat Finance yang benar | Typecheck/lint/build, DevTools desktop/tablet |
+| 5 | Passed | UI refund/recovery/nol dan riwayat Finance snapshot | Full637 test, native history, DevTools/Playwright desktop/tablet, TS/lint/build |
 | 6 | Planned | Regresi, aktivasi aman dan delivery | Full test, native/browser, migration dan Git remote |
 
 ## Handoff Saat Ini
 
-- Perubahan: backend quote/settlement, summary POS terpisah, scope invoice,
-  alokasi exact/nol, audit/replay atomik bersama writer Finance. Dua endpoint
-  memakai sales.returns.refund; catalog additive tanpa grant. Tidak ada UI baru,
-  payout/data user atau aktivasi lokal; kedua migration refund masih Pending.
-- Verifikasi terbaru: full633 test/5428 assertion, focused15 test/124 assertion,
-  native empat worker LOCK WAIT/initial scope/stale quote/replay/zero/residual/
-  audit rollback/FK/down guard. Bukti pada [tasks.md](tasks.md).
-- Browser QA SKIPPED: belum ada UI refund; contract HTTP diverifikasi melalui
-  feature tests dan transaksi native. QA desktop/tablet pada Increment 5.
-- Risiko terbuka: history/UI/timeout recovery dan aktivasi lokal. Backend yang
-  lulus QA tidak membuat fitur siap dipakai sebelum schema, catalog dan UI
-  diaktifkan sesuai Increment 5..6.
+- Perubahan terbaru: dialog refund positif/multi-metode dan nol, status uang
+  terpisah dari penerimaan, hasil readonly, recovery body identik, serta source
+  refund/detail khusus di history Finance. Read aman saat schema belum aktif.
+- Verifikasi: full637 test/5509 assertion; focused93 test/874 assertion; native
+  history MySQL nominal besar/presisi/filter/snapshot PASS. DevTools authenticated
+  positif/nol/history PASS; Playwright desktop/tablet Light/Dark expanded/collapsed,
+  timeout30s/5xx/lost response/stale/permission/keyboard PASS. TS/lint/build/Pint
+  lulus. Bukti dan lokasi artifact pada [tasks.md](tasks.md).
+- Kedua migration refund masih Pending. Tidak menjalankan migration, catalog,
+  demo, payout atau grant di DB user. Theme dan package tidak diubah.
+- Risiko terbuka: aktivasi lokal dan delivery keseluruhan pada Increment 6.
+  Belum push; keberhasilan fixture disposable bukan klaim fitur aktif di DB user.
 - Gap conformance: tidak ditemukan konflik struktural pada bagian yang dibaca;
   ini bukan audit menyeluruh repository. `Old-docs` dan file user tidak disentuh.

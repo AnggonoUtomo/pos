@@ -21,7 +21,7 @@
 Draft sendiri tidak mengubah stok/FIFO, refund atau invoice/pembayaran asal.
 Beberapa draft boleh menunjuk invoice sama; batas kumulatif diperiksa saat
 posting melalui writer Stock. Harga asal bukan HPP atau uang yang otomatis
-dikembalikan; backend refund tersedia terpisah di bawah, belum aktif lokal/UI.
+dikembalikan; refund tersedia terpisah di bawah, belum aktif schema lokal.
 
 Tidak ada endpoint edit invoice, hapus permanen, atau perubahan ledger bebas.
 Snapshot publik tidak memuat HPP, pembayaran, request hash, maupun credential.
@@ -47,7 +47,7 @@ master aktif. Invoice/penerimaan/consumption asal immutable; posting fisik tidak
 melakukan refund. Karantina, tukar, gudang tujuan bebas dan reversal belum tersedia. HPP tidak menjadi
 props atau response Returns. Audit Returns dan Stock berada dalam satu transaction.
 
-## Backend Refund Lunas (Belum Aktif Lokal/UI)
+## Refund Lunas (Belum Aktif Schema Lokal)
 
 Scope disetujui melalui interview pada [work item refund](../../../work-items/sale-return-refund/README.md).
 Hanya retur posted, satu penyelesaian penuh dengan multi-payment tepat tanpa
@@ -61,7 +61,8 @@ ledger nol; alokasi kuantitas tetap tercatat. Refund tidak mengubah Stock/FIFO
 atau penerimaan invoice asal. Posted lama tidak otomatis menjadi sudah dibayar.
 
 Permission, quote/stale handling, persistence dan consumer writer Finance sudah
-tersedia pada Increment 4. UI/history menyusul; migration lokal belum dijalankan.
+tersedia pada Increment 4. UI/history tersedia pada Increment 5; migration lokal
+belum dijalankan dan permission catalog belum diaktifkan pada DB user.
 Pembayaran parsial, kredit pelanggan, tukar barang dan reversal di luar scope.
 
 Increment 2 menyediakan `RefundInvoiceBasis` untuk rekonsiliasi semua baris
@@ -98,6 +99,16 @@ draft edited/trashed. Aktivasi lokal tidak menjalankan demo.
 
 Halaman admin memakai shadcn/ui, Sonner, format angka Indonesia, shortcut
 dropdown, navigasi sidebar/palette, desktop/tablet Light/Dark.
+
+UI refund memakai permission terpisah sales.returns.refund untuk quote/konfirmasi.
+Status fisik Diterima terpisah dari Belum refund/Refund lunas/Tanpa pengembalian
+uang. View boleh membaca snapshot hasil readonly. Rows menambah refund_available
+dan settlement safe; schema Pending tidak merusak daftar atau menawarkan refund.
+Split positif memakai decimal scale2/BigInt untuk preview tepat, total otomatis,
+metode unik maksimal10. Nol tidak meminta metode. Quote stale422 harus dimuat dan
+dikonfirmasi ulang, tidak auto-submit. Setelah timeout/network/5xx, pilihan dan
+close terkunci; Periksa ulang hasil memakai payload identik hingga terkonfirmasi.
+Quote lama di-abort saat tutup/pindah dokumen. Tidak mengubah theme.
 
 ## Schema Dan Contract
 

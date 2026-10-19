@@ -11,7 +11,8 @@ snapshot invoice asal dan `Inventory/Stock/Application/Contracts/SaleReturnStock
 untuk penerimaan stok, bukan model/repository privat module lain.
 
 Status: Active untuk draft/posting fisik. Backend quote/refund lunas tersedia,
-tetapi migration lokal Pending dan UI/history belum dibuat. Karantina/tukar
+UI refund dan hasil readonly serta history Finance tersedia; migration lokal
+masih Pending sampai Increment 6. Karantina/tukar
 belum tersedia. Rincian [refund](../../../work-items/sale-return-refund/README.md).
 URL `/sales/returns`, permission `sales.returns.view`, `sales.returns.manage`,
 serta `sales.returns.post` terpisah. Posted readonly, replay aman, FIFO biaya

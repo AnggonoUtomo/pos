@@ -17,7 +17,11 @@ export function usePaymentDetail() {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(route('finance.payments.history.show', { direction: row.direction, id: row.id }), {
+            const url =
+                row.source_type === 'sale_return'
+                    ? route('finance.payments.history.refund', { id: row.id })
+                    : route('finance.payments.history.show', { direction: row.direction, id: row.id });
+            const response = await fetch(url, {
                 signal: request.signal,
                 credentials: 'same-origin',
                 headers: { Accept: 'application/json' },
@@ -27,6 +31,7 @@ export function usePaymentDetail() {
             if (
                 data.id !== row.id ||
                 data.direction !== row.direction ||
+                data.source_type !== row.source_type ||
                 !/^\d+(?:\.\d{1,6})?$/.test(data.total) ||
                 !Array.isArray(data.payments) ||
                 !data.payments.every(

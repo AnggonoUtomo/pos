@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatDecimalInput as format } from '@/lib/decimal-input';
 import { ArrowDownLeft, ArrowUpRight, Eye, ReceiptText } from 'lucide-react';
-import { dateLabel, directionLabel, type PaymentRow } from '../types';
+import { dateLabel, directionLabel, sourceLabel, type PaymentRow } from '../types';
 
 export function DataTable({ rows, onOpen, disabled }: { rows: PaymentRow[]; onOpen: (row: PaymentRow) => void; disabled: boolean }) {
     return (
@@ -28,9 +28,12 @@ export function DataTable({ rows, onOpen, disabled }: { rows: PaymentRow[]; onOp
                         </tr>
                     ) : (
                         rows.map((row) => (
-                            <tr key={`${row.direction}-${row.id}`} className="hover:bg-muted/30">
+                            <tr key={`${row.source_type}-${row.id}`} className="hover:bg-muted/30">
                                 <td className="px-4 py-3 whitespace-nowrap">{dateLabel(row.occurred_at)}</td>
-                                <td className="max-w-64 px-4 py-3 font-mono text-xs break-all">{row.source_number}</td>
+                                <td className="max-w-64 px-4 py-3 break-all">
+                                    <span className="block font-mono text-xs">{row.source_number}</span>
+                                    <span className="text-muted-foreground text-xs">{sourceLabel(row.source_type)}</span>
+                                </td>
                                 <td className="px-4 py-3">
                                     <Badge
                                         variant="outline"

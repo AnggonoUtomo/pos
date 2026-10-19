@@ -2,7 +2,9 @@
 
 use App\Modules\Finance\Payments\Application\Actions\RecordSalePayment;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentWriter;
+use App\Modules\Finance\Payments\Application\Contracts\SaleRefundPaymentWriter;
 use App\Modules\Finance\Payments\Application\DTOs\PurchasePaymentRequest;
+use App\Modules\Finance\Payments\Application\DTOs\SaleRefundPaymentRequest;
 use App\Modules\Finance\Payments\Application\Queries\ListPaymentHistory;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
@@ -31,8 +33,9 @@ $check = static function (bool $ok, string $label): void {
 try {
     $server->exec('CREATE DATABASE `'.$name.'` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
     $created = true;
-    config(['database.connections.history_qa' => array_replace($original, ['database' => $name]), 'app.timezone' => 'UTC']);
+    config(['database.connections.history_qa' => array_replace($original, ['database' => $name, 'url' => null]), 'app.timezone' => 'UTC']);
     DB::setDefaultConnection('history_qa');
+    $check(DB::selectOne('SELECT DATABASE() AS name')->name === $name, 'Koneksi benar-benar database QA sebelum migration');
     $app->detectEnvironment(fn () => 'testing');
     $check(Artisan::call('migrate', ['--force' => true]) === 0, 'Native schema baseline tersedia');
     $fixture = PaymentHistoryFixture::seed();
@@ -40,22 +43,28 @@ try {
     $largeBuy = '999999999999999999999999.123456';
     app(RecordSalePayment::class)->handle(['source_id' => strtolower((string) Str::ulid()), 'source_number' => 'POS-LARGE-QA', 'total' => $largeSale, 'payments' => [['method_id' => $fixture['methods']['TUNAI'], 'amount' => $largeSale]]]);
     $purchase = DB::transaction(fn () => app(PurchasePaymentWriter::class)->pay(new PurchasePaymentRequest(strtolower((string) Str::ulid()), 'PO-LARGE-QA', $largeBuy, [['method_id' => $fixture['methods']['TRANSFER'], 'amount' => $largeBuy]])));
+    $refund = DB::transaction(fn () => app(SaleRefundPaymentWriter::class)->pay(new SaleRefundPaymentRequest(strtolower((string) Str::ulid()), 'SR-LARGE-QA', $largeSale, [['method_id' => $fixture['methods']['DEBIT'], 'amount' => $largeSale]])));
     DB::table('payment_methods')->update(['name' => 'Renamed method', 'deleted_at' => now(), 'is_active' => false]);
     DB::table('payment_accounts')->update(['name' => 'Renamed account', 'deleted_at' => now(), 'is_active' => false, 'account_number' => 'PRIVATE-QA']);
     $before = PaymentHistoryFixture::fingerprint();
     $query = app(ListPaymentHistory::class);
     $filters = ['search' => '', 'direction' => 'all', 'account_id' => null, 'method_id' => null, 'date_from' => null, 'date_to' => null];
-    $check($query->records(1, $filters)['meta']['total'] === 5, 'Native union kedua arah/pagination');
+    $check($query->records(1, $filters)['meta']['total'] === 6, 'Native union tiga sumber/pagination');
     $check($query->records(1, array_replace($filters, ['date_from' => '2026-10-16', 'date_to' => '2026-10-16']))['meta']['total'] === 2, 'Batas tanggal Jakarta inklusif');
     $check($query->records(1, array_replace($filters, ['search' => '%_']))['meta']['total'] === 1, 'Pencarian wildcard literal');
     $check($query->records(1, array_replace($filters, ['account_id' => $fixture['bank_account'], 'method_id' => $fixture['methods']['TUNAI']]))['meta']['total'] === 0, 'Filter akun/metode harus baris yang sama');
     $check($query->records(1, array_replace($filters, ['search' => 'POS-LARGE-QA']))['data'][0]['total'] === $largeSale, 'Nominal sale28digit exact lewat UNION CHAR');
     $check($query->records(1, array_replace($filters, ['search' => 'PO-LARGE-QA']))['data'][0]['total'] === $largeBuy && $query->detail('outgoing', $purchase->id)['total'] === $largeBuy, 'Nominal purchase24digit/6pecahan exact');
+    $row = $query->records(1, array_replace($filters, ['search' => 'SR-LARGE-QA']))['data'][0];
+    $refundDetail = $query->detail('refund', $refund->id);
+    $check($row['total'] === $largeSale && $row['source_type'] === 'sale_return' && $row['direction'] === 'outgoing'
+        && $refundDetail['total'] === $largeSale && $refundDetail['payments'][0]['amount'] === $largeSale, 'Refund28digit scale2 exact melalui UNION dan detail terpisah');
+    $check($query->records(1, array_replace($filters, ['method_id' => $fixture['methods']['DEBIT']]))['meta']['total'] === 1, 'Filter metode refund snapshot');
     $detail = $query->detail('incoming', $fixture['incoming']);
     $cash = collect($detail['payments'])->firstWhere('method_type', 'cash');
     $check($detail['change'] === '1000.00' && $cash['amount'] === '4000.12', 'Kas masuk bersih sesudah kembalian');
     $options = $query->options();
-    $check(count($options['accounts']) === 2 && count($options['methods']) === 2 && ! str_contains(json_encode([$detail, $options]), 'Renamed') && ! str_contains(json_encode($detail), 'PRIVATE-QA'), 'Snapshot dan pilihan tidak bergantung master aktif, metadata privat tidak bocor');
+    $check(count($options['accounts']) === 2 && count($options['methods']) === 3 && ! str_contains(json_encode([$detail, $refundDetail, $options]), 'Renamed') && ! str_contains(json_encode([$detail, $refundDetail]), 'PRIVATE-QA'), 'Snapshot dan pilihan refund tidak bergantung master aktif, metadata privat tidak bocor');
     $check($before === PaymentHistoryFixture::fingerprint(), 'Seluruh GET query menjaga data/ledger/audit identik');
 } finally {
     DB::purge('history_qa');

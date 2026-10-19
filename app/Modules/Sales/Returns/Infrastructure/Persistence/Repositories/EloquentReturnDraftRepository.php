@@ -8,6 +8,7 @@ use Brick\Math\BigDecimal;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use LogicException;
 use RuntimeException;
@@ -112,8 +113,19 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         }
         $result = $query->orderByDesc('id')->paginate(25, page: $page);
         $lines = $this->lines($result->getCollection()->pluck('id')->all());
+        $available = Schema::hasTable('sales_return_settlements') && Schema::hasTable('sales_return_refund_scopes')
+            && Schema::hasTable('sales_return_refund_allocations');
+        $settlements = $available ? DB::table('sales_return_settlements')->whereIn('sales_return_id', $result->getCollection()->pluck('id'))
+            ->get(['sales_return_id', 'snapshot'])->mapWithKeys(function ($row): array {
+                $snapshot = json_decode($row->snapshot, true, flags: JSON_THROW_ON_ERROR)['settlement'];
+                $safe = Arr::only($snapshot, ['id', 'outcome', 'total', 'finance_refund_id', 'settled_at']);
+                $safe['payments'] = array_map(fn ($line) => Arr::only($line, ['method_id', 'method_name', 'method_type', 'amount']), $snapshot['payments']);
 
-        return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key', 'posted_by', 'posted_from_version']) + ['lines' => ($lines[$model->id] ?? collect())->all()])->all(),
+                return [$row->sales_return_id => $safe];
+            }) : collect();
+
+        return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key', 'posted_by', 'posted_from_version'])
+            + ['lines' => ($lines[$model->id] ?? collect())->all(), 'refund_available' => $available, 'settlement' => $settlements[$model->id] ?? null])->all(),
             'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
     }
 
