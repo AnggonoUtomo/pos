@@ -133,13 +133,20 @@ diperbaiki pada level dialog; rerun GREEN. Bukti rinci pada tasks.md.
 
 ## Increment 6: QA, Aktivasi Dan Delivery
 
-Status: Planned. Owner: Returns dan Finance. Dependency: seluruh increment.
+Status: In Progress. Owner: Returns dan Finance. Dependency: seluruh increment.
 
 Jalankan seluruh regresi dan review diff/boundary. Siapkan aktivasi local/MySQL
 additive yang hanya menjalankan migration baru dan catalog permission. Fingerprint
 kolom/data existing, role/grant, source invoices, pembayaran, Stock/FIFO dan audit
 harus tetap; jangan otomatis membayar retur lama atau menjalankan demo transaksi.
 Uji aktivasi dua kali. Catat skip seeder refund otomatis: payout bukan data master.
+
+QA full637/5509 dan frontend gates lulus. Native writer/settlement/history dan
+native aktivasi berulang sebelum/sesudah settlement lulus pada DB disposable.
+DevTools dan Playwright desktop/tablet terbaru lulus. Aktivasi lokal dua kali
+Ran batch22 dengan fingerprint seluruh kolom/data existing, metadata existing,
+user/role/pivot, source/Stock/Finance/audit identik. Tidak grant/reset/demo/payout.
+Delivery ditutup setelah bukti SHA remote; hasil command ada pada tasks.md.
 
 Dokumen API/spec/module index/QA diperbarui mengikuti bukti aktual, bukan rencana.
 Commit otomatis setiap task/increment verified; push hanya setelah keseluruhan
@@ -165,8 +172,8 @@ work item selesai atau diminta eksplisit. Buktikan SHA remote dan divergence.
 
 ## Batas Berhenti Dan Rollback
 
-User menyetujui lanjut Increment 5: UI/history. Aktivasi/delivery Increment 6
-tetap terpisah; migration lokal belum dijalankan. Perubahan scope di luar README
+User menyetujui lanjut Increment 6: QA, aktivasi aman dan delivery. Aktivasi
+lokal sudah lulus dua kali setelah verifikasi disposable/gate relevan. Perubahan scope di luar README
 perlu persetujuan user.
 
 Dokumentasi dapat dipulihkan melalui revert commit terfokus, bukan reset file

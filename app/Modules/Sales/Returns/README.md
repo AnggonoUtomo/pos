@@ -9,5 +9,6 @@ Dokumen: docs/modules/Sales/Returns/ dan docs/work-items/sale-return-posting/.
 Posting memakai SaleReturnStockWriter: gudang asal, biaya FIFO asal, layer baru,
 trace kumulatif, shared transaction/replay dan posted readonly. Refund memakai
 scope invoice, alokasi exact/nol, audit dan replay tanpa mengubah Stock lagi.
-UI/history dan aktivasi migration lokal menyusul. Dokumen canonical:
+UI/history tersedia, migration lokal Ran batch22 melalui aktivasi dua kali tanpa
+grant/demo/payout; fingerprint existing identik. Dokumen canonical:
 [Refund](../../../../docs/work-items/sale-return-refund/README.md).

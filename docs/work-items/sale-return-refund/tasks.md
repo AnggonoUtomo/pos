@@ -106,14 +106,14 @@
 
 ## Increment 6: Aktivasi Dan Delivery
 
-- [ ] Jalankan full regresi, lint/typecheck/build, Pint dan review boundary.
+- [x] Jalankan full regresi, lint/typecheck/build, Pint dan review boundary.
   - Acceptance: seluruh gate relevan PASS; tidak mengklaim QA yang belum jalan.
   - Verification: command pada `plan.md`, native MySQL dan browser artifacts.
-- [ ] Siapkan/jalankan aktivasi lokal additive dua kali.
+- [x] Siapkan/jalankan aktivasi lokal additive dua kali.
   - Acceptance: migration dan catalog permission saja, tanpa grant/reset/demo/
     payout; data existing dan alokasi historis tidak diubah otomatis.
   - Verification: migration/status/route dan fingerprint kolom existing/data.
-- [ ] Dokumentasikan alasan tidak membuat seeder pembayaran refund otomatis.
+- [x] Dokumentasikan alasan tidak membuat seeder pembayaran refund otomatis.
   - Acceptance: demo master CCTV/kelistrikan dipertahankan; skenario refund
     relasional ada di fixture disposable, bukan pembayaran dari DB user.
   - Verification: review seeder/fixture dan laporan aktivasi.
@@ -134,11 +134,11 @@ belum selesai kecuali diminta eksplisit.
 ## Sesudah Coding Keseluruhan Work Item
 
 - [ ] Semua acceptance refund terpenuhi dan increment implementasi verified.
-- [ ] Unit/feature/full test dan native MySQL PASS.
-- [ ] Typecheck, lint, build dan scoped Pint PASS.
-- [ ] Migration/status dan route PASS.
-- [ ] Chrome DevTools QA PASS atau BLOCKED/SKIPPED dengan alasan dan fallback.
-- [ ] Fingerprint Stock/FIFO/invoice/payment asal serta aktivasi lokal PASS.
+- [x] Unit/feature/full test dan native MySQL PASS.
+- [x] Typecheck, lint, build dan scoped Pint PASS.
+- [x] Migration/status dan route PASS.
+- [x] Chrome DevTools QA PASS atau BLOCKED/SKIPPED dengan alasan dan fallback.
+- [x] Fingerprint Stock/FIFO/invoice/payment asal serta aktivasi lokal PASS.
 - [ ] Dokumen aktual, risiko terbuka dan remote delivery diperbarui.
 
 ## Hasil Verifikasi
@@ -285,8 +285,46 @@ Checklist setelah Increment 5:
 - [x] Review akhir staged scope/link/whitespace; save point dibuat otomatis
   setelah verifikasi, identitasnya tersedia pada riwayat Git.
 
-Increment 6 tetap Planned: aktivasi aman dua kali, regresi delivery dan push
-keseluruhan. Tidak menganggap feature aktif lokal hanya karena UI sudah tersedia.
+Pada akhir Increment 5, Increment 6 masih Planned. Hasil aktivasi/delivery aktual
+dicatat di bawah, bukan menganggap UI sebagai bukti schema lokal aktif.
+
+## Handoff Increment 6
+
+19 Oktober2026. Perubahan hanya tooling aktivasi/QA serta dokumentasi aktual;
+tidak mengubah business rule, contract/route/permission key, UI/theme atau package.
+
+| Pemeriksaan | Hasil | Bukti ringkas |
+| --- | --- | --- |
+| Native aktivasi RED | EXPECTED FAIL | Pemeriksaan berhenti sebelum membuat DB karena script aktivasi belum ada. |
+| `php scripts/qa/activate-sale-return-refund-mysql.php` | PASS | DB random dan SELECT DATABASE() sebelum migration; baseline berisi retur fisik, readiness false->true, dua aktivasi tanpa isi ledger, catalog unik, role/grant/source/Stock identik; rerun sesudah settlement tidak mengubah ledger. Cleanup selesai. |
+| Guard override negatif | EXPECTED REJECTION | --qa-database not-a-qa-database exit1 sebelum query/mutation, tanpa output data/credential; kedua script dibatasi CLI. |
+| `php artisan test --compact` | PASS | 637 test/5509 assertion, 64,54 detik. |
+| Typecheck/lint/build | PASS | npx tsc --noEmit, npx eslint resources/js, npm run build. |
+| Pint dan boundary | PASS | Semua PHP yang berubah sejak baseline work item ditambah dua script baru; 33 file module diperiksa untuk dependency Application/Domain tanpa pelanggaran. Review provider/contract/controller/adapter tetap terfokus. |
+| Native writer Finance | PASS | sale-refund-payment-mysql.php: tiga worker LOCK WAIT/current read, replay, decimal besar/sen terakhir, audit veto, guard histori dan FK/down. |
+| Native settlement Returns | PASS | sale-return-refund-mysql.php: empat worker LOCK WAIT, race scope invoice/stale dan dua replay, nol/sen terakhir, audit Returns sesudah Finance rollback, immutable source/Stock, FK/down. |
+| Native riwayat Finance | PASS | payment-history-mysql.php: tiga sumber union, sale/refund28digit scale2/purchase24digit scale6, filter snapshot, privacy/readonly. |
+| Chrome DevTools MCP | PASS | Tool langsung tidak tersedia; executable MCP existing via stdio/headless/isolated. Authenticated positif/nol/result/history, console/network, framing1440/1024/768 serta fingerprint/audit PASS. |
+| Playwright QA ulang | PASS | Timeout30s, 5xx sebelum commit, respons hilang setelah commit dan empat body identik tanpa duplikasi; stale setelah sibling nyata, nol/sen terakhir, shortcut/permission/readonly/history; Light/Dark desktop/tablet expanded/collapsed. Console/network tak terduga kosong. |
+| Aktivasi lokal dua kali | PASS | activate-sale-return-refund-local.php: kedua migration Ran batch22. Catalog additive saja, tanpa grant/reset/demo/payout. Seluruh kolom/data existing, user/role/pivot/source/Stock/Finance/audit dan metadata existing identik; tabel refund baru kosong. |
+| Route/status | PASS | 11 route Returns, 16 route Finance; migrate:status seluruhnya Ran, dua refund batch22. Tidak ada migration lain dijalankan. |
+| Alasan skip demo refund | PASS | Payout bukan master; tidak membuat seeder transaksi uang otomatis. Master CCTV/kelistrikan dipertahankan; relasi refund hanya fixture disposable. |
+| Review staged scope/link/whitespace | PASS | 19 file Increment 6, 17 dokumen/74 link lokal valid; 80 file keseluruhan delivery diperiksa, tanpa arsip/file user/artifact atau pola credential. Whitespace lulus; branch main dan origin benar. |
+
+Artifact terbaru ignored:
+
+- DevTools: storage/framework/testing/return-refund-browser-4ef0db781ccb73a3/devtools-report.json.
+- Playwright: storage/framework/testing/return-refund-browser-ea9cdd51954e7a93/report.json.
+- Screenshot Light desktop dan hasil Dark tablet diperiksa visual. Semua server,
+  worker/profil dan DB QA dibersihkan; artifact tidak masuk commit.
+
+Aktivasi dilakukan setelah QA lulus. MySQL DDL tidak rollback otomatis ketika
+guard gagal; koreksi posted hanya forward fix atau reversal yang disetujui.
+Normal user tetap perlu grant eksplisit melalui pengelolaan akses existing;
+super-system hanya bypass permission, bukan invariant atau validasi.
+
+Delivery Git masih menunggu review staged scope, commit/push dan bukti SHA remote.
+Old-docs dan file user tidak dibaca/diubah; tidak membuat branch/dependency baru.
 
 Jangan menambahkan scope ke checklist tanpa persetujuan user. Commit otomatis
 setelah task/increment verified; push setelah keseluruhan work item selesai.

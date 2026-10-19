@@ -8,14 +8,15 @@ dan [Posting retur](../../../work-items/sale-return-posting/README.md).
 
 Dependency publik: `Sales/POS/Application/Contracts/ReturnInvoiceLookup` untuk
 snapshot invoice asal dan `Inventory/Stock/Application/Contracts/SaleReturnStockWriter`
-untuk penerimaan stok, bukan model/repository privat module lain.
+untuk penerimaan stok; Finance SaleRefundPaymentWriter/Methods untuk uang keluar,
+bukan model/repository privat module lain.
 
 Status: Active untuk draft/posting fisik. Backend quote/refund lunas tersedia,
-UI refund dan hasil readonly serta history Finance tersedia; migration lokal
-masih Pending sampai Increment 6. Karantina/tukar
+UI refund dan hasil readonly serta history Finance tersedia; migration refund
+lokal Ran batch22, aktivasi dua kali tanpa grant/demo/payout. Karantina/tukar
 belum tersedia. Rincian [refund](../../../work-items/sale-return-refund/README.md).
 URL `/sales/returns`, permission `sales.returns.view`, `sales.returns.manage`,
-serta `sales.returns.post` terpisah. Posted readonly, replay aman, FIFO biaya
+serta `sales.returns.post` dan `sales.returns.refund` terpisah. Posted readonly, replay aman, FIFO biaya
 asal/residual exact, batas kumulatif dan audit atomic sudah diuji.
 Migration draft Ran batch20, posting Ran batch21; aktivasi additive tanpa
 demo/grant/reset akun atau posting otomatis.

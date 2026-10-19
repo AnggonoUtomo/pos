@@ -10,7 +10,9 @@
 - [x] Increment 4: source summary, quote dan settlement backend atomik/nol,
   permission, audit, replay serta concurrency MySQL diverifikasi; belum UI/aktivasi.
 - [x] Increment 5: UI refund positif/nol, readonly/recovery, status uang terpisah
-  dan browser desktop/tablet verified; aktivasi lokal tetap Increment 6.
+  dan browser desktop/tablet verified.
+- [x] Increment 6: regresi dan aktivasi lokal dua kali Ran batch22,
+  fingerprint data/role/grant/source/Stock/audit identik, tanpa demo/payout.
 - [ ] Implementasi dan QA refund selesai; ikuti
   [checklist refund](../../../work-items/sale-return-refund/tasks.md).
 - [ ] Karantina/tukar/reversal disepakati pada pekerjaan terpisah.

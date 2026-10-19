@@ -111,8 +111,8 @@ fingerprint source/Stock. Empat worker harus terbukti LOCK WAIT. Semua child dan
 database dibersihkan pada finally, tanpa mencetak credential atau payload pribadi.
 
 Focused: `php artisan test --compact tests/Feature/Modules/Sales/Returns/SettleReturnRefundTest.php tests/Feature/Modules/Sales/POS/RefundBasisLookupTest.php`.
-Scope ini backend/HTTP, belum UI refund. Browser desktop/tablet dan integrasi
-history dijadwalkan Increment 5; migration lokal tetap Pending hingga aktivasi.
+Scope command ini backend/HTTP. Browser desktop/tablet dan integrasi history
+tersedia pada Increment 5. Schema lokal refund Ran batch22 pada Increment 6.
 
 ## QA Writer Refund Finance
 
@@ -128,9 +128,27 @@ cocok dengan nama disposable sebelum menjalankan migration atau writer.
 
 Focused: `php artisan test --compact tests/Feature/Modules/Finance/Payments/RecordSaleRefundPaymentTest.php tests/Unit/Modules/Finance/Payments/RefundSettlementTest.php`.
 Tidak memasang dependency, menjalankan demo/payout di DB lokal, atau mengaktifkan
-endpoint refund. Migration lokal boleh Pending sampai aktivasi work item pada
-Increment 6; catat status ini, jangan disamakan dengan native disposable Ran.
-QA scope invoice/stale quote dan UI Returns tetap terpisah pada increment lanjut.
+endpoint refund bebas. Schema lokal Ran batch22 melalui aktivasi Increment 6,
+bukan efek native QA. QA scope invoice/stale quote dan UI memakai command
+tersendiri agar writer Finance tidak menjadi pengaman hak retur.
+
+## QA Aktivasi Refund
+
+`php scripts/qa/activate-sale-return-refund-mysql.php` menguji dua aktivasi pada
+DB MySQL disposable populated, readiness false menjadi true, lima tabel baru
+tetap kosong, catalog unik, serta role/grant/source/Stock existing identik.
+Sesudah settlement fixture, aktivasi ulang juga harus menjaga ledger/alokasi.
+Koneksi aktual diverifikasi sebelum migration; cleanup pada finally.
+
+`php scripts/qa/activate-sale-return-refund-local.php` hanya CLI local/MySQL,
+advisory lock, dua path migration refund dan catalog Returns tanpa grant/demo/
+reset/payout. Jalankan pada keadaan tidak ada operasi bersamaan. Fingerprint
+semua kolom/data tabel existing kecuali cache (metadata migrations/permissions
+existing diperiksa per row), termasuk role/pivot/source/Stock/Finance/audit.
+Penambahan hanya lima tabel refund dan catalog/migration yang diizinkan; rerun
+tidak menghapus atau membayar ulang histori. MySQL DDL tidak rollback otomatis
+jika guard gagal; jangan memakai down/drop untuk menghapus settlement posted.
+Detail operasi dan bukti pada [work item refund](work-items/sale-return-refund/README.md).
 
 ## QA Browser Dengan Chrome DevTools MCP
 

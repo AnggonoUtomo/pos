@@ -21,7 +21,7 @@
 Draft sendiri tidak mengubah stok/FIFO, refund atau invoice/pembayaran asal.
 Beberapa draft boleh menunjuk invoice sama; batas kumulatif diperiksa saat
 posting melalui writer Stock. Harga asal bukan HPP atau uang yang otomatis
-dikembalikan; refund tersedia terpisah di bawah, belum aktif schema lokal.
+dikembalikan; refund tersedia terpisah di bawah dan schema lokal sudah aktif.
 
 Tidak ada endpoint edit invoice, hapus permanen, atau perubahan ledger bebas.
 Snapshot publik tidak memuat HPP, pembayaran, request hash, maupun credential.
@@ -47,7 +47,7 @@ master aktif. Invoice/penerimaan/consumption asal immutable; posting fisik tidak
 melakukan refund. Karantina, tukar, gudang tujuan bebas dan reversal belum tersedia. HPP tidak menjadi
 props atau response Returns. Audit Returns dan Stock berada dalam satu transaction.
 
-## Refund Lunas (Belum Aktif Schema Lokal)
+## Refund Lunas
 
 Scope disetujui melalui interview pada [work item refund](../../../work-items/sale-return-refund/README.md).
 Hanya retur posted, satu penyelesaian penuh dengan multi-payment tepat tanpa
@@ -61,8 +61,8 @@ ledger nol; alokasi kuantitas tetap tercatat. Refund tidak mengubah Stock/FIFO
 atau penerimaan invoice asal. Posted lama tidak otomatis menjadi sudah dibayar.
 
 Permission, quote/stale handling, persistence dan consumer writer Finance sudah
-tersedia pada Increment 4. UI/history tersedia pada Increment 5; migration lokal
-belum dijalankan dan permission catalog belum diaktifkan pada DB user.
+tersedia pada Increment 4. UI/history tersedia pada Increment 5. Migration lokal
+dan catalog permission aktif pada Increment 6, Ran batch22 tanpa grant/payout.
 Pembayaran parsial, kredit pelanggan, tukar barang dan reversal di luar scope.
 
 Increment 2 menyediakan `RefundInvoiceBasis` untuk rekonsiliasi semua baris
@@ -157,3 +157,13 @@ source fingerprint unchanged serta delta stok. Full525 test/4057 assertion PASS.
 
 Rincian bukti: [Draft](work-items/draft-foundation/tasks.md) dan
 [Posting](../../../work-items/sale-return-posting/tasks.md).
+
+Refund: `php scripts/qa/activate-sale-return-refund-local.php` hanya CLI
+local/MySQL, dua migration refund tertentu dan catalog Returns. Dua kali lulus,
+Ran batch22 dengan fingerprint kolom/data existing, role/grant, source invoice,
+Stock/FIFO/Finance dan audit identik. Retur lama tidak otomatis dibayar; tidak
+menjalankan demo/reset akun. Script tidak rollback DDL otomatis bila gagal.
+`php scripts/qa/activate-sale-return-refund-mysql.php` menguji aktivasi berulang
+pada DB disposable sebelum dan setelah settlement, dengan cleanup.
+QA/domain/native/browser dan batas koreksi pada
+[checklist refund](../../../work-items/sale-return-refund/tasks.md).

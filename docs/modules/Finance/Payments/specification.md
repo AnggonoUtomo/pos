@@ -138,8 +138,9 @@ outgoing purchase. Source_type sale/purchase/sale_return membedakan sumber,
 refund scale2; schema Pending diabaikan hanya pada read union/options dan detail404.
 Tidak mengarang payout atau status pembayaran lama. Migration
 2026_10_19_000001_create_payment_refunds sudah diuji up/down/native disposable,
-tetapi masih Pending pada DB lokal; aktivasi aman dijadwalkan Increment 6.
-Tidak menjalankan demo/grant/payout atau mengubah DB user pada increment ini.
+dan Ran batch22 pada DB lokal melalui aktivasi aman Increment 6 dua kali.
+Aktivasi hanya schema/catalog dengan fingerprint existing identik, tanpa
+demo/grant/payout atau perubahan user/role/source/Stock/audit.
 QA: `php scripts/qa/sale-refund-payment-mysql.php` memakai DB random disposable,
 worker current read/replay, presisi28 digit dan audit/FK/down guard. Rincian
 [checklist](../../../work-items/sale-return-refund/tasks.md).

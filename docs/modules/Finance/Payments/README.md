@@ -58,7 +58,8 @@ kas masuk penjualan, pengeluaran pembelian dan refund retur readonly. Permission
 finance.payments.history.view, bukan implikasi view/manage master. Filter nomor,
 tanggal WIB, arah, akun dan metode; detail snapshot tanpa metadata rekening.
 Satu baris per dokumen; Total dokumen tidak berubah menjadi total akun terfilter.
-Penerimaan memakai jumlah bersih sesudah kembalian, pengeluaran exact6.
+Penerimaan memakai jumlah bersih sesudah kembalian, pengeluaran pembelian exact6
+dan refund exact2.
 Read tidak membuat audit atau mutation ledger; tidak mengklaim saldo berjalan.
 Lihat [work item](work-items/payment-history/README.md), termasuk alasan tidak
 menambah seeder transaksi baru, dan hasil QA/aktivasi permission catalog saja.
@@ -68,10 +69,11 @@ menambah seeder transaksi baru, dan hasil QA/aktivasi permission catalog saja.
 Increment 3 [refund retur](../../../work-items/sale-return-refund/README.md)
 menyediakan writer internal/DTOs/choices dan ledger refund khusus decimal30,2,
 canonical replay, audit wajib serta guard histori master. Bukan endpoint payout
-bebas, bukan pembayaran purchase dan bukan klaim fitur refund siap UI.
+bebas dan bukan pembayaran purchase.
 Consumer settlement Returns dan quote tersedia sejak Increment 4;
 riwayat refund dan UI Returns tersedia pada Increment 5. Source sale_return
 memakai path detail refunds/{id}, bukan outgoing purchase; hasil nol hanya di
 Returns tanpa ledger uang. History tetap berfungsi sebelum schema baru aktif.
-Migration refund lokal Pending; QA schema dan native worker hanya pada database
-disposable, tanpa payout/demo/grant di DB user.
+Migration refund lokal Ran batch22 melalui aktivasi dua kali pada Increment 6.
+Fingerprint data existing tetap; tidak membuat payout/demo/grant di DB user.
+QA schema, worker dan transaksi refund hanya pada database disposable.

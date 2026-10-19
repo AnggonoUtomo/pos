@@ -720,11 +720,14 @@ rusak/karantina, tukar, reversal dan gudang tujuan bebas belum tersedia.
 ## Contract Refund Retur
 
 Backend quote/settlement tersedia pada Increment 4 sesuai ADR-016; Domain dan
-writer Finance sudah tersedia sebelumnya. Dua migration refund lokal masih
-Pending sampai aktivasi Increment 6. UI dan riwayat refund tersedia pada
+writer Finance sudah tersedia sebelumnya. Dua migration refund lokal Ran batch22
+melalui aktivasi Increment 6 dua kali dengan fingerprint existing identik.
+UI dan riwayat refund tersedia pada
 Increment 5 [work item](work-items/sale-return-refund/README.md). Endpoint
 menolak422 refund bila schema Returns belum tersedia, tanpa membuat payout.
 Contract lookup draft dan route existing di atas/bawahnya tetap utuh.
+Aktivasi hanya schema/catalog, tanpa grant/demo/payout. Normal user memerlukan
+permission view dan refund terpisah; super-system tetap mengikuti invariant.
 
 ### Ringkasan Invoice Internal
 

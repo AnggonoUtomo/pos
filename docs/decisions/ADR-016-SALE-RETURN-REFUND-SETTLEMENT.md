@@ -5,8 +5,9 @@
 Accepted untuk aturan dan desain Increment 2 berdasarkan scope interview user.
 Writer/ledger Finance dan lock master diimplementasi pada Increment 3 serta
 diuji disposable. Scope invoice/settlement Returns dan endpoint tersedia pada
-Increment 4. UI/history tersedia Increment 5; aktivasi lokal masih Increment 6;
-penerimaan ADR bukan bukti payout siap operasional.
+Increment 4. UI/history tersedia Increment 5; aktivasi lokal Increment 6
+Ran batch22 dua kali dengan fingerprint existing identik. Penerimaan ADR
+bukan pengganti QA atau klaim transfer bank nyata.
 
 ## Tanggal
 
@@ -216,6 +217,14 @@ Quote/POST memeriksa ketersediaan tiga tabel Returns sebelum membaca ledger.
 Schema belum aktif menghasilkan422 refund, bukan query ke tabel yang belum ada.
 Permission catalog additive tidak memberi grant. Kedua migration lokal masih
 Pending; native QA hanya pada database disposable yang sudah dibersihkan.
+
+Increment 6: full637 test/5509 assertion, native writer/settlement/history serta
+browser authenticated desktop/tablet PASS. Aktivasi CLI local/MySQL hanya dua
+migration dan catalog, Ran batch22; dua kali menjaga kolom/data existing,
+user/role/grant, source/Stock/Finance/audit. QA aktivasi disposable juga mengulang
+sesudah settlement dan menjaga ledger. Tidak ada seeder payout atau auto-refund;
+demo master CCTV/kelistrikan tidak diubah. DDL tidak rollback otomatis; jika
+ada settlement, gunakan forward fix/reversal terencana, bukan down/drop ledger.
 
 Referensi: [Work item](../work-items/sale-return-refund/README.md),
 [ADR-014](ADR-014-PURCHASE-PAYMENT-DISBURSEMENTS.md),

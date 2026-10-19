@@ -2,8 +2,9 @@
 
 ## Status
 
-In Progress. Increment 1..5 Passed; aktivasi dan delivery Increment 6 belum.
-Backend endpoint tersedia, tetapi dua migration lokal masih Pending.
+In Progress. Increment 1..5 Passed; QA dan aktivasi Increment 6 Passed, delivery
+Git sedang ditutup. Dua migration refund lokal Ran batch22, catalog aktif tanpa
+grant/demo/payout. Fingerprint existing terjaga pada dua aktivasi.
 Increment 1 hanya dokumentasi, bukan aktivasi fitur refund.
 
 ## Owner Dan Lokasi
@@ -100,6 +101,39 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 | Stok/FIFO | Tidak dimutasi; fingerprint sebelum/sesudah harus sama. |
 | Harga/diskon/pajak | Membaca nilai bersih snapshot; tidak menghitung ulang master atau menambahkan input baru. |
 
+## Operasi Aktivasi Dan Batas Koreksi
+
+Jalankan `php scripts/qa/activate-sale-return-refund-local.php` hanya CLI pada
+local/MySQL, saat tidak ada transaksi atau perubahan user bersamaan. Script
+memverifikasi database aktual, baseline tabel dan advisory lock aktivasi; hanya
+dua migration refund tertentu serta catalog Returns yang dijalankan. Fingerprint
+kolom/data existing, role/grant, source/Stock/Finance/audit dan metadata existing
+harus tetap; cache permission boleh diinvalidate. Ulangi untuk membuktikan no-op.
+
+QA: `php scripts/qa/activate-sale-return-refund-mysql.php` membuat database
+random, mencoba aktivasi dua kali pada retur fisik existing, lalu mengulang
+setelah settlement fixture. Override --qa-database hanya menerima namespace
+disposable khusus, bukan nama database bebas. QA bukan instruksi mengisi data
+pada database user.
+
+Normal user memerlukan sales.returns.view untuk halaman dan sales.returns.refund
+untuk quote/konfirmasi; finance.payments.history.view untuk riwayat uang.
+Aktivasi tidak memberi grant. Role super-system bypass authorization sesuai
+ADR-010, tidak melewati validasi/invariant refund. Retur posted lama tetap belum
+refund, bukan otomatis diselesaikan. UI `/sales/returns`, history
+`/finance/payments/history`.
+
+Tidak ada seeder payout refund: pengeluaran bukan data master/demo yang boleh
+dibuat saat aktivasi. Demo master CCTV/kelistrikan dipertahankan, sedangkan
+transaksi refund relasional hanya dibuat fixture QA disposable. Tidak ada
+reset akun, demo ulang, refund otomatis, perubahan harga, atau mutation stok.
+
+DDL MySQL tidak rollback otomatis bersama transaction catalog. Bila pemeriksaan
+gagal, hentikan aktivasi dan periksa penyebab; script exit nonzero tanpa mencetak
+data sensitif. Jangan drop/reset tabel atau menjalankan rollback posted untuk
+memaksa recovery. Setelah settlement ada, koreksi memerlukan forward fix atau
+work item reversal yang disetujui; reversal belum tersedia.
+
 ## Dependency Dan Keputusan
 
 - [Arsitektur](../../ARCHITECTURE.md), [struktur](../../FOLDER-STRUCTURE.md),
@@ -124,7 +158,7 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
 | 3 | Passed | Writer pengeluaran refund Finance dengan snapshot/replay | Focused26/full618 test, native MySQL worker/schema/guard |
 | 4 | Passed | Quote dan penyelesaian Returns atomik, termasuk nol | Focused15/full633 test, empat worker native, audit/FK/down guard |
 | 5 | Passed | UI refund/recovery/nol dan riwayat Finance snapshot | Full637 test, native history, DevTools/Playwright desktop/tablet, TS/lint/build |
-| 6 | Planned | Regresi, aktivasi aman dan delivery | Full test, native/browser, migration dan Git remote |
+| 6 | In Progress | Regresi dan aktivasi aman lulus; menunggu bukti remote | Full637 test, tiga native refund/history + native aktivasi, browser, batch22 |
 
 ## Handoff Saat Ini
 
@@ -136,9 +170,13 @@ historis otomatis, dan tidak mengubah transaksi posted lewat soft delete.
   positif/nol/history PASS; Playwright desktop/tablet Light/Dark expanded/collapsed,
   timeout30s/5xx/lost response/stale/permission/keyboard PASS. TS/lint/build/Pint
   lulus. Bukti dan lokasi artifact pada [tasks.md](tasks.md).
-- Kedua migration refund masih Pending. Tidak menjalankan migration, catalog,
-  demo, payout atau grant di DB user. Theme dan package tidak diubah.
-- Risiko terbuka: aktivasi lokal dan delivery keseluruhan pada Increment 6.
-  Belum push; keberhasilan fixture disposable bukan klaim fitur aktif di DB user.
+- Kedua migration refund Ran batch22 melalui aktivasi lokal dua kali, catalog
+  additive tanpa grant/reset/demo/payout. Semua kolom/data existing, user/role/
+  pivot, source/Stock/Finance/audit identik. Theme dan package tidak diubah.
+- QA Increment 6: full637/5509, native writer/settlement/history/aktivasi, DevTools
+  dan Playwright terbaru PASS; bukti pada tasks. Tidak ada seeder payout otomatis.
+- Delivery Git menunggu commit/push dan verifikasi SHA remote. Batas tersisa adalah
+  non-scope (parsial, kredit, tukar, reversal, running balance dan transfer bank
+  nyata), bukan fitur yang diam-diam dianggap selesai.
 - Gap conformance: tidak ditemukan konflik struktural pada bagian yang dibaca;
   ini bukan audit menyeluruh repository. `Old-docs` dan file user tidak disentuh.
