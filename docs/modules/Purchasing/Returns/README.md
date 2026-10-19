@@ -2,9 +2,9 @@
 
 ## Status
 
-In Progress. Increment 2 fondasi teknis dan Increment 3 backend lookup serta
-create/update draft sudah terverifikasi. Belum ada lifecycle soft delete/restore,
-demo draft atau UI; Inertia index akan hadir pada Increment 5.
+In Progress. Increment 2 fondasi teknis, Increment 3 backend lookup/create/update,
+dan Increment 4 lifecycle soft delete/restore serta demo draft sudah diverifikasi.
+UI; Inertia index akan hadir pada Increment 5.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
 [struktur canonical](../../../FOLDER-STRUCTURE.md).
 
@@ -38,8 +38,9 @@ Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
   `purchasing.returns.manage` tanpa memberi role/grant. Permission dibedakan per
   action; super-system tetap tunduk invariant.
 - Backend route aktif: `/purchasing/returns/data`, `/purchasing/returns/purchases`,
-  `/purchasing/returns/purchases/{id}`, `POST /purchasing/returns`, dan
-  `PUT /purchasing/returns/{id}`. Inertia root, delete dan restore belum aktif.
+  `/purchasing/returns/purchases/{id}`, `POST /purchasing/returns`,
+  `PUT /purchasing/returns/{id}`, `DELETE /purchasing/returns/{id}`, dan
+  `POST /purchasing/returns/{id}/restore`. GET root Inertia belum aktif.
 - Source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/ dan
   Database/Seeders/ ada di dalam module. Provider terdaftar dan memuat route
   serta migration module.
@@ -51,10 +52,12 @@ Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
   tanpa float.
 - Demo CCTV/kelistrikan hanya draft dari sumber posted existing; bila tidak ada
   sumber relevan, skip tanpa membuat penerimaan/pembayaran atau seed module lain.
+  Seeder hanya local/testing, idempotent termasuk marker yang diedit/terhapus,
+  dan tidak mengubah source, ledger, permission maupun grant.
 
 ## Operasi Dan Verifikasi
 
-Migration lokal masih Pending dan tidak dijalankan pada Increment 2. Belum ada
+Migration lokal masih Pending dan tidak dijalankan pada Increment 2-4. Belum ada
 aktivasi, command QA native/browser khusus, atau migration yang dijalankan pada
 database user untuk module ini. Rencana command dan hasil aktual dibedakan di
 [work item fondasi](work-items/draft-foundation/README.md).

@@ -9,4 +9,6 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('purchasing/returns')->na
     Route::get('purchases/{id}', [PurchaseReturnController::class, 'purchase'])->whereUlid('id')->name('purchase');
     Route::post('/', [PurchaseReturnController::class, 'store'])->name('store');
     Route::put('{id}', [PurchaseReturnController::class, 'update'])->whereUlid('id')->name('update');
+    Route::delete('{id}', [PurchaseReturnController::class, 'destroy'])->whereUlid('id')->name('destroy');
+    Route::post('{id}/restore', [PurchaseReturnController::class, 'restore'])->whereUlid('id')->name('restore');
 });

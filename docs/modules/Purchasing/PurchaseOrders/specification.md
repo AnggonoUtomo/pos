@@ -60,7 +60,8 @@ PurchaseOrders mempublikasikan `Application/Contracts/ReturnPurchaseLookup` dan
 aktif, dengan receipt yang cocok pada source type/id/nomor/gudang/waktu. Projection
 menggunakan snapshot header/baris exact6 tanpa notes, actor, request hash,
 payment snapshot atau data rekening. Adapter berada di PurchaseOrders dan tidak
-mengembalikan model/repository. Search literal max150, maksimal25 sumber.
+mengembalikan model/repository. Search literal max150 pada nomor pembelian, kode/
+nama supplier dan nama gudang; maksimal25 sumber.
 
 Posting full melalui PostPurchaseOrder dan public Stock/PurchaseStockWriter,
 DTOs PurchaseStockRequest/PurchaseStockResult, bukan repository privat.

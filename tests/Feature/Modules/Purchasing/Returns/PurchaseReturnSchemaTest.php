@@ -29,7 +29,7 @@ class PurchaseReturnSchemaTest extends StockTestCase
         $this->assertFalse(Schema::hasColumn('purchase_returns', 'finance_refund_id'));
         $this->assertFalse(Schema::hasColumn('purchase_return_lines', 'total_value'));
         $this->getJson('/purchasing/returns')->assertMethodNotAllowed();
-        $this->assertCount(5, collect(app('router')->getRoutes())->filter(fn ($route) => str_starts_with($route->uri(), 'purchasing/returns')));
+        $this->assertCount(7, collect(app('router')->getRoutes())->filter(fn ($route) => str_starts_with($route->uri(), 'purchasing/returns')));
         $before = $this->fingerprint();
         app(ReturnsDemoSeeder::class)->run();
         $this->assertSame($before, $this->fingerprint());

@@ -4,8 +4,9 @@
 
 Scope produk Disetujui. Increment 2 telah mengimplementasikan scaffold, schema
 draft dan value object quantity. Increment 3 menyediakan lookup, persistence,
-permission, query, route data/source, create/update dan audit. Lifecycle soft
-delete/restore, demo dan UI masih rencana.
+permission, query, route data/source dan create/update. Increment 4 menyediakan
+soft delete/restore draft, version/audit atomic serta demo seeder aman. UI masih
+rencana.
 
 ## Tujuan Dan Scope
 
@@ -52,7 +53,9 @@ dicatat pembayarannya sama-sama dapat menjadi sumber; draft tidak menilai hak ua
 6. Status hanya draft pada scope ini. Nomor server direncanakan PR-{ULID},
    immutable; timestamp server dan notes opsional maksimal500.
 7. Update/delete/restore memakai version draft sendiri. Stale ditolak, no-op
-   tidak menambah version/audit. Pembayaran pembelian dapat menaikkan version
+   update tidak menambah version/audit. Delete/restore menaikkan version tepat
+   sekali dan wajib audit dalam transaksi. Snapshot/baris tetap ada dan status
+   non-draft tidak dapat dihapus/pulihkan termasuk super-system. Pembayaran pembelian dapat menaikkan version
    PO tanpa mengubah snapshot baris; jangan menyamakan version PO dengan draft retur.
 8. Restore mempertahankan snapshot, bukan membuat dokumen/baris baru. Master
    inactive/rename/soft-deleted tidak menulis ulang snapshot posted/draft.
@@ -86,9 +89,12 @@ Projection sumber yang dibutuhkan:
   snapshot lokal.
 
 Input save: `purchase_order_id`, `notes`, `lines[{purchase_order_line_id,
-quantity}]`, ditambah `version` pada update. Baris menolak key tambahan. ID/nomor/
+quantity}]`, ditambah `version` pada update. Delete/restore juga menerima version
+wajib. Baris menolak key tambahan. ID/nomor/
 status/snapshot/harga/rasio/gudang/actor/demo_key bukan authority dari client.
-Source order tidak dapat diganti pada update. Lifecycle delete/restore menyusul.
+Source order tidak dapat diganti pada update. Delete hanya menemukan dokumen
+aktif, restore hanya menemukan dokumen trashed; operasi pada state yang salah
+tidak dianggap sukses.
 Validasi membership/quantity/snapshot di backend termasuk bagi super-system.
 Rencana error: guest login/JSON401, forbidden403, missing404, input/stale422;
 audit gagal membatalkan mutation, bukan success palsu.
@@ -112,7 +118,7 @@ movement/layer/payment atau field "sudah refund".
 ## Authorization Dan Audit
 
 `purchasing.returns.view` untuk data daftar; `purchasing.returns.manage` untuk
-lookup sumber dan create/update.
+lookup sumber, create/update dan lifecycle draft.
 Manage tidak otomatis memberi view, dan izin PurchaseOrders bukan bypass Returns.
 Lookup sumber melalui Returns tidak mengharuskan hak CRUD PurchaseOrders/Finance;
 permission manage mengizinkan projection terbatas, bukan seluruh detail pembelian.
@@ -129,12 +135,15 @@ kontak supplier, credential, payment payload atau salinan snapshot penuh.
 
 Prefix `/purchasing/returns`, name `purchasing.returns.*`; web/auth/verified dan
 CSRF. `GET /data` memerlukan view; `GET /purchases`, `GET /purchases/{id}`,
-`POST /`, dan `PUT /{id}` memerlukan manage. Data JSON `{data,meta}`, pagination25,
+`POST /`, `PUT /{id}`, `DELETE /{id}` dan `POST /{id}/restore` memerlukan manage.
+Data JSON `{data,meta}`, pagination25,
 search literal max150 atas nomor retur/pembelian/supplier, status all/draft,
 trashed0/1 dan page. Purchase search mengembalikan maksimal25 snapshot aman.
 Input create/update dan response JSON didokumentasikan di [API](../../../API.md).
-Inertia `GET /` akan ditambahkan bersama halaman pada Increment 5. Belum ada
-route delete/restore. Tidak ada route post/pay/refund/void. Tidak menampilkan
+Inertia `GET /` akan ditambahkan bersama halaman pada Increment 5. Delete/restore
+memerlukan version positif dan hanya menerima state active/trashed yang sesuai;
+mutation/audit atomic mempertahankan snapshot dan baris. Tidak ada route
+post/pay/refund/void. Tidak menampilkan
 jumlah total refund atau status kas/utang.
 
 Page purchasing/returns/index; components/hooks/types lokal bila diperlukan.
@@ -153,7 +162,8 @@ Seeder module local/testing eksplisit melalui Application, hanya membuat draft
 relasional dari pembelian diterima existing yang relevan CCTV/kelistrikan
 (perangkat unit/set, kabel meter/rol, konektor buah/pak/dus sesuai baris sumber).
 Tidak seed ulang master, membuat PO/receipt/payment, mengubah harga atau grant.
-Tidak ada sumber eligible: skip dengan alasan. Demo idempotent termasuk marker
+Lookup mencari supplier code dan memilih baris CCTV serta kelistrikan dari source
+eligible yang tersedia. Tidak ada sumber/baris eligible: skip tanpa mutation. Demo idempotent termasuk marker
 draft terhapus/edited, tidak memulihkan atau menimpa pekerjaan user.
 Fixture QA boleh menyiapkan alur relasional pada DB disposable terpisah.
 Aktivasi lokal hanya migration/catalog; demo draft bukan bagian aktivasi.

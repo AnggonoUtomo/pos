@@ -27,6 +27,7 @@ final class DatabaseReturnPurchaseLookup implements ReturnPurchaseLookup
         if ($search !== '') {
             $like = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
             $query->where(fn ($builder) => $builder->whereRaw("purchase_orders.number LIKE ? ESCAPE '!'", [$like])
+                ->orWhereRaw("purchase_orders.supplier_code LIKE ? ESCAPE '!'", [$like])
                 ->orWhereRaw("purchase_orders.supplier_name LIKE ? ESCAPE '!'", [$like])
                 ->orWhereRaw("purchase_orders.warehouse_name LIKE ? ESCAPE '!'", [$like]));
         }

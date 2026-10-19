@@ -2,9 +2,10 @@
 
 ## Status
 
-In Progress. Increment 1 dokumentasi, Increment 2 scaffold/schema/Domain, dan
-Increment 3 backend source lookup serta draft create/update Passed. Increment
-4..6 belum dimulai. Migration lokal masih Pending dan belum dijalankan.
+In Progress. Increment 1 dokumentasi, Increment 2 scaffold/schema/Domain,
+Increment 3 backend source lookup/create/update, serta Increment 4 lifecycle,
+audit dan demo Passed. Increment 5-6 belum dimulai. Migration lokal masih Pending
+dan belum dijalankan.
 
 ## Owner Dan Lokasi
 
@@ -54,7 +55,7 @@ reversal, retur bebas sumber, parsial/utang atau perubahan tema/dependency.
 | --- | --- |
 | Database | Header/baris draft milik Returns; ULID/soft delete/version/snapshot. Migration hanya di module. |
 | Boundary | Published read lookup/DTOs milik PurchaseOrders untuk consumer nyata Returns; tidak ekspor model/repository. |
-| Route/permission | purchasing.returns.view/manage dan route draft/lookup; belum aktif, tanpa auto-grant. |
+| Route/permission | purchasing.returns.view/manage pada route draft/lookup/delete/restore; catalog additive tanpa auto-grant. |
 | UI | Workspace admin, shortcut dropdown, nav/palette existing, Sonner dan angka Indonesia; tidak mengubah theme. |
 | Demo | Draft relasional CCTV/kelistrikan dari sumber existing; skip bila tidak tersedia, tanpa auto receipt/pay. |
 | Audit | created/updated/deleted/restored mandatory atomic, metadata minimal tanpa notes/raw payload. |
@@ -75,11 +76,24 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 | 1 | Passed | Baseline module/work item dan source review | 10 dokumen/22 link lokal valid, whitespace dan scope review |
 | 2 | Passed | Scaffold canonical, dua tabel draft, dan Domain quantity exact6 | 78 test/139 assertion lulus; Pint, route absence, migration Pending, diff check |
 | 3 | Passed | Lookup sumber, permission, dan simpan draft melalui HTTP JSON | 87 tests/218 assertions, route/permission, snapshot, audit, no-op |
-| 4 | Planned | Lifecycle/version/audit/demo | Feature stale/no-op/rollback/seeder dan fingerprint |
+| 4 | Passed | Lifecycle/version/audit/demo | 28 focused tests/216 assertions, full suite 733/5800, Pint, 7 routes, fingerprint |
 | 5 | Planned | UI/nav/shortcut/browser | TS/lint/build, DevTools dan desktop/tablet |
 | 6 | Planned | Native QA, aktivasi dan delivery | MySQL, full regresi, fingerprint lokal dan Git remote |
 
-## Handoff Saat Ini
+## Handoff Increment 4
+
+- Perubahan: DELETE/restore hanya draft dengan version guard, soft delete menjaga
+  snapshot/baris, audit atomik; demo local/testing mencari source CCTV posted
+  existing lewat lookup published dan skip bila tidak tersedia.
+- Verifikasi: 28 test Returns/PurchaseOrders lookup/216 assertions, full suite
+  733 tests/5800 assertions, Pint scoped, 7 route dan whitespace lulus. Seeder
+  idempotent untuk marker edited/trashed; source, receipt, Stock/FIFO, Finance,
+  permission/grant tetap identik. Migration lokal Pending, tidak dijalankan.
+- Browser: SKIPPED karena UI belum masuk scope sampai Increment 5.
+- Risiko: UI, native MySQL/aktivasi dan delivery keseluruhan masih menunggu.
+- SampleUI, Old-docs dan artefak LSP user tetap tidak disentuh; tidak push.
+
+## Handoff Increment 3
 
 - Perubahan: published ReturnPurchaseLookup/DTOs, source adapter validasi receipt,
   Returns query/repository/action, create/update API, access catalog, permission
@@ -87,7 +101,7 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 - Verifikasi: 18 focused feature tests/137 assertions, full suite, Pint, route:list
   dan `git diff --check`; migration tetap Pending, tidak dijalankan pada DB lokal.
 - Browser: SKIPPED karena halaman UI belum masuk scope hingga Increment 5.
-- Risiko: lifecycle delete/restore, seeder demo, UI, native MySQL dan aktivasi
-  additive belum dibuat atau diverifikasi.
+- Risiko saat itu: lifecycle delete/restore, seeder demo, UI, native MySQL dan
+  aktivasi additive belum dibuat atau diverifikasi.
 - Old-docs, SampleUI dan artefak user tidak disentuh. Commit tiap increment
   setelah verified; push hanya work item selesai atau diminta eksplisit.

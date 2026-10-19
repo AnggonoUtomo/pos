@@ -21,15 +21,16 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         }
     }
 
-    public function lock(string $id): array
+    public function lock(string $id, bool $trashed = false): array
     {
         $this->requireTransaction();
-        $model = PurchaseReturn::query()->lockForUpdate()->findOrFail($id);
+        $query = $trashed ? PurchaseReturn::onlyTrashed() : PurchaseReturn::query();
+        $model = $query->lockForUpdate()->findOrFail($id);
 
         return $model->toArray() + ['lines' => ($this->lines([$id], lock: true)[$id] ?? collect())->all()];
     }
 
-    public function save(array $header, array $lines, ?string $id = null): string
+    public function save(array $header, array $lines, ?string $id = null, ?string $demoKey = null): string
     {
         $this->requireTransaction();
         $model = $id === null ? new PurchaseReturn : PurchaseReturn::query()->lockForUpdate()->findOrFail($id);
@@ -43,7 +44,7 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         $model->fill($header);
         if ($id === null) {
             $id = strtolower((string) Str::ulid());
-            $model->fill(['id' => $id, 'number' => 'PR-'.strtoupper($id), 'status' => 'draft', 'version' => 1]);
+            $model->fill(['id' => $id, 'number' => 'PR-'.strtoupper($id), 'status' => 'draft', 'version' => 1, 'demo_key' => $demoKey]);
             $event = 'created';
         } else {
             $model->version++;
@@ -65,10 +66,37 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         return $id;
     }
 
+    public function delete(string $id): void
+    {
+        $this->requireTransaction();
+        $model = PurchaseReturn::query()->lockForUpdate()->findOrFail($id);
+        $model->version++;
+        if (! $model->save() || ! $model->delete()) {
+            throw new RuntimeException('Draft retur gagal dihapus.');
+        }
+        $this->audit($model, 'deleted');
+    }
+
+    public function restore(string $id): void
+    {
+        $this->requireTransaction();
+        $model = PurchaseReturn::onlyTrashed()->lockForUpdate()->findOrFail($id);
+        $model->version++;
+        if (! $model->restore()) {
+            throw new RuntimeException('Draft retur gagal dipulihkan.');
+        }
+        $this->audit($model, 'restored');
+    }
+
+    public function demoExists(string $key): bool
+    {
+        return PurchaseReturn::withTrashed()->where('demo_key', $key)->exists();
+    }
+
     private function audit(PurchaseReturn $model, string $event): void
     {
         $log = activity('purchasing.returns')->performedOn($model)->event($event)->withProperties([
-            'attributes' => Arr::only($model->toArray(), ['number', 'purchase_order_id', 'status', 'version']),
+            'attributes' => Arr::only($model->toArray(), ['number', 'purchase_order_id', 'status', 'version', 'deleted_at']),
             'line_count' => DB::table('purchase_return_lines')->where('purchase_return_id', $model->id)->count(),
         ])->log('Retur pembelian '.$event);
         if ($log === null || ! $log->exists) {

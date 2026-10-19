@@ -4,9 +4,15 @@ namespace App\Modules\Purchasing\Returns\Application\Contracts;
 
 interface ReturnDraftRepository
 {
-    public function lock(string $id): array;
+    public function lock(string $id, bool $trashed = false): array;
 
-    public function save(array $header, array $lines, ?string $id = null): string;
+    public function save(array $header, array $lines, ?string $id = null, ?string $demoKey = null): string;
+
+    public function delete(string $id): void;
+
+    public function restore(string $id): void;
+
+    public function demoExists(string $key): bool;
 
     public function paginate(int $page, array $filters): array;
 }

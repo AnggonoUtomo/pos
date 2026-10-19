@@ -7,6 +7,7 @@ use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PostPurchaseOrder;
 use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
 use App\Modules\Purchasing\Returns\Application\Contracts\ReturnDraftRepository;
 use App\Modules\Purchasing\Suppliers\Infrastructure\Persistence\Models\Supplier;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -107,10 +108,17 @@ class ReturnDraftTest extends StockTestCase
         [$otherPurchase] = $this->received();
         $action = app(ManagePurchaseReturnDraft::class);
         $input = $this->input($purchaseId, $lineId);
+        $input['lines'][0]['quantity'] = '0.123456';
         $id = $action->save($input);
+        $headerSnapshot = json_decode(DB::table('purchase_returns')->where('id', $id)->value('snapshot'), true, flags: JSON_THROW_ON_ERROR);
+        $lineSnapshot = json_decode(DB::table('purchase_return_lines')->where('purchase_return_id', $id)->value('snapshot'), true, flags: JSON_THROW_ON_ERROR);
+        DB::table('purchase_returns')->where('id', $id)->update(['snapshot' => json_encode(array_reverse($headerSnapshot, true))]);
+        DB::table('purchase_return_lines')->where('purchase_return_id', $id)->update(['snapshot' => json_encode(array_reverse($lineSnapshot, true))]);
         $logs = Activity::where('log_name', 'purchasing.returns')->count();
         $action->save($input + ['version' => 1], $id);
         $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 1]);
+        $this->assertDatabaseHas('purchase_return_lines', ['purchase_return_id' => $id, 'quantity' => '0.123456', 'base_quantity' => '1.481472']);
+        $this->assertSame('0', DB::table('purchase_returns')->where('id', $id)->value('notes'));
         $this->assertSame($logs, Activity::where('log_name', 'purchasing.returns')->count());
 
         try {
@@ -144,6 +152,92 @@ class ReturnDraftTest extends StockTestCase
             $this->assertDatabaseCount('purchase_return_lines', 0);
         } finally {
             Activity::flushEventListeners();
+        }
+    }
+
+    public function test_delete_and_restore_are_versioned_audited_and_keep_snapshots(): void
+    {
+        [$purchaseId, $lineId] = $this->received();
+        $action = app(ManagePurchaseReturnDraft::class);
+        $id = $action->save($this->input($purchaseId, $lineId));
+        $lineBefore = DB::table('purchase_return_lines')->where('purchase_return_id', $id)->first();
+
+        $action->delete($id, 1);
+        $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 2]);
+        $this->assertNotNull(DB::table('purchase_returns')->where('id', $id)->value('deleted_at'));
+        $this->assertEquals($lineBefore, DB::table('purchase_return_lines')->where('purchase_return_id', $id)->first());
+
+        $action->restore($id, 2);
+        $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 3, 'deleted_at' => null]);
+        $this->assertEquals($lineBefore, DB::table('purchase_return_lines')->where('purchase_return_id', $id)->first());
+        $this->assertSame(['created', 'deleted', 'restored'], Activity::where('log_name', 'purchasing.returns')->orderBy('id')->pluck('event')->all());
+    }
+
+    public function test_delete_restore_reject_stale_wrong_state_and_posted_invariant(): void
+    {
+        [$purchaseId, $lineId] = $this->received();
+        $action = app(ManagePurchaseReturnDraft::class);
+        $id = $action->save($this->input($purchaseId, $lineId));
+
+        try {
+            $action->delete($id, 2);
+            $this->fail('Stale version harus ditolak.');
+        } catch (ValidationException) {
+            $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 1, 'deleted_at' => null]);
+        }
+        try {
+            $action->restore($id, 1);
+            $this->fail('Draft aktif tidak dapat dipulihkan.');
+        } catch (ModelNotFoundException) {
+            $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 1, 'deleted_at' => null]);
+        }
+
+        $action->delete($id, 1);
+        try {
+            $action->delete($id, 2);
+            $this->fail('Draft terhapus tidak dapat dihapus ulang.');
+        } catch (ModelNotFoundException) {
+            $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 2]);
+        }
+        try {
+            $action->restore($id, 3);
+            $this->fail('Restore dengan version stale harus ditolak.');
+        } catch (ValidationException $error) {
+            $this->assertArrayHasKey('version', $error->errors());
+        }
+
+        DB::table('purchase_returns')->where('id', $id)->update(['status' => 'posted']);
+        try {
+            $action->restore($id, 2);
+            $this->fail('Super-system maupun user biasa tidak boleh memulihkan status posted.');
+        } catch (ValidationException $error) {
+            $this->assertArrayHasKey('purchase_return', $error->errors());
+            $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 2]);
+        }
+    }
+
+    public function test_delete_and_restore_audit_veto_roll_back_lifecycle_and_version(): void
+    {
+        [$purchaseId, $lineId] = $this->received();
+        $action = app(ManagePurchaseReturnDraft::class);
+        $id = $action->save($this->input($purchaseId, $lineId));
+
+        foreach ([['deleted', fn () => $action->delete($id, 1)], ['restored', fn () => $action->restore($id, 2)]] as [$event, $mutation]) {
+            $before = DB::table('purchase_returns')->where('id', $id)->first();
+            Activity::creating(fn ($log) => $log->log_name === 'purchasing.returns' && $log->event === $event ? false : null);
+            try {
+                $mutation();
+                $this->fail("Audit {$event} gagal harus membatalkan lifecycle.");
+            } catch (RuntimeException) {
+                $after = DB::table('purchase_returns')->where('id', $id)->first();
+                $this->assertSame($before->version, $after->version);
+                $this->assertSame($before->deleted_at, $after->deleted_at);
+            } finally {
+                Activity::flushEventListeners();
+            }
+            if ($event === 'deleted') {
+                $action->delete($id, 1);
+            }
         }
     }
 }

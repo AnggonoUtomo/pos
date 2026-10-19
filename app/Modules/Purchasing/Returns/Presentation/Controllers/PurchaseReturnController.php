@@ -5,6 +5,7 @@ namespace App\Modules\Purchasing\Returns\Presentation\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
 use App\Modules\Purchasing\Returns\Application\Queries\ReturnWorkspace;
+use App\Modules\Purchasing\Returns\Presentation\Requests\LifecyclePurchaseReturnRequest;
 use App\Modules\Purchasing\Returns\Presentation\Requests\ListPurchaseReturnDraftsRequest;
 use App\Modules\Purchasing\Returns\Presentation\Requests\SavePurchaseReturnDraftRequest;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +19,7 @@ final class PurchaseReturnController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:purchasing.returns.view', only: ['data']),
-            new Middleware('can:purchasing.returns.manage', only: ['purchases', 'purchase', 'store', 'update'])];
+            new Middleware('can:purchasing.returns.manage', only: ['purchases', 'purchase', 'store', 'update', 'destroy', 'restore'])];
     }
 
     public function data(ListPurchaseReturnDraftsRequest $request, ReturnWorkspace $query): JsonResponse
@@ -53,5 +54,19 @@ final class PurchaseReturnController extends Controller implements HasMiddleware
         $action->save($request->validated(), strtolower($id));
 
         return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft retur pembelian berhasil diperbarui.');
+    }
+
+    public function destroy(LifecyclePurchaseReturnRequest $request, string $id, ManagePurchaseReturnDraft $action): JsonResponse|RedirectResponse
+    {
+        $action->delete(strtolower($id), $request->validated('version'));
+
+        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft retur pembelian berhasil dihapus.');
+    }
+
+    public function restore(LifecyclePurchaseReturnRequest $request, string $id, ManagePurchaseReturnDraft $action): JsonResponse|RedirectResponse
+    {
+        $action->restore(strtolower($id), $request->validated('version'));
+
+        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft retur pembelian berhasil dipulihkan.');
     }
 }

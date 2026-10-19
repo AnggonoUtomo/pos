@@ -14,6 +14,11 @@
 - [x] Sebelum Increment 2, baca ulang source/generator/QA dan status Git terkini.
 - [x] Sebelum Increment 3, baca ulang API/module docs, boundary PurchaseOrders,
   source/routes, QA dan status Git; target PurchaseOrders/Returns diumumkan.
+- [x] Sebelum Increment 4, baca ulang spesifikasi lifecycle/demo, action,
+  repository, routes, model, source lookup dan pola seeder/test; worktree user
+  dipastikan tetap di luar scope.
+- [x] Batas Increment 4 dipastikan hanya lifecycle draft dan demo dari source
+  posted existing; tidak membuat source, receipt, pembayaran, grant atau ledger.
 
 ## Increment 1: Baseline Dokumentasi
 
@@ -71,18 +76,24 @@
 
 ## Increment 4: Lifecycle, Audit Dan Demo
 
-- [ ] Lengkapi soft delete/restore draft dan version guards.
+- [x] Lengkapi soft delete/restore draft dan version guards.
   - Acceptance: hanya draft dan state aktif/trashed yang sesuai; restore menjaga
     snapshot/baris, stale/ulang/gagal audit tidak meninggalkan mutation parsial.
   - Verification: feature lifecycle, super-system invariant dan audit rollback.
-- [ ] Uji strict no-op dan fingerprint seluruh source/ledger.
+- [x] Uji strict no-op dan fingerprint seluruh source/ledger.
   - Acceptance: urutan key JSON MySQL tidak membuat audit palsu; long decimal dan
     notes "0" tidak hilang; tidak ada perubahan PO/receipt/Stock/FIFO/Finance.
   - Verification: feature regression dan native current-read/precision saat perlu.
-- [ ] Tambahkan demo draft relasional module dan regresi catalog akses.
+- [x] Tambahkan demo draft relasional module dan regresi catalog akses.
   - Acceptance: catalog tetap tanpa grant; demo CCTV/kelistrikan local/testing eksplisit,
     skip sumber kosong, idempotent termasuk edited/trashed, tanpa auto receipt/pay.
   - Verification: access/demo tests, marker lama dan snapshot source unchanged.
+
+- [x] Verifikasi lifecycle, demo dan fingerprint lalu buat scoped commit.
+  - Acceptance: checklist Increment 4 hanya dicentang setelah seluruh test,
+    audit, seeder, whitespace dan scope staged lulus; user artifacts tetap utuh.
+  - Verification: focused/full suite, Pint, route:list, diff check, staged name
+    review dan commit otomatis; tidak push sebelum seluruh work item selesai.
 
 ## Increment 5: UI Dan Browser
 
@@ -150,6 +161,10 @@
 | Lookup source dan draft backend | PASS | `php artisan test --compact tests/Feature/Modules/Purchasing/Returns tests/Feature/Modules/Purchasing/PurchaseOrders/ReturnPurchaseLookupTest.php tests/Unit/Modules/Purchasing/Returns`: 87 tests, 218 assertions; source/privacy/receipt/header+line consistency/search, HTTP permission/catalog no-grant, exact snapshot, audit veto/no-op/version lulus. |
 | Regresi penuh (Increment 3) | PASS | `php artisan test --compact`: 724 tests, 5727 assertions. |
 | Route Increment 3 | PASS | `php artisan route:list --path=purchasing/returns`: data, purchases, purchase, store, update; GET root belum ada sampai UI Increment 5. |
+| Lifecycle, version dan audit (Increment 4) | PASS | Focused Returns + PurchaseOrders source lookup: 28 tests, 216 assertions; delete/restore, stale/state, permission, super-system invariant dan audit rollback. |
+| Demo dan fingerprint (Increment 4) | PASS | Demo returns eligible CCTV/kelistrikan existing, no-source skip, edited/trashed idempotency, no grants; source/receipt/Stock/FIFO/Finance/master/audit-source fingerprint identik. |
+| Regresi penuh (Increment 4) | PASS | `php artisan test --compact`: 733 tests, 5800 assertions. |
+| Pint dan routes (Increment 4) | PASS | Pint scoped lulus; `route:list --path=purchasing/returns` menunjukkan 7 route termasuk DELETE dan restore. |
 | Whitespace | PASS | `git diff --check` lulus. |
 | Link/whitespace (Increment 1) | PASS | Node memeriksa 10 dokumen dan 22 link lokal, tanpa trailing whitespace; git diff --check lulus. |
 | Staged scope/save point (Increment 1) | PASS | Sepuluh file docs terfokus, tanpa source/user/artifact/arsip atau pola credential. Scoped commit dibuat; tidak push work item yang belum selesai. |
@@ -172,6 +187,19 @@ tersebut untuk lookup, list data, create dan update draft. Validasi source,
 membership, kuantitas, permission, version/no-op dan audit satu transaksi diuji;
 PO/receipt/Stock/FIFO/Finance tidak berubah. Route Inertia root dan lifecycle
 delete/restore belum dibuat. Migration lokal tetap Pending.
+
+## Handoff Increment 4
+
+Draft kini dapat dihapus lunak dan dipulihkan hanya dengan version aktif yang
+sesuai; status non-draft ditolak termasuk super-system. Kedua lifecycle
+mempertahankan snapshot/baris dan mencatat audit atomik. Demo Returns hanya
+mencari PO posted existing melalui published lookup, lalu membuat draft
+bermarker untuk baris CCTV dan kelistrikan yang tersedia; tanpa source/baris
+relevan ia skip. Marker edited/trashed tidak ditimpa. Test membuktikan no-op
+dengan key snapshot yang diurut ulang, quantity decimal6 dan notes string "0",
+serta fingerprint PO/receipt/Stock/FIFO/Finance/master pembayaran/audit sumber
+yang tidak berubah oleh seeder. Migration lokal tetap Pending; UI dan QA native
+belum masuk scope increment ini.
 
 ## Handoff Increment 1
 

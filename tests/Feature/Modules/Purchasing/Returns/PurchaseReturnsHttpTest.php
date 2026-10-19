@@ -62,6 +62,50 @@ class PurchaseReturnsHttpTest extends StockTestCase
         $this->getJson(self::URL)->assertMethodNotAllowed();
     }
 
+    public function test_manage_can_delete_and_restore_only_through_current_draft_version(): void
+    {
+        [$purchaseId, $lineId] = $this->received();
+        $id = $this->postJson(self::URL, $this->input($purchaseId, $lineId))->assertCreated()->json('id');
+        $lines = DB::table('purchase_return_lines')->where('purchase_return_id', $id)->get()->toJson();
+
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 2])->assertUnprocessable()->assertJsonValidationErrors('version');
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 1])->assertOk();
+        $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 2]);
+        $this->getJson(self::URL.'/data')->assertJsonPath('meta.total', 0);
+        $this->getJson(self::URL.'/data?trashed=1')->assertJsonPath('data.0.version', 2);
+        $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 1])->assertUnprocessable()->assertJsonValidationErrors('version');
+        $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 2])->assertOk();
+        $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 3, 'deleted_at' => null]);
+        $this->assertSame($lines, DB::table('purchase_return_lines')->where('purchase_return_id', $id)->get()->toJson());
+        $this->assertSame(['created', 'deleted', 'restored'], DB::table('activity_log')->where('log_name', 'purchasing.returns')->orderBy('id')->pluck('event')->all());
+        $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 3])->assertNotFound();
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 3])->assertOk();
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 4])->assertNotFound();
+        $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 4])->assertOk();
+    }
+
+    public function test_lifecycle_permissions_super_system_and_posted_invariant_are_enforced(): void
+    {
+        [$purchaseId, $lineId] = $this->received();
+        $id = $this->postJson(self::URL, $this->input($purchaseId, $lineId))->assertCreated()->json('id');
+
+        $viewer = User::factory()->create();
+        $viewer->givePermissionTo('purchasing.returns.view');
+        $this->actingAs($viewer);
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 1])->assertForbidden();
+        $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 1])->assertForbidden();
+
+        $this->actingAs($this->manager);
+        DB::table('purchase_returns')->where('id', $id)->update(['status' => 'posted']);
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 1])->assertUnprocessable()->assertJsonValidationErrors('purchase_return');
+        DB::table('purchase_returns')->where('id', $id)->update(['status' => 'draft', 'deleted_at' => now()]);
+        $system = User::factory()->create();
+        $system->assignRole(Role::findOrCreate('super-system', 'web'));
+        $this->actingAs($system);
+        DB::table('purchase_returns')->where('id', $id)->update(['status' => 'posted']);
+        $this->postJson(self::URL.'/'.$id.'/restore', ['version' => 1])->assertUnprocessable()->assertJsonValidationErrors('purchase_return');
+    }
+
     public function test_permissions_are_separate_and_source_not_found_is_safe(): void
     {
         [$purchaseId, $lineId] = $this->received();

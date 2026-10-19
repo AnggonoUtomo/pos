@@ -153,16 +153,24 @@ Prefix `/purchasing/returns`, name `purchasing.returns.*`:
 | GET | /purchases/{id} | purchase | purchasing.returns.manage |
 | POST | / | store | purchasing.returns.manage |
 | PUT | /{id} | update | purchasing.returns.manage |
+| DELETE | /{id} | destroy | purchasing.returns.manage |
+| POST | /{id}/restore | restore | purchasing.returns.manage |
 
-Belum ada GET root Inertia, DELETE atau restore; halaman dan lifecycle masuk
-increment berikutnya. GET `/data` memberi `{data,meta}`, pagination25 descending
+GET root Inertia belum tersedia hingga UI Increment 5. DELETE dan restore hanya
+untuk draft, menerima `version` wajib positif dan memakai state active/trashed
+yang sesuai. JSON sukses memberi `{id}`; Inertia mengembalikan success flash.
+Lifecycle menaikkan version dan mencatat audit atomik tanpa mengubah baris atau
+snapshot. Resource pada state salah 404, stale/status bukan draft 422.
+
+GET `/data` memberi `{data,meta}`, pagination25 descending
 id, search literal maksimal150 pada number/purchase_order_number/supplier_name,
 status all/draft, trashed0/1 dan page positif. Setiap record berisi ID/nomor,
 source PO/supplier snapshot, status/version/notes/timestamp dan maksimal100 line
 snapshot. Response tidak memuat demo_key, actor atau nilai payment.
 
-GET `/purchases` menerima search nullable max150 dan mengembalikan maksimal25
-pembelian eligible dengan snapshot header/baris. Eligible hanya PO posted aktif
+GET `/purchases` menerima search nullable max150 pada nomor PO, kode/nama supplier
+atau nama gudang dan mengembalikan maksimal25 pembelian eligible dengan snapshot
+header/baris. Eligible hanya PO posted aktif
 yang receipt source type/id/nomor/gudang/waktu cocok dan semua baris receipt sama
 dengan source line/item/base unit/kuantitas dasar/nilai total. GET `/purchases/{id}` memberi
 projection yang sama atau404. Projection memakai snapshot PurchaseOrders, tidak
@@ -181,7 +189,12 @@ melebihi quantity diterima. `base_quantity` dihitung exact6 server. POST memberi
 Toast dan halaman Inertia diperiksa bersama UI pada Increment 5.
 Input/stale/source tidak eligible422; resource tak ditemukan404; forbidden403;
 guest JSON401 atau redirect login. Audit wajib satu transaksi dengan header dan
-baris; no-op update tidak mengubah version/audit. Soft delete/restore belum ada.
+baris; no-op update tidak mengubah version/audit. Delete/restore draft menaikkan
+version dan audit dalam transaksi; snapshot/baris dipertahankan, status non-draft
+ditolak termasuk untuk super-system. Restore hanya menemukan dokumen terhapus;
+delete hanya dokumen aktif. Seeder demo local/testing mencari source CCTV posted
+yang sudah ada, idempotent termasuk marker yang diedit/terhapus, dan skip tanpa
+membuat sumber/receipt/pembayaran bila tidak tersedia.
 
 Permission `purchasing.returns.view/manage` didaftarkan additive oleh
 `ReturnsAccessSeeder`; tidak ada auto-grant. Manage tidak memberi view dan

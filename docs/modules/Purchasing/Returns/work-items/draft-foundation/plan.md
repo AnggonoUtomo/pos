@@ -15,7 +15,7 @@ keputusan FIFO/uang yang belum disepakati.
 | 1 | Passed | Baseline | README/spec/plan/tasks module dan work item; module index/source roadmap | Scope, non-scope, dependency, presisi dan QA jelas tanpa runtime change | Review, 10 dokumen/22 link, whitespace PASS |
 | 2 | Passed | Fondasi teknis | Dry-run/generator, discovery, schema draft dan quantity Domain | Route/database module canonical, exact6, batas schema, tanpa mutation ledger | 78 focused tests/139 assertions, 712 full tests/5628 assertions, Pint, route/status |
 | 3 | Passed | Alur simpan | Published source lookup/DTOs, permission catalog, query/route JSON, persistence, create/update | Sumber receipt cocok/snapshot safe, harga bukan input, create/update atomic/audited/versioned | 87 tests/218 assertions, Pint, route:list, diff check |
-| 4 | Planned | Lifecycle/demo | Soft delete/restore, stale/no-op/audit hardening dan demo module | Draft saja, tidak mereset user, fingerprint ledger tetap | Feature lifecycle/audit/seeder/native current-read bila perlu |
+| 4 | Passed | Lifecycle/demo | Soft delete/restore, stale/no-op/audit hardening dan demo module | Draft saja, tidak mereset user, fingerprint ledger tetap | 28 focused tests/216 assertions, full suite 733/5800, Pint, route dan fingerprint |
 | 5 | Planned | UI | List/form/detail/lifecycle, source picker, nav/palette dan shortcut | Permission UX, loading/error/retry/readonly, format Indonesia tanpa klaim posted/refund | TS/lint/build, DevTools/Playwright |
 | 6 | Planned | Penutupan | Native MySQL, regresi, aktivasi lokal aman, docs dan delivery | Semua acceptance verified, aktivasi2x tanpa grant/demo/mutation sumber, remote sama HEAD | Full suite/native/browser/status/Git |
 
@@ -34,10 +34,13 @@ search bounded/literal, nilai setelah master rename, quantity/member/forgery,
 version/no-op, permission terpisah dan rollback audit. JSON data/source/create/
 update routes tersedia; Inertia index masuk Increment 5.
 
-Increment 4 melengkapi delete/restore dan batas no-op (JSON key order MySQL,
-decimal panjang dan notes numeric-string "0" dibandingkan strict). Demo hanya
-draft dari sumber existing; fixture disposable boleh menyiapkan PO+receipt.
-Tidak menambahkan reservasi atau menghitung stok tersedia untuk menolak draft.
+Increment 4 melengkapi delete/restore dengan version/state guard dan audit
+atomic. Test no-op mengacak urutan key JSON snapshot, memakai decimal6 dan notes
+"0"; no-op tidak mengubah revision/audit. Demo hanya membuat draft dari source
+eligible existing melalui lookup published; skip tanpa source, dan marker
+edited/trashed tidak ditimpa. Fixture disposable menyiapkan PO+receipt sebelum
+fingerprint; seeder Returns tidak membuat atau memodifikasi ledger. Tidak ada
+reservasi atau pemeriksaan saldo stok untuk menolak draft.
 
 Increment 5 menguji abort quote/snapshot lama, loading/error500/retry,403/422,
 double submit, stale version dan keyboard dari level dialog. Tidak memberi
@@ -84,9 +87,9 @@ hanya migration/catalog, seluruh data/audit existing harus identik.
 
 ## Batas Berhenti Dan Rollback
 
-User menyetujui Increment 3 source lookup dan draft create/update. Tahap ini
-berhenti setelah verifikasi dan commit save point; Increment 4..6 menunggu arahan. Scope
-posting/FIFO/uang supplier tidak boleh diambil dari roadmap tanpa interview/
+Increment 1-4 telah dikerjakan dan diverifikasi sesuai checklist. Increment 5
+UI/browser dan Increment 6 native QA/aktivasi/penutupan tetap belum selesai.
+Scope posting/FIFO/uang supplier tidak boleh diambil dari roadmap tanpa interview/
 approval terpisah.
 Pemulihan dokumen melalui commit terfokus, bukan reset perubahan user. Setelah
 ada data, rollback schema harus mengikuti guard/keputusan Increment 2; jangan

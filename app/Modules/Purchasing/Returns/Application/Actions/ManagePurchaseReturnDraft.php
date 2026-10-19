@@ -14,7 +14,7 @@ final class ManagePurchaseReturnDraft
 {
     public function __construct(private ReturnDraftRepository $drafts, private ReturnPurchaseLookup $purchases) {}
 
-    public function save(array $input, ?string $id = null): string
+    public function save(array $input, ?string $id = null, ?string $demoKey = null): string
     {
         $input = self::normalize($input);
         $data = Validator::make($input, [
@@ -27,7 +27,11 @@ final class ManagePurchaseReturnDraft
             'version' => [$id === null ? 'sometimes' : 'required', 'integer', 'min:1', 'max:2147483646'],
         ])->validate();
 
-        return DB::transaction(function () use ($data, $input, $id): string {
+        if ($demoKey !== null) {
+            Validator::make(['demo_key' => $demoKey], ['demo_key' => ['required', 'string', 'max:64']])->validate();
+        }
+
+        return DB::transaction(function () use ($data, $input, $id, $demoKey): string {
             if ($id !== null) {
                 $draft = $this->drafts->lock($id);
                 $this->assertEditable($draft, $input['version'] ?? null);
@@ -62,7 +66,23 @@ final class ManagePurchaseReturnDraft
                 'supplier_name' => $purchase->header['supplier_name'], 'snapshot' => $purchase->header,
                 'notes' => $notes === '' ? null : $notes];
 
-            return $this->drafts->save($header, $lines, $id);
+            return $this->drafts->save($header, $lines, $id, $demoKey);
+        }, 3);
+    }
+
+    public function delete(string $id, mixed $version): void
+    {
+        DB::transaction(function () use ($id, $version): void {
+            $this->assertEditable($this->drafts->lock(strtolower($id)), $version);
+            $this->drafts->delete(strtolower($id));
+        }, 3);
+    }
+
+    public function restore(string $id, mixed $version): void
+    {
+        DB::transaction(function () use ($id, $version): void {
+            $this->assertEditable($this->drafts->lock(strtolower($id), trashed: true), $version);
+            $this->drafts->restore(strtolower($id));
         }, 3);
     }
 
