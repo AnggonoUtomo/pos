@@ -9,8 +9,10 @@
 - [x] Lifecycle/version/no-op, audit dan demo aman verified pada Increment 4.
 - [x] UI/nav/palette/shortcut serta browser desktop/tablet verified.
 - [x] Native MySQL, regresi, aktivasi additive dan delivery verified.
+- [ ] Posting retur dari sisa layer penerimaan asal, atomic dan readonly setelah
+  posted; lihat [work item](../../../work-items/purchase-return-posting/tasks.md).
 
 Bukti terperinci: [fondasi draft](work-items/draft-foundation/tasks.md).
 
-Posting stok, pemilihan FIFO layer, refund supplier dan reversal memerlukan
-scope/work item tersendiri; tidak dianggap disetujui oleh checklist ini.
+Refund supplier dan reversal memerlukan scope/work item tersendiri; tidak
+dianggap disetujui oleh checklist fondasi draft ini.

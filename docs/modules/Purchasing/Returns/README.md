@@ -3,8 +3,10 @@
 ## Status
 
 Selesai untuk fondasi draft. Increment 2-6 telah diverifikasi. Migration Returns
-telah aktif di database lokal; tabel draft kosong. Posting stok/FIFO, pengiriman
-retur dan refund supplier memerlukan scope terpisah.
+telah aktif di database lokal; tabel draft kosong. Posting stok/FIFO dari layer
+penerimaan asal sedang dikerjakan pada
+[work item terpisah](../../../work-items/purchase-return-posting/README.md).
+Refund supplier belum masuk scope posting.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
 [struktur canonical](../../../FOLDER-STRUCTURE.md).
 
