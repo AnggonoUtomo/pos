@@ -27,6 +27,14 @@
   daftar mengambil snapshot dari query yang sama dengan endpoint data.
 - [x] QA Increment 5 dibatasi desktop/tablet; Chrome DevTools MCP dicoba lebih
   dahulu, tanpa mengubah data bisnis lokal atau menguji mobile.
+- [x] Sebelum Increment 6, baca ulang QUALITY, ARCHITECTURE, FOLDER-STRUCTURE,
+  Returns specification/plan/API, native MySQL/activation patterns dan source;
+  target Purchasing/Returns diumumkan.
+- [x] Database lokal dicek read-only: migration Returns `Pending`; scope aktivasi
+  dibatasi ke migration Returns dan permission catalog, tanpa demo/grant.
+- [x] QA native dirancang memakai database MySQL random disposable, verified
+  `SELECT DATABASE()`, cleanup `finally`, tanpa mencetak koneksi/credential.
+- [x] Worktree sesudah push dicek; `SampleUI/` dan artefak LSP tetap excluded.
 
 ## Increment 1: Baseline Dokumentasi
 
@@ -131,19 +139,19 @@
 
 ## Increment 6: Native QA, Aktivasi Dan Delivery
 
-- [ ] Verifikasi schema/precision/version/audit pada MySQL native disposable.
+- [x] Verifikasi schema/precision/version/audit pada MySQL native disposable.
   - Acceptance: unique/FK/up-down, lock/current read/stale dan rollback terbukti;
     draft tidak mengubah source/Stock/Finance. Cleanup semua DB/worker/server QA.
   - Verification: skrip native dibuat saat implementasi, output/status dicatat.
-- [ ] Jalankan regresi dan review contract/layer/privacy.
+- [x] Jalankan regresi dan review contract/layer/privacy.
   - Acceptance: focused/full tests, TS/lint/build/Pint relevan lulus; tidak ada
     import privat atau migration global, tidak menambah dependency/branch.
   - Verification: command plan, review diff dan boundary/privacy.
-- [ ] Siapkan dan jalankan aktivasi lokal additive dua kali setelah QA lulus.
+- [x] Siapkan dan jalankan aktivasi lokal additive dua kali setelah QA lulus.
   - Acceptance: hanya migration/catalog, tanpa grant/reset/demo/receipt/pay;
     kolom/data existing/role/grant/source/Stock/Finance/audit identik.
   - Verification: uji aktivasi disposable lebih dahulu, migrate:status dan fingerprint.
-- [ ] Tutup docs/API/module index dan delivery keseluruhan.
+- [x] Tutup docs/API/module index dan delivery keseluruhan.
   - Acceptance: status sesuai bukti, checklist dicentang sesudah verified;
     scoped commit/push, SHA remote sama HEAD, divergence0/0, user files excluded.
   - Verification: link/whitespace/staged review, push/ls-remote/rev-list/status.
@@ -156,13 +164,13 @@
 
 ## Sesudah Coding Keseluruhan Work Item
 
-- [ ] Semua acceptance draft terpenuhi, tanpa posting/reservasi/refund.
-- [ ] Unit/feature/native/full regresi dan fingerprint ledger lulus.
-- [ ] Typecheck/lint/build/scoped Pint lulus sesuai perubahan.
-- [ ] Route dan migration/status serta aktivasi aman terverifikasi.
-- [ ] DevTools QA PASS atau BLOCKED beralasan dengan fallback terverifikasi.
-- [ ] Demo aman atau skip beralasan; tidak dijalankan saat aktivasi user.
-- [ ] Dokumen aktual, risiko, scoped commit/push dan remote verified.
+- [x] Semua acceptance draft terpenuhi, tanpa posting/reservasi/refund.
+- [x] Unit/feature/native/full regresi dan fingerprint ledger lulus.
+- [x] Typecheck/lint/build/scoped Pint lulus sesuai perubahan.
+- [x] Route dan migration/status serta aktivasi aman terverifikasi.
+- [x] DevTools QA Increment 5 PASS; Increment 6 tidak mengubah UI.
+- [x] Demo aman; tidak dijalankan saat aktivasi lokal.
+- [x] Dokumen aktual, risiko, scoped commit/push dan remote verified.
 
 ## Hasil Verifikasi
 
@@ -187,6 +195,12 @@
 | Typecheck/lint/build (Increment 5) | PASS | `npx tsc --noEmit`, ESLint scope UI, dan `npm run build` lulus setelah perbaikan aksesibilitas. |
 | Test HTTP/focused (Increment 5) | PASS | `php artisan test --compact tests/Feature/Modules/Purchasing/Returns`: 26 tests, 219 assertions; `php artisan test --compact`: 734 tests, 5824 assertions setelah perubahan UI. |
 | Fixture dan cleanup (Increment 5) | PASS | SQLite disposable hanya di `storage/framework/testing`; fingerprint stock/FIFO/payment sebelum dan sesudah sama (`7235da28...fc74`). Server port 18767 dan file SQLite QA telah dihentikan/dihapus. |
+| MySQL native disposable (Increment 6) | PASS | `php scripts/qa/purchase-returns-mysql.php`: native migration up/down/up, DECIMAL(20,6), stale current-read pada REPEATABLE READ, audit rollback, unique/FK, populated rollback guard, fingerprint PO/receipt/Stock/FIFO/Finance/audit sumber; database QA dibersihkan. |
+| Aktivasi disposable (Increment 6) | PASS | `php scripts/qa/activate-purchase-returns-mysql.php`: baseline terisi tanpa Returns, aktivasi dua kali, hanya satu migration dan dua permission catalog; existing data/schema/role/grant/audit tidak berubah, tabel Returns kosong, database QA dibersihkan. |
+| Aktivasi lokal (Increment 6) | PASS | `php scripts/qa/apply-purchase-returns-local.php` dua kali: pertama migration selesai, kedua `Nothing to migrate`; tanpa demo/grant/reset/receipt/payment. `migrate:status` menampilkan migration Returns `Ran`; tabel draft kosong. |
+| Regresi Increment 6 | PASS | `php artisan test --compact`: 734 tests, 5824 assertions. `npx tsc --noEmit`, `npx eslint resources/js`, `npm run build`, `php vendor/bin/pint --test` dan `php -l` ketiga skrip QA lulus. |
+| Routes/status Increment 6 | PASS | `php artisan route:list --path=purchasing/returns` memuat 8 route; migration module terdaftar `Ran`. |
+| Diff/docs/scope (Increment 6) | PASS | `git diff --check`, validasi link dokumen, staged scope review; `SampleUI/`, `Old-docs/` dan artefak LSP dikecualikan. |
 | Whitespace | PASS | `git diff --check` lulus. |
 | Link/whitespace (Increment 1) | PASS | Node memeriksa 10 dokumen dan 22 link lokal, tanpa trailing whitespace; git diff --check lulus. |
 | Staged scope/save point (Increment 1) | PASS | Sepuluh file docs terfokus, tanpa source/user/artifact/arsip atau pola credential. Scoped commit dibuat; tidak push work item yang belum selesai. |
@@ -236,3 +250,22 @@ review staged selesai; tidak push sampai work item selesai atau diminta.
 
 Jangan menambahkan scope di luar persetujuan user. Commit otomatis setiap
 task/increment verified; push hanya saat seluruh work item selesai atau diminta.
+
+## Handoff Increment 6
+
+- Perubahan: tiga skrip QA reusable untuk native MySQL, aktivasi lokal terbatas,
+  dan pengujian aktivasi pada database disposable; dokumen module/API/quality
+  diselaraskan dengan route dan hasil runtime.
+- Verifikasi native: schema DECIMAL(20,6), up/down/up, lock/current-read stale,
+  audit veto rollback, unique/FK dan rollback populated lulus. Fingerprint
+  PurchaseOrders/receipt/Stock/FIFO/Finance serta audit asal tidak berubah.
+- Aktivasi: baseline disposable terisi diaktifkan dua kali; hanya migration dan
+  dua permission catalog bertambah. Aktivasi lokal dijalankan dua kali; tidak
+  memberi grant atau membuat demo/receipt/payment. Migration lokal kini `Ran`,
+  tabel draft tetap kosong.
+- Regresi: 734 tests/5824 assertions, TypeScript, ESLint, build, Pint, route dan
+  status lulus. QA desktop/tablet tetap PASS dari Increment 5; UI tidak berubah.
+- Batas tersisa: posting/pengiriman retur, perubahan stok/FIFO, utang dan refund
+  supplier belum diimplementasikan dan memerlukan work item/keputusan terpisah.
+- Delivery: increment disimpan dan dipush setelah scope staged, commit serta
+  remote SHA diverifikasi; `SampleUI/`, `Old-docs/` dan artefak LSP tidak masuk.

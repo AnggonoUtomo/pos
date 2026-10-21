@@ -16,8 +16,8 @@ keputusan FIFO/uang yang belum disepakati.
 | 2 | Passed | Fondasi teknis | Dry-run/generator, discovery, schema draft dan quantity Domain | Route/database module canonical, exact6, batas schema, tanpa mutation ledger | 78 focused tests/139 assertions, 712 full tests/5628 assertions, Pint, route/status |
 | 3 | Passed | Alur simpan | Published source lookup/DTOs, permission catalog, query/route JSON, persistence, create/update | Sumber receipt cocok/snapshot safe, harga bukan input, create/update atomic/audited/versioned | 87 tests/218 assertions, Pint, route:list, diff check |
 | 4 | Passed | Lifecycle/demo | Soft delete/restore, stale/no-op/audit hardening dan demo module | Draft saja, tidak mereset user, fingerprint ledger tetap | 28 focused tests/216 assertions, full suite 733/5800, Pint, route dan fingerprint |
-| 5 | Planned | UI | List/form/detail/lifecycle, source picker, nav/palette dan shortcut | Permission UX, loading/error/retry/readonly, format Indonesia tanpa klaim posted/refund | TS/lint/build, DevTools/Playwright |
-| 6 | Planned | Penutupan | Native MySQL, regresi, aktivasi lokal aman, docs dan delivery | Semua acceptance verified, aktivasi2x tanpa grant/demo/mutation sumber, remote sama HEAD | Full suite/native/browser/status/Git |
+| 5 | Passed | UI/browser | List/form/detail/lifecycle, source picker, nav/palette dan shortcut | Permission UX, loading/error/retry/readonly, format Indonesia tanpa klaim posted/refund | 734 tests/5824 assertions, TS/lint/build, DevTools desktop/tablet |
+| 6 | Passed | Penutupan | Native MySQL, regresi, aktivasi lokal aman, docs dan delivery | Semua acceptance verified, aktivasi dua kali tanpa grant/demo/mutation sumber, remote sama HEAD | 734 tests/5824 assertions, native MySQL, aktivasi disposable/lokal, build/typecheck/lint/Pint, route/status/Git |
 
 ## Rincian Checkpoint
 
@@ -42,10 +42,11 @@ edited/trashed tidak ditimpa. Fixture disposable menyiapkan PO+receipt sebelum
 fingerprint; seeder Returns tidak membuat atau memodifikasi ledger. Tidak ada
 reservasi atau pemeriksaan saldo stok untuk menolak draft.
 
-Increment 5 menguji abort quote/snapshot lama, loading/error500/retry,403/422,
-double submit, stale version dan keyboard dari level dialog. Tidak memberi
-success pengeluaran stok atau penerimaan kas. Tampilan desktop1440x1000,
-tablet1024x768 dan768x1024, Light/Dark, sidebar expanded/collapsed.
+Increment 5 menguji request race source, loading/offline/HTTP500/retry, validasi
+kuantitas, double submit dan keyboard dari level dialog. HTTP403/422/stale diuji
+di feature test. Tidak memberi success pengeluaran stok atau penerimaan kas.
+Tampilan desktop1440x1000, tablet1024x768 dan768x1024, Light/Dark, sidebar
+expanded/collapsed.
 
 Increment 6 menguji native decimal/FK/unique/row lock/stale/current read dan
 audit rollback. Fingerprint meliputi PO/header/lines, receipt/lines/alokasi,
@@ -66,8 +67,11 @@ hanya migration/catalog, seluruh data/audit existing harus identik.
   --fix global yang bisa menyentuh arsip/artefak user.
 - Route/status: php artisan route:list --path=purchasing/returns dan
   php artisan migrate:status setelah route/schema ada.
-- Native/browser/aktivasi: script spesifik belum ada. Buat saat ada consumer dan
-  catat nama command, status dan artifact aktual, bukan mengklaim tersedia sekarang.
+- Native/aktivasi: `php scripts/qa/purchase-returns-mysql.php` memverifikasi
+  schema, presisi, transaksi, stale, audit dan fingerprint pada MySQL disposable;
+  `php scripts/qa/activate-purchase-returns-mysql.php` menguji aktivasi dua kali
+  pada baseline terisi; `php scripts/qa/apply-purchase-returns-local.php`
+  mengaktifkan migration/catalog lokal dua kali tanpa grant/demo/ledger.
 - DevTools MCP dahulu sesuai [QUALITY](../../../../../QUALITY.md), termasuk
   executable MCP existing isolated bila tool langsung tidak diekspos; fallback
   dengan alasan jika blocked. Tidak install dependency/profile user.
@@ -87,8 +91,8 @@ hanya migration/catalog, seluruh data/audit existing harus identik.
 
 ## Batas Berhenti Dan Rollback
 
-Increment 1-4 telah dikerjakan dan diverifikasi sesuai checklist. Increment 5
-UI/browser dan Increment 6 native QA/aktivasi/penutupan tetap belum selesai.
+Increment 1-6 telah dikerjakan dan diverifikasi sesuai checklist. Work item
+selesai; migration Returns aktif di database lokal dan tabel draft tetap kosong.
 Scope posting/FIFO/uang supplier tidak boleh diambil dari roadmap tanpa interview/
 approval terpisah.
 Pemulihan dokumen melalui commit terfokus, bukan reset perubahan user. Setelah

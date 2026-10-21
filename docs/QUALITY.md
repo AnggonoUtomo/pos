@@ -381,6 +381,27 @@ lama. Tidak men-seed draft demo, mengubah master/ledger, grant atau reset akun.
 Demo operasional module hanya eksplisit pada local/testing; bukan aktivasi
 otomatis database bisnis. Migration DDL terpisah dari transaction catalog.
 
+## QA Draft Retur Pembelian
+
+Native MySQL disposable: `php scripts/qa/purchase-returns-mysql.php`. Guard
+local/MySQL, memverifikasi `SELECT DATABASE()` dan membuat schema acak
+`pos_purchase_returns_qa_[16hex]`; database dihapus pada `finally`. Memeriksa
+DECIMAL(20,6), migration up/down kosong dan down populated guard, create/update/
+no-op/delete/restore, stale current-read setelah snapshot REPEATABLE READ,
+rollback audit, unique/FK dan fingerprint PO/receipt/Stock/FIFO/Finance/audit
+asal yang harus tetap sama. Bukan load test atau bukti seluruh interleaving.
+
+Aktivasi disposable: `php scripts/qa/activate-purchase-returns-mysql.php`.
+Menyiapkan database populated acak tanpa migration Returns, lalu menjalankan
+`apply-purchase-returns-local.php --qa-database=...` dua kali. Memeriksa
+kolom/data existing, migration, permission lama, user/role/grant, source dan
+ledger tetap identik; dua permission baru tercatat sekali tanpa grant, tabel
+Returns kosong. Database QA dibersihkan. Setelah lulus, aktivasi lokal yang
+disetujui: `php scripts/qa/apply-purchase-returns-local.php` dua kali. Script
+lokal memerlukan APP_ENV local/MySQL, verifikasi database aktif, advisory lock,
+dan hanya migration module plus catalog permission; tanpa demo, grant, reset,
+receipt atau pembayaran. Periksa `php artisan migrate:status --path=app/Modules/Purchasing/Returns/Database/Migrations`.
+
 ## QA Master Supplier
 
 Sesudah build, jalankan `php artisan test --filter=Suppliers` dan

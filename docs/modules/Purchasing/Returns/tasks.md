@@ -7,8 +7,8 @@
 - [x] Scaffold/schema dan Domain quantity verified pada disposable.
 - [x] Published source lookup dengan consumer nyata dan alur simpan verified.
 - [x] Lifecycle/version/no-op, audit dan demo aman verified pada Increment 4.
-- [ ] UI/nav/palette/shortcut serta browser desktop/tablet verified.
-- [ ] Native MySQL, regresi, aktivasi additive dan delivery verified.
+- [x] UI/nav/palette/shortcut serta browser desktop/tablet verified.
+- [x] Native MySQL, regresi, aktivasi additive dan delivery verified.
 
 Bukti terperinci: [fondasi draft](work-items/draft-foundation/tasks.md).
 

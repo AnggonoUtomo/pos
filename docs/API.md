@@ -148,6 +148,7 @@ Prefix `/purchasing/returns`, name `purchasing.returns.*`:
 
 | Method | Path relatif | Nama | Permission |
 | --- | --- | --- | --- |
+| GET | / | index | purchasing.returns.view |
 | GET | /data | data | purchasing.returns.view |
 | GET | /purchases | purchases | purchasing.returns.manage |
 | GET | /purchases/{id} | purchase | purchasing.returns.manage |
@@ -156,8 +157,9 @@ Prefix `/purchasing/returns`, name `purchasing.returns.*`:
 | DELETE | /{id} | destroy | purchasing.returns.manage |
 | POST | /{id}/restore | restore | purchasing.returns.manage |
 
-GET root Inertia belum tersedia hingga UI Increment 5. DELETE dan restore hanya
-untuk draft, menerima `version` wajib positif dan memakai state active/trashed
+GET root mengembalikan halaman Inertia `purchasing/returns/index` dengan props
+`records` dan `filters`; viewer dapat membaca snapshot tanpa manage permission.
+DELETE dan restore hanya untuk draft, menerima `version` wajib positif dan memakai state active/trashed
 yang sesuai. JSON sukses memberi `{id}`; Inertia mengembalikan success flash.
 Lifecycle menaikkan version dan mencatat audit atomik tanpa mengubah baris atau
 snapshot. Resource pada state salah 404, stale/status bukan draft 422.

@@ -5,8 +5,9 @@
 Scope produk Disetujui. Increment 2 telah mengimplementasikan scaffold, schema
 draft dan value object quantity. Increment 3 menyediakan lookup, persistence,
 permission, query, route data/source dan create/update. Increment 4 menyediakan
-soft delete/restore draft, version/audit atomic serta demo seeder aman. UI masih
-rencana.
+soft delete/restore draft, version/audit atomic serta demo seeder aman. Increment
+5 menyediakan UI dan Increment 6 memverifikasi native MySQL serta aktivasi
+additive. Migration aktif lokal; tabel draft kosong.
 
 ## Tujuan Dan Scope
 
@@ -111,8 +112,9 @@ soft delete independen. Migration down menolak jika masih ada header termasuk
 yang soft-deleted, atau baris tersisa, dan hanya menghapus tabel milik Returns.
 Domain ReturnQuantity memvalidasi string decimal positif maksimal14 digit integer
 dan6 pecahan, quantity <= received, rasio >=1, hasil base quantity exact6 dan
-kapasitas decimal20,6. Tidak memakai float. Schema diuji pada SQLite disposable;
-migration lokal tetap Pending dan belum dieksekusi. Tidak ada tabel
+kapasitas decimal20,6. Tidak memakai float. Schema diuji pada SQLite dan MySQL
+disposable; migration Returns telah aktif di database lokal setelah aktivasi
+terverifikasi dua kali. Tabel lokal masih kosong. Tidak ada tabel
 movement/layer/payment atau field "sudah refund".
 
 ## Authorization Dan Audit
@@ -140,7 +142,7 @@ Data JSON `{data,meta}`, pagination25,
 search literal max150 atas nomor retur/pembelian/supplier, status all/draft,
 trashed0/1 dan page. Purchase search mengembalikan maksimal25 snapshot aman.
 Input create/update dan response JSON didokumentasikan di [API](../../../API.md).
-Inertia `GET /` akan ditambahkan bersama halaman pada Increment 5. Delete/restore
+Inertia `GET /` tersedia bersama halaman pada Increment 5. Delete/restore
 memerlukan version positif dan hanya menerima state active/trashed yang sesuai;
 mutation/audit atomic mempertahankan snapshot dan baris. Tidak ada route
 post/pay/refund/void. Tidak menampilkan
@@ -170,12 +172,12 @@ Aktivasi lokal hanya migration/catalog; demo draft bukan bagian aktivasi.
 
 ## Acceptance Criteria
 
-- [ ] CRUD draft dan source lookup hanya pembelian eligible, snapshot safe/exact.
-- [ ] Invalid qty/base/member/duplicate/forgery/stale ditolak tanpa mutation.
-- [ ] Lifecycle/version/no-op dan audit atomic terverifikasi.
-- [ ] Stock/FIFO/receipt/PO/payment asal identik sepanjang lifecycle draft.
-- [ ] Permission, UI/shortcut, error/retry/readonly dan browser desktop/tablet lulus.
-- [ ] Demo aman, native MySQL, aktivasi additive dua kali dan delivery terverifikasi.
+- [x] CRUD draft dan source lookup hanya pembelian eligible, snapshot safe/exact.
+- [x] Invalid qty/base/member/duplicate/forgery/stale ditolak tanpa mutation.
+- [x] Lifecycle/version/no-op dan audit atomic terverifikasi.
+- [x] Stock/FIFO/receipt/PO/payment asal identik sepanjang lifecycle draft.
+- [x] Permission, UI/shortcut, error/retry/readonly dan browser desktop/tablet lulus.
+- [x] Demo aman, native MySQL, aktivasi additive dua kali dan delivery terverifikasi.
 
 ## Di Luar Scope Dan Risiko Terbuka
 

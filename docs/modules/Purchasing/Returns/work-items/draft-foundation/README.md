@@ -2,10 +2,9 @@
 
 ## Status
 
-In Progress. Increment 1 dokumentasi, Increment 2 scaffold/schema/Domain,
-Increment 3 backend source lookup/create/update, serta Increment 4 lifecycle,
-audit dan demo Passed. Increment 5-6 belum dimulai. Migration lokal masih Pending
-dan belum dijalankan.
+Selesai. Increment 1-6 telah diverifikasi dan work item telah dipush. Migration
+Returns lokal aktif; tabel draft masih kosong. Posting stok/FIFO dan refund
+supplier tetap di luar scope.
 
 ## Owner Dan Lokasi
 
@@ -42,12 +41,12 @@ reversal, retur bebas sumber, parsial/utang atau perubahan tema/dependency.
 
 ## Acceptance Criteria
 
-- [ ] Source eligible safe, membership dan quantity/base exact terbukti.
-- [ ] Simpan/lifecycle/version/no-op dan audit mandatory atomic terbukti.
-- [ ] Semua operasi draft menjaga source/receipt/Stock/FIFO/Finance identik.
-- [ ] Permission, UI, demo aman serta QA native/browser sesuai spec lulus.
-- [ ] Aktivasi lokal hanya schema/catalog, idempotent dan tanpa grant/demo/reset.
-- [ ] Dokumen aktual/checklist, scoped commit/push dan remote SHA verified.
+- [x] Source eligible safe, membership dan quantity/base exact terbukti.
+- [x] Simpan/lifecycle/version/no-op dan audit mandatory atomic terbukti.
+- [x] Semua operasi draft menjaga source/receipt/Stock/FIFO/Finance identik.
+- [x] Permission, UI, demo aman serta QA native/browser sesuai spec lulus.
+- [x] Aktivasi lokal hanya schema/catalog, idempotent dan tanpa grant/demo/reset.
+- [x] Dokumen aktual/checklist, scoped commit/push dan remote SHA verified.
 
 ## Dampak Yang Harus Dicek
 
@@ -77,8 +76,8 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 | 2 | Passed | Scaffold canonical, dua tabel draft, dan Domain quantity exact6 | 78 test/139 assertion lulus; Pint, route absence, migration Pending, diff check |
 | 3 | Passed | Lookup sumber, permission, dan simpan draft melalui HTTP JSON | 87 tests/218 assertions, route/permission, snapshot, audit, no-op |
 | 4 | Passed | Lifecycle/version/audit/demo | 28 focused tests/216 assertions, full suite 733/5800, Pint, 7 routes, fingerprint |
-| 5 | Planned | UI/nav/shortcut/browser | TS/lint/build, DevTools dan desktop/tablet |
-| 6 | Planned | Native QA, aktivasi dan delivery | MySQL, full regresi, fingerprint lokal dan Git remote |
+| 5 | Passed | UI/nav/shortcut/browser | 734 tests/5824 assertions, TS/lint/build, DevTools desktop/tablet |
+| 6 | Passed | Native QA, aktivasi dan delivery | MySQL disposable dan aktivasi lokal dua kali; 734 tests/5824 assertions, build/typecheck/lint/Pint, route/status lulus |
 
 ## Handoff Increment 4
 
@@ -92,6 +91,33 @@ Desain posting FIFO dan refund supplier tetap terbuka di luar work item.
 - Browser: SKIPPED karena UI belum masuk scope sampai Increment 5.
 - Risiko: UI, native MySQL/aktivasi dan delivery keseluruhan masih menunggu.
 - SampleUI, Old-docs dan artefak LSP user tetap tidak disentuh; tidak push.
+
+## Handoff Increment 5
+
+- Perubahan: Inertia workspace draft, source picker, form/detail, soft delete/
+  restore, permission-aware navigation, command palette dan shortcut. Tidak ada
+  posting stok/FIFO atau refund supplier.
+- Verifikasi: 734 tests/5824 assertions, typecheck, ESLint, build, Pint, route dan
+  DevTools desktop/tablet; fingerprint Stock/FIFO/payment tidak berubah.
+- Delivery: commit `1409d7b` telah dipush dan diverifikasi sama dengan `origin/main`.
+- Risiko tersisa: migration lokal masih Pending; native MySQL/aktivasi belum
+  dijalankan. Increment 6 melanjutkan dengan database disposable terlebih dahulu.
+
+## Handoff Increment 6
+
+- Perubahan: skrip QA MySQL native dan aktivasi additive reusable; dokumentasi
+  API/module/quality diperbarui mengikuti route dan keadaan migration aktual.
+- Verifikasi: native MySQL up/down/up, presisi DECIMAL(20,6), concurrency stale,
+  audit rollback, unique/FK dan populated rollback guard lulus. Fingerprint
+  source/receipt/Stock/FIFO/Finance/audit asal identik.
+- Aktivasi disposable dua kali dan aktivasi lokal dua kali lulus. Hanya migration
+  serta dua permission catalog ditambahkan; tidak ada grant, demo, receipt,
+  payment atau perubahan tabel/data existing. Tabel draft lokal kosong.
+- Regresi penuh 734 tests/5824 assertions; TypeScript, ESLint, build, Pint,
+  route dan migration status lulus. QA browser desktop/tablet sudah PASS pada
+  Increment 5 dan tidak ada perubahan UI di increment ini.
+- Delivery diverifikasi sama dengan `origin/main`; tidak ada perubahan pada
+  `SampleUI/`, `Old-docs/` atau file LSP user.
 
 ## Handoff Increment 3
 

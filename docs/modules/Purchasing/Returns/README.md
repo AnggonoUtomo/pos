@@ -2,9 +2,9 @@
 
 ## Status
 
-In Progress. Increment 2 fondasi teknis, Increment 3 backend lookup/create/update,
-dan Increment 4 lifecycle soft delete/restore serta demo draft sudah diverifikasi.
-UI; Inertia index akan hadir pada Increment 5.
+Selesai untuk fondasi draft. Increment 2-6 telah diverifikasi. Migration Returns
+telah aktif di database lokal; tabel draft kosong. Posting stok/FIFO, pengiriman
+retur dan refund supplier memerlukan scope terpisah.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
 [struktur canonical](../../../FOLDER-STRUCTURE.md).
 
@@ -37,10 +37,11 @@ Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
 - `ReturnsAccessSeeder` mendaftarkan `purchasing.returns.view` dan
   `purchasing.returns.manage` tanpa memberi role/grant. Permission dibedakan per
   action; super-system tetap tunduk invariant.
-- Backend route aktif: `/purchasing/returns/data`, `/purchasing/returns/purchases`,
+- Backend route aktif: `GET /purchasing/returns` (Inertia),
+  `/purchasing/returns/data`, `/purchasing/returns/purchases`,
   `/purchasing/returns/purchases/{id}`, `POST /purchasing/returns`,
   `PUT /purchasing/returns/{id}`, `DELETE /purchasing/returns/{id}`, dan
-  `POST /purchasing/returns/{id}/restore`. GET root Inertia belum aktif.
+  `POST /purchasing/returns/{id}/restore`.
 - Source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/ dan
   Database/Seeders/ ada di dalam module. Provider terdaftar dan memuat route
   serta migration module.
@@ -57,10 +58,12 @@ Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
 
 ## Operasi Dan Verifikasi
 
-Migration lokal masih Pending dan tidak dijalankan pada Increment 2-4. Belum ada
-aktivasi, command QA native/browser khusus, atau migration yang dijalankan pada
-database user untuk module ini. Rencana command dan hasil aktual dibedakan di
-[work item fondasi](work-items/draft-foundation/README.md).
+Increment 5 memakai SQLite fixture disposable terpisah. Increment 6 juga lulus
+QA native MySQL disposable serta aktivasi additive disposable dan lokal dua kali.
+Aktivasi hanya menjalankan migration Returns dan mendaftarkan catalog permission;
+tidak memberi grant atau menjalankan seeder demo. Draft lokal tetap kosong.
+Command dan hasil rinci ada di [work item fondasi](work-items/draft-foundation/README.md)
+dan [QA](../../../QUALITY.md).
 Gunakan [plan](plan.md) dan [checklist module](tasks.md) untuk urutan capability.
 Implementasi harus memakai generator project setelah dry-run, test terfokus,
 route/status, QA browser desktop/tablet dan aktivasi additive yang terverifikasi.
