@@ -132,7 +132,7 @@ const commandItems = [
     },
     {
         title: 'Retur Pembelian',
-        description: 'Draft retur dari pembelian yang sudah diterima',
+        description: 'Retur dari pembelian yang sudah diterima',
         url: '/purchasing/returns',
         permission: 'purchasing.returns.view',
         icon: RotateCcw,

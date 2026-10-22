@@ -147,7 +147,7 @@ const mainNavGroups: NavGroup[] = [
                 url: '/purchasing/returns',
                 icon: RotateCcw,
                 permission: 'purchasing.returns.view',
-                badge: 'Draft',
+                badge: 'Aktif',
                 badgeTone: 'violet',
             },
         ],
