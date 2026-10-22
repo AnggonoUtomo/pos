@@ -185,7 +185,7 @@ export function ReturnFormDialog({ record, readOnly, onClose }: { record: Return
                 onPointerDownOutside={(event) => form.processing && event.preventDefault()}
             >
                 <DialogHeader>
-                    <DialogTitle>{readOnly ? 'Detail draft retur pembelian' : record ? 'Edit draft retur pembelian' : 'Draft retur pembelian baru'}</DialogTitle>
+                    <DialogTitle>{readOnly ? 'Detail retur pembelian' : record ? 'Edit draft retur pembelian' : 'Draft retur pembelian baru'}</DialogTitle>
                     <DialogDescription>{record ? `${record.number} · Revisi ${record.version}` : 'Pilih pembelian yang sudah diterima untuk memulai draft.'}</DialogDescription>
                 </DialogHeader>
                 {!record && !readOnly && (
@@ -258,8 +258,8 @@ export function ReturnFormDialog({ record, readOnly, onClose }: { record: Return
                             <InputError message={errors.notes} />
                         </div>
                         <div className="bg-muted/40 flex flex-wrap items-center gap-2 rounded-md p-3 text-sm">
-                            <Badge variant="secondary">Draft</Badge>
-                            <span className="text-muted-foreground">Belum mengubah stok/FIFO dan tidak mencatat pengembalian uang supplier.</span>
+                            <Badge variant={record?.status === 'posted' ? 'default' : 'secondary'}>{record?.status === 'posted' ? 'Diserahkan' : 'Draft'}</Badge>
+                            <span className="text-muted-foreground">{record?.status === 'posted' ? 'Stok dari penerimaan asal sudah dikeluarkan. Pengembalian uang supplier dicatat terpisah.' : 'Belum mengubah stok/FIFO dan tidak mencatat pengembalian uang supplier.'}</span>
                         </div>
                         {stale && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-amber-500/40 p-3 text-sm"><span>Revisi draft sudah berubah. Perubahan pada form ini belum disimpan.</span><Button type="button" variant="outline" onClick={() => { onClose(); router.reload(); }}>Tutup dan muat ulang</Button></div>}
                         <DialogFooter>

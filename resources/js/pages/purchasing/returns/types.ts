@@ -33,8 +33,10 @@ export interface ReturnRow {
     purchase_order_id: string;
     purchase_order_number: string;
     supplier_name: string;
-    status: string;
+    status: 'draft' | 'posted';
     version: number;
+    stock_issue_id: string | null;
+    posted_at: string | null;
     notes: string | null;
     snapshot: Omit<ReturnPurchaseSource, 'lines'>;
     lines: ReturnLine[];
@@ -44,7 +46,7 @@ export interface ReturnRow {
 
 export interface ReturnFilters {
     search: string;
-    status: 'all' | 'draft';
+    status: 'all' | 'draft' | 'posted';
     trashed: boolean;
 }
 
