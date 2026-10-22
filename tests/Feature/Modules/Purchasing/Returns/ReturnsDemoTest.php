@@ -77,7 +77,7 @@ class ReturnsDemoTest extends TestCase
         $after = DB::table('purchase_returns')->where('id', $id)->first();
         $this->assertEquals($before, $after);
         $this->assertDatabaseCount('purchase_returns', 1);
-        $this->assertDatabaseCount('permissions', 2);
+        $this->assertDatabaseCount('permissions', 3);
         $this->assertDatabaseCount('model_has_permissions', 0);
         $this->assertDatabaseCount('model_has_roles', 0);
     }

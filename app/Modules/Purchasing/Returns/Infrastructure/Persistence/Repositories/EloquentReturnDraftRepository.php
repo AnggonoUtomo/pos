@@ -88,17 +88,33 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         $this->audit($model, 'restored');
     }
 
+    public function post(string $id, string $issueId, string $postedAt, int $version, ?int $actorId): void
+    {
+        $this->requireTransaction();
+        $model = PurchaseReturn::query()->lockForUpdate()->findOrFail($id);
+        $model->fill(['status' => 'posted', 'version' => $version + 1, 'posted_from_version' => $version,
+            'stock_issue_id' => $issueId, 'posted_at' => $postedAt, 'posted_by' => $actorId]);
+        if (! $model->save()) {
+            throw new RuntimeException('Status posting retur pembelian gagal disimpan.');
+        }
+        $this->audit($model, 'posted', $actorId);
+    }
+
     public function demoExists(string $key): bool
     {
         return PurchaseReturn::withTrashed()->where('demo_key', $key)->exists();
     }
 
-    private function audit(PurchaseReturn $model, string $event): void
+    private function audit(PurchaseReturn $model, string $event, ?int $actorId = null): void
     {
-        $log = activity('purchasing.returns')->performedOn($model)->event($event)->withProperties([
-            'attributes' => Arr::only($model->toArray(), ['number', 'purchase_order_id', 'status', 'version', 'deleted_at']),
+        $logger = activity('purchasing.returns')->performedOn($model)->event($event)->withProperties([
+            'attributes' => Arr::only($model->toArray(), ['number', 'purchase_order_id', 'status', 'version', 'deleted_at', 'stock_issue_id', 'posted_at']),
             'line_count' => DB::table('purchase_return_lines')->where('purchase_return_id', $model->id)->count(),
-        ])->log('Retur pembelian '.$event);
+        ]);
+        if ($event === 'posted') {
+            $actorId === null ? $logger->causedByAnonymous() : $logger->causedBy($actorId);
+        }
+        $log = $logger->log('Retur pembelian '.$event);
         if ($log === null || ! $log->exists) {
             throw new RuntimeException('Audit draft retur pembelian gagal disimpan.');
         }
@@ -107,8 +123,8 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
     public function paginate(int $page, array $filters): array
     {
         $query = ! empty($filters['trashed']) ? PurchaseReturn::onlyTrashed() : PurchaseReturn::query();
-        if (($filters['status'] ?? 'all') === 'draft') {
-            $query->where('status', 'draft');
+        if (in_array($filters['status'] ?? 'all', ['draft', 'posted'], true)) {
+            $query->where('status', $filters['status']);
         }
         if (($search = $filters['search'] ?? '') !== '') {
             $like = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
@@ -117,7 +133,7 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         $result = $query->orderByDesc('id')->paginate(25, page: $page);
         $lines = $this->lines($result->getCollection()->pluck('id')->all());
 
-        return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key'])
+        return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key', 'posted_by', 'posted_from_version'])
             + ['lines' => ($lines[$model->id] ?? collect())->all()])->all(),
             'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
     }

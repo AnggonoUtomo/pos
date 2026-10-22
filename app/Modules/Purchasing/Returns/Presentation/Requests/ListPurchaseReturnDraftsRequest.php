@@ -15,7 +15,7 @@ final class ListPurchaseReturnDraftsRequest extends FormRequest
     public function rules(): array
     {
         return ['search' => ['nullable', 'string', 'max:150'], 'page' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
-            'trashed' => ['sometimes', 'boolean'], 'status' => ['sometimes', Rule::in(['all', 'draft'])]];
+            'trashed' => ['sometimes', 'boolean'], 'status' => ['sometimes', Rule::in(['all', 'draft', 'posted'])]];
     }
 
     public function filters(): array

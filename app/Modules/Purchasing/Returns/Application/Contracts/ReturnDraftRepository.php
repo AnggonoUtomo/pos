@@ -12,6 +12,8 @@ interface ReturnDraftRepository
 
     public function restore(string $id): void;
 
+    public function post(string $id, string $issueId, string $postedAt, int $version, ?int $actorId): void;
+
     public function demoExists(string $key): bool;
 
     public function paginate(int $page, array $filters): array;

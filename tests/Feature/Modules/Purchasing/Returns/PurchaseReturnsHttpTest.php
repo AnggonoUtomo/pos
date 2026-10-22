@@ -183,8 +183,34 @@ class PurchaseReturnsHttpTest extends StockTestCase
         app(ReturnsAccessSeeder::class)->run();
 
         $this->assertSame($before, DB::table('model_has_permissions')->where('model_id', $user->id)->count());
-        $this->assertSame(2, DB::table('permissions')->whereIn('name', ['purchasing.returns.view', 'purchasing.returns.manage'])->count());
+        $this->assertSame(3, DB::table('permissions')->whereIn('name', ['purchasing.returns.view', 'purchasing.returns.manage', 'purchasing.returns.post'])->count());
         $this->assertFalse($user->can('purchasing.returns.view'));
         $this->assertFalse($user->can('purchasing.returns.manage'));
+        $this->assertFalse($user->can('purchasing.returns.post'));
+    }
+
+    public function test_post_permission_version_and_readonly_result_are_enforced(): void
+    {
+        [$purchaseId, $lineId] = $this->received();
+        $id = $this->postJson(self::URL, $this->input($purchaseId, $lineId))->assertCreated()->json('id');
+        $url = self::URL.'/'.$id.'/post';
+        $this->postJson($url, ['version' => 1])->assertForbidden();
+        $this->manager->givePermissionTo('purchasing.returns.post');
+        $this->postJson($url, ['version' => 2])->assertUnprocessable()->assertJsonValidationErrors('version');
+        $result = $this->postJson($url, ['version' => 1])->assertOk()->assertJsonPath('status', 'posted')->json();
+        $this->postJson($url, ['version' => 1])->assertOk()->assertJsonPath('stock_issue_id', $result['stock_issue_id']);
+        $this->postJson($url, ['version' => 2])->assertUnprocessable()->assertJsonValidationErrors('version');
+        $this->putJson(self::URL.'/'.$id, $this->input($purchaseId, $lineId) + ['version' => 2])
+            ->assertUnprocessable()->assertJsonValidationErrors('purchase_return');
+        $this->deleteJson(self::URL.'/'.$id, ['version' => 2])->assertUnprocessable()->assertJsonValidationErrors('purchase_return');
+        $this->getJson(self::URL.'/data?status=posted')->assertOk()->assertJsonPath('data.0.id', $id)
+            ->assertJsonPath('data.0.status', 'posted')->assertJsonMissingPath('data.0.posted_by')
+            ->assertJsonMissingPath('data.0.posted_from_version');
+
+        $viewer = User::factory()->create();
+        $viewer->givePermissionTo('purchasing.returns.view');
+        $this->actingAs($viewer)->postJson($url, ['version' => 1])->assertForbidden();
+        auth()->logout();
+        $this->postJson($url, ['version' => 1])->assertUnauthorized();
     }
 }

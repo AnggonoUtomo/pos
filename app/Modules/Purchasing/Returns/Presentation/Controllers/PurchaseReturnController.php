@@ -4,6 +4,7 @@ namespace App\Modules\Purchasing\Returns\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
+use App\Modules\Purchasing\Returns\Application\Actions\PostPurchaseReturnDraft;
 use App\Modules\Purchasing\Returns\Application\Queries\ReturnWorkspace;
 use App\Modules\Purchasing\Returns\Presentation\Requests\LifecyclePurchaseReturnRequest;
 use App\Modules\Purchasing\Returns\Presentation\Requests\ListPurchaseReturnDraftsRequest;
@@ -21,7 +22,8 @@ final class PurchaseReturnController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:purchasing.returns.view', only: ['index', 'data']),
-            new Middleware('can:purchasing.returns.manage', only: ['purchases', 'purchase', 'store', 'update', 'destroy', 'restore'])];
+            new Middleware('can:purchasing.returns.manage', only: ['purchases', 'purchase', 'store', 'update', 'destroy', 'restore']),
+            new Middleware('can:purchasing.returns.post', only: ['post'])];
     }
 
     public function index(ListPurchaseReturnDraftsRequest $request, ReturnWorkspace $query): Response
@@ -80,5 +82,12 @@ final class PurchaseReturnController extends Controller implements HasMiddleware
         $action->restore(strtolower($id), $request->validated('version'));
 
         return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft retur pembelian berhasil dipulihkan.');
+    }
+
+    public function post(LifecyclePurchaseReturnRequest $request, string $id, PostPurchaseReturnDraft $action): JsonResponse|RedirectResponse
+    {
+        $result = $action->handle(strtolower($id), $request->validated('version'), $request->user()->id);
+
+        return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Barang retur pembelian berhasil diserahkan.');
     }
 }
