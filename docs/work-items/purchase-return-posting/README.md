@@ -1,7 +1,8 @@
 # Posting Retur Pembelian Dari Layer Asal
 
-Status: implementasi dan QA selesai, menunggu delivery remote. Chrome DevTools
-MCP melalui executable existing/stdio isolated lulus pada desktop dan tablet.
+Status: Selesai. Implementasi, QA dan delivery remote terverifikasi pada
+22 Oktober 2026. Chrome DevTools MCP melalui executable existing/stdio isolated
+lulus pada desktop dan tablet.
 
 ## Tujuan Dan Batas
 
@@ -42,7 +43,7 @@ Rencana serta bukti kerja ada pada [plan](plan.md) dan [tasks](tasks.md).
   Chrome DevTools MCP lulus.
 - [x] Aktivasi migration/catalog additive tanpa grant/demo/posting; native MySQL
   dan regresi diverifikasi.
-- [ ] Remote delivery diverifikasi setelah push.
+- [x] Remote delivery diverifikasi setelah push.
 
 ## Risiko
 

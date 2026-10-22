@@ -55,7 +55,7 @@
   - Acceptance: no-negative, audit, lock, ledger conservation; migration dan
     catalog additive idempotent, data lama identik.
   - Verification: test, Pint, native script, route/status, fingerprint.
-- [ ] Aktifkan lokal hanya schema/catalog, tutup docs/checklist dan delivery.
+- [x] Aktifkan lokal hanya schema/catalog, tutup docs/checklist dan delivery.
   - Acceptance: tanpa grant/demo/posting; staged scope bersih, remote SHA sama
     HEAD dan ahead/behind 0/0.
   - Verification: activation dua kali, migration status, build/browser evidence,
@@ -82,6 +82,10 @@
   SQLite/server/Chrome QA ditutup dan database sementara dihapus pada finally.
 - Badge sidebar dan deskripsi command palette diselaraskan dengan capability
   posting. Typecheck, ESLint dua komponen dan build ulang lulus.
+- Payload `c68afe2` dipush ke `origin/main`; `git ls-remote` identik dengan
+  HEAD dan ahead/behind `0/0`. Scope 47 file terverifikasi tanpa SampleUI,
+  Old-docs atau LSP; 30 staged file user tetap terpisah. Commit penutupan
+  dokumentasi dikirim setelah verifikasi payload ini.
 
 ## Gap Conformance Di Luar Scope
 
@@ -91,7 +95,7 @@ ini dicatat tanpa memperluas perubahan ke aksesibilitas shell pada work item ini
 
 ## Sesudah Coding
 
-- [x] Acceptance implementasi/QA terbukti; remote delivery dicentang setelah push.
+- [x] Acceptance implementasi/QA dan remote delivery terbukti.
 - [x] Tidak ada perubahan pada Finance/source/receipt asal atau file user.
 - [x] Status module/API/ADR sesuai runtime; gap existing dinyatakan.
 
