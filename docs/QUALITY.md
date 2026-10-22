@@ -392,15 +392,30 @@ rollback audit, unique/FK dan fingerprint PO/receipt/Stock/FIFO/Finance/audit
 asal yang harus tetap sama. Bukan load test atau bukti seluruh interleaving.
 
 Aktivasi disposable: `php scripts/qa/activate-purchase-returns-mysql.php`.
-Menyiapkan database populated acak tanpa migration Returns, lalu menjalankan
+Menyiapkan database populated acak dengan migration draft dan satu draft
+existing tetapi tanpa migration posting, lalu menjalankan
 `apply-purchase-returns-local.php --qa-database=...` dua kali. Memeriksa
 kolom/data existing, migration, permission lama, user/role/grant, source dan
-ledger tetap identik; dua permission baru tercatat sekali tanpa grant, tabel
-Returns kosong. Database QA dibersihkan. Setelah lulus, aktivasi lokal yang
+ledger tetap identik; permission `post` baru tercatat sekali tanpa grant, draft
+Returns existing tetap utuh. Database QA dibersihkan. Ketiga permission
+(view/manage/post) diuji; tidak ada auto-grant. Setelah lulus, aktivasi lokal yang
 disetujui: `php scripts/qa/apply-purchase-returns-local.php` dua kali. Script
 lokal memerlukan APP_ENV local/MySQL, verifikasi database aktif, advisory lock,
 dan hanya migration module plus catalog permission; tanpa demo, grant, reset,
 receipt atau pembayaran. Periksa `php artisan migrate:status --path=app/Modules/Purchasing/Returns/Database/Migrations`.
+
+## QA Posting Retur Pembelian
+
+`php artisan test --compact tests/Feature/Modules/Purchasing/Returns`
+bersama `tests/Feature/Modules/Inventory/Stock/PurchaseReturnStockTest.php` memeriksa
+posting atomik, version/replay, permission, layer receipt asal, no-negative dan
+rollback audit. `php scripts/qa/purchase-returns-mysql.php` menjalankan
+migration dan alur posting pada MySQL disposable, termasuk current read dan
+penolakan pengeluaran dari layer lain. Aktivasi diuji dua kali pada database
+disposable dengan `activate-purchase-returns-mysql.php`, lalu dua kali lokal
+melalui `apply-purchase-returns-local.php`; tidak ada seed/grant/posting data
+bisnis. UI wajib dicoba pada desktop/tablet via Chrome DevTools MCP; bila
+namespace tidak tersedia, catat BLOCKED dan jangan klaim visual PASS.
 
 ## QA Master Supplier
 

@@ -2,9 +2,9 @@
 
 ## Status
 
-Selesai untuk fondasi draft. Increment 2-6 telah diverifikasi. Migration Returns
-telah aktif di database lokal; tabel draft kosong. Posting stok/FIFO dari layer
-penerimaan asal sedang dikerjakan pada
+Selesai untuk fondasi draft dan implementasi posting stok/FIFO dari layer
+penerimaan asal. Migration posting aktif di database lokal; QA browser visual
+masih perlu diulang ketika DevTools MCP tersedia stabil. Rincian pada
 [work item terpisah](../../../work-items/purchase-return-posting/README.md).
 Refund supplier belum masuk scope posting.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
@@ -18,11 +18,13 @@ posted. Spesifikasi: [specification.md](specification.md).
 
 ## Boundary
 
-- Memiliki: header/baris draft, snapshot asal, kuantitas retur, version,
-  lifecycle soft delete/restore, permission, audit, query, UI dan demo draft.
-- Tidak memiliki: penerimaan pembelian, pengurangan/reservasi stok, alokasi FIFO,
-  refund supplier, utang, pembayaran atau koreksi dokumen posted.
-- Draft tidak menyatakan barang telah dikirim atau uang telah diterima kembali.
+- Memiliki: header/baris draft dan posted, snapshot asal, kuantitas retur,
+  version, lifecycle soft delete/restore draft, permission, audit, query, UI
+  dan demo draft.
+- Tidak memiliki: penerimaan pembelian, reservasi stok, alokasi FIFO internal
+  Stock, refund supplier, utang, pembayaran atau koreksi dokumen posted.
+- Draft belum mengurangi stok; status posted menyatakan barang diserahkan,
+  bukan uang telah diterima kembali.
 
 ## Public Boundary Dan Dependency
 
@@ -33,17 +35,22 @@ dan DTO `PurchaseOrders\Application\DTOs\ReturnPurchaseData` untuk lookup dan
 save. Adapter query tetap dimiliki PurchaseOrders.
 Tidak membaca model/repository/Domain privat PurchaseOrders atau Sales/Returns.
 Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
+Saat posting, Returns mengonsumsi `Inventory/Stock/Application/Contracts/
+PurchaseReturnStockWriter` dan DTO publiknya dalam shared transaction.
+Finance tidak dimutasi.
 
 ## Permission, Data Dan Seeder
 
-- `ReturnsAccessSeeder` mendaftarkan `purchasing.returns.view` dan
-  `purchasing.returns.manage` tanpa memberi role/grant. Permission dibedakan per
+- `ReturnsAccessSeeder` mendaftarkan `purchasing.returns.view`,
+  `purchasing.returns.manage` dan `purchasing.returns.post` tanpa memberi grant.
+  Permission dibedakan per
   action; super-system tetap tunduk invariant.
 - Backend route aktif: `GET /purchasing/returns` (Inertia),
   `/purchasing/returns/data`, `/purchasing/returns/purchases`,
   `/purchasing/returns/purchases/{id}`, `POST /purchasing/returns`,
   `PUT /purchasing/returns/{id}`, `DELETE /purchasing/returns/{id}`, dan
-  `POST /purchasing/returns/{id}/restore`.
+  `POST /purchasing/returns/{id}/restore`, dan
+  `POST /purchasing/returns/{id}/post`.
 - Source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/ dan
   Database/Seeders/ ada di dalam module. Provider terdaftar dan memuat route
   serta migration module.
@@ -65,7 +72,8 @@ QA native MySQL disposable serta aktivasi additive disposable dan lokal dua kali
 Aktivasi hanya menjalankan migration Returns dan mendaftarkan catalog permission;
 tidak memberi grant atau menjalankan seeder demo. Draft lokal tetap kosong.
 Command dan hasil rinci ada di [work item fondasi](work-items/draft-foundation/README.md)
-dan [QA](../../../QUALITY.md).
+dan [QA](../../../QUALITY.md). Posting lulus feature, full suite, native MySQL
+dan aktivasi additive dua kali; visual browser belum diklaim lulus pada sesi ini.
 Gunakan [plan](plan.md) dan [checklist module](tasks.md) untuk urutan capability.
 Implementasi harus memakai generator project setelah dry-run, test terfokus,
 route/status, QA browser desktop/tablet dan aktivasi additive yang terverifikasi.

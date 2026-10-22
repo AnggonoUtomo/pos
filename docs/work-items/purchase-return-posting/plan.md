@@ -3,10 +3,10 @@
 | Increment | Status | Isi | Verifikasi |
 | --- | --- | --- | --- |
 | 1. Baseline | Passed | ADR, scope, ownership, contract/lock plan, checklist | Review source/dokumen, sembilan dokumen/link dan diff lulus |
-| 2. Stock writer | Planned | Writer asal receipt, alokasi FIFO, issue/movement/consumption dan audit | Unit/feature, ledger conservation, rollback, native MySQL |
-| 3. Returns posting | Planned | Migration metadata, action, permission, route dan HTTP guard | Feature source/version/replay/403/rollback |
-| 4. UI | Planned | Konfirmasi posting, status/filter/detail/readonly, shortcut dan Sonner | Typecheck/lint/build, browser desktop/tablet |
-| 5. Aktivasi | Planned | QA penuh/native, activation schema/catalog, dokumentasi dan delivery | Full tests, status/route, fingerprint, commit/push |
+| 2. Stock writer | Passed | Writer asal receipt, alokasi FIFO, issue/movement/consumption dan audit | 35 focused test/174 assertion; native layer asal dan dua worker |
+| 3. Returns posting | Passed | Migration metadata, action, permission, route dan HTTP guard | 37 focused test/285 assertion; route 9, replay/403/rollback |
+| 4. UI | Partial | Konfirmasi posting, status/filter/detail/readonly, shortcut dan Sonner | Typecheck/lint/build PASS; DevTools MCP visual BLOCKED setelah interupsi |
+| 5. Aktivasi | Passed | QA penuh/native, activation schema/catalog, dokumentasi dan delivery | 745 test/5890 assertion; native/activation dua kali; lokal Ran batch24 |
 
 ## Urutan Dan Kontrak
 

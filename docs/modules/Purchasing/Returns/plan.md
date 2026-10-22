@@ -4,7 +4,7 @@
    Snapshot sumber, quantity, lifecycle/audit/permission/demo dan UI belum
    memutasi ledger.
 2. [Posting retur pembelian](../../../work-items/purchase-return-posting/plan.md):
-   disetujui dan sedang dikerjakan. Seluruh draft diposting saat barang
+   implementasi/backend QA selesai; visual browser masih BLOCKED. Seluruh draft diposting saat barang
    diserahkan; hanya sisa layer penerimaan pembelian asal yang boleh keluar.
 3. Pengembalian uang supplier/utang/koreksi: belum disepakati; bukan implikasi
    harga beli snapshot pada draft atau refund penjualan yang sudah tersedia.

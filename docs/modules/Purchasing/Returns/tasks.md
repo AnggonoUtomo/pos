@@ -9,8 +9,10 @@
 - [x] Lifecycle/version/no-op, audit dan demo aman verified pada Increment 4.
 - [x] UI/nav/palette/shortcut serta browser desktop/tablet verified.
 - [x] Native MySQL, regresi, aktivasi additive dan delivery verified.
-- [ ] Posting retur dari sisa layer penerimaan asal, atomic dan readonly setelah
+- [x] Posting retur dari sisa layer penerimaan asal, atomic dan readonly setelah
   posted; lihat [work item](../../../work-items/purchase-return-posting/tasks.md).
+- [ ] QA visual posting desktop/tablet via Chrome DevTools MCP setelah koneksi
+  sesi stabil; backend/full test/native/aktivasi tidak menggantikan bukti visual.
 
 Bukti terperinci: [fondasi draft](work-items/draft-foundation/tasks.md).
 

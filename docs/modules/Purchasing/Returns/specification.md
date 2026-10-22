@@ -1,5 +1,12 @@
 # Spesifikasi Fondasi Draft Retur Pembelian
 
+Dokumen ini merekam scope fondasi draft yang telah selesai, bukan keseluruhan
+capability module saat ini. Posting barang dari layer penerimaan asal sudah
+diimplementasikan sesuai [ADR-017](../../../decisions/ADR-017-PURCHASE-RETURN-ORIGINAL-RECEIPT-LAYER.md)
+dan [work item posting](../../../work-items/purchase-return-posting/README.md).
+Pernyataan "tidak posting" di bawah hanya berlaku untuk increment fondasi draft;
+refund supplier masih belum tersedia.
+
 ## Status
 
 Scope produk Disetujui. Increment 2 telah mengimplementasikan scaffold, schema

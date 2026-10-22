@@ -1,7 +1,8 @@
 # Posting Retur Pembelian Dari Layer Asal
 
-Status: In Progress. Keputusan domain disetujui; implementasi dan QA belum
-selesai.
+Status: implementasi dan QA backend selesai; QA visual desktop/tablet tertunda
+karena Chrome DevTools MCP hilang dari sesi setelah interupsi. Tidak diklaim
+sebagai PASS visual.
 
 ## Tujuan Dan Batas
 
@@ -29,17 +30,18 @@ Rencana serta bukti kerja ada pada [plan](plan.md) dan [tasks](tasks.md).
 
 ## Acceptance
 
-- [ ] Satu draft diposting penuh sekali, di gudang pembelian asal.
-- [ ] Tiap baris hanya mengonsumsi sisa layer receipt pembelian asal; stok
+- [x] Satu draft diposting penuh sekali, di gudang pembelian asal.
+- [x] Tiap baris hanya mengonsumsi sisa layer receipt pembelian asal; stok
   barang dari layer lain tidak membuat posting lolos.
-- [ ] Quantity/value saldo, layer, movement dan consumption exact6 konsisten;
+- [x] Quantity/value saldo, layer, movement dan consumption exact6 konsisten;
   full drain menjaga residual, termasuk biaya mikro nol.
-- [ ] Dua draft bersaing tidak dapat mengeluarkan lebih dari sisa layer.
-- [ ] Status/version/replay, master guard, permission dan audit lintas module
+- [x] Dua draft bersaing tidak dapat mengeluarkan lebih dari sisa layer.
+- [x] Status/version/replay, master guard, permission dan audit lintas module
   atomik; posted tidak bisa edit/delete/restore.
 - [ ] UI konfirmasi, status/filter/detail, shortcut, Sonner dan QA desktop/tablet
-  bekerja tanpa menampilkan HPP sebagai uang kembali.
-- [ ] Aktivasi migration/catalog additive tanpa grant/demo/posting; native MySQL,
+  bekerja tanpa menampilkan HPP sebagai uang kembali. Typecheck/lint/build
+  lulus; verifikasi visual langsung masih BLOCKED.
+- [x] Aktivasi migration/catalog additive tanpa grant/demo/posting; native MySQL,
   regresi dan remote delivery diverifikasi.
 
 ## Risiko

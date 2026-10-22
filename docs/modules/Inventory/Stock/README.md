@@ -27,6 +27,8 @@ payment, pajak, diskon, atau harga level pelanggan.
 - StockUsage menyediakan guard histori untuk consumer Items/Warehouses.
 - SaleStockWriter dikonsumsi PostInvoice POS untuk pengeluaran dan FIFO.
 - PurchaseStockWriter dikonsumsi PostPurchaseOrder untuk receipt/movement/FIFO.
+- PurchaseReturnStockWriter dikonsumsi Purchasing/Returns untuk issue dari sisa
+  layer receipt pembelian asal; layer lain tidak boleh menggantikan sumber.
 - Tidak membuat event atau port tanpa consumer transaksi nyata.
 
 ## Permission Dan Operasi
@@ -73,3 +75,8 @@ menambah receipt ledger immutable dan saldo tanpa anchor opening wajib. Saldo
 purchase-only tampil bersama legacy melalui snapshot fallback. MySQL batch16
 aktif lokal tanpa seed/posting user; receipt dan sale diserialisasi per gudang.
 Duplicate post/dua urutan receipt-versus-sale terbukti lewat worker MySQL nyata.
+
+[Posting retur pembelian](../../../work-items/purchase-return-posting/README.md)
+menambah issue `purchase_return`, movement negatif, konsumsi FIFO dan audit
+atomik tanpa mutation pada pembelian/receipt asal atau Finance. Validasi saldo
+seluruh layer dilakukan sebelum alokasi hanya pada layer sumber.

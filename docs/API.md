@@ -156,6 +156,7 @@ Prefix `/purchasing/returns`, name `purchasing.returns.*`:
 | PUT | /{id} | update | purchasing.returns.manage |
 | DELETE | /{id} | destroy | purchasing.returns.manage |
 | POST | /{id}/restore | restore | purchasing.returns.manage |
+| POST | /{id}/post | post | purchasing.returns.post |
 
 GET root mengembalikan halaman Inertia `purchasing/returns/index` dengan props
 `records` dan `filters`; viewer dapat membaca snapshot tanpa manage permission.
@@ -166,9 +167,10 @@ snapshot. Resource pada state salah 404, stale/status bukan draft 422.
 
 GET `/data` memberi `{data,meta}`, pagination25 descending
 id, search literal maksimal150 pada number/purchase_order_number/supplier_name,
-status all/draft, trashed0/1 dan page positif. Setiap record berisi ID/nomor,
+status all/draft/posted, trashed0/1 dan page positif. Setiap record berisi ID/nomor,
 source PO/supplier snapshot, status/version/notes/timestamp dan maksimal100 line
-snapshot. Response tidak memuat demo_key, actor atau nilai payment.
+snapshot. Record posted memuat `stock_issue_id` dan `posted_at`. Response tidak
+memuat demo_key, actor, HPP layer, atau nilai payment.
 
 GET `/purchases` menerima search nullable max150 pada nomor PO, kode/nama supplier
 atau nama gudang dan mengembalikan maksimal25 pembelian eligible dengan snapshot
@@ -198,7 +200,15 @@ delete hanya dokumen aktif. Seeder demo local/testing mencari source CCTV posted
 yang sudah ada, idempotent termasuk marker yang diedit/terhapus, dan skip tanpa
 membuat sumber/receipt/pembayaran bila tidak tersedia.
 
-Permission `purchasing.returns.view/manage` didaftarkan additive oleh
+POST `/{id}/post` menerima `version` positif milik draft aktif. Posting penuh
+sekali di gudang pembelian asal mengonsumsi sisa layer FIFO dari baris receipt
+pembelian asal, menulis stock issue/movement/consumption dan audit Stock/Returns
+dalam satu transaksi. JSON sukses memberi `{id,status,version,stock_issue_id,
+posted_at}`. Replay dengan version asal mengembalikan hasil sama tanpa ledger
+baru; version berbeda, source/snapshot tidak valid, atau sisa layer kurang
+ditolak 422. Posted readonly; tidak ada refund supplier pada endpoint ini.
+
+Permission `purchasing.returns.view/manage/post` didaftarkan additive oleh
 `ReturnsAccessSeeder`; tidak ada auto-grant. Manage tidak memberi view dan
 PurchaseOrders permissions tidak diperlukan untuk source lookup. Super-system
 tetap tunduk validasi bisnis. Detail module:

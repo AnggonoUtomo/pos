@@ -183,3 +183,15 @@ dibuktikan terpisah; test SQLite tidak diklaim membuktikan row locking.
 - [x] Saldo/kartu stok menggunakan ledger, bukan activity log.
 - [x] UI desktop/tablet diverifikasi; gate dependency terpisah dicatat di tasks.md.
 - [x] Tidak ada consumer FIFO pengeluaran palsu atau koreksi posted bebas.
+
+## Posting Retur Pembelian
+
+`PurchaseReturnStockWriter` adalah published boundary yang dipakai
+Purchasing/Returns dalam transaksi bersama. Writer mengunci gudang, saldo dan
+layer current read, mencari layer dari baris receipt pembelian asal, lalu
+mengonsumsi hanya sisa layer tersebut. Saldo tetap dicek terhadap seluruh
+layer barang/gudang. Issue, movement negatif, FIFO consumption dan audit
+Stock berhasil bersama perubahan status/audit Returns atau semuanya rollback.
+Biaya FIFO memakai remaining value layer asal, bukan harga beli snapshot atau
+nilai refund supplier. Detail keputusan ada pada
+[ADR-017](../../../decisions/ADR-017-PURCHASE-RETURN-ORIGINAL-RECEIPT-LAYER.md).

@@ -25,18 +25,18 @@
 
 ## Increment 2: Writer Stock
 
-- [ ] Uji alokasi dari satu layer receipt asal dan conservation seluruh saldo.
+- [x] Uji alokasi dari satu layer receipt asal dan conservation seluruh saldo.
   - Acceptance: layer lain tidak eligible; partial round-down6, full residual,
     biaya nol turunan, kurang stok dan orphan trace ditolak.
   - Verification: unit/feature red-green serta regression issue sale/receipt.
-- [ ] Publikasikan writer Stock/DTOs dengan consumer nyata Returns.
+- [x] Publikasikan writer Stock/DTOs dengan consumer nyata Returns.
   - Acceptance: issue `purchase_return`, movement negatif, consumption ke layer
     asal, audit atomik, replay aman; source receipt/sale/Finance immutable.
   - Verification: focused test, MySQL native current read/dua draft bersaing.
 
 ## Increment 3: Posting Returns
 
-- [ ] Tambahkan migration additive, action dan permission/route post.
+- [x] Tambahkan migration additive, action dan permission/route post.
   - Acceptance: shared transaction; version/stale/replay, snapshot/source
     authoritative, audit rollback; posted tidak bisa CRUD draft.
   - Verification: feature HTTP/auth/403/422/replay, migration up/down disposable,
@@ -51,7 +51,7 @@
 
 ## Increment 5: QA Dan Aktivasi
 
-- [ ] Ulang native/focused/full regression dan activation QA disposable.
+- [x] Ulang native/focused/full regression dan activation QA disposable.
   - Acceptance: no-negative, audit, lock, ledger conservation; migration dan
     catalog additive idempotent, data lama identik.
   - Verification: test, Pint, native script, route/status, fingerprint.
@@ -61,11 +61,26 @@
   - Verification: activation dua kali, migration status, build/browser evidence,
     link/diff check, commit/push/ls-remote.
 
+## Bukti Setelah Coding
+
+- Stock dan Returns: 37 focused test/285 assertion PASS; full suite 745
+  test/5890 assertion PASS. Native MySQL disposable membuktikan source layer,
+  replay, batas stok dan dua worker bersaing (satu posted, satu rejected).
+- TypeScript, ESLint halaman Returns, build Vite dan Pint PASS. Route Returns
+  berjumlah 9 termasuk `post`; migration lokal posting Ran batch 24.
+- Activation disposable dua kali dengan satu draft existing serta lokal dua
+  kali PASS. Schema/catalog additive, permission `post` tidak otomatis di-grant,
+  data dan grant existing tetap.
+- DevTools MCP sempat tersedia dan menampilkan login `pos.test`, lalu namespace
+  hilang setelah interupsi. Browser Chrome alternatif tidak terhubung. Fixture
+  QA dan server sementara ditutup/dibersihkan. QA visual desktop/tablet BLOCKED;
+  jangan menganggapnya PASS dari build atau test backend.
+
 ## Sesudah Coding
 
-- [ ] Semua acceptance work item terbukti dan bukti command dicatat.
-- [ ] Tidak ada perubahan pada Finance/source/receipt asal atau file user.
-- [ ] Status module/API/ADR sesuai runtime; risiko residual dinyatakan.
+- [ ] Semua acceptance work item terbukti: visual browser masih BLOCKED.
+- [x] Tidak ada perubahan pada Finance/source/receipt asal atau file user.
+- [x] Status module/API/ADR sesuai runtime; risiko visual residual dinyatakan.
 
 ## Bukti Increment 1
 
