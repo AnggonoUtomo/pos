@@ -21,6 +21,7 @@ Dokumen ini menjadi indeks singkat ADR yang berlaku.
 | [ADR-015](decisions/ADR-015-SALE-RETURN-COST-AND-FIFO-LAYERS.md) | Layer retur baru dengan biaya FIFO asal, residual exact dan biaya nol hasil alokasi | Accepted |
 | [ADR-016](decisions/ADR-016-SALE-RETURN-REFUND-SETTLEMENT.md) | Refund exact2 dari snapshot bersih, residual/nol, scope invoice dan ledger Finance khusus | Accepted |
 | [ADR-017](decisions/ADR-017-PURCHASE-RETURN-ORIGINAL-RECEIPT-LAYER.md) | Retur pembelian hanya mengeluarkan sisa layer penerimaan asal saat barang diserahkan | Accepted |
+| [ADR-018](decisions/ADR-018-PURCHASE-RETURN-REFUND-RECEIPTS.md) | Penerimaan uang retur supplier exact6 dari pembelian lunas, hak/residual dan ledger immutable terpisah | Accepted |
 
 Tambahkan ADR baru hanya untuk keputusan yang mahal, sulit dibalik, atau
 mengubah baseline arsitektur/domain.

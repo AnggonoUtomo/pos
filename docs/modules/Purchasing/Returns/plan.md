@@ -6,9 +6,10 @@
 2. [Posting retur pembelian](../../../work-items/purchase-return-posting/plan.md):
    implementasi, backend dan QA visual selesai. Seluruh draft diposting saat barang
    diserahkan; hanya sisa layer penerimaan pembelian asal yang boleh keluar.
-3. Pengembalian uang supplier/utang/koreksi: belum disepakati; bukan implikasi
-   harga beli snapshot pada draft atau refund penjualan yang sudah tersedia.
+3. [Penerimaan uang supplier](../../../work-items/purchase-return-refund/plan.md):
+   In Progress; hanya pembelian lunas, nominal otomatis snapshot exact6,
+   diterima penuh sekali. Kredit supplier/utang/koreksi tetap terpisah.
 
-Langkah 2 tidak membuat mutasi Finance. Langkah 3 memerlukan keputusan dan work
-item tersendiri.
+Langkah 2 tidak membuat mutasi Finance. Langkah 3 mengikuti ADR-018 dan work item
+tersendiri dengan checklist sebelum/sesudah coding.
 Checklist: [tasks.md](tasks.md).
