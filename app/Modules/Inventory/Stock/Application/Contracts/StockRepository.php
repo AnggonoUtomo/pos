@@ -22,7 +22,9 @@ interface StockRepository
 
     public function paginate(string $tab, int $page, array $filters): array;
 
-    public function lockIssueBySource(string $sourceId): ?array;
+    public function lockIssueBySource(string $sourceId, string $sourceType = 'sale'): ?array;
+
+    public function purchaseSourceLayers(string $purchaseId): ?array;
 
     public function createIssue(array $header): string;
 

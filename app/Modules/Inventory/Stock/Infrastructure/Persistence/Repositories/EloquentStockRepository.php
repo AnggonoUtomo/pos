@@ -166,10 +166,10 @@ class EloquentStockRepository implements StockRepository, StockUsage
             })->all();
     }
 
-    public function lockIssueBySource(string $sourceId): ?array
+    public function lockIssueBySource(string $sourceId, string $sourceType = 'sale'): ?array
     {
         $this->assertTransaction();
-        $row = DB::table('stock_issues')->where('source_type', 'sale')->where('source_id', $sourceId)->lockForUpdate()->first();
+        $row = DB::table('stock_issues')->where('source_type', $sourceType)->where('source_id', $sourceId)->lockForUpdate()->first();
         if ($row === null) {
             return null;
         }
@@ -178,6 +178,28 @@ class EloquentStockRepository implements StockRepository, StockUsage
             ->map(fn ($line) => $this->normalizeLine((array) $line))->all();
 
         return $result;
+    }
+
+    public function purchaseSourceLayers(string $purchaseId): ?array
+    {
+        $this->assertTransaction();
+        $receipt = DB::table('stock_receipts')->where('source_type', 'purchase')->where('source_id', $purchaseId)->lockForUpdate()->first();
+        if ($receipt === null) {
+            return null;
+        }
+        $lines = DB::table('stock_receipt_lines as receipt_line')
+            ->join('stock_movements as movement', 'movement.receipt_line_id', '=', 'receipt_line.id')
+            ->join('fifo_layers as layer', 'layer.movement_id', '=', 'movement.id')
+            ->where('receipt_line.receipt_id', $receipt->id)
+            ->get(['receipt_line.source_line_id', 'receipt_line.item_id', 'receipt_line.base_unit_id',
+                'receipt_line.quantity', 'layer.id as layer_id', 'layer.warehouse_id as layer_warehouse_id',
+                'layer.item_id as layer_item_id', 'layer.original_quantity'])
+            ->map(fn ($row) => (array) $row)->all();
+        if (count($lines) !== DB::table('stock_receipt_lines')->where('receipt_id', $receipt->id)->count()) {
+            throw new \InvalidArgumentException('Jejak layer penerimaan pembelian tidak lengkap.');
+        }
+
+        return ['warehouse_id' => $receipt->warehouse_id, 'lines' => $lines];
     }
 
     public function createIssue(array $header): string
@@ -208,7 +230,7 @@ class EloquentStockRepository implements StockRepository, StockUsage
         DB::table('stock_issue_lines')->insert($line + ['id' => $lineId, 'issue_id' => $issueId, 'quantity' => $allocation->quantity, 'total_value' => $allocation->value]);
         $movementId = (string) Str::ulid();
         DB::table('stock_movements')->insert(['id' => $movementId, 'warehouse_id' => $header['warehouse_id'], 'item_id' => $line['item_id'],
-            'issue_line_id' => $lineId, 'type' => 'sale', 'quantity' => (string) BigDecimal::of($allocation->quantity)->negated(),
+            'issue_line_id' => $lineId, 'type' => $header['source_type'], 'quantity' => (string) BigDecimal::of($allocation->quantity)->negated(),
             'total_value' => (string) BigDecimal::of($allocation->value)->negated(), 'posted_at' => $header['posted_at'],
             'source_number' => $header['source_number'], 'sku' => $line['sku'], 'item_name' => $line['item_name'],
             'base_unit_name' => $line['base_unit_name'], 'warehouse_name' => $header['warehouse_name'], 'warehouse_code' => $header['warehouse_code']]);
@@ -235,7 +257,7 @@ class EloquentStockRepository implements StockRepository, StockUsage
         } else {
             $logger->causedBy($actorId);
         }
-        $activity = $logger->log('Pengeluaran stok penjualan');
+        $activity = $logger->log($issue->source_type === 'purchase_return' ? 'Pengeluaran stok retur pembelian' : 'Pengeluaran stok penjualan');
         if ($activity === null || ! $activity->exists) {
             throw new \RuntimeException('Audit pengeluaran stok tidak tersimpan.');
         }
