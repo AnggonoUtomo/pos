@@ -78,9 +78,10 @@ $snapshotTables = static function () use ($hash): array {
     return $snapshot;
 };
 $snapshotRows = static fn (string $table): array => DB::table($table)->get()->mapWithKeys(fn ($row) => [$row->id => $hash($row)])->all();
-$migrationName = '2026_10_19_000003_create_purchase_return_drafts';
-$newPermissions = ['purchasing.returns.manage', 'purchasing.returns.view'];
+$migrationNames = ['2026_10_19_000003_create_purchase_return_drafts', '2026_10_21_000001_add_purchase_return_posting'];
+$newPermissions = ['purchasing.returns.manage', 'purchasing.returns.view', 'purchasing.returns.post'];
 
+$failure = null;
 try {
     foreach (['purchase_orders', 'purchase_order_lines', 'permissions', 'roles', 'activity_log'] as $table) {
         if (! Schema::hasTable($table)) {
@@ -100,8 +101,18 @@ try {
 
     foreach ($beforeTables as $table => $snapshot) {
         $columns = Schema::getColumnListing($table);
-        $rows = DB::table($table)->select($columns)->get()->map($hash)->sort()->values()->all();
-        if ($columns !== $snapshot['columns'] || $hash($rows) !== $snapshot['rows']) {
+        $expectedColumns = $snapshot['columns'];
+        $allowedColumns = $table === 'purchase_returns'
+            ? ['stock_issue_id', 'posted_from_version', 'posted_at', 'posted_by'] : [];
+        $actualNewColumns = array_values(array_diff($columns, $expectedColumns));
+        $expectedNewColumns = array_values(array_diff($allowedColumns, $expectedColumns));
+        sort($actualNewColumns);
+        sort($expectedNewColumns);
+        if ($actualNewColumns !== $expectedNewColumns || array_diff($expectedColumns, $columns) !== []) {
+            throw new RuntimeException('Kolom tabel existing berubah di luar schema posting Returns.');
+        }
+        $rows = DB::table($table)->select($expectedColumns)->get()->map($hash)->sort()->values()->all();
+        if ($hash($rows) !== $snapshot['rows']) {
             throw new RuntimeException('Tabel/data/grant existing berubah saat aktivasi.');
         }
     }
@@ -116,11 +127,17 @@ try {
         }
     }
 
-    $newMigrationRows = DB::table('migrations')->where('migration', $migrationName)->count();
+    $newMigrationRows = DB::table('migrations')->whereIn('migration', $migrationNames)->count();
     $addedMigrationRows = DB::table('migrations')->count() - count($beforeMigrations);
-    if ($newMigrationRows !== 1 || $addedMigrationRows !== (isset($beforeMigrations[
-        DB::table('migrations')->where('migration', $migrationName)->value('id')]) ? 0 : 1)) {
-        throw new RuntimeException('Migration Returns tidak terdaftar tepat satu kali.');
+    $expectedAdded = 0;
+    foreach ($migrationNames as $migrationName) {
+        $row = DB::table('migrations')->where('migration', $migrationName)->sole();
+        if (! isset($beforeMigrations[$row->id])) {
+            $expectedAdded++;
+        }
+    }
+    if ($newMigrationRows !== count($migrationNames) || $addedMigrationRows !== $expectedAdded) {
+        throw new RuntimeException('Migration Returns tidak terdaftar tepat satu kali per perubahan.');
     }
     foreach ($newPermissions as $permission) {
         if (DB::table('permissions')->where('name', $permission)->where('guard_name', 'web')->count() !== 1) {
@@ -128,19 +145,30 @@ try {
         }
     }
     foreach (['purchase_returns', 'purchase_return_lines'] as $table) {
-        if (! Schema::hasTable($table) || DB::table($table)->count() !== 0) {
-            throw new RuntimeException('Aktivasi harus membuat tabel Returns kosong.');
+        if (! Schema::hasTable($table) || (! isset($beforeTables[$table]) && DB::table($table)->count() !== 0)) {
+            throw new RuntimeException('Aktivasi harus mempertahankan data Returns atau membuat tabel kosong.');
+        }
+    }
+    foreach (['stock_issue_id', 'posted_from_version', 'posted_at', 'posted_by'] as $column) {
+        if (! Schema::hasColumn('purchase_returns', $column)) {
+            throw new RuntimeException('Kolom posting Returns tidak tersedia: '.$column);
         }
     }
 
     if ($migrationOutput !== '') {
         echo $migrationOutput;
     }
-    echo 'PASS: schema dan dua permission Returns additive; tidak ada grant, demo, atau transaksi.'.PHP_EOL;
+    echo 'PASS: schema dan tiga permission Returns additive; tidak ada grant, demo, atau transaksi.'.PHP_EOL;
     echo 'PASS: kolom/data tabel existing, roles/grants, audit, dan permission lama tetap identik.'.PHP_EOL;
+} catch (Throwable $error) {
+    $failure = $error;
 } finally {
     DB::selectOne('SELECT RELEASE_LOCK(?) AS released', [$lockName]);
     if ($qaName !== null) {
         DB::purge($connectionName);
     }
+}
+if ($failure !== null) {
+    fwrite(STDERR, 'FAIL: '.$failure->getMessage().PHP_EOL);
+    exit(1);
 }

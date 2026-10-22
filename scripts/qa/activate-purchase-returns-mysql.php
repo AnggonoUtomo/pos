@@ -8,6 +8,7 @@ use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersReceiptDemoSeeder;
+use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
 use App\Modules\Purchasing\Suppliers\Database\Seeders\SuppliersDemoSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
@@ -79,9 +80,9 @@ try {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
     $migrator = app('migrator');
-    $migrationName = '2026_10_19_000003_create_purchase_return_drafts';
+    $migrationNames = ['2026_10_19_000003_create_purchase_return_drafts', '2026_10_21_000001_add_purchase_return_posting'];
     $paths = array_merge($migrator->paths(), [database_path('migrations')]);
-    $files = array_diff_key($migrator->getMigrationFiles($paths), [$migrationName => true]);
+    $files = array_diff_key($migrator->getMigrationFiles($paths), array_fill_keys($migrationNames, true));
     $check(Artisan::call('migrate', ['--path' => array_values($files), '--realpath' => true, '--force' => true]) === 0,
         'Baseline project populated tanpa migration Returns');
     $app->detectEnvironment(fn () => 'testing');
@@ -92,6 +93,14 @@ try {
         PurchaseOrdersDemoSeeder::class, PurchaseOrdersReceiptDemoSeeder::class] as $seeder) {
         app($seeder)->run();
     }
+    $check(Artisan::call('migrate', ['--path' => 'app/Modules/Purchasing/Returns/Database/Migrations/2026_10_19_000003_create_purchase_return_drafts.php',
+        '--force' => true]) === 0, 'Fondasi Returns existing aktif sebelum migration posting');
+    $purchaseId = DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->where('status', 'posted')->value('id');
+    $purchaseLineId = DB::table('purchase_order_lines')->where('purchase_order_id', $purchaseId)->orderBy('id')->value('id');
+    $draftId = app(ManagePurchaseReturnDraft::class)->save(['purchase_order_id' => $purchaseId,
+        'lines' => [['purchase_order_line_id' => $purchaseLineId, 'quantity' => '1']]]);
+    Permission::findOrCreate('purchasing.returns.view', 'web');
+    Permission::findOrCreate('purchasing.returns.manage', 'web');
     $permission = Permission::findOrCreate('qa.activation.baseline', 'web');
     $role = Role::findOrCreate('qa-activation-baseline', 'web');
     $role->givePermissionTo($permission);
@@ -112,7 +121,7 @@ try {
         stream_get_contents($pipes[2]);
         fclose($pipes[1]);
         fclose($pipes[2]);
-        $check(proc_close($process) === 0 && str_contains($output, 'PASS: schema dan dua permission'),
+        $check(proc_close($process) === 0 && str_contains($output, 'PASS: schema dan tiga permission'),
             'Child aktivasi additive selesai tanpa grant/demo');
     };
 
@@ -122,6 +131,18 @@ try {
     $secondPass = $snapshotTables();
     $check($firstPass === $secondPass, 'Aktivasi kedua idempotent pada semua tabel/data existing');
     foreach ($beforeTables as $table => $snapshot) {
+        if ($table === 'purchase_returns') {
+            $oldColumns = $snapshot['columns'];
+            $newColumns = array_values(array_diff($secondPass[$table]['columns'] ?? [], $oldColumns));
+            sort($newColumns);
+            $expected = ['posted_at', 'posted_by', 'posted_from_version', 'stock_issue_id'];
+            sort($expected);
+            $oldRows = DB::table($table)->select($oldColumns)->get()->map($hash)->sort()->values()->all();
+            $check($newColumns === $expected && $hash($oldRows) === $snapshot['rows'],
+                'Draft existing mempertahankan seluruh kolom dan data lama');
+
+            continue;
+        }
         $check(($secondPass[$table] ?? null) === $snapshot, 'Tabel/data existing identik: '.$table);
     }
     foreach ($beforePermissions as $id => $value) {
@@ -130,9 +151,11 @@ try {
     foreach ($beforeMigrations as $id => $value) {
         $check($value === $hash(DB::table('migrations')->where('id', $id)->first()), 'Migration existing identik: '.$id);
     }
-    $check(DB::table('migrations')->where('migration', $migrationName)->count() === 1,
-        'Migration Returns tercatat tepat satu kali');
-    foreach (['purchasing.returns.view', 'purchasing.returns.manage'] as $permissionName) {
+    foreach ($migrationNames as $migrationName) {
+        $check(DB::table('migrations')->where('migration', $migrationName)->count() === 1,
+            'Migration Returns tercatat tepat satu kali: '.$migrationName);
+    }
+    foreach (['purchasing.returns.view', 'purchasing.returns.manage', 'purchasing.returns.post'] as $permissionName) {
         $permissionId = DB::table('permissions')->where('name', $permissionName)->where('guard_name', 'web')->value('id');
         $check($permissionId !== null && DB::table('permissions')->where('name', $permissionName)->where('guard_name', 'web')->count() === 1,
             'Permission catalog additive: '.$permissionName);
@@ -142,8 +165,9 @@ try {
     }
     $check(DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->where('status', 'posted')->exists(),
         'Purchase source baseline tetap populated');
-    $check(DB::table('purchase_returns')->count() === 0 && DB::table('purchase_return_lines')->count() === 0,
-        'Tabel Returns baru tetap kosong setelah dua aktivasi');
+    $check(DB::table('purchase_returns')->where('id', $draftId)->where('status', 'draft')->count() === 1
+        && DB::table('purchase_return_lines')->where('purchase_return_id', $draftId)->count() === 1,
+        'Draft Returns existing tetap utuh setelah dua aktivasi');
 } finally {
     DB::purge('purchase_returns_activation_qa');
     if ($created) {

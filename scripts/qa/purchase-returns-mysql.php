@@ -8,8 +8,10 @@ use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessS
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersReceiptDemoSeeder;
 use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
+use App\Modules\Purchasing\Returns\Application\Actions\PostPurchaseReturnDraft;
 use App\Modules\Purchasing\Returns\Database\Seeders\ReturnsAccessSeeder;
 use App\Modules\Purchasing\Suppliers\Database\Seeders\SuppliersDemoSeeder;
+use Brick\Math\BigDecimal;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -44,12 +46,35 @@ if ($baseDatabase !== $original['database']) {
     throw new LogicException('Database koneksi dasar tidak sesuai konfigurasi aktif.');
 }
 
-$name = 'pos_purchase_returns_qa_'.bin2hex(random_bytes(8));
+$worker = ($argv[1] ?? '') === '--worker';
+$input = $worker ? json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR) : [];
+$name = $worker ? ($input['database'] ?? '') : 'pos_purchase_returns_qa_'.bin2hex(random_bytes(8));
 if (! preg_match('/^pos_purchase_returns_qa_[a-f0-9]{16}$/D', $name) || $name === $baseDatabase) {
     throw new LogicException('Nama database QA tidak aman.');
 }
 
 $created = false;
+$workers = [];
+if ($worker) {
+    config(['database.connections.purchase_returns_qa' => array_replace($original, ['database' => $name, 'url' => null]),
+        'database.default' => 'purchase_returns_qa', 'cache.default' => 'array']);
+    DB::purge('purchase_returns_qa');
+    DB::setDefaultConnection('purchase_returns_qa');
+    $app->detectEnvironment(fn () => 'testing');
+    echo "READY\n";
+    flush();
+    try {
+        app(PostPurchaseReturnDraft::class)->handle($input['id'], 1);
+        echo json_encode(['status' => 'posted'], JSON_THROW_ON_ERROR);
+        exit(0);
+    } catch (ValidationException) {
+        echo json_encode(['status' => 'rejected'], JSON_THROW_ON_ERROR);
+        exit(2);
+    } catch (Throwable) {
+        echo json_encode(['status' => 'error'], JSON_THROW_ON_ERROR);
+        exit(3);
+    }
+}
 $check = static function (bool $ok, string $label): void {
     if (! $ok) {
         throw new RuntimeException('FAIL: '.$label);
@@ -98,10 +123,14 @@ try {
         && (int) $column->numeric_precision === 20 && (int) $column->numeric_scale === 6), 'Kolom kuantitas native DECIMAL(20,6)');
 
     $migration = require app_path('Modules/Purchasing/Returns/Database/Migrations/2026_10_19_000003_create_purchase_return_drafts.php');
+    $postingMigration = require app_path('Modules/Purchasing/Returns/Database/Migrations/2026_10_21_000001_add_purchase_return_posting.php');
+    $postingMigration->down();
     $migration->down();
     $check(! Schema::hasTable('purchase_returns') && Schema::hasTable('purchase_orders'), 'Down kosong hanya menghapus tabel Returns');
     $migration->up();
-    $check(Schema::hasTable('purchase_return_lines'), 'Up ulang migration kosong berhasil');
+    $postingMigration->up();
+    $check(Schema::hasTable('purchase_return_lines') && Schema::hasColumn('purchase_returns', 'posted_from_version'),
+        'Up ulang migration kosong beserta kolom posting berhasil');
 
     $purchaseId = DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->where('status', 'posted')->value('id');
     $source = app(ReturnPurchaseLookup::class)->findEligible((string) $purchaseId);
@@ -197,7 +226,93 @@ try {
     $check($downRejected && Schema::hasTable('purchase_return_lines'), 'Down migration menolak draft populated');
     $check($beforeLedger === $ledger() && $beforeSourceAudit === $sourceAudit(),
         'Draft dan lifecycle tidak mengubah PO/receipt/Stock/FIFO/Finance atau audit asal');
+
+    $balanceBefore = DB::table('stock_balances')->where('warehouse_id', $source->header['warehouse_id'])
+        ->where('item_id', $sourceLine['item_id'])->sole();
+    $receiptLayer = DB::table('fifo_layers as layer')
+        ->join('stock_movements as movement', 'movement.id', '=', 'layer.movement_id')
+        ->join('stock_receipt_lines as receipt_line', 'receipt_line.id', '=', 'movement.receipt_line_id')
+        ->where('receipt_line.source_line_id', $sourceLine['id'])->sole(['layer.id', 'layer.remaining_quantity']);
+    $result = app(PostPurchaseReturnDraft::class)->handle($id, 4);
+    $issueLine = DB::table('stock_issue_lines')->where('issue_id', $result['stock_issue_id'])->sole();
+    $consumption = DB::table('fifo_consumptions as consumption')
+        ->join('stock_movements as movement', 'movement.id', '=', 'consumption.movement_id')
+        ->where('movement.issue_line_id', $issueLine->id)->sole(['consumption.fifo_layer_id']);
+    $balanceAfter = DB::table('stock_balances')->where('warehouse_id', $source->header['warehouse_id'])
+        ->where('item_id', $sourceLine['item_id'])->sole();
+    $check($result['status'] === 'posted' && $consumption->fifo_layer_id === $receiptLayer->id
+        && DB::table('stock_issues')->where('id', $result['stock_issue_id'])->value('source_type') === 'purchase_return'
+        && BigDecimal::of($balanceBefore->quantity)->minus($balanceAfter->quantity)->isEqualTo($row->base_quantity),
+        'Posting native mengurangi saldo dan hanya mengonsumsi layer penerimaan asal');
+    $issueCount = DB::table('stock_issues')->count();
+    $movementCount = DB::table('stock_movements')->count();
+    $check(app(PostPurchaseReturnDraft::class)->handle($id, 4) === $result
+        && DB::table('stock_issues')->count() === $issueCount && DB::table('stock_movements')->count() === $movementCount,
+        'Replay posting native tidak menggandakan ledger');
+    $overId = $action->save(['purchase_order_id' => $purchaseId,
+        'lines' => [['purchase_order_line_id' => $sourceLine['id'], 'quantity' => $sourceLine['quantity']]]]);
+    $overRejected = false;
+    try {
+        app(PostPurchaseReturnDraft::class)->handle($overId, 1);
+    } catch (ValidationException) {
+        $overRejected = true;
+    }
+    $check($overRejected && DB::table('purchase_returns')->where('id', $overId)->value('status') === 'draft'
+        && DB::table('stock_issues')->count() === $issueCount,
+        'Posting native menolak penggantian dengan layer lain saat sumber tidak cukup');
+    $draft = static fn (): string => $action->save(['purchase_order_id' => $purchaseId,
+        'lines' => [['purchase_order_line_id' => $sourceLine['id'], 'quantity' => '1']]]);
+    $contenders = [$draft(), $draft()];
+    DB::beginTransaction();
+    DB::table('warehouses')->where('id', $source->header['warehouse_id'])->lockForUpdate()->first();
+    foreach ($contenders as $contender) {
+        $pipes = [];
+        $process = proc_open([PHP_BINARY, __FILE__, '--worker'],
+            [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes,
+            dirname(__DIR__, 2), options: ['bypass_shell' => true]);
+        if (! is_resource($process)) {
+            throw new RuntimeException('Worker native tidak dapat dimulai.');
+        }
+        fwrite($pipes[0], json_encode(['database' => $name, 'id' => $contender], JSON_THROW_ON_ERROR));
+        fclose($pipes[0]);
+        stream_set_timeout($pipes[1], 45);
+        stream_set_timeout($pipes[2], 45);
+        $workers[] = ['process' => $process, 'pipes' => $pipes, 'closed' => false];
+    }
+    foreach ($workers as $entry) {
+        $check(trim((string) fgets($entry['pipes'][1])) === 'READY', 'Worker posting independen siap');
+    }
+    DB::commit();
+    $statuses = [];
+    foreach ($workers as $index => $entry) {
+        $out = stream_get_contents($entry['pipes'][1]);
+        $err = stream_get_contents($entry['pipes'][2]);
+        fclose($entry['pipes'][1]);
+        fclose($entry['pipes'][2]);
+        $code = proc_close($entry['process']);
+        $workers[$index]['closed'] = true;
+        $check(in_array($code, [0, 2], true) && $err === '', 'Worker native selesai tanpa error lain');
+        $statuses[] = json_decode($out, true, flags: JSON_THROW_ON_ERROR)['status'];
+    }
+    sort($statuses);
+    $check($statuses === ['posted', 'rejected']
+        && DB::table('purchase_returns')->whereIn('id', $contenders)->where('status', 'posted')->count() === 1,
+        'Dua proses bersaing: satu menang dan satu ditolak dari layer asal');
 } finally {
+    if (DB::transactionLevel() > 0) {
+        DB::rollBack();
+    }
+    foreach ($workers as $entry) {
+        if (! $entry['closed']) {
+            proc_terminate($entry['process']);
+            foreach ([1, 2] as $pipe) {
+                if (is_resource($entry['pipes'][$pipe])) {
+                    fclose($entry['pipes'][$pipe]);
+                }
+            }
+            proc_close($entry['process']);
+        }
+    }
     DB::purge('purchase_returns_peer');
     DB::purge('purchase_returns_qa');
     if ($created) {
