@@ -8,11 +8,13 @@ use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersReceiptDemoSeeder;
+use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
 use App\Modules\Purchasing\Returns\Database\Seeders\ReturnsAccessSeeder;
 use App\Modules\Purchasing\Suppliers\Database\Seeders\SuppliersDemoSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
@@ -25,11 +27,23 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
 }
 
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+$sourceFingerprint = static function (): string {
+    $rows = [];
+    foreach (['purchase_orders', 'purchase_order_lines', 'stock_receipts', 'stock_receipt_lines',
+        'payment_disbursements', 'payment_disbursement_lines', 'payment_receipts', 'payment_records',
+        'payment_refunds', 'payment_refund_lines'] as $table) {
+        if (Schema::hasTable($table)) {
+            $rows[$table] = DB::table($table)->orderBy('id')->get()->all();
+        }
+    }
+
+    return hash('sha256', json_encode($rows, JSON_THROW_ON_ERROR));
+};
 $ledgerFingerprint = static function (): string {
     $tables = ['stock_receipts', 'stock_receipt_lines', 'stock_balances', 'stock_movements', 'fifo_layers', 'fifo_consumptions', 'payment_disbursements', 'payment_disbursement_lines', 'payment_receipts', 'payment_receipt_lines'];
     $rows = [];
     foreach ($tables as $table) {
-        if (\Illuminate\Support\Facades\Schema::hasTable($table)) {
+        if (Schema::hasTable($table)) {
             $rows[$table] = DB::table($table)->orderBy('id')->get()->all();
         }
     }
@@ -39,6 +53,20 @@ $ledgerFingerprint = static function (): string {
 
 if (($input['snapshot'] ?? false) === true) {
     echo json_encode(['ledger_fingerprint' => $ledgerFingerprint()], JSON_THROW_ON_ERROR);
+    exit;
+}
+
+if (($input['verify_posting'] ?? false) === true) {
+    $posted = DB::table('purchase_returns')->where('id', $input['posted_id'])->sole();
+    $blocked = DB::table('purchase_returns')->where('id', $input['blocked_id'])->sole();
+    if ($posted->status !== 'posted' || $posted->version !== 2 || $posted->posted_from_version !== 1
+        || $posted->stock_issue_id === null || $blocked->status !== 'draft' || $blocked->version !== 1
+        || DB::table('stock_issues')->where('source_type', 'purchase_return')->count() !== 1
+        || DB::table('activity_log')->where('log_name', 'purchasing.returns')->where('event', 'posted')->count() !== 1
+        || ! hash_equals($input['source_fingerprint'], $sourceFingerprint())) {
+        throw new RuntimeException('Posting browser QA, ledger atau source fingerprint tidak sesuai.');
+    }
+    echo json_encode(['status' => 'PASS', 'posting' => 'single', 'blocked' => 'draft', 'source' => 'unchanged'], JSON_THROW_ON_ERROR);
     exit;
 }
 
@@ -71,11 +99,24 @@ foreach (['manager', 'viewer', 'outsider'] as $role) {
     }
     if ($role === 'manager') {
         $user->givePermissionTo('purchasing.returns.manage');
+        if (($input['posting'] ?? false) === true) {
+            $user->givePermissionTo('purchasing.returns.post');
+        }
     }
 }
 
 $purchase = DB::table('purchase_orders')->where('demo_key', 'cctv-electrical-purchase-v1')->where('status', 'posted')->sole();
 $line = DB::table('purchase_order_lines')->where('purchase_order_id', $purchase->id)->orderBy('id')->first();
+$posting = [];
+if (($input['posting'] ?? false) === true) {
+    foreach (['posted' => '1', 'blocked' => $line->quantity] as $key => $quantity) {
+        $id = app(ManagePurchaseReturnDraft::class)->save(['purchase_order_id' => $purchase->id,
+            'lines' => [['purchase_order_line_id' => $line->id, 'quantity' => $quantity]]]);
+        $posting[$key.'_id'] = $id;
+        $posting[$key.'_number'] = DB::table('purchase_returns')->where('id', $id)->value('number');
+    }
+    $posting['source_fingerprint'] = $sourceFingerprint();
+}
 echo json_encode([
     'status' => 'READY',
     'number' => $purchase->number,
@@ -84,4 +125,5 @@ echo json_encode([
     'quantity' => $line->quantity,
     'line_id' => $line->id,
     'ledger_fingerprint' => $ledgerFingerprint(),
+    ...$posting,
 ], JSON_THROW_ON_ERROR);
