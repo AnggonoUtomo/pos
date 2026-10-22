@@ -3,8 +3,8 @@
 ## Status
 
 Selesai untuk fondasi draft dan implementasi posting stok/FIFO dari layer
-penerimaan asal. Migration posting aktif di database lokal; QA browser visual
-masih perlu diulang ketika DevTools MCP tersedia stabil. Rincian pada
+penerimaan asal. Migration posting aktif di database lokal; QA Chrome DevTools
+MCP Light/Dark desktop/tablet lulus. Rincian pada
 [work item terpisah](../../../work-items/purchase-return-posting/README.md).
 Refund supplier belum masuk scope posting.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
@@ -73,7 +73,9 @@ Aktivasi hanya menjalankan migration Returns dan mendaftarkan catalog permission
 tidak memberi grant atau menjalankan seeder demo. Draft lokal tetap kosong.
 Command dan hasil rinci ada di [work item fondasi](work-items/draft-foundation/README.md)
 dan [QA](../../../QUALITY.md). Posting lulus feature, full suite, native MySQL
-dan aktivasi additive dua kali; visual browser belum diklaim lulus pada sesi ini.
+dan aktivasi additive dua kali; runner DevTools MCP existing/stdio isolated
+memverifikasi posting, penolakan stok, readonly/viewer, shortcut/palette,
+framing Light/Dark serta console/network tanpa error.
 Gunakan [plan](plan.md) dan [checklist module](tasks.md) untuk urutan capability.
 Implementasi harus memakai generator project setelah dry-run, test terfokus,
 route/status, QA browser desktop/tablet dan aktivasi additive yang terverifikasi.

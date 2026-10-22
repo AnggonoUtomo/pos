@@ -1,8 +1,7 @@
 # Posting Retur Pembelian Dari Layer Asal
 
-Status: implementasi dan QA backend selesai; QA visual desktop/tablet tertunda
-karena Chrome DevTools MCP hilang dari sesi setelah interupsi. Tidak diklaim
-sebagai PASS visual.
+Status: implementasi dan QA selesai, menunggu delivery remote. Chrome DevTools
+MCP melalui executable existing/stdio isolated lulus pada desktop dan tablet.
 
 ## Tujuan Dan Batas
 
@@ -38,11 +37,12 @@ Rencana serta bukti kerja ada pada [plan](plan.md) dan [tasks](tasks.md).
 - [x] Dua draft bersaing tidak dapat mengeluarkan lebih dari sisa layer.
 - [x] Status/version/replay, master guard, permission dan audit lintas module
   atomik; posted tidak bisa edit/delete/restore.
-- [ ] UI konfirmasi, status/filter/detail, shortcut, Sonner dan QA desktop/tablet
-  bekerja tanpa menampilkan HPP sebagai uang kembali. Typecheck/lint/build
-  lulus; verifikasi visual langsung masih BLOCKED.
-- [x] Aktivasi migration/catalog additive tanpa grant/demo/posting; native MySQL,
-  regresi dan remote delivery diverifikasi.
+- [x] UI konfirmasi, status/filter/detail, shortcut, Sonner dan QA desktop/tablet
+  bekerja tanpa menampilkan HPP sebagai uang kembali. Typecheck/lint/build dan
+  Chrome DevTools MCP lulus.
+- [x] Aktivasi migration/catalog additive tanpa grant/demo/posting; native MySQL
+  dan regresi diverifikasi.
+- [ ] Remote delivery diverifikasi setelah push.
 
 ## Risiko
 

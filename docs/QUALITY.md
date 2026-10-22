@@ -414,8 +414,23 @@ migration dan alur posting pada MySQL disposable, termasuk current read dan
 penolakan pengeluaran dari layer lain. Aktivasi diuji dua kali pada database
 disposable dengan `activate-purchase-returns-mysql.php`, lalu dua kali lokal
 melalui `apply-purchase-returns-local.php`; tidak ada seed/grant/posting data
-bisnis. UI wajib dicoba pada desktop/tablet via Chrome DevTools MCP; bila
-namespace tidak tersedia, catat BLOCKED dan jangan klaim visual PASS.
+bisnis.
+
+UI: `node scripts/qa/purchase-return-posting-devtools.mjs` dengan
+`QA_DEVTOOLS_ENTRY` menunjuk entry JavaScript Chrome DevTools MCP yang sudah
+terpasang. Runner mengikuti pola stdio existing, tanpa memasang dependency:
+credential acak via stdin fixture, SQLite disposable dengan guard path,
+Chrome isolated/headless, server localhost sementara dan cleanup pada finally.
+Report/screenshot ignored mencakup posting Ctrl+Enter, readonly, kekurangan layer,
+Sonner, filter, viewer, shortcut/palette, console/network, Light/Dark pada
+1440x1000, 1024x768, 768x1024. Screenshot tetap ditinjau visual.
+
+Jika namespace tool editor hilang tetapi server sudah tersedia, gunakan runner
+stdio ini untuk QA konkret. Catat metode `Chrome DevTools MCP existing stdio
+isolated`; ini tetap menjalankan MCP yang sama. Jangan memasang ulang paket atau
+menganggap server VS Code yang running otomatis terekspos ke sesi Codex.
+Jika executable existing juga tidak dapat diakses, barulah catat BLOCKED dan
+gunakan fallback yang tersedia.
 
 ## QA Master Supplier
 

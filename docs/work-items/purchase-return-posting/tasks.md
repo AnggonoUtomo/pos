@@ -44,7 +44,7 @@
 
 ## Increment 4: UI
 
-- [ ] Tambah konfirmasi posting dan tampilan posted readonly.
+- [x] Tambah konfirmasi posting dan tampilan posted readonly.
   - Acceptance: post hanya terlihat dengan izin, double submit aman, status
     dan waktu posting tampil, HPP/refund tidak disalahartikan.
   - Verification: tsc, ESLint, build, DevTools MCP/fallback desktop/tablet.
@@ -71,16 +71,29 @@
 - Activation disposable dua kali dengan satu draft existing serta lokal dua
   kali PASS. Schema/catalog additive, permission `post` tidak otomatis di-grant,
   data dan grant existing tetap.
-- DevTools MCP sempat tersedia dan menampilkan login `pos.test`, lalu namespace
-  hilang setelah interupsi. Browser Chrome alternatif tidak terhubung. Fixture
-  QA dan server sementara ditutup/dibersihkan. QA visual desktop/tablet BLOCKED;
-  jangan menganggapnya PASS dari build atau test backend.
+- Chrome DevTools MCP PASS melalui executable existing/stdio isolated pada
+  22 Oktober 2026. Runner `scripts/qa/purchase-return-posting-devtools.mjs`
+  memverifikasi posting via Ctrl+Enter, readonly, penolakan sisa layer, Sonner,
+  filter posted, viewer, shortcut/palette, console/network dan source fingerprint.
+- Screenshot Light/Dark 1440x1000, 1024x768, 768x1024 dengan sidebar
+  expanded/collapsed ditinjau; overflow halaman/dialog tidak ditemukan.
+  Report dan delapan screenshot ignored berada di
+  `storage/framework/testing/purchasing-returns-browser-3ec7952cd4fe3d1b/`.
+  SQLite/server/Chrome QA ditutup dan database sementara dihapus pada finally.
+- Badge sidebar dan deskripsi command palette diselaraskan dengan capability
+  posting. Typecheck, ESLint dua komponen dan build ulang lulus.
+
+## Gap Conformance Di Luar Scope
+
+Tombol command palette/theme topnav existing kehilangan accessible name pada
+tablet ketika teks label tersembunyi. Fungsi klik/shortcut bekerja. Gap global
+ini dicatat tanpa memperluas perubahan ke aksesibilitas shell pada work item ini.
 
 ## Sesudah Coding
 
-- [ ] Semua acceptance work item terbukti: visual browser masih BLOCKED.
+- [x] Acceptance implementasi/QA terbukti; remote delivery dicentang setelah push.
 - [x] Tidak ada perubahan pada Finance/source/receipt asal atau file user.
-- [x] Status module/API/ADR sesuai runtime; risiko visual residual dinyatakan.
+- [x] Status module/API/ADR sesuai runtime; gap existing dinyatakan.
 
 ## Bukti Increment 1
 

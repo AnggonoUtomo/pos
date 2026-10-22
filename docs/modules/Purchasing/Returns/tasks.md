@@ -11,8 +11,8 @@
 - [x] Native MySQL, regresi, aktivasi additive dan delivery verified.
 - [x] Posting retur dari sisa layer penerimaan asal, atomic dan readonly setelah
   posted; lihat [work item](../../../work-items/purchase-return-posting/tasks.md).
-- [ ] QA visual posting desktop/tablet via Chrome DevTools MCP setelah koneksi
-  sesi stabil; backend/full test/native/aktivasi tidak menggantikan bukti visual.
+- [x] QA visual posting desktop/tablet via Chrome DevTools MCP existing/stdio
+  isolated: Light/Dark, framing, viewer/readonly, penolakan stok dan console/network.
 
 Bukti terperinci: [fondasi draft](work-items/draft-foundation/tasks.md).
 
