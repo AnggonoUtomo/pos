@@ -48,7 +48,7 @@
   - Acceptance: source/Stock immutable, data/grant lama identik; schema/catalog
     idempotent tanpa posting/seed otomatis pada lokal.
   - Verification: test/Pint/native/browser/activation dua kali, route/status.
-- [ ] Aktivasi lokal, checklist/docs, commit dan delivery.
+- [x] Aktivasi lokal, checklist/docs, commit dan delivery.
   - Acceptance: local/remote SHA sama dan ahead/behind0/0; file user utuh.
   - Verification: diff/link/scope, commit/push/ls-remote.
 
@@ -128,4 +128,13 @@ reversal atau saldo berjalan. Posted/source dan Stock/FIFO tidak dimutasi.
 Gap label aksesibilitas topnav tablet existing tidak diperluas pada pekerjaan
 ini; palette diuji melalui shortcut. Mobile di luar scope sesuai keputusan user.
 Old-docs, theme, dependency, SampleUI dan empat file LSP staged tidak disentuh.
-Push/verifikasi remote menunggu commit QA/dokumentasi ini.
+
+## Delivery
+
+Commit incremental eadd3be, 5197c28, aa9d5ef, 46d4556, e0902b3 dan 53aeb7c
+telah di-push ke origin/main. git ls-remote main dan HEAD sama pada
+53aeb7cee2f5761a14772bf480b7750c22952dc2, ahead/behind0/0. Penutupan checklist
+ini dibuat setelah bukti remote tersebut, lalu di-commit/push sebagai dokumentasi.
+Tiga puluh file staged user tetap di luar commit (SampleUI26, LSP4), tidak ada
+perubahan unstaged source atau proses QA tersisa. URL lokal purchasing/returns
+merespons200 (guest mengikuti login), tanpa menjalankan transaksi pada data toko.

@@ -1,7 +1,8 @@
 # Penerimaan Uang Retur Supplier
 
-Status: In Progress (delivery). Implementasi, QA dan aktivasi lokal PASS
-23 Oktober 2026; commit/push final dan verifikasi remote sedang ditutup.
+Status: Done. Implementasi, QA, aktivasi lokal dan delivery terverifikasi
+23 Oktober 2026. Commit implementasi/QA 53aeb7c tersedia pada origin/main;
+checklist penutupan dicatat terpisah setelah verifikasi remote.
 
 ## Owner Dan Kondisi Awal
 
@@ -36,7 +37,7 @@ Tidak memasang dependency, mengubah stack atau mengisi demo di database bisnis.
 - [x] Permission, quote stale, metode invalid, nol, readonly dan histori teruji.
 - [x] QA unit/feature/native MySQL/browser desktop-tablet, build/lint/typecheck.
 - [x] Migration/catalog lokal additive idempotent tanpa grant/demo otomatis.
-- [ ] Dokumen, commit per increment dan remote delivery terverifikasi.
+- [x] Dokumen, commit per increment dan remote delivery terverifikasi.
 
 ## Dependency Dan Keputusan
 
