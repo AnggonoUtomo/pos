@@ -16,7 +16,7 @@
 
 ## Increment 2: Nilai Dan Source
 
-- [ ] Domain alokasi dan basis paid authoritative exact6.
+- [x] Domain alokasi dan basis paid authoritative exact6.
   - Acceptance: snapshot source, partial round-down/full residual, nol, kuantitas
     dan nilai kumulatif/overflow dijaga; tidak memakai float/HPP/harga terkini.
   - Verification: unit/feature red-green, source/ledger fingerprint.
@@ -57,3 +57,10 @@
 - [ ] Acceptance dan bukti setiap increment dicatat sesuai realita.
 - [ ] Tidak ada mutation source/Stock/FIFO atau file user.
 - [ ] Risiko/gap yang tidak ditutup dicatat dan docs module/API selaras.
+
+## Bukti Increment 2
+
+Unit/feature terfokus: 39 test/320 assertion PASS. Domain diuji red-green untuk
+residual/nol/overflow. Source proof Finance memverifikasi jumlah baris ledger,
+pointer/nomor/waktu/snapshot pembayaran PurchaseOrders, redaction dan master
+nonaktif tanpa mengubah sumber. Pint lulus. Belum ada schema atau uang diterima.

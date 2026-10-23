@@ -9,6 +9,7 @@ use App\Modules\Finance\Payments\Application\Contracts\DisbursementRepository;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentHistoryReader;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
+use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentProofLookup;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentWriter;
 use App\Modules\Finance\Payments\Application\Contracts\RefundRepository;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
@@ -16,6 +17,7 @@ use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
 use App\Modules\Finance\Payments\Application\Contracts\SaleRefundPaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SaleRefundPaymentWriter;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabasePaymentHistoryReader;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabasePurchasePaymentProofLookup;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseSalePaymentMethods;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentDisbursementRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentPaymentsRepository;
@@ -26,6 +28,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(PurchasePaymentProofLookup::class, DatabasePurchasePaymentProofLookup::class);
         $this->app->bind(SaleRefundPaymentWriter::class, RecordSaleRefundPayment::class);
         $this->app->bind(SaleRefundPaymentMethods::class, DatabaseSalePaymentMethods::class);
         $this->app->bind(RefundRepository::class, EloquentRefundRepository::class);

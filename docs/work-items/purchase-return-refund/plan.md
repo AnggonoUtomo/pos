@@ -3,7 +3,7 @@
 | Increment | Status | Hasil | Verifikasi |
 | --- | --- | --- | --- |
 | 1. Baseline | Passed | Scope, ADR, kontrak, checklist | Review source, link/diff |
-| 2. Nilai Dan Source | Planned | Domain alokasi exact6, paid basis publik | Unit presisi/zero/residual/overflow, source integrity |
+| 2. Nilai Dan Source | Passed | Domain alokasi exact6, paid basis publik | 39 test/320 assertion, source integrity/redaction, Pint |
 | 3. Finance | Planned | Proof pembayaran asal dan receipt supplier immutable exact6 | Feature atomic/audit/replay/metode/batas paid |
 | 4. Settlement | Planned | Schema Returns, quote/fingerprint, aksi/route/permission | HTTP403/422, stale/replay/nol/concurrency/rollback |
 | 5. UI Dan Histori | Planned | Dialog, readonly, viewer, Finance history | Typecheck/lint/build, DevTools MCP1440/1024/768 |

@@ -2,14 +2,41 @@
 
 namespace App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentProofLookup;
 use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\ReturnPurchaseLookup;
 use App\Modules\Purchasing\PurchaseOrders\Application\DTOs\ReturnPurchaseData;
+use App\Modules\Purchasing\PurchaseOrders\Application\DTOs\ReturnPurchaseRefundBasisData;
 use Brick\Math\BigDecimal;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 final class DatabaseReturnPurchaseLookup implements ReturnPurchaseLookup
 {
+    public function __construct(private PurchasePaymentProofLookup $payments) {}
+
+    public function refundBasis(string $id): ?ReturnPurchaseRefundBasisData
+    {
+        $source = $this->findEligible($id);
+        $row = DB::table('purchase_orders')->where('id', strtolower($id))->first();
+        if ($source === null || $row === null || $row->payment_disbursement_id === null
+            || $row->paid_at === null || $row->paid_from_version === null || $row->payment_snapshot === null) {
+            return null;
+        }
+        $proof = $this->payments->find($row->id);
+        $total = (string) BigDecimal::of((string) $row->total_value)->toScale(6);
+        $snapshot = json_decode($row->payment_snapshot, true, flags: JSON_THROW_ON_ERROR);
+        if ($proof === null || $proof->id !== $row->payment_disbursement_id || $proof->sourceNumber !== $row->number
+            || $proof->total !== $total || $proof->paidAt !== Carbon::parse($row->paid_at, config('app.timezone'))->utc()->toISOString()
+            || Arr::sortRecursive($snapshot) !== Arr::sortRecursive($proof->snapshot())) {
+            return null;
+        }
+
+        return new ReturnPurchaseRefundBasisData(['id' => $row->id, 'number' => $row->number,
+            'payment_disbursement_id' => $proof->id, 'total' => $total, 'paid_total' => $proof->total], $source->lines);
+    }
+
     public function findEligible(string $id): ?ReturnPurchaseData
     {
         $header = $this->eligibleQuery()->where('purchase_orders.id', strtolower($id))->first();
