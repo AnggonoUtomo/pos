@@ -15,6 +15,7 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
         'incoming' => ['header' => 'payment_receipts', 'lines' => 'payment_records', 'foreign' => 'receipt_id', 'time' => 'posted_at', 'scale' => 2, 'direction' => 'incoming', 'source' => 'sale'],
         'outgoing' => ['header' => 'payment_disbursements', 'lines' => 'payment_disbursement_lines', 'foreign' => 'disbursement_id', 'time' => 'paid_at', 'scale' => 6, 'direction' => 'outgoing', 'source' => 'purchase'],
         'refund' => ['header' => 'payment_refunds', 'lines' => 'payment_refund_lines', 'foreign' => 'refund_id', 'time' => 'paid_at', 'scale' => 2, 'direction' => 'outgoing', 'source' => 'sale_return'],
+        'supplier-refund' => ['header' => 'purchase_refund_receipts', 'lines' => 'purchase_refund_receipt_lines', 'foreign' => 'receipt_id', 'time' => 'received_at', 'scale' => 6, 'direction' => 'incoming', 'source' => 'purchase_return'],
     ];
 
     private function query(string $direction, array $filters): Builder
@@ -51,7 +52,7 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
 
     private function header(array $row): array
     {
-        $row['total'] = (string) BigDecimal::of((string) $row['total'])->toScale($row['source_type'] === 'purchase' ? 6 : 2);
+        $row['total'] = (string) BigDecimal::of((string) $row['total'])->toScale(in_array($row['source_type'], ['purchase', 'purchase_return'], true) ? 6 : 2);
         $row['occurred_at'] = Carbon::parse($row['occurred_at'], config('app.timezone'))->utc()->toISOString();
 
         return $row;
@@ -63,6 +64,9 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
         if ($this->refundsAvailable()) {
             $union->unionAll($this->query('refund', $filters));
         }
+        if ($this->supplierReceiptsAvailable()) {
+            $union->unionAll($this->query('supplier-refund', $filters));
+        }
         $result = DB::query()->fromSub($union, 'history')->orderByDesc('occurred_at')->orderBy('direction')->orderByDesc('id')->orderBy('source_type')->paginate(25, page: $page);
 
         return ['data' => $result->getCollection()->map(fn ($row) => $this->header((array) $row))->all(),
@@ -71,7 +75,8 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
 
     public function detail(string $direction, string $id): array
     {
-        abort_if(! isset(self::LEDGERS[$direction]) || ($direction === 'refund' && ! $this->refundsAvailable()), 404);
+        abort_if(! isset(self::LEDGERS[$direction]) || ($direction === 'refund' && ! $this->refundsAvailable())
+            || ($direction === 'supplier-refund' && ! $this->supplierReceiptsAvailable()), 404);
         $ledger = self::LEDGERS[$direction];
         $query = $this->query($direction, [])->where('h.id', $id);
         if ($direction === 'incoming') {
@@ -110,6 +115,9 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
             if ($this->refundsAvailable()) {
                 $union->unionAll(DB::table('payment_refund_lines')->select($columns));
             }
+            if ($this->supplierReceiptsAvailable()) {
+                $union->unionAll(DB::table('purchase_refund_receipt_lines')->select($columns));
+            }
             $result[$key] = DB::query()->fromSub($union, 'snapshots')->select('id')->selectRaw('MAX(name) as name')->groupBy('id')->orderBy('name')->orderBy('id')->limit(1000)->get()->map(fn ($row) => (array) $row)->all();
         }
 
@@ -119,5 +127,10 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
     private function refundsAvailable(): bool
     {
         return Schema::hasTable('payment_refunds') && Schema::hasTable('payment_refund_lines');
+    }
+
+    private function supplierReceiptsAvailable(): bool
+    {
+        return Schema::hasTable('purchase_refund_receipts') && Schema::hasTable('purchase_refund_receipt_lines');
     }
 }

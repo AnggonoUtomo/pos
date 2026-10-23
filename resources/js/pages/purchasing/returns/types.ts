@@ -42,7 +42,28 @@ export interface ReturnRow {
     lines: ReturnLine[];
     deleted_at: string | null;
     created_at: string;
+    refund_available: boolean;
+    settlement: RefundSettlement | null;
 }
+
+export type RefundPayment = { method_id: string; amount: string };
+export type RefundInput = { version: number; quote_fingerprint: string; payments: RefundPayment[] };
+export type RefundQuote = {
+    id: string;
+    version: number;
+    total: string;
+    quote_fingerprint: string;
+    lines: { purchase_return_line_id: string; purchase_order_line_id: string; quantity: string; amount: string }[];
+    methods: { id: string; name: string; code: string; type: string }[];
+};
+export type RefundSettlement = {
+    id: string;
+    outcome: 'received' | 'no_payment';
+    total: string;
+    finance_receipt_id: string | null;
+    settled_at: string;
+    payments: (RefundPayment & { method_name: string; method_type: string })[];
+};
 
 export interface ReturnFilters {
     search: string;

@@ -37,7 +37,7 @@
 
 ## Increment 5: UI Dan Histori
 
-- [ ] Dialog konfirmasi/split, result readonly, recovery dan Finance history.
+- [x] Dialog konfirmasi/split, result readonly, recovery dan Finance history.
   - Acceptance: format Indonesia exact6 trimmed, quote server, Sonner, shortcut,
     viewer, loading/error/nol/retry, beda sumber/arah/nominal histori jelas.
   - Verification: typecheck/lint/build, DevTools MCP desktop1440/tablet1024/768.
@@ -80,3 +80,15 @@ settlement lain, retry canonical, audit veto dua module, total paid cap dan stok
 source immutable. Alokasi nol tidak membuat uang; retur terakhir mendapat residual
 0,000003 secara exact6. Projection settlement dibaca bulk tanpa N+1. Native
 MySQL/concurrency dijalankan pada gate Increment 6, belum diklaim lulus.
+
+## Bukti Increment 5
+
+93 focused test/903 assertion, typecheck, ESLint seluruh resources/js dan build
+2745 module PASS. Full suite 761 test/6016 assertion PASS. Chrome DevTools MCP
+existing/stdio isolated PASS desktop1440/tablet1024/768, Light/Dark expanded/
+collapsed, input Indonesia exact6 (selisih mikro disable), konfirmasi shortcut,
+hasil/viewer readonly, nol tanpa ledger, history masuk/detail, palette, console
+dan network bersih. Delapan screenshot beserta report ignored tersimpan pada
+storage/framework/testing/purchasing-returns-browser-4639c6552d2150b6; screenshot
+tablet dan dark desktop juga ditinjau visual. Fixture memastikan satu receipt,
+dua settlement/audit termasuk nol, serta source/Stock tetap identik.

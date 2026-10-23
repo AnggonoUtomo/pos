@@ -11,6 +11,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('data', [$controller, 'data'])->name('data');
         Route::get('/', [$controller, 'index'])->name('index');
         Route::get('refunds/{id}', [$controller, 'refund'])->whereUlid('id')->name('refund');
+        Route::get('supplier-refunds/{id}', [$controller, 'supplierRefund'])->whereUlid('id')->name('supplier-refund');
         Route::get('{direction}/{id}', [$controller, 'show'])->whereIn('direction', ['incoming', 'outgoing'])->whereUlid('id')->name('show');
     });
     foreach (['payment-accounts' => PaymentAccountController::class, 'payment-methods' => PaymentMethodController::class] as $path => $controller) {

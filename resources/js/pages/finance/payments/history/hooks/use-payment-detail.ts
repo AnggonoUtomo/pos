@@ -18,9 +18,11 @@ export function usePaymentDetail() {
         setError('');
         try {
             const url =
-                row.source_type === 'sale_return'
-                    ? route('finance.payments.history.refund', { id: row.id })
-                    : route('finance.payments.history.show', { direction: row.direction, id: row.id });
+                row.source_type === 'purchase_return'
+                    ? route('finance.payments.history.supplier-refund', { id: row.id })
+                    : row.source_type === 'sale_return'
+                      ? route('finance.payments.history.refund', { id: row.id })
+                      : route('finance.payments.history.show', { direction: row.direction, id: row.id });
             const response = await fetch(url, {
                 signal: request.signal,
                 credentials: 'same-origin',

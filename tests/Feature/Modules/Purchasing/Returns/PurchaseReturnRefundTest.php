@@ -93,6 +93,14 @@ class PurchaseReturnRefundTest extends StockTestCase
         $this->assertDatabaseCount('purchase_refund_receipts', 1);
         $this->assertDatabaseCount('purchase_refund_receipt_lines', 2);
         $this->assertDatabaseCount('purchase_return_settlements', 1);
+        $this->manager->givePermissionTo(Permission::findOrCreate('finance.payments.history.view', 'web'));
+        $receiptId = $result['settlement']['finance_receipt_id'];
+        $this->getJson('/finance/payments/history/data?direction=incoming')->assertOk()
+            ->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.source_type', 'purchase_return')
+            ->assertJsonPath('data.0.total', '60000.000000');
+        $this->getJson('/finance/payments/history/supplier-refunds/'.$receiptId)->assertOk()
+            ->assertJsonPath('direction', 'incoming')->assertJsonPath('tendered', null)
+            ->assertJsonCount(2, 'payments');
         $this->assertDatabaseHas('purchase_returns', ['id' => $id, 'version' => 2, 'status' => 'posted']);
         $logs = Activity::count();
         DB::table('payment_methods')->update(['is_active' => false, 'name' => 'Diubah']);
