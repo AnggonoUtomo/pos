@@ -7,7 +7,7 @@
 | 3. Finance | Passed | Receipt supplier immutable exact6, proof, guard master | 92 test/883 assertion terfokus lintas module, Pint |
 | 4. Settlement | Passed | Schema, quote/fingerprint, aksi/route/permission dan projection | 40 test/347 assertion; native concurrency pada Increment 6 |
 | 5. UI Dan Histori | Passed | Dialog/readonly/recovery, viewer, history kas masuk | Typecheck/lint/build, DevTools MCP1440/1024/768 PASS, 8 screenshot |
-| 6. QA Dan Aktivasi | Planned | Native MySQL, seeder, activation, docs/delivery | Full test, migration/status, fingerprint, commit/push |
+| 6. QA Dan Aktivasi | In Progress (delivery) | Native, full gate, browser dan aktivasi lokal PASS; push pending | 761 test/6016 assertion, batch25, dua aktivasi, fingerprint |
 
 ## Ownership Dan Lock
 

@@ -44,7 +44,7 @@
 
 ## Increment 6: QA Dan Aktivasi
 
-- [ ] Seeder demo aman atau alasan skip, native/full gate dan activation disposable.
+- [x] Seeder demo aman atau alasan skip, native/full gate dan activation disposable.
   - Acceptance: source/Stock immutable, data/grant lama identik; schema/catalog
     idempotent tanpa posting/seed otomatis pada lokal.
   - Verification: test/Pint/native/browser/activation dua kali, route/status.
@@ -54,9 +54,9 @@
 
 ## Sesudah Coding
 
-- [ ] Acceptance dan bukti setiap increment dicatat sesuai realita.
-- [ ] Tidak ada mutation source/Stock/FIFO atau file user.
-- [ ] Risiko/gap yang tidak ditutup dicatat dan docs module/API selaras.
+- [x] Acceptance dan bukti setiap increment dicatat sesuai realita.
+- [x] Tidak ada mutation source/Stock/FIFO atau file user.
+- [x] Risiko/gap yang tidak ditutup dicatat dan docs module/API selaras.
 
 ## Bukti Increment 2
 
@@ -92,3 +92,40 @@ dan network bersih. Delapan screenshot beserta report ignored tersimpan pada
 storage/framework/testing/purchasing-returns-browser-4639c6552d2150b6; screenshot
 tablet dan dark desktop juga ditinjau visual. Fixture memastikan satu receipt,
 dua settlement/audit termasuk nol, serta source/Stock tetap identik.
+
+## Bukti Increment 6
+
+- `php scripts/qa/purchase-return-refund-mysql.php`: PASS migration/status,
+  empty down/up, empat worker LOCK WAIT, race quote scope, dua replay, snapshot
+  MySQL JSON, nol/residual, rollback audit, FK/down guard dan source/Stock
+  immutable. Nominal 900000000090001234560000,123456 tersimpan exact6 melalui
+  kuantitas/harga beli yang valid; batas input harga beli tidak dilonggarkan.
+- `php scripts/qa/activate-purchase-return-refund-mysql.php`: PASS sebelum schema,
+  dua aktivasi, readiness false/true, lima tabel baru kosong, catalog unik,
+  grant/source identik dan rerun setelah settlement. Database/worker dibersihkan.
+- `php scripts/qa/activate-purchase-return-refund-local.php`: PASS dua kali
+  setelah perbaikan cache, plus rerun setelah format script. Migration batch25
+  Ran, permission refund tepat satu; receipt/settlement lokal tetap kosong.
+  Tidak grant/reset/demo/posting/penerimaan uang pada database toko.
+- Percobaan QA awal menemukan cache permission terbawa antar koneksi; QA
+  parent/child kini memakai array. Aktivasi lokal pertama menyelesaikan DDL tetapi
+  catalog ditahan duplicate permission dari cache stale; transaksi catalog
+  rollback. Cache di-refresh sebelum seeder, rerun dan fingerprint lulus. Tidak
+  down/drop atau reset data. SQL error diagnostics hanya state/code/frame,
+  bukan query/payload sensitif.
+- Full suite 761 test/6016 assertion, focused93/903, Pint, ESLint resources/js,
+  typecheck dan build PASS; route Returns11 dan Finance history5 sesuai.
+- Tautan relatif dokumen87 dan git diff --check PASS. Generator tidak dijalankan
+  karena module existing, bukan perubahan scaffold/generator.
+- Demo settlement sengaja tidak ditambahkan: akan membuat uang tanpa aksi
+  operator. Fixture CCTV relasional menjalankan purchase/paid/return hanya pada
+  database disposable. Master demo CCTV/kelistrikan existing tetap digunakan.
+
+## Risiko Dan Batas
+
+Belum mendukung supplier credit, pembelian belum lunas, penerimaan parsial,
+reversal atau saldo berjalan. Posted/source dan Stock/FIFO tidak dimutasi.
+Gap label aksesibilitas topnav tablet existing tidak diperluas pada pekerjaan
+ini; palette diuji melalui shortcut. Mobile di luar scope sesuai keputusan user.
+Old-docs, theme, dependency, SampleUI dan empat file LSP staged tidak disentuh.
+Push/verifikasi remote menunggu commit QA/dokumentasi ini.

@@ -19,6 +19,9 @@
    UI/history tersedia Increment 5; aktivasi lokal Increment 6 Ran batch22
    dua kali, tanpa payout/grant/demo; status delivery pada work item;
    penyelesaian nol milik Returns tanpa ledger uang. Bukan pembayaran purchase.
-6. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
+6. [Penerimaan uang retur supplier](../../../work-items/purchase-return-refund/plan.md):
+   ledger masuk exact6, proof paid, batas asal, guard/replay/audit; consumer Returns
+   dan history empat sumber. Aktivasi tanpa menerima uang atau memberi grant.
+7. Reversal, piutang/utang dan mutasi/saldo umum memerlukan pekerjaan terpisah.
 
 Jangan membuat saldo/payment record dari checklist fondasi master ini.

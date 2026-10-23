@@ -53,13 +53,23 @@ Playwright desktop/tablet dan native MySQL tercatat pada work item tersebut.
 
 ## Riwayat Pembayaran
 
+Penerimaan uang retur supplier memakai ledger terpisah exact6
+purchase_refund_receipts/lines dengan writer internal PurchaseRefundReceiptWriter,
+proof pembayaran asal, canonical replay, batas nilai paid dan audit wajib.
+Consumer Purchasing/Returns menjaga hak quantity/snapshot; Finance menjaga
+metode/akun serta ledger uang. Tidak mengubah Stock atau pembayaran asal.
+History menampilkan `purchase_return` sebagai Kas masuk/Uang retur supplier,
+detail supplier-refunds/{id}, tanpa tendered/change; sources lama tetap utuh.
+Tidak ada running balance, penerimaan bebas atau kredit supplier. Detail:
+[work item](../../../work-items/purchase-return-refund/README.md).
+
 Halaman [Pembayaran](http://pos.test/finance/payments/history) menyediakan daftar
 kas masuk penjualan, pengeluaran pembelian dan refund retur readonly. Permission khusus
 finance.payments.history.view, bukan implikasi view/manage master. Filter nomor,
 tanggal WIB, arah, akun dan metode; detail snapshot tanpa metadata rekening.
 Satu baris per dokumen; Total dokumen tidak berubah menjadi total akun terfilter.
 Penerimaan memakai jumlah bersih sesudah kembalian, pengeluaran pembelian exact6
-dan refund exact2.
+dan refund penjualan exact2; penerimaan uang retur supplier exact6.
 Read tidak membuat audit atau mutation ledger; tidak mengklaim saldo berjalan.
 Lihat [work item](work-items/payment-history/README.md), termasuk alasan tidak
 menambah seeder transaksi baru, dan hasil QA/aktivasi permission catalog saja.

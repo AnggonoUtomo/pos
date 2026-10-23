@@ -143,6 +143,48 @@ Rincian [spesifikasi PurchaseOrders](modules/Purchasing/PurchaseOrders/specifica
 
 ## Endpoint Internal Retur Pembelian
 
+### Penerimaan Uang Supplier
+
+`GET /purchasing/returns/{id}/refund-quote` dan
+`POST /purchasing/returns/{id}/refund` memakai permission terpisah
+`purchasing.returns.refund`, auth/verified dan CSRF pada mutation. Hanya retur
+posted dari pembelian lunas dengan snapshot dan proof Finance yang cocok.
+Quote menghasilkan id/version/purchase_revision/total/lines/methods dan
+quote_fingerprint. Nominal otomatis dari nilai beli asal, exact6: partial
+round-down, kuantitas terakhir mengambil residual. Bukan HPP atau harga kini.
+
+POST hanya menerima `{version, quote_fingerprint, payments:[{method_id,amount}]}`.
+Maksimal10 metode aktif unik, amount string positif maksimal24 integer/6pecahan;
+total harus tepat tanpa kembalian. Actor dari auth. Scope per pembelian dikunci;
+quote lama setelah settlement lain ditolak422. Canonical retry identik membaca
+snapshot tersimpan tanpa memerlukan master aktif; request berbeda ditolak.
+Finance receipt, alokasi, revision dan dua audit commit/rollback bersama.
+
+Hasil `{id,status,version,settlement:{id,outcome,total,finance_receipt_id,
+settled_at,payments}}`; outcome `received` atau `no_payment`. Total nol memerlukan
+payments kosong dan finance_receipt_id null, tanpa ledger uang nol. Status/
+version posted tidak berubah. GET data menambah refund_available dan settlement
+readonly untuk viewer; readiness false bila schema belum aktif.
+
+Boundary PurchaseOrders: `ReturnPurchaseLookup::refundBasis(id)` memberi
+ReturnPurchaseRefundBasisData, setelah memverifikasi proof pembayaran Finance.
+Finance menerbitkan PurchasePaymentProofLookup/DTOs serta
+`PurchaseRefundReceiptWriter::receive(PurchaseRefundReceiptRequest)` dan pilihan
+PurchaseRefundReceiptMethods. Caller transaction wajib; receipt immutable pada
+purchase_refund_receipts/purchase_refund_receipt_lines, source purchase_return,
+batas cumulative terhadap disbursement asal dan guard histori master. Tidak
+ada endpoint Finance penerimaan bebas atau perubahan Stock/FIFO/source.
+
+History Finance menambah source_type `purchase_return`, direction incoming dan
+nilai exact6. Detail lewat `GET /finance/payments/history/supplier-refunds/{id}`
+(name finance.payments.history.supplier-refund), permission
+finance.payments.history.view. Tendered/change null; split memakai amount exact6.
+Path terpisah menghindari ambiguity dengan receipt penjualan. Union/options
+mengabaikan ledger baru sebelum schema aktif; detail404. Sumber existing tetap
+sale/sale_return exact2 dan purchase exact6.
+
+### Fondasi Draft Dan Posting
+
 Purchasing/Returns memakai session web/auth/verified/CSRF, bukan token API.
 Prefix `/purchasing/returns`, name `purchasing.returns.*`:
 
@@ -208,7 +250,7 @@ posted_at}`. Replay dengan version asal mengembalikan hasil sama tanpa ledger
 baru; version berbeda, source/snapshot tidak valid, atau sisa layer kurang
 ditolak 422. Posted readonly; tidak ada refund supplier pada endpoint ini.
 
-Permission `purchasing.returns.view/manage/post` didaftarkan additive oleh
+Permission `purchasing.returns.view/manage/post/refund` didaftarkan additive oleh
 `ReturnsAccessSeeder`; tidak ada auto-grant. Manage tidak memberi view dan
 PurchaseOrders permissions tidak diperlukan untuk source lookup. Super-system
 tetap tunduk validasi bisnis. Detail module:

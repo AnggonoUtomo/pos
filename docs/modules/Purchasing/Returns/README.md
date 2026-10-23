@@ -6,7 +6,10 @@ Selesai untuk fondasi draft dan implementasi posting stok/FIFO dari layer
 penerimaan asal. Migration posting aktif di database lokal; QA Chrome DevTools
 MCP Light/Dark desktop/tablet lulus. Rincian pada
 [work item terpisah](../../../work-items/purchase-return-posting/README.md).
-Refund supplier belum masuk scope posting.
+Penerimaan uang supplier tersedia terpisah dari posting barang, hanya untuk
+pembelian lunas; [work item penerimaan](../../../work-items/purchase-return-refund/README.md).
+Schema receipt/settlement lokal Ran batch25, catalog refund additive tanpa grant,
+demo atau penerimaan uang otomatis; QA native/full/browser dan aktivasi dua kali PASS.
 Dokumen mengikuti [arsitektur](../../../ARCHITECTURE.md) dan
 [struktur canonical](../../../FOLDER-STRUCTURE.md).
 
@@ -20,9 +23,9 @@ posted. Spesifikasi: [specification.md](specification.md).
 
 - Memiliki: header/baris draft dan posted, snapshot asal, kuantitas retur,
   version, lifecycle soft delete/restore draft, permission, audit, query, UI
-  dan demo draft.
+  dan demo draft; quote dan settlement penerimaan uang supplier exact6.
 - Tidak memiliki: penerimaan pembelian, reservasi stok, alokasi FIFO internal
-  Stock, refund supplier, utang, pembayaran atau koreksi dokumen posted.
+  Stock, utang, pembayaran pembelian asal atau koreksi dokumen posted.
 - Draft belum mengurangi stok; status posted menyatakan barang diserahkan,
   bukan uang telah diterima kembali.
 
@@ -37,12 +40,18 @@ Tidak membaca model/repository/Domain privat PurchaseOrders atau Sales/Returns.
 Stock/Finance hanya diperiksa fingerprint-nya, bukan dependency mutation draft.
 Saat posting, Returns mengonsumsi `Inventory/Stock/Application/Contracts/
 PurchaseReturnStockWriter` dan DTO publiknya dalam shared transaction.
-Finance tidak dimutasi.
+Posting barang tidak memutasi Finance. Settlement uang mengonsumsi published
+PurchaseRefundReceiptWriter/Request/Result dan PurchaseRefundReceiptMethods
+milik Finance; source paid melalui ReturnPurchaseLookup::refundBasis. Scope
+per pembelian, receipt, alokasi dan audit dua module satu transaction. Partial
+round-down6/full residual, nol tanpa uang, canonical replay dan quote stale422.
+Ledger kas masuk dimiliki Finance; tidak mengubah stok/FIFO atau PO asal.
 
 ## Permission, Data Dan Seeder
 
 - `ReturnsAccessSeeder` mendaftarkan `purchasing.returns.view`,
-  `purchasing.returns.manage` dan `purchasing.returns.post` tanpa memberi grant.
+  `purchasing.returns.manage`, `purchasing.returns.post`, dan
+  `purchasing.returns.refund` tanpa memberi grant.
   Permission dibedakan per
   action; super-system tetap tunduk invariant.
 - Backend route aktif: `GET /purchasing/returns` (Inertia),
@@ -50,7 +59,9 @@ Finance tidak dimutasi.
   `/purchasing/returns/purchases/{id}`, `POST /purchasing/returns`,
   `PUT /purchasing/returns/{id}`, `DELETE /purchasing/returns/{id}`, dan
   `POST /purchasing/returns/{id}/restore`, dan
-  `POST /purchasing/returns/{id}/post`.
+  `POST /purchasing/returns/{id}/post`, `GET /{id}/refund-quote`, dan
+  `POST /{id}/refund` pada prefix yang sama. Hasil settlement dapat dibaca viewer
+  tanpa izin refund; dialog konfirmasi/Sonner/shortcut/recovery milik Returns.
 - Source: app/Modules/Purchasing/Returns; Routes/, Database/Migrations/ dan
   Database/Seeders/ ada di dalam module. Provider terdaftar dan memuat route
   serta migration module.

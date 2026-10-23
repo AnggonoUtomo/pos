@@ -5,7 +5,9 @@ capability module saat ini. Posting barang dari layer penerimaan asal sudah
 diimplementasikan sesuai [ADR-017](../../../decisions/ADR-017-PURCHASE-RETURN-ORIGINAL-RECEIPT-LAYER.md)
 dan [work item posting](../../../work-items/purchase-return-posting/README.md).
 Pernyataan "tidak posting" di bawah hanya berlaku untuk increment fondasi draft;
-refund supplier masih belum tersedia.
+penerimaan uang supplier kini ditetapkan terpisah oleh
+[ADR-018](../../../decisions/ADR-018-PURCHASE-RETURN-REFUND-RECEIPTS.md) dan
+[work item penerimaan](../../../work-items/purchase-return-refund/README.md).
 
 ## Status
 

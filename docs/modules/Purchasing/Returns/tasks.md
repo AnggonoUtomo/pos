@@ -13,8 +13,11 @@
   posted; lihat [work item](../../../work-items/purchase-return-posting/tasks.md).
 - [x] QA visual posting desktop/tablet via Chrome DevTools MCP existing/stdio
   isolated: Light/Dark, framing, viewer/readonly, penolakan stok dan console/network.
+- [x] Penerimaan uang supplier pembelian lunas exact6, quote/scope/replay/nol,
+  audit atomic, UI/history dan QA native/browser/full; schema lokal batch25 aktif.
 
 Bukti terperinci: [fondasi draft](work-items/draft-foundation/tasks.md).
 
-Refund supplier dan reversal memerlukan scope/work item tersendiri; tidak
-dianggap disetujui oleh checklist fondasi draft ini.
+Penerimaan uang supplier telah disetujui melalui
+[work item terpisah](../../../work-items/purchase-return-refund/tasks.md).
+Kredit supplier, pembelian belum lunas dan reversal tetap di luar scope.

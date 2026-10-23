@@ -1,6 +1,7 @@
 # Penerimaan Uang Retur Supplier
 
-Status: In Progress. Scope dan presisi disetujui user; implementasi belum selesai.
+Status: In Progress (delivery). Implementasi, QA dan aktivasi lokal PASS
+23 Oktober 2026; commit/push final dan verifikasi remote sedang ditutup.
 
 ## Owner Dan Kondisi Awal
 
@@ -29,12 +30,12 @@ Tidak memasang dependency, mengubah stack atau mengisi demo di database bisnis.
 
 ## Acceptance
 
-- [ ] Source paid/receipt/snapshot authoritative dan batas hak per baris exact6.
-- [ ] Scope pembelian mengunci settlement bersaing; tidak over-refund.
-- [ ] Finance masuk dan dua audit/status settlement atomic; replay aman.
-- [ ] Permission, quote stale, metode invalid, nol, readonly dan histori teruji.
-- [ ] QA unit/feature/native MySQL/browser desktop-tablet, build/lint/typecheck.
-- [ ] Migration/catalog lokal additive idempotent tanpa grant/demo otomatis.
+- [x] Source paid/receipt/snapshot authoritative dan batas hak per baris exact6.
+- [x] Scope pembelian mengunci settlement bersaing; tidak over-refund.
+- [x] Finance masuk dan dua audit/status settlement atomic; replay aman.
+- [x] Permission, quote stale, metode invalid, nol, readonly dan histori teruji.
+- [x] QA unit/feature/native MySQL/browser desktop-tablet, build/lint/typecheck.
+- [x] Migration/catalog lokal additive idempotent tanpa grant/demo otomatis.
 - [ ] Dokumen, commit per increment dan remote delivery terverifikasi.
 
 ## Dependency Dan Keputusan

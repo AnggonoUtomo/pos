@@ -101,6 +101,37 @@ release. Jangan menjalankannya berulang tanpa perubahan source.
 
 ## QA Settlement Refund Returns
 
+### Penerimaan Uang Retur Supplier
+
+`php scripts/qa/purchase-return-refund-mysql.php`: database MySQL disposable
+pos_purchase_refund_qa_ +16hex, bukan DB user. Migration/status, empat worker
+LOCK WAIT (race quote dan replay), residual/nol exact6, nominal24 digit,
+rollback audit, FK/down guard serta fingerprint purchase/Stock/Finance asal.
+Koneksi aktual diverifikasi, seluruh worker/database dibersihkan pada finally.
+
+`php scripts/qa/activate-purchase-return-refund-mysql.php`: baseline populated
+tanpa dua migration baru, readiness false/true, aktivasi dua kali dan rerun
+setelah settlement. Cache permission parent/child diisolasi array saat mengganti
+koneksi agar catalog DB user tidak terbawa ke QA. Tabel/data/grant/metadata lama
+harus identik; lima tabel baru kosong setelah aktivasi tanpa grant/demo.
+
+`php scripts/qa/activate-purchase-return-refund-local.php`: hanya CLI local/MySQL,
+advisory lock, dua migration exact path dan ReturnsAccessSeeder additive. Jalankan
+saat tidak ada operasi bersamaan. Tidak seed master, membuat receipt, reset akun,
+atau mengubah grant. Fingerprint semua data/kolom lama kecuali cache, serta row
+metadata migrations/permissions existing. DDL MySQL tidak rollback otomatis;
+jangan down/drop tabel berhistori untuk membatalkan penerimaan.
+
+Browser: `node scripts/qa/purchase-return-refund-devtools.mjs` dengan
+QA_DEVTOOLS_ENTRY executable MCP existing; isolated stdio/roots workspace, SQLite
+disposable/password random stdin. Desktop1440/tablet1024/768 Light/Dark sidebar
+expanded/collapsed, quote exact6 Indonesia, penolakan selisih mikro, shortcut,
+hasil/nol/viewer readonly, Finance history/detail, palette, console/network dan
+fingerprint. Screenshot/report ignored storage/framework/testing; server/browser
+ditutup dan database disposable dihapus. Tidak mengubah profil/session user.
+Focused: PurchaseReturnRefundTest, PurchaseRefundReceiptTest, PurchaseRefundBasisTest
+dan RefundAllocationTest. Scope mobile, kredit supplier dan reversal tetap di luar.
+
 `php scripts/qa/sale-return-refund-mysql.php` memakai MySQL disposable random
 `pos_return_refund_qa_` +16 hex, salinan config URL null dan SELECT DATABASE()
 sebelum migration/writer. Fixture transaksi CCTV nyata berjalan pada testing,

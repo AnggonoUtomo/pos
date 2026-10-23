@@ -12,6 +12,10 @@ Tidak mengambil model privat module lain.
 `ReturnPurchaseLookup`/`ReturnPurchaseData` mempublikasikan projection aman
 pembelian received untuk consumer Purchasing/Returns; adapter membaca snapshot
 order/baris dan mencocokkan metadata receipt, tanpa payment/actor/notes.
+`refundBasis` pada lookup yang sama menerbitkan ReturnPurchaseRefundBasisData
+khusus nominal retur, sesudah pointer/nomor/total/waktu/snapshot pembayaran asal
+cocok dengan published PurchasePaymentProofLookup Finance. Source unpaid atau
+proof tidak cocok ditolak; tidak mengekspor akun/bank/actor/notes atau mengubah PO.
 
 Lihat [spesifikasi](specification.md), [rencana](plan.md), [checklist](tasks.md)
 dan [fondasi draft](work-items/draft-foundation/README.md), serta
@@ -28,5 +32,6 @@ sekali penuh menambah saldo/movement/FIFO atomic; replay versi asal tidak
 menggandakan ledger. Posted readonly; pembayaran melalui operasi terpisah setelah
 diterima. Multi-metode harus tepat tanpa kembalian, snapshot readonly dan retry
 tidak menambah pengeluaran. Data lama tetap Belum dicatat, bukan otomatis lunas.
-Parsial, utang/jatuh tempo, running balance kas/bank dan retur/reversal belum
-dibuat. QA/aktivasi: [Quality](../../../QUALITY.md#qa-pembayaran-pembelian-lunas).
+Parsial, utang/jatuh tempo, running balance kas/bank dan reversal belum dibuat.
+Retur barang/penerimaan uang dimiliki [Purchasing/Returns](../Returns/README.md),
+bukan mutation source PO. QA: [Quality](../../../QUALITY.md#qa-pembayaran-pembelian-lunas).
