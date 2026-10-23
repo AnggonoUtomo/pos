@@ -3,7 +3,7 @@
 | Increment | Status | Hasil | Verifikasi |
 | --- | --- | --- | --- |
 | 1 Baseline | Passed | Scope/dokumen/checklist dan dry-run | Review boundary/diff |
-| 2 Schema/Domain | Planned | Scaffold, ULID/schema, quantity exact6 | Unit red-green, migration/scaffold |
+| 2 Schema/Domain | Passed | Scaffold, ULID/schema, quantity exact6 | Red-green,4 test/20 assertion, Pint |
 | 3 CRUD | Planned | Prepare/save/query/routes/permission | Feature valid/invalid/auth/snapshot |
 | 4 Lifecycle/Demo | Planned | Delete/restore/version/no-op/audit, demo | Rollback, stale, idempotency/ledger fingerprint |
 | 5 UI | Planned | Page/dialog/table/filter/nav/palette/shortcut | Lint/typecheck/build, DevTools desktop/tablet |

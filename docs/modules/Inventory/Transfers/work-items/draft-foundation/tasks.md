@@ -17,7 +17,7 @@
 
 ## Increment 2: Schema Dan Domain
 
-- [ ] Generator, dua tabel ULID dan TransferQuantity.
+- [x] Generator, dua tabel ULID dan TransferQuantity.
   - Acceptance: routes/database module, exact6/overflow/precision guard, down aman.
   - Verification: unit red-green, scaffold/schema/empty up-down tests, Pint.
 
@@ -63,3 +63,6 @@
 
 Dry-run generator PASS: provider, Routes, Database/Migrations/Seeders dan test
 canonical. File user staged30 tetap terpisah. Gate implementasi belum dijalankan.
+
+Increment2: unit red-green, scaffold/schema/empty down-up 4 test/20 assertion
+PASS; Pint PASS. Belum menjalankan migration pada DB lokal.
