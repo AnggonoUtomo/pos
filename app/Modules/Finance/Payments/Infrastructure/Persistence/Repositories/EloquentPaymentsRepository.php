@@ -35,7 +35,8 @@ class EloquentPaymentsRepository implements PaymentsRepository
         return PaymentMethod::withTrashed()->where('payment_account_id', $id)->lockForUpdate()->first(['id']) !== null
             || DB::table('payment_records')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null
             || DB::table('payment_disbursement_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null
-            || (Schema::hasTable('payment_refund_lines') && DB::table('payment_refund_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null);
+            || (Schema::hasTable('payment_refund_lines') && DB::table('payment_refund_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null)
+            || (Schema::hasTable('purchase_refund_receipt_lines') && DB::table('purchase_refund_receipt_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null);
     }
 
     public function hasMethodHistory(string $id): bool
@@ -44,7 +45,8 @@ class EloquentPaymentsRepository implements PaymentsRepository
 
         return DB::table('payment_records')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null
             || DB::table('payment_disbursement_lines')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null
-            || (Schema::hasTable('payment_refund_lines') && DB::table('payment_refund_lines')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null);
+            || (Schema::hasTable('payment_refund_lines') && DB::table('payment_refund_lines')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null)
+            || (Schema::hasTable('purchase_refund_receipt_lines') && DB::table('purchase_refund_receipt_lines')->where('method_id', $id)->lockForUpdate()->first(['id']) !== null);
     }
 
     public function lockReceiptBySource(string $sourceId): ?array

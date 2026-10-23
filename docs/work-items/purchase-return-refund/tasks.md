@@ -23,7 +23,7 @@
 
 ## Increment 3: Finance
 
-- [ ] Ledger receipt supplier, proof/contract/DTOs dan writer dengan consumer nyata.
+- [x] Ledger receipt supplier, proof/contract/DTOs dan writer dengan consumer nyata.
   - Acceptance: total/split exact6, source paid, metode aktif compatible, replay,
     audit wajib dan batas paid; sumber lama tidak berubah presisi.
   - Verification: feature writer, migration up/down disposable, rollback audit.
@@ -64,3 +64,11 @@ Unit/feature terfokus: 39 test/320 assertion PASS. Domain diuji red-green untuk
 residual/nol/overflow. Source proof Finance memverifikasi jumlah baris ledger,
 pointer/nomor/waktu/snapshot pembayaran PurchaseOrders, redaction dan master
 nonaktif tanpa mengubah sumber. Pint lulus. Belum ada schema atau uang diterima.
+
+## Bukti Increment 3
+
+Finance/Payments dan Purchasing/Returns: 92 test/883 assertion PASS. Writer
+memerlukan transaction caller, proof paid cocok, split exact6, batas paid,
+canonical replay dan audit atomic. Guard histori master mencakup receipt baru
+(test merah sebelum guard ditambahkan). Migration up lewat RefreshDatabase dan
+down populated ditolak. Pint PASS. Database lokal belum diaktivasi.

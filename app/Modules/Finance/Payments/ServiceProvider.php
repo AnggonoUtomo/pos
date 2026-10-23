@@ -3,6 +3,7 @@
 namespace App\Modules\Finance\Payments;
 
 use App\Modules\Finance\Payments\Application\Actions\RecordPurchasePayment;
+use App\Modules\Finance\Payments\Application\Actions\RecordPurchaseRefundReceipt;
 use App\Modules\Finance\Payments\Application\Actions\RecordSalePayment;
 use App\Modules\Finance\Payments\Application\Actions\RecordSaleRefundPayment;
 use App\Modules\Finance\Payments\Application\Contracts\DisbursementRepository;
@@ -11,6 +12,9 @@ use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentProofLookup;
 use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentWriter;
+use App\Modules\Finance\Payments\Application\Contracts\PurchaseRefundReceiptMethods;
+use App\Modules\Finance\Payments\Application\Contracts\PurchaseRefundReceiptRepository;
+use App\Modules\Finance\Payments\Application\Contracts\PurchaseRefundReceiptWriter;
 use App\Modules\Finance\Payments\Application\Contracts\RefundRepository;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
@@ -21,6 +25,7 @@ use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\Databas
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseSalePaymentMethods;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentDisbursementRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentPaymentsRepository;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentPurchaseRefundReceiptRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\EloquentRefundRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -28,6 +33,9 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(PurchaseRefundReceiptWriter::class, RecordPurchaseRefundReceipt::class);
+        $this->app->bind(PurchaseRefundReceiptRepository::class, EloquentPurchaseRefundReceiptRepository::class);
+        $this->app->bind(PurchaseRefundReceiptMethods::class, DatabaseSalePaymentMethods::class);
         $this->app->bind(PurchasePaymentProofLookup::class, DatabasePurchasePaymentProofLookup::class);
         $this->app->bind(SaleRefundPaymentWriter::class, RecordSaleRefundPayment::class);
         $this->app->bind(SaleRefundPaymentMethods::class, DatabaseSalePaymentMethods::class);
