@@ -30,7 +30,7 @@
 
 ## Increment 4: Settlement
 
-- [ ] Quote dan settlement Returns atomic berversi/fingerprint.
+- [x] Quote dan settlement Returns atomic berversi/fingerprint.
   - Acceptance: hanya posted/paid, hak per pembelian terkunci, stale/replay,
     permission terpisah; nol tanpa ledger/metode dan posted tetap immutable.
   - Verification: HTTP/auth403/422, native lock/concurrency, audit veto lintas module.
@@ -72,3 +72,11 @@ memerlukan transaction caller, proof paid cocok, split exact6, batas paid,
 canonical replay dan audit atomic. Guard histori master mencakup receipt baru
 (test merah sebelum guard ditambahkan). Migration up lewat RefreshDatabase dan
 down populated ditolak. Pint PASS. Database lokal belum diaktivasi.
+
+## Bukti Increment 4
+
+40 test/347 assertion Returns dan writer PASS: HTTP403/419/422, quote stale setelah
+settlement lain, retry canonical, audit veto dua module, total paid cap dan stok/
+source immutable. Alokasi nol tidak membuat uang; retur terakhir mendapat residual
+0,000003 secara exact6. Projection settlement dibaca bulk tanpa N+1. Native
+MySQL/concurrency dijalankan pada gate Increment 6, belum diklaim lulus.

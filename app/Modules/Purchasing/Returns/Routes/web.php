@@ -13,4 +13,6 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('purchasing/returns')->na
     Route::delete('{id}', [PurchaseReturnController::class, 'destroy'])->whereUlid('id')->name('destroy');
     Route::post('{id}/restore', [PurchaseReturnController::class, 'restore'])->whereUlid('id')->name('restore');
     Route::post('{id}/post', [PurchaseReturnController::class, 'post'])->whereUlid('id')->name('post');
+    Route::get('{id}/refund-quote', [PurchaseReturnController::class, 'refundQuote'])->whereUlid('id')->name('refund-quote');
+    Route::post('{id}/refund', [PurchaseReturnController::class, 'refund'])->whereUlid('id')->name('refund');
 });

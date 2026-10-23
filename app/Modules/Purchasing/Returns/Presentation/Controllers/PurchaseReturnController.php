@@ -5,6 +5,8 @@ namespace App\Modules\Purchasing\Returns\Presentation\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Purchasing\Returns\Application\Actions\ManagePurchaseReturnDraft;
 use App\Modules\Purchasing\Returns\Application\Actions\PostPurchaseReturnDraft;
+use App\Modules\Purchasing\Returns\Application\Actions\SettleReturnRefund;
+use App\Modules\Purchasing\Returns\Application\Queries\QuoteReturnRefund;
 use App\Modules\Purchasing\Returns\Application\Queries\ReturnWorkspace;
 use App\Modules\Purchasing\Returns\Presentation\Requests\LifecyclePurchaseReturnRequest;
 use App\Modules\Purchasing\Returns\Presentation\Requests\ListPurchaseReturnDraftsRequest;
@@ -23,7 +25,20 @@ final class PurchaseReturnController extends Controller implements HasMiddleware
     {
         return [new Middleware('can:purchasing.returns.view', only: ['index', 'data']),
             new Middleware('can:purchasing.returns.manage', only: ['purchases', 'purchase', 'store', 'update', 'destroy', 'restore']),
-            new Middleware('can:purchasing.returns.post', only: ['post'])];
+            new Middleware('can:purchasing.returns.post', only: ['post']),
+            new Middleware('can:purchasing.returns.refund', only: ['refundQuote', 'refund'])];
+    }
+
+    public function refundQuote(string $id, QuoteReturnRefund $query): JsonResponse
+    {
+        return response()->json($query->handle(strtolower($id)));
+    }
+
+    public function refund(Request $request, string $id, SettleReturnRefund $action): JsonResponse|RedirectResponse
+    {
+        $result = $action->handle(strtolower($id), $request->all(), $request->user()->id);
+
+        return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Penerimaan uang retur supplier berhasil dicatat.');
     }
 
     public function index(ListPurchaseReturnDraftsRequest $request, ReturnWorkspace $query): Response

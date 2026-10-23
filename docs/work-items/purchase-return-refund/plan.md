@@ -5,7 +5,7 @@
 | 1. Baseline | Passed | Scope, ADR, kontrak, checklist | Review source, link/diff |
 | 2. Nilai Dan Source | Passed | Domain alokasi exact6, paid basis publik | 39 test/320 assertion, source integrity/redaction, Pint |
 | 3. Finance | Passed | Receipt supplier immutable exact6, proof, guard master | 92 test/883 assertion terfokus lintas module, Pint |
-| 4. Settlement | Planned | Schema Returns, quote/fingerprint, aksi/route/permission | HTTP403/422, stale/replay/nol/concurrency/rollback |
+| 4. Settlement | Passed | Schema, quote/fingerprint, aksi/route/permission dan projection | 40 test/347 assertion; native concurrency pada Increment 6 |
 | 5. UI Dan Histori | Planned | Dialog, readonly, viewer, Finance history | Typecheck/lint/build, DevTools MCP1440/1024/768 |
 | 6. QA Dan Aktivasi | Planned | Native MySQL, seeder, activation, docs/delivery | Full test, migration/status, fingerprint, commit/push |
 
