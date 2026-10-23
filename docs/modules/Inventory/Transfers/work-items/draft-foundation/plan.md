@@ -1,0 +1,28 @@
+# Rencana Fondasi Draft Transfer
+
+| Increment | Status | Hasil | Verifikasi |
+| --- | --- | --- | --- |
+| 1 Baseline | Passed | Scope/dokumen/checklist dan dry-run | Review boundary/diff |
+| 2 Schema/Domain | Planned | Scaffold, ULID/schema, quantity exact6 | Unit red-green, migration/scaffold |
+| 3 CRUD | Planned | Prepare/save/query/routes/permission | Feature valid/invalid/auth/snapshot |
+| 4 Lifecycle/Demo | Planned | Delete/restore/version/no-op/audit, demo | Rollback, stale, idempotency/ledger fingerprint |
+| 5 UI | Planned | Page/dialog/table/filter/nav/palette/shortcut | Lint/typecheck/build, DevTools desktop/tablet |
+| 6 QA/Delivery | Planned | Native/full/activation/docs/commit/push | MySQL worker/guard, full suite, activation dua kali |
+
+## QA Automated
+
+php artisan test --compact tests/Feature/Modules/Inventory/Transfers
+tests/Unit/Modules/Inventory/Transfers, kemudian full suite. Pint scoped,
+npx eslint resources/js, npx tsc --noEmit, npm run build, route:list/migrate:status.
+MySQL disposable random memeriksa locking/current-read, stale, JSON/exact6,
+audit rollback dan empty/populated down/up. Browser DevTools MCP existing stdio
+isolated bila namespace tidak tersedia, credential random stdin, SQLite disposable.
+Desktop1440x1000/tablet1024x768/768x1024 Light/Dark, sidebar kedua state, screenshot,
+console/network/overflow dan fingerprint Stock/Finance. Aktivasi additive lokal
+tanpa grant/demo/reset, guard seluruh data existing. Review link dan diff.
+
+## Batas Dan Rollback
+
+Stop setelah draft selesai, tidak merancang posting FIFO diam-diam. Tidak down/drop
+data user. Migration down hanya disposable kosong, populated ditolak. Preserve
+SampleUI26/LSP4 staged; commit --only explicit paths, push sesudah keseluruhan QA.
