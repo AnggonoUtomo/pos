@@ -30,6 +30,7 @@ class TransferPostingTest extends TransferTestCase
         $this->assertDatabaseCount('stock_movements', 3);
         $this->postJson("/inventory/transfers/{$id}/post", ['version' => 1])->assertOk();
         $this->assertDatabaseCount('stock_movements', 3);
+        $this->postJson("/inventory/transfers/{$id}/post", ['version' => 9])->assertUnprocessable();
         $this->deleteJson("/inventory/transfers/{$id}", ['version' => 2])->assertUnprocessable();
         $this->assertDatabaseHas('activity_log', ['log_name' => 'inventory.transfers', 'event' => 'posted']);
     }
@@ -58,6 +59,15 @@ class TransferPostingTest extends TransferTestCase
         $this->assertDatabaseCount('stock_movements', 1);
         $this->assertDatabaseHas('stock_transfers', ['id' => $id, 'status' => 'draft', 'version' => 1]);
         $this->assertEquals(24, DB::table('stock_balances')->where('warehouse_id', $this->warehouse)->value('quantity'));
+    }
+
+    public function test_missing_draft_lines_cannot_create_an_empty_posted_transfer(): void
+    {
+        $id = $this->ready();
+        DB::table('stock_transfer_lines')->where('transfer_id', $id)->delete();
+        $this->postJson("/inventory/transfers/{$id}/post", ['version' => 1])->assertUnprocessable();
+        $this->assertDatabaseCount('stock_issues', 0);
+        $this->assertDatabaseHas('stock_transfers', ['id' => $id, 'status' => 'draft']);
     }
 
     public function test_multiple_source_costs_and_zero_cost_segments_remain_separate_at_destination(): void

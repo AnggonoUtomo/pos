@@ -64,7 +64,7 @@ try {
     const password = randomBytes(32).toString('hex');
     const setup = fixture({ password, operational: true });
     assert.equal(setup.status, 'READY');
-    console.log('PASS: fixture retur pembelian disposable siap');
+    console.log('PASS: fixture stok operasional disposable siap');
     server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')],
         { cwd: path.join(root, 'public'), env, stdio: 'ignore', windowsHide: true });
     let ready = false;
@@ -160,5 +160,3 @@ try {
     if (server && server.exitCode === null) { server.kill(); await new Promise((resolve) => server.once('exit', resolve)); }
     if (database) await unlink(database).catch(() => {});
 }
-
-

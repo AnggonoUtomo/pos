@@ -25,8 +25,11 @@ final class WriteOperationalStock implements TransferStockWriter
     public function transfer(TransferStockRequest $request): void
     {
         $this->requireTransaction();
-        if ($request->sourceWarehouseId === $request->destinationWarehouseId) {
+        if (strtolower($request->sourceWarehouseId) === strtolower($request->destinationWarehouseId)) {
             throw new InvalidArgumentException('Gudang asal dan tujuan harus berbeda.');
+        }
+        if (! array_is_list($request->lines) || count($request->lines) < 1 || count($request->lines) > 100) {
+            throw new InvalidArgumentException('Transfer harus berisi 1 sampai 100 baris.');
         }
         $warehouseIds = [$request->sourceWarehouseId, $request->destinationWarehouseId];
         sort($warehouseIds);

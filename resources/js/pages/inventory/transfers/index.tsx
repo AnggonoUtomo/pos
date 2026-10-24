@@ -67,7 +67,12 @@ export default function Transfers({ records, filters, options }: TransferPagePro
                         keys: ['Ctrl/Cmd', 'Shift', 'N'],
                         disabled: !canManage || filters.trashed,
                     },
-                    { label: 'Simpan/konfirmasi', description: 'Konfirmasi dialog aktif', keys: ['Ctrl/Cmd', 'Enter'], disabled: !canManage },
+                    {
+                        label: 'Simpan/konfirmasi',
+                        description: 'Konfirmasi dialog aktif',
+                        keys: ['Ctrl/Cmd', 'Enter'],
+                        disabled: !canManage && !canPost,
+                    },
                     { label: 'Tutup', description: 'Tutup dialog saat tidak memproses', keys: ['Esc'] },
                 ]}
             />

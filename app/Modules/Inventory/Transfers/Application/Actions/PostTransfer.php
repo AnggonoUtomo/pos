@@ -24,6 +24,10 @@ final class PostTransfer
             DB::transaction(function () use ($id, $input, $actorId): void {
                 $record = $this->drafts->lock($id);
                 if ($record['status'] === 'posted') {
+                    if ((int) $input['version'] !== $record['version'] - 1) {
+                        throw ValidationException::withMessages(['version' => 'Transfer diposting dari revisi berbeda.']);
+                    }
+
                     return;
                 }
                 if ($record['status'] !== 'draft' || $record['version'] !== (int) $input['version']) {
