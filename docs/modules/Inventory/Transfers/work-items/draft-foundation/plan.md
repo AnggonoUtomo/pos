@@ -7,7 +7,7 @@
 | 3 CRUD | Passed | Prepare/save/query/routes/permission |9 test/85 assertion, snapshot/stale/no-op/auth/CSRF |
 | 4 Lifecycle/Demo | Passed | Delete/restore/version/no-op/audit, demo |16 test/126 assertion, rollback/model veto/demo, Pint |
 | 5 UI | Passed | Page/dialog/table/filter/nav/palette/shortcut | Lint/typecheck/build, DevTools1440/1024/768 PASS |
-| 6 QA/Delivery | In Progress (delivery) | Native/full/browser/aktivasi lokal PASS; push pending |777 test/6142 assertion, batch26, fingerprint |
+| 6 QA/Delivery | Passed | Native/full/browser/aktivasi/delivery PASS |777 test/6142 assertion, batch26, remote f7e663b sama0/0 |
 
 ## QA Automated
 

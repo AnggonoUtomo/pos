@@ -1,7 +1,7 @@
 # Rencana Transfer Antar-Gudang
 
 1. [Fondasi draft](work-items/draft-foundation/plan.md): implementasi/QA/aktivasi
-   lokal lulus; delivery pada work item. CRUD/snapshot/lifecycle/permission/audit/
+   lokal dan delivery selesai. CRUD/snapshot/lifecycle/permission/audit/
    demo/UI tanpa mutation stok.
 2. Posting dan perpindahan nilai FIFO: belum disetujui, scope/keputusan terpisah.
 3. Pengiriman/penerimaan parsial, stok perjalanan dan reversal: ditunda.

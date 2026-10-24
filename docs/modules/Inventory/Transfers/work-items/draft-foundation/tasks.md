@@ -48,7 +48,7 @@
   - Acceptance: worker stale/lock/JSON/exact6/audit/FK/down guard, source/Stock/
     Finance/grant lama identik, tidak membuat draft demo pada database toko.
   - Verification: scripts QA, full test/Pint, route/status, browser/fingerprint.
-- [ ] Docs/checklist/review dan delivery.
+- [x] Docs/checklist/review dan delivery.
   - Acceptance: semua scope lulus; user files utuh, local/remote SHA sama0/0.
   - Verification: link/diff/staged scope, commit/push/ls-remote.
 
@@ -57,7 +57,7 @@
 - [x] Acceptance dan status increment sesuai bukti.
 - [x] Backend/UI/native/browser/activation relevan lulus.
 - [x] Docs/API/module index selaras; gap/non-scope dicatat.
-- [ ] Commit incremental dan delivery terverifikasi.
+- [x] Commit incremental dan delivery terverifikasi.
 
 ## Hasil Verifikasi
 
@@ -113,5 +113,12 @@ Gap existing nama aksesibel tombol command/theme topnav tablet di luar scope;
 palette/tema diuji melalui pola existing. Mobile tidak diuji sesuai keputusan user.
 Biaya FIFO, layer tanggal transfer, posting satu/dua tahap, stok perjalanan,
 parsial dan reversal belum disetujui. Draft tidak mereservasi ketersediaan.
-Old-docs/theme/dependency/SampleUI26/LSP4 staged tidak disentuh. Delivery pending
-commit QA/docs ini dan verifikasi remote.
+Old-docs/theme/dependency/SampleUI26/LSP4 staged tidak disentuh.
+
+## Delivery
+
+Commit 7f47105,389042e,d6246a9,a535375,9457832 dan f7e663b telah di-push ke
+origin/main. HEAD dan ls-remote sama pada f7e663b4d703db388450c5d663383cbe9f560110,
+ahead/behind0/0. Penutupan checklist ini dibuat sesudah bukti remote tersebut,
+lalu di-commit/push sebagai dokumentasi. Tiga puluh file staged user tetap di
+luar commit; tidak ada proses QA tersisa. Tidak ada perubahan Old-docs.
