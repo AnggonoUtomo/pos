@@ -2,13 +2,15 @@
 
 namespace App\Modules\Inventory\Transfers;
 
+use App\Modules\Inventory\Transfers\Application\Contracts\TransferDraftRepository;
+use App\Modules\Inventory\Transfers\Infrastructure\Persistence\Repositories\EloquentTransferDraftRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(TransferDraftRepository::class, EloquentTransferDraftRepository::class);
     }
 
     public function boot(): void

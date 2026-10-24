@@ -23,7 +23,7 @@
 
 ## Increment 3: Simpan Dan Query
 
-- [ ] Prepare/save/version/query dan route/permission/options.
+- [x] Prepare/save/version/query dan route/permission/options.
   - Acceptance: master aktif/pasangan berbeda, duplicate/forgery/stale ditolak,
     view/manage terpisah, no-op, snapshot aman dan data pagination/filter.
   - Verification: HTTP403/419/422, valid/invalid feature, ledger fingerprint.
@@ -66,3 +66,7 @@ canonical. File user staged30 tetap terpisah. Gate implementasi belum dijalankan
 
 Increment2: unit red-green, scaffold/schema/empty down-up 4 test/20 assertion
 PASS; Pint PASS. Belum menjalankan migration pada DB lokal.
+
+Increment3: 9 test/85 assertion PASS, termasuk snapshot/no-op/stale/pasangan,
+quantity/forgery, permission/options terpisah, CSRF dan query literal/filter.
+Error duplicate import Route sisa scaffold diperbaiki sebelum test lulus.
