@@ -51,6 +51,30 @@ class PurchasePaymentTest extends StockTestCase
         return array_map(fn ($table) => DB::table($table)->orderBy('id')->get()->toJson(), ['stock_receipts', 'stock_receipt_lines', 'stock_movements', 'stock_balances', 'fifo_layers']);
     }
 
+    public function test_receive_and_pay_is_atomic_replayable_and_requires_both_permissions(): void
+    {
+        $id = $this->order(false);
+        $body = ['version' => 1, 'payments' => $this->payments];
+        $this->manager->revokePermissionTo('purchasing.purchase-orders.post');
+        $this->postJson(self::URL.$id.'/receive-and-pay', $body)->assertForbidden();
+        $this->manager->givePermissionTo('purchasing.purchase-orders.post');
+        $first = $this->postJson(self::URL.$id.'/receive-and-pay', $body)->assertOk()->assertJsonPath('version', 3)->json();
+        $this->assertSame($first, $this->postJson(self::URL.$id.'/receive-and-pay', $body)->assertOk()->json());
+        $this->assertDatabaseCount('stock_receipts', 1);
+        $this->assertDatabaseCount('payment_disbursements', 1);
+    }
+
+    public function test_receive_and_pay_failure_leaves_draft_and_inventory_unchanged(): void
+    {
+        $id = $this->order(false);
+        $before = $this->stock();
+        $body = ['version' => 1, 'payments' => [['method_id' => $this->payments[0]['method_id'], 'amount' => '1']]];
+        $this->postJson(self::URL.$id.'/receive-and-pay', $body)->assertUnprocessable();
+        $this->assertSame($before, $this->stock());
+        $this->assertDatabaseHas('purchase_orders', ['id' => $id, 'status' => 'draft', 'version' => 1]);
+        $this->assertDatabaseCount('payment_disbursements', 0);
+    }
+
     public function test_payment_atomic_replay_snapshot_filters_and_stock_unchanged(): void
     {
         $id = $this->order();

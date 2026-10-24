@@ -12,7 +12,6 @@ export function DataTable({
     canPost,
     onOpen,
     onLifecycle,
-    onPost,
     canPay,
     onPay,
 }: {
@@ -23,7 +22,6 @@ export function DataTable({
     onPay: (row: PurchaseRow) => void;
     onOpen: (row: PurchaseRow, readOnly: boolean) => void;
     onLifecycle: (row: PurchaseRow) => void;
-    onPost: (row: PurchaseRow) => void;
 }) {
     return (
         <div className="overflow-x-auto rounded-md border">
@@ -92,19 +90,19 @@ export function DataTable({
                                             </TooltipTrigger>
                                             <TooltipContent>Detail</TooltipContent>
                                         </Tooltip>
-                                        {canPost && row.status === 'draft' && !row.deleted_at && (
+                                        {canPost && canPay && row.status === 'draft' && !row.deleted_at && (
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        aria-label={`Terima ${row.number}`}
-                                                        onClick={() => onPost(row)}
+                                                        aria-label={`Terima dan bayar ${row.number}`}
+                                                        onClick={() => onPay(row)}
                                                     >
                                                         <CheckCheck className="size-4 text-emerald-600 dark:text-emerald-300" />
                                                     </Button>
                                                 </TooltipTrigger>
-                                                <TooltipContent>Terima barang</TooltipContent>
+                                                <TooltipContent>Terima dan bayar lunas</TooltipContent>
                                             </Tooltip>
                                         )}
                                         {canPay && row.status === 'posted' && !row.payment_disbursement_id && !row.deleted_at && (

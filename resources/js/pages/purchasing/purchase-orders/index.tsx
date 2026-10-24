@@ -22,7 +22,6 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
     const [paying, setPaying] = useState<PurchaseRow | null>(null);
     const [dialog, setDialog] = useState<{ record: PurchaseRow | null; readOnly: boolean } | null>(null);
     const [lifecycle, setLifecycle] = useState<PurchaseRow | null>(null);
-    const [posting, setPosting] = useState<PurchaseRow | null>(null);
     const [search, setSearch] = useState(filters.search);
     const [loading, setLoading] = useState(false);
     const searchRef = useRef<HTMLInputElement>(null);
@@ -196,7 +195,6 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                     onPay={setPaying}
                     onOpen={(record, readOnly) => setDialog({ record, readOnly })}
                     onLifecycle={setLifecycle}
-                    onPost={setPosting}
                 />
                 <div className="text-muted-foreground flex items-center justify-between gap-3 text-sm">
                     <span>
@@ -236,7 +234,6 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                 />
             )}
             {canManage && lifecycle && <LifecycleDialog key={lifecycle.id} record={lifecycle} onClose={() => setLifecycle(null)} />}
-            {canPost && posting && <LifecycleDialog key={posting.id} mode="post" record={posting} onClose={() => setPosting(null)} />}
             {canPay && paying && <PaymentDialog key={paying.id} record={paying} methods={options.paymentMethods} onClose={() => setPaying(null)} />}
         </AppLayout>
     );

@@ -47,14 +47,17 @@ export function PaymentDialog({
             return;
         }
         form.transform((data) => ({ ...data, payments: data.payments.map((row) => ({ ...row, amount: canonical(row.amount)! })) }));
-        form.post(route('purchasing.purchase-orders.pay', { id: record.id }), {
-            preserveScroll: true,
-            onSuccess: () => {
-                toast.success('Pembayaran pembelian berhasil dicatat.');
-                onClose();
+        form.post(
+            route(record.status === 'draft' ? 'purchasing.purchase-orders.receive-and-pay' : 'purchasing.purchase-orders.pay', { id: record.id }),
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success('Pembayaran pembelian berhasil dicatat.');
+                    onClose();
+                },
+                onError: () => toast.error('Pembayaran belum berhasil. Periksa isian.'),
             },
-            onError: () => toast.error('Pembayaran belum berhasil. Periksa isian.'),
-        });
+        );
     };
     return (
         <Dialog
@@ -73,7 +76,7 @@ export function PaymentDialog({
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle>Bayar pembelian</DialogTitle>
+                    <DialogTitle>{record.status === 'draft' ? 'Terima dan bayar pembelian' : 'Bayar pembelian'}</DialogTitle>
                     <DialogDescription className="break-all">{record.number}</DialogDescription>
                 </DialogHeader>
                 <form

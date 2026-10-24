@@ -7,6 +7,7 @@ use App\Modules\Finance\Payments\Application\Contracts\PurchasePaymentMethods;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PayPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PostPurchaseOrder;
+use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ReceiveAndPayPurchase;
 use App\Modules\Purchasing\PurchaseOrders\Application\Queries\PurchaseWorkspace;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\ListPurchaseOrdersRequest;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\PayPurchaseOrderRequest;
@@ -26,8 +27,8 @@ class PurchaseOrderController extends Controller implements HasMiddleware
     {
         return [new Middleware('can:purchasing.purchase-orders.view', only: ['index', 'data']),
             new Middleware('can:purchasing.purchase-orders.manage', only: ['store', 'update', 'destroy', 'restore']),
-            new Middleware('can:purchasing.purchase-orders.post', only: ['post']),
-            new Middleware('can:purchasing.purchase-orders.pay', only: ['pay'])];
+            new Middleware('can:purchasing.purchase-orders.post', only: ['post', 'receiveAndPay']),
+            new Middleware('can:purchasing.purchase-orders.pay', only: ['pay', 'receiveAndPay'])];
     }
 
     public function index(ListPurchaseOrdersRequest $request, PurchaseWorkspace $query, PurchasePaymentMethods $methods): Response
@@ -83,5 +84,12 @@ class PurchaseOrderController extends Controller implements HasMiddleware
         $result = $action->handle(strtolower($id), $request->validated('version'), $request->validated('payments'), $request->user()->id);
 
         return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Pembayaran pembelian berhasil dicatat.');
+    }
+
+    public function receiveAndPay(PayPurchaseOrderRequest $request, string $id, ReceiveAndPayPurchase $action): JsonResponse|RedirectResponse
+    {
+        $result = $action->handle(strtolower($id), $request->validated('version'), $request->validated('payments'), $request->user()->id);
+
+        return $request->expectsJson() ? response()->json($result) : back()->with('success', 'Pembelian diterima dan lunas.');
     }
 }
