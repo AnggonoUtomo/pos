@@ -18,7 +18,7 @@ import { SaleContextBar } from './components/sale-context-bar';
 import { useCatalog } from './hooks/use-catalog';
 import { usePaidCheckout } from './hooks/use-paid-checkout';
 import { checkoutKey } from './lib/checkout-key';
-import { localDecimal, parseQuantity } from './lib/decimal';
+import { localDecimal, parsePricingAmount, parseQuantity } from './lib/decimal';
 import { parsePaymentAmount } from './lib/payment';
 import { PosRequestError, posRequest } from './lib/request';
 import type { CartLine, CartQuote, CheckoutAttempt, InvoicePricing, PaymentDraft, PaymentMethod, PosItem, PosPageProps } from './types';
@@ -120,8 +120,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         if (!ready || !lines.length || locked) return;
         invalidate();
         const quantities = lines.map((line) => parseQuantity(line.quantity));
-        const discountValue = parsePaymentAmount(pricing.discount_value);
-        const taxRate = parsePaymentAmount(pricing.tax_rate);
+        const discountValue = parsePricingAmount(pricing.discount_value);
+        const taxRate = parsePricingAmount(pricing.tax_rate);
         if (discountValue === null || taxRate === null) {
             toast.error('Diskon/pajak harus angka Indonesia maksimal dua desimal.');
             return;

@@ -18,3 +18,10 @@ export function parseQuantity(local: string): string | null {
 export function hasStock(stock: string): boolean {
     return /[1-9]/.test(stock);
 }
+
+export function parsePricingAmount(local: string): string | null {
+    const parsed = parseQuantity(local);
+    if (parsed === null || !/^\d{1,28}(?:\.\d{1,2})?$/.test(parsed)) return null;
+    const [whole, fraction = ''] = parsed.split('.');
+    return `${BigInt(whole)}.${fraction.padEnd(2, '0')}`;
+}
