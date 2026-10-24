@@ -18,10 +18,10 @@ import { SaleContextBar } from './components/sale-context-bar';
 import { useCatalog } from './hooks/use-catalog';
 import { usePaidCheckout } from './hooks/use-paid-checkout';
 import { checkoutKey } from './lib/checkout-key';
-import { parseQuantity } from './lib/decimal';
+import { localDecimal, parseQuantity } from './lib/decimal';
 import { parsePaymentAmount } from './lib/payment';
 import { PosRequestError, posRequest } from './lib/request';
-import type { CartLine, CartQuote, CheckoutAttempt, PaymentDraft, PaymentMethod, PosItem, PosPageProps } from './types';
+import type { CartLine, CartQuote, CheckoutAttempt, InvoicePricing, PaymentDraft, PaymentMethod, PosItem, PosPageProps } from './types';
 
 export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [warehouseId, setWarehouseId] = useState('');
@@ -31,6 +31,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [catalogVersion, setCatalogVersion] = useState(0);
     const [lines, setLines] = useState<CartLine[]>([]);
     const [quote, setQuote] = useState<CartQuote | null>(null);
+    const [pricing, setPricing] = useState<InvoicePricing>({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
     const [busy, setBusy] = useState(false);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
     const [error, setError] = useState('');
@@ -53,11 +54,18 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         setWarehouseId(attempt.payload.warehouse_id);
         setCustomerId(attempt.payload.customer_id);
         setLines(attempt.cart);
+        const source = attempt.payload.pricing;
+        setPricing(
+            source
+                ? { ...source, discount_value: localDecimal(source.discount_value), tax_rate: localDecimal(source.tax_rate) }
+                : { discount_type: 'fixed', discount_value: '0', tax_rate: '0' },
+        );
         setPaymentOpen(true);
     }, []);
     const posted = useCallback(() => {
         invalidate();
         setLines([]);
+        setPricing({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
         setQuery('');
         setPage(1);
         setPaymentOpen(false);
@@ -89,7 +97,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         try {
             void checkout.submit({
                 version: 1,
-                total: quote.subtotal,
+                total: quote.total,
                 cart: lines,
                 methods: methods.filter((method) => rows.some((row) => row.methodId === method.id)),
                 payload: {
@@ -97,7 +105,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     warehouse_id: warehouseId,
                     customer_id: customerId,
                     quote_fingerprint: quote.fingerprint,
-                    lines: quote.lines.map((line) => ({ item_id: line.item_id, unit_id: line.unit_id, quantity: line.quantity })),
+                    pricing: quote.pricing,
+                    lines: lines.map((line) => ({ item_id: line.item.id, unit_id: line.unitId, quantity: parseQuantity(line.quantity)! })),
                     payments: rows.map((row) => ({ method_id: row.methodId, amount: parsePaymentAmount(row.amount)! })),
                 },
             });
@@ -111,6 +120,12 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         if (!ready || !lines.length || locked) return;
         invalidate();
         const quantities = lines.map((line) => parseQuantity(line.quantity));
+        const discountValue = parsePaymentAmount(pricing.discount_value);
+        const taxRate = parsePaymentAmount(pricing.tax_rate);
+        if (discountValue === null || taxRate === null) {
+            toast.error('Diskon/pajak harus angka Indonesia maksimal dua desimal.');
+            return;
+        }
         if (quantities.some((value) => value === null)) {
             const errors: Record<string, string[]> = {};
             quantities.forEach((value, index) => {
@@ -127,6 +142,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
             const data = await posRequest<CartQuote>(route('pos.quote'), controller.signal, {
                 warehouse_id: warehouseId,
                 customer_id: customerId,
+                pricing: { discount_type: pricing.discount_type, discount_value: discountValue, tax_rate: taxRate },
                 lines: lines.map((line, index) => ({ item_id: line.item.id, unit_id: line.unitId, quantity: quantities[index] })),
             });
             if (!controller.signal.aborted) {
@@ -143,7 +159,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         } finally {
             if (!controller.signal.aborted) setBusy(false);
         }
-    }, [ready, lines, warehouseId, customerId, invalidate, locked]);
+    }, [ready, lines, warehouseId, customerId, invalidate, locked, pricing]);
 
     useEffect(() => {
         const key = (event: KeyboardEvent) => {
@@ -324,6 +340,11 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                                 }}
                             />
                             <OrderSummary
+                                pricing={pricing}
+                                onPricing={(next) => {
+                                    invalidate();
+                                    setPricing(next);
+                                }}
                                 quote={quote}
                                 loading={busy}
                                 disabled={!ready || !lines.length}
@@ -369,6 +390,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                             onClick={() => {
                                 invalidate();
                                 setLines([]);
+                                setPricing({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
                                 setResetOpen(false);
                                 toast.success('Keranjang dikosongkan.');
                             }}

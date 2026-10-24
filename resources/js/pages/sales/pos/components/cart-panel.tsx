@@ -32,7 +32,7 @@ export function CartPanel({
                     <p className="text-muted-foreground py-10 text-center text-sm">Keranjang masih kosong.</p>
                 ) : (
                     lines.map((line, index) => {
-                        const checked = quote?.lines[index];
+                        const checked = quote?.lines.find((row) => row.item_id === line.item.id && row.unit_id === line.unitId);
                         const error = errors[`lines.${index}.quantity`]?.[0] ?? errors[`lines.${index}.unit_id`]?.[0];
                         return (
                             <div key={line.item.id + ':' + index} className="space-y-3 border-b border-[var(--app-border)] p-4">

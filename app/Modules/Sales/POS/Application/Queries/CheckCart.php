@@ -6,6 +6,7 @@ use App\Modules\Inventory\Items\Application\Contracts\SaleItemCatalog;
 use App\Modules\Inventory\Stock\Application\Contracts\StockAvailability;
 use App\Modules\Sales\Parties\Application\Contracts\ItemPriceCatalog;
 use App\Modules\Sales\POS\Application\DTOs\CartLineData;
+use App\Modules\Sales\POS\Domain\ValueObjects\InvoiceAmounts;
 use App\Modules\Sales\POS\Domain\ValueObjects\LineAmounts;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,7 @@ class CheckCart
         private ItemPriceCatalog $prices, private StockAvailability $stock) {}
 
     /** @param list<CartLineData> $lines */
-    public function handle(string $warehouseId, string $customerId, array $lines, bool $lock = false): array
+    public function handle(string $warehouseId, string $customerId, array $lines, bool $lock = false, array $pricing = []): array
     {
         if (! array_is_list($lines) || count($lines) < 1 || count($lines) > 100) {
             throw ValidationException::withMessages(['lines' => 'Keranjang harus berisi 1 sampai 100 baris.']);
@@ -29,7 +30,7 @@ class CheckCart
             }
         }
 
-        return DB::transaction(function () use ($warehouseId, $customerId, $lines, $lock): array {
+        return DB::transaction(function () use ($warehouseId, $customerId, $lines, $lock, $pricing): array {
             if ($lock) {
                 $this->prices->activeLevels(lock: true);
             }
@@ -76,9 +77,14 @@ class CheckCart
 
             $canonical = $rows;
             usort($canonical, fn ($a, $b) => [$a['item_id'], $a['unit_id']] <=> [$b['item_id'], $b['unit_id']]);
-            $fingerprint = hash('sha256', json_encode([$context, $canonical, (string) $total], JSON_THROW_ON_ERROR));
+            try {
+                $amounts = InvoiceAmounts::calculate($canonical, $pricing);
+            } catch (InvalidArgumentException $e) {
+                throw ValidationException::withMessages(['pricing' => $e->getMessage()]);
+            }
+            $fingerprint = hash('sha256', json_encode([$context, $amounts], JSON_THROW_ON_ERROR));
 
-            return ['lines' => $rows, 'subtotal' => (string) $total, 'customer' => $context['customer'], 'warehouse' => $context['warehouse'],
+            return $amounts + ['customer' => $context['customer'], 'warehouse' => $context['warehouse'],
                 'fingerprint' => $fingerprint, 'checked_at' => now()->toIso8601String()];
         });
     }

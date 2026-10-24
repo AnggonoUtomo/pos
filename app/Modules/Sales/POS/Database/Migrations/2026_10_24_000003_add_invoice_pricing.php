@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('sales_invoices', fn (Blueprint $table) => $table->json('pricing')->nullable());
+    }
+
+    public function down(): void
+    {
+        if (DB::table('sales_invoices')->whereNotNull('pricing')->exists()) {
+            throw new LogicException('Snapshot diskon/pajak tidak boleh dihapus.');
+        }
+        Schema::table('sales_invoices', fn (Blueprint $table) => $table->dropColumn('pricing'));
+    }
+};

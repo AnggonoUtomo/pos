@@ -15,6 +15,17 @@ export function readAttempt(raw: string | null): CheckoutAttempt | null {
     const lines = payload.lines;
     const payments = payload.payments;
     if (
+        payload.pricing !== undefined &&
+        (!record(payload.pricing) ||
+            !['fixed', 'percent'].includes(String(payload.pricing.discount_type)) ||
+            !['discount_value', 'tax_rate'].every(
+                (key) =>
+                    text(payload.pricing && (payload.pricing as Record<string, unknown>)[key]) &&
+                    amount.test((payload.pricing as Record<string, string>)[key]),
+            ))
+    )
+        throw new Error('Snapshot diskon/pajak pemulihan tidak valid.');
+    if (
         ![payload.idempotency_key, payload.warehouse_id, payload.customer_id].every(id) ||
         !text(payload.quote_fingerprint) ||
         !/^[a-f0-9]{64}$/.test(payload.quote_fingerprint) ||

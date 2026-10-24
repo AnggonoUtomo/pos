@@ -22,11 +22,11 @@
 
 ## Paket 2: Transaksi POS
 
-- [ ] Diskon persen/nominal dan pajak server-authoritative.
+- [x] Diskon persen/nominal dan pajak server-authoritative.
   - Acceptance: subtotal, pembulatan, total dan pembayaran konsisten;
     harga level/satuan, permission dan stok tidak boleh dilewati.
   - Verification: test perhitungan/checkout/tampering/rollback terfokus.
-- [ ] Struk, detail invoice dan retur/refund mengikuti snapshot nilai bersih.
+- [x] Struk, detail invoice dan retur/refund mengikuti snapshot nilai bersih.
   - Acceptance: refund tidak melebihi penjualan setelah diskon/pajak;
     sisa pembulatan terjaga.
   - Verification: test retur dan browser transaksi lengkap.
@@ -56,8 +56,13 @@
 
 ## Bukti Verifikasi
 
-Belum ada verifikasi runtime baru untuk empat paket ini.
-
 Paket stok: test terfokus baru 9/71 PASS; regresi backend 783/6194 PASS.
 Typecheck, ESLint Stock/Transfers, build2751 dan Pint scoped PASS. Browser
-operasional sedang diselesaikan; belum aktivasi migration lokal/push paket.
+operasional DevTools PASS: transfer posted, koreksi keluar 0,5, ledger, screenshot
+desktop1440/tablet1024 dan console. Bukti ignored pada
+storage/framework/testing/transfer-draft-browser-a9c4e904f019871a. Belum aktivasi
+migration lokal/push paket. Savepoint source 132477c.
+
+Paket POS: focused POS/Returns 87/694 PASS; sesudah tambahan DTO snapshot,
+checkout16/153 PASS. Typecheck, ESLint POS dan Pint PASS. Browser transaksi baru
+dan build final menunggu gabungan dengan identitas toko (tidak mengulang tema).

@@ -28,7 +28,9 @@ class CartQuoteRequest extends CatalogRequest
 
     public function rules(): array
     {
-        return ['warehouse_id' => ['required', 'ulid'], 'customer_id' => ['required', 'ulid'],
+        return ['pricing' => ['sometimes', 'array:discount_type,discount_value,tax_rate'],
+            'pricing.discount_type' => ['sometimes', 'in:fixed,percent'], 'pricing.discount_value' => ['sometimes', 'string'], 'pricing.tax_rate' => ['sometimes', 'string'],
+            'warehouse_id' => ['required', 'ulid'], 'customer_id' => ['required', 'ulid'],
             'lines' => ['required', 'array', 'list', 'min:1', 'max:100'],
             'lines.*' => ['array:item_id,unit_id,quantity'], 'lines.*.item_id' => ['required', 'ulid'],
             'lines.*.unit_id' => ['required', 'ulid'], 'lines.*.quantity' => ['required', 'string', 'regex:/^\d{1,14}(?:\.\d{1,6})?$/D']];
@@ -37,7 +39,7 @@ class CartQuoteRequest extends CatalogRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
-            if (array_diff(array_keys($this->all()), ['warehouse_id', 'customer_id', 'lines', '_token']) !== []) {
+            if (array_diff(array_keys($this->all()), ['warehouse_id', 'customer_id', 'lines', 'pricing', '_token']) !== []) {
                 $validator->errors()->add('cart', 'Hanya konteks, barang, satuan dan kuantitas yang boleh dikirim.');
             }
         }];

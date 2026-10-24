@@ -14,7 +14,9 @@ use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use App\Modules\Sales\POS\Application\Actions\PostInvoice;
 use App\Modules\Sales\POS\Application\Contracts\InvoiceRepository;
+use App\Modules\Sales\POS\Application\Contracts\ReturnInvoiceLookup;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
+use App\Modules\Sales\Returns\Domain\ValueObjects\RefundInvoiceBasis;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +62,30 @@ class PosCheckoutTest extends TestCase
     {
         return array_map(fn ($table) => DB::table($table)->orderBy('id')->get()->toJson(), ['sales_invoices', 'sales_invoice_lines', 'stock_issues',
             'stock_issue_lines', 'stock_balances', 'stock_movements', 'fifo_layers', 'fifo_consumptions', 'payment_receipts', 'payment_records', 'activity_log']);
+    }
+
+    public function test_discount_tax_checkout_snapshot_and_refund_basis_use_the_same_net_value(): void
+    {
+        $this->input['pricing'] = ['discount_type' => 'percent', 'discount_value' => '10', 'tax_rate' => '11'];
+        $quote = $this->postJson('/pos/quote', array_intersect_key($this->input, array_flip(['warehouse_id', 'customer_id', 'lines', 'pricing'])))
+            ->assertOk()->assertJsonPath('total', '99900.00')->json();
+        $this->input['quote_fingerprint'] = $quote['fingerprint'];
+        $invoice = $this->postJson('/pos/invoices', $this->input)->assertCreated()->assertJsonPath('discount_amount', '10000.00')
+            ->assertJsonPath('tax_amount', '9900.00')->assertJsonPath('payments.change', '10100.00')->json();
+        $basis = app(ReturnInvoiceLookup::class)->refundBasis($invoice['id']);
+        $net = RefundInvoiceBasis::fromSnapshot($basis->header, $basis->lines);
+        $this->assertSame('99900.00', $net->total);
+        $this->assertSame('99900.00', $net->lines[$invoice['lines'][0]['id']]['net_amount']);
+        $this->assertSame('10.00', json_decode(DB::table('sales_invoices')->value('pricing'), true)['discount_value']);
+        $this->assertSame($invoice, $this->postJson('/pos/invoices', $this->input)->assertCreated()->json());
+    }
+
+    public function test_pricing_changes_require_a_fresh_quote_and_fail_without_mutations(): void
+    {
+        $before = $this->fingerprint();
+        $this->input['pricing'] = ['discount_type' => 'fixed', 'discount_value' => '10000', 'tax_rate' => '0'];
+        $this->postJson('/pos/invoices', $this->input)->assertUnprocessable()->assertJsonValidationErrors('quote_fingerprint');
+        $this->assertSame($before, $this->fingerprint());
     }
 
     public function test_posting_is_atomic_and_receipt_does_not_leak_private_data(): void

@@ -15,6 +15,12 @@ Satu checklist ini menjadi acuan progres lintas module.
 - Koreksi stok dengan alasan wajib, permission khusus, dan ledger/audit.
 - Diskon persen/nominal dan pajak eksplisit; tarif tidak diasumsikan dari aturan
   perpajakan. Harga transaksi dan basis retur mengikuti snapshot server.
+  MVP memakai diskon tingkat nota, lalu pajak tambahan persen atas nilai bersih.
+  Tarif 0..100%, dua desimal; diskon tidak boleh menghabiskan seluruh subtotal.
+  Alokasi diskon kumulatif proporsional dibulatkan turun per baris dengan sisa
+  terjaga; pajak per baris HALF_UP dua desimal. Total header adalah jumlah baris.
+  Nilai request, tipe diskon dan tarif disimpan; refund memakai nilai bersih
+  baris asal, bukan harga master. Belum pajak inklusif/multi-tarif/gratis.
 - Pengaturan identitas toko/struk dan laporan operasional minimum.
 - Piutang/utang, pembayaran parsial, serial number, garansi, approval, multi
   cabang, akuntansi penuh, ekspor lanjutan, dan kosmetik tema ditunda.

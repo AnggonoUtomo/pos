@@ -39,6 +39,6 @@ class POSController extends Controller implements HasMiddleware
         $data = $request->validated();
         $lines = array_map(fn ($line) => new CartLineData($line['item_id'], $line['unit_id'], $line['quantity']), $data['lines']);
 
-        return response()->json($query->handle($data['warehouse_id'], $data['customer_id'], $lines));
+        return response()->json($query->handle($data['warehouse_id'], $data['customer_id'], $lines, pricing: $data['pricing'] ?? []));
     }
 }

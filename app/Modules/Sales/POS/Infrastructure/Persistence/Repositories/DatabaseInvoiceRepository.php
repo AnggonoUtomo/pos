@@ -29,6 +29,7 @@ class DatabaseInvoiceRepository implements InvoiceRepository
     {
         $row['actor_id'] = (int) $row['actor_id'];
         $row['payments'] = json_decode($row['payments'], true, flags: JSON_THROW_ON_ERROR);
+        $row['pricing'] = isset($row['pricing']) ? json_decode($row['pricing'], true, flags: JSON_THROW_ON_ERROR) : null;
         $row['posted_at'] = Carbon::parse($row['posted_at'], config('app.timezone'))->utc()->toISOString();
         foreach (['subtotal', 'total', 'discount_amount', 'tax_amount', 'total_cost'] as $key) {
             $row[$key] = (string) BigDecimal::of((string) $row[$key])->toScale($key === 'total_cost' ? 6 : 2);

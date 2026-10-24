@@ -34,7 +34,7 @@ export function PaymentDialog({
     const [loading, setLoading] = useState(false);
     const [loadError, setLoadError] = useState('');
     const [version, setVersion] = useState(0);
-    const total = pending?.total ?? quote?.subtotal ?? '0.00';
+    const total = pending?.total ?? quote?.total ?? '0.00';
     const fingerprint = quote?.fingerprint;
     useEffect(() => {
         if (!open || pending || !canPost || !fingerprint) return;

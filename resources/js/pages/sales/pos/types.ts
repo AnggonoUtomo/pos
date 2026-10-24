@@ -21,6 +21,10 @@ export type QuoteLine = {
 export type CartQuote = {
     lines: QuoteLine[];
     subtotal: string;
+    total: string;
+    discount_amount: string;
+    tax_amount: string;
+    pricing: InvoicePricing;
     checked_at: string;
     customer: CustomerOption;
     warehouse: WarehouseOption;
@@ -31,6 +35,7 @@ export type PosPageProps = { warehouses: WarehouseOption[]; customers: CustomerO
 export type PaymentMethod = { id: string; code: string; name: string; type: 'cash' | 'debit' | 'transfer' };
 export type PaymentDraft = { methodId: string; amount: string };
 export type CheckoutPayload = {
+    pricing?: InvoicePricing;
     idempotency_key: string;
     warehouse_id: string;
     customer_id: string;
@@ -38,6 +43,7 @@ export type CheckoutPayload = {
     lines: { item_id: string; unit_id: string; quantity: string }[];
     payments: { method_id: string; amount: string }[];
 };
+export type InvoicePricing = { discount_type: 'fixed' | 'percent'; discount_value: string; tax_rate: string };
 export type CheckoutAttempt = { version: 1; payload: CheckoutPayload; total: string; cart: CartLine[]; methods: PaymentMethod[] };
 export type PostedInvoice = {
     id: string;
