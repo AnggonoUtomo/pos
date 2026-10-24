@@ -41,7 +41,7 @@ const mainNavGroups: NavGroup[] = [
                 permission: ['platform.identity.view', 'platform.identity.users.view'],
             },
             {
-                title: 'Pengaturan Perusahaan',
+                title: 'Pengaturan toko',
                 url: '/platform/company-settings',
                 icon: Settings,
                 badge: 'Aktif',

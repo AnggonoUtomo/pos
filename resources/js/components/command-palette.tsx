@@ -61,7 +61,7 @@ const commandItems = [
         tone: 'text-violet-600 dark:text-violet-300',
     },
     {
-        title: 'Pengaturan Perusahaan',
+        title: 'Pengaturan toko',
         description: 'Konfigurasi perusahaan dan preferensi sistem',
         icon: Settings,
         tone: 'text-slate-600 dark:text-slate-300',

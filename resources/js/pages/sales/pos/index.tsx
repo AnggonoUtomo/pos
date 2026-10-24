@@ -147,7 +147,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
             });
             if (!controller.signal.aborted) {
                 setQuote(data);
-                toast.success('Keranjang berhasil diperiksa.');
+                toast.success('Keranjang berhasil diperiksa.', { position: 'top-right' });
             }
         } catch (error) {
             if (!controller.signal.aborted) {
