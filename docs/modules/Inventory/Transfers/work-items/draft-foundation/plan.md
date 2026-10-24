@@ -5,7 +5,7 @@
 | 1 Baseline | Passed | Scope/dokumen/checklist dan dry-run | Review boundary/diff |
 | 2 Schema/Domain | Passed | Scaffold, ULID/schema, quantity exact6 | Red-green,4 test/20 assertion, Pint |
 | 3 CRUD | Passed | Prepare/save/query/routes/permission |9 test/85 assertion, snapshot/stale/no-op/auth/CSRF |
-| 4 Lifecycle/Demo | Planned | Delete/restore/version/no-op/audit, demo | Rollback, stale, idempotency/ledger fingerprint |
+| 4 Lifecycle/Demo | Passed | Delete/restore/version/no-op/audit, demo |16 test/126 assertion, rollback/model veto/demo, Pint |
 | 5 UI | Planned | Page/dialog/table/filter/nav/palette/shortcut | Lint/typecheck/build, DevTools desktop/tablet |
 | 6 QA/Delivery | Planned | Native/full/activation/docs/commit/push | MySQL worker/guard, full suite, activation dua kali |
 

@@ -30,7 +30,7 @@
 
 ## Increment 4: Lifecycle, Audit Dan Demo
 
-- [ ] Delete/restore berversi, audit atomic dan demo relasional.
+- [x] Delete/restore berversi, audit atomic dan demo relasional.
   - Acceptance: snapshot tetap, non-draft immutable, rollback saat audit/model veto,
     demo tidak overwrite edited/trashed atau mengubah ledger/master/grant.
   - Verification: focused lifecycle/rollback/demo, production refusal.
@@ -70,3 +70,8 @@ PASS; Pint PASS. Belum menjalankan migration pada DB lokal.
 Increment3: 9 test/85 assertion PASS, termasuk snapshot/no-op/stale/pasangan,
 quantity/forgery, permission/options terpisah, CSRF dan query literal/filter.
 Error duplicate import Route sisa scaffold diperbaiki sebelum test lulus.
+
+Increment4: 16 test/126 assertion PASS; lifecycle/stale/immutable super-system,
+audit veto seluruh mutation, model veto, down populated guard dan demo CCTV/
+kelistrikan idempotent/skip/production refusal. Master/ledger/grant tidak
+dimutasi oleh demo. Pint PASS. Tidak ada duplicate inherited test pada suite.
