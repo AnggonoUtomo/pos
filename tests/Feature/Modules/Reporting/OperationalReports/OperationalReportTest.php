@@ -19,7 +19,7 @@ class OperationalReportTest extends TestCase
         ReturnRefundFixture::posted($invoice, '0.5');
         Permission::findOrCreate('reporting.operational.view', 'web');
         $this->actingAs(User::factory()->create()->givePermissionTo('reporting.operational.view'));
-        $url = '/reports/operations/data?'.http_build_query(['from' => now()->toDateString(), 'to' => now()->toDateString()]);
+        $url = '/reports/operations/data?'.http_build_query(['from' => now('Asia/Jakarta')->toDateString(), 'to' => now('Asia/Jakarta')->toDateString()]);
         $this->getJson($url)->assertOk()->assertJsonPath('sales.total', '1235100.00')->assertJsonPath('sales.count', 2)
             ->assertJsonPath('sales_returns.count', 1)->assertJsonPath('payments.incoming', '1235100.000000')->assertJsonPath('payments.scope', 'all_warehouses');
         $other = DB::table('warehouses')->where('id', '!=', $invoice['warehouse_id'])->value('id');
