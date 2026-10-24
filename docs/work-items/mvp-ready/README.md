@@ -17,6 +17,11 @@ go-live, perangkat/printer nyata, dan konfigurasi deploy produksi tetap milik
 operator/admin, belum dianggap selesai oleh agent. Fitur tambahan tetap
 dibekukan sampai UAT pada [panduan operasional](OPERASIONAL.md) disetujui.
 
+Pengecualian eksplisit dari user: module
+[Pengaturan Operasional](../../modules/Platform/OperationalSettings/README.md)
+untuk opsi struk/backup. Implementasi aktif lokal; UAT printer fisik, tablet,
+salinan backup terpisah dan konfigurasi production belum dianggap selesai.
+
 ## Batas MVP
 
 - Transfer penuh satu posting atomik; tidak ada barang dalam perjalanan.

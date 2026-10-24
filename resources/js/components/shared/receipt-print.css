@@ -1,0 +1,74 @@
+.pos-receipt-print {
+    display: none;
+}
+
+.receipt-paper {
+    max-width: 100%;
+    color: #111;
+    background: #fff;
+}
+
+.receipt-paper[data-paper='58mm'] {
+    width: 54mm;
+}
+
+.receipt-paper[data-paper='80mm'] {
+    width: 76mm;
+}
+
+.receipt-paper:not([data-paper='a4']) :is(p, dt, dd, span, th, td) {
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.receipt-paper:not([data-paper='a4']) dl:first-of-type {
+    grid-template-columns: 4rem minmax(0, 1fr);
+}
+
+.receipt-paper:not([data-paper='a4']) table thead {
+    display: none;
+}
+
+.receipt-paper:not([data-paper='a4']) :is(table, tbody) {
+    display: block;
+    width: 100%;
+}
+
+.receipt-paper:not([data-paper='a4']) tbody tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 6px 0;
+}
+
+.receipt-paper:not([data-paper='a4']) tbody td {
+    padding: 2px;
+}
+
+.receipt-paper:not([data-paper='a4']) tbody td:first-child {
+    grid-column: 1 / -1;
+}
+
+@media print {
+    html body:has(> .pos-receipt-print) {
+        overflow: visible !important;
+        height: auto !important;
+        color: #111 !important;
+        background: #fff !important;
+    }
+
+    body:has(> .pos-receipt-print) > :not(.pos-receipt-print) {
+        display: none !important;
+    }
+
+    body > .pos-receipt-print {
+        display: block !important;
+    }
+
+    .pos-receipt-print :is(.text-muted-foreground, .text-emerald-700) {
+        color: #333 !important;
+    }
+
+    .pos-receipt-print tr {
+        break-inside: avoid;
+    }
+}

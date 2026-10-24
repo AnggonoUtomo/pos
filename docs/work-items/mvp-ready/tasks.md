@@ -138,3 +138,71 @@ di SampleUI/storage tidak dimasukkan; Old-docs tidak disentuh.
 
 Rincian [OPERASIONAL.md](OPERASIONAL.md). Pending manusia/deploy ini tidak
 ditandai selesai hanya karena QA automated lulus. Tidak menambah fitur baru.
+
+## Lanjutan: Penerimaan Operasional Windows/LAN
+
+Target dikonfirmasi user: PC Windows/Laragon ini melayani kasir dan tablet
+di jaringan toko. Ini penyelesaian Paket 4, bukan penambahan fitur/modul.
+
+### Increment 1: Inventaris Dan Lembar Penerimaan
+
+- [x] Baca panduan aktif dan periksa environment tanpa mengubah data.
+  - Acceptance: printer, scheduler, HTTPS dan virtual host aktual diketahui;
+    credential/key tidak dibaca atau ditampilkan.
+  - Verification: inventaris Windows, request HTTPS dan konfigurasi vhost.
+- [x] Siapkan lembar UAT operator/printer dan runbook Windows/LAN.
+  - Acceptance: hasil harapan terukur, persetujuan manusia tetap pending;
+    `.env` aktif, data, firewall dan service tidak diubah tanpa kesiapan target.
+  - Verification: review skenario, link relatif dan `git diff --check`.
+- [ ] Commit increment dokumentasi yang sudah diverifikasi.
+
+### Increment 2: Jadwal Dan Media Backup
+
+- [x] Konfirmasi jadwal opsional/jam WIB dikelola module Pengaturan Operasional.
+- [ ] Konfirmasi lokasi salinan terpisah bersama penanggung jawab toko.
+- [x] Daftarkan task Windows dengan path executable absolut, working directory
+  project, pencegah overlap dan penanganan jadwal terlewat.
+  - Acceptance: tanpa password pada argumen/file, tidak menimpa task unrelated;
+    status kegagalan terlihat dan tidak diklaim off-device bila masih satu PC.
+  - Verification: definisi task, run terkontrol dan LastTaskResult.
+- [ ] Operator menetapkan penanggung jawab, media terpisah dan restore berkala.
+
+### Increment 3: Konfigurasi Dan Persetujuan Penggunaan
+
+- [ ] Uji akses tablet lewat hostname yang sama dan sertifikat terpercaya.
+- [ ] Terapkan document root public, HTTPS, production/debug/cookie setelah
+  rute akses client siap; pertahankan APP_KEY/data/grant existing.
+  - Verification: sintaks Apache, readiness production, login dan asset
+    PC/tablet; perubahan server tidak mengganggu virtual host project lain.
+- [ ] Operator melaksanakan UAT dan printer fisik; agent hanya merekam bukti.
+- [ ] Penanggung jawab menyetujui go-live; commit/push hasil yang terverifikasi.
+
+### Inventaris Awal
+
+- Windows hanya menampilkan printer virtual; default Microsoft Print to PDF.
+  Printer fisik/model/lebar kertas/koneksi belum dikonfirmasi.
+- Tidak ditemukan scheduled task bernama POS untuk backup.
+- PHP 8.4.16 dan MySQL/mysqldump 8.0.30 tersedia lewat executable Laragon.
+- `https://pos.test/login` mengembalikan HTTP 200 tanpa melewati validasi TLS
+  pada PC ini. Ini bukan bukti akses atau trust sertifikat pada tablet.
+- Vhost `auto.pos.test.conf` melayani 80/443, tetapi DocumentRoot masih root
+  project. Penyesuaian public direncanakan sebelum produksi.
+- Tidak mengulang gate backend/frontend karena source runtime belum berubah.
+
+### Hasil Lanjutan
+
+User meminta module baru Platform/OperationalSettings, scope eksplisit format
+struk A4/58/80 dan dialog OS, backup opsional/jam WIB/status, tanpa secret/.env/
+raw printer dari UI. Implementasi dan QA tercatat pada
+[work item module](../../modules/Platform/OperationalSettings/work-items/initial-settings/tasks.md).
+Ini pengecualian freeze yang disetujui user, bukan penambahan fitur bisnis lain.
+
+Runbook Windows/LAN dan lembar UAT operator sudah tersedia. Module aktif lokal
+batch28 tanpa reset/grant; task Windows POS-OperationalScheduler terpasang,
+tick LastTaskResult=0. Backup otomatis tetap mati sampai operator mengaktifkan
+jadwal di UI. Backup/restore terverifikasi, preferensi/status, preview desktop/
+tablet dan rendering PDF tiga ukuran PASS. PDF bukan bukti cetak fisik.
+
+User mengonfirmasi tablet BELUM tersedia. Maka pengujian LAN/TLS tablet,
+konfigurasi production aktif, UAT manusia/printer serta salinan backup di
+perangkat terpisah masih pending; checklist tersebut sengaja tidak dicentang.

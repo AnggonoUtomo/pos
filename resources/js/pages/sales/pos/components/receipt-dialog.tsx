@@ -1,11 +1,12 @@
+import { ReceiptPrintPortal } from '@/components/shared/receipt-print';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import type { SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { LoaderCircle, Printer, RefreshCw } from 'lucide-react';
-import { createPortal } from 'react-dom';
 import { localDecimal, money } from '../lib/decimal';
 import type { PostedInvoice } from '../types';
-import './receipt.css';
 
 function ReceiptBody({ receipt }: { receipt: PostedInvoice }) {
     return (
@@ -108,6 +109,7 @@ export function ReceiptDialog({
     error: string;
     onReload: () => void;
 }) {
+    const paper = usePage<SharedData>().props.printing?.paper ?? 'a4';
     return (
         <>
             <Dialog open={open} onOpenChange={onOpenChange}>
@@ -152,15 +154,11 @@ export function ReceiptDialog({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            {open &&
-                receipt &&
-                typeof document !== 'undefined' &&
-                createPortal(
-                    <section className="pos-receipt-print">
-                        <ReceiptBody receipt={receipt} />
-                    </section>,
-                    document.body,
-                )}
+            {open && receipt && (
+                <ReceiptPrintPortal paper={paper}>
+                    <ReceiptBody receipt={receipt} />
+                </ReceiptPrintPortal>
+            )}
         </>
     );
 }

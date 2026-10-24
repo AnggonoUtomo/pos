@@ -1037,3 +1037,26 @@ privat POS/Purchasing. Detail [specification](modules/Finance/Payments/specifica
 
 Semua endpoint memakai auth/CSRF/authorization backend. Detail dan bukti pada
 [MVP siap toko](work-items/mvp-ready/tasks.md), aturan biaya/harga pada ADR-019.
+
+## Pengaturan Operasional
+
+GET/PUT `/platform/operational-settings`, nama route
+`platform.operational-settings.index/update`, session web/auth/verified.
+Permission `platform.operational-settings.view/manage` per action. PUT hanya
+menerima receipt_paper (`a4`, `58mm`, `80mm`), backup_enabled boolean,
+backup_time `HH:mm` 24 jam Asia/Jakarta, version integer. Unknown field422,
+stale version422, mutation/audit atomic; no-op tidak membuat audit ganda.
+
+Index memuat settings dan backup {scheduler_seen_at,last_run}; last_run berisi
+scheduled_for/status/attempts/started_at/finished_at/error_code, bukan output
+command, credential atau akses unduh dump. Timestamp disimpan UTC dan UI WIB.
+Shared Inertia printing {paper} tersedia hanya untuk user terautentikasi,
+tidak membocorkan konfigurasi/status backup kepada role tanpa view settings.
+
+Tidak ada endpoint web untuk menjalankan backup, edit .env, mengirim ESC/POS,
+mengunggah/mengunduh dump atau menulis path arbitrary. CLI `pos:backup-due`
+dipanggil scheduler setiap menit; jadwal aplikasi opsional/default mati.
+Satu sukses/hari WIB, retry gagal maksimal3/jeda10menit, lease15menit dan
+token fencing menolak completion dari attempt lama. Hari terlewat tidak
+direkonstruksi. Ukuran thermal mengatur area cetak 54/76 mm dengan margin2 mm;
+driver/dialog OS tetap harus memilih kertas fisik 58/80 mm yang sesuai.

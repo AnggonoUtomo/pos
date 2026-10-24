@@ -29,10 +29,13 @@ export interface NavItem {
     permission?: string | string[];
 }
 
+export type ReceiptPaper = 'a4' | '58mm' | '80mm';
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    printing?: { paper: ReceiptPaper } | null;
     [key: string]: unknown;
 }
 

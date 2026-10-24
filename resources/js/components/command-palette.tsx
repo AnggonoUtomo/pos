@@ -20,6 +20,7 @@ import {
     Settings,
     ShieldCheck,
     ShoppingCart,
+    SlidersHorizontal,
     Tags,
     Truck,
     Warehouse,
@@ -27,6 +28,14 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
+    {
+        title: 'Pengaturan operasional',
+        description: 'Format struk dan jadwal backup',
+        url: '/platform/operational-settings',
+        permission: 'platform.operational-settings.view',
+        icon: SlidersHorizontal,
+        tone: 'text-amber-600 dark:text-amber-300',
+    },
     {
         title: 'Transfer antar-gudang',
         description: 'Draft dan posting transfer stok',

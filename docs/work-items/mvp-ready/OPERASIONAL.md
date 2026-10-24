@@ -1,5 +1,9 @@
 # Menjalankan MVP Toko
 
+Target penggunaan: PC Windows/Laragon dan tablet pada jaringan toko.
+Panduan spesifik [Windows/LAN](DEPLOY-WINDOWS.md) dan
+[lembar UAT operator/printer](UAT-OPERATOR.md) melengkapi dokumen ini.
+
 ## Aktivasi Dan Backup
 
 1. Start All Laragon, pastikan MySQL dan virtual host pos.test berjalan.
@@ -30,7 +34,8 @@ mengubah grant existing. Super-system memakai bypass existing; role operator
 diatur admin melalui Identitas & Akses sesuai kebutuhan toko.
 
 Salin backup ke penyimpanan terpisah dengan akses terbatas dan enkripsi. Jadwalkan
-`php artisan pos:backup` harian melalui scheduler OS; verifikasi restore berkala
+backup opsional dari halaman Operasional; runner OS mengikuti
+[panduan Windows](DEPLOY-WINDOWS.md). Verifikasi restore berkala
 saat tidak ada transaksi. Backup database belum mencakup .env/APP_KEY, file
 storage bisnis atau konfigurasi printer: simpan semuanya secara aman terpisah,
 bukan di Git atau dokumentasi. Tidak ada upload/retention otomatis pada fase ini.
@@ -39,7 +44,8 @@ bukan di Git atau dokumentasi. Tidak ada upload/retention otomatis pada fase ini
 
 Untuk server produksi: arahkan document root ke public, gunakan HTTPS, set
 APP_ENV=production, APP_DEBUG=false, APP_URL sesuai host dan SESSION_SECURE_COOKIE=true.
-Gunakan APP_KEY unik, credential DB khusus, izin tulis hanya storage/bootstrap/cache,
+Pertahankan APP_KEY existing; jangan regenerate key saat database sudah dipakai.
+Gunakan credential DB khusus, izin tulis hanya storage/bootstrap/cache,
 dan batasi akses backup/database. Jangan menyimpan nilai secret dalam laporan.
 Build asset harus tersedia dan public/hot tidak boleh menunjuk server Vite mati.
 Jalankan `php artisan config:cache`, `php artisan route:cache`, lalu

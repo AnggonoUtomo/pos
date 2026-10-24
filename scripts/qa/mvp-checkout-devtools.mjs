@@ -5,6 +5,7 @@ import { mkdir, writeFile, unlink } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import path from 'node:path';
 import { createInterface } from 'node:readline';
+import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 assert(process.env.QA_DEVTOOLS_ENTRY, 'Gunakan executable Chrome DevTools MCP existing.');
@@ -62,7 +63,8 @@ try {
         return JSON.parse(result.stdout);
     };
     const password = randomBytes(32).toString('hex');
-    const setup = fixture({ password });
+    const operational = process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
+    const setup = fixture({ password, operational_only: operational });
     assert.equal(setup.status, 'READY');
     console.log('PASS: fixture MVP disposable siap');
     server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')],
@@ -117,12 +119,94 @@ try {
         ] });
         await click(pageId, 'button', 'Log in');
         await locate(pageId, 'heading', 'Dasbor Operasional');
-        await tool('navigate_page', { pageId, url: `${url}/platform/company-settings` });
+        await tool('navigate_page', { pageId, url: `${url}${operational ? '/platform/operational-settings' : '/platform/company-settings'}` });
         return pageId;
     };
     const pageId = await login('manager');
 
-    if (process.argv.includes('--navigation-only')) {
+    if (process.argv.includes('--operational-pdf-only')) {
+        assert(process.env.QA_PLAYWRIGHT_MODULE,'Gunakan Playwright existing hanya untuk print-to-PDF.');
+        const {chromium}=createRequire(import.meta.url)(process.env.QA_PLAYWRIGHT_MODULE);
+        const browser=await chromium.launch({channel:'chrome',headless:true});
+        try {
+            const page=await browser.newPage({viewport:{width:1440,height:1000}});
+            await page.goto(`${url}/login`);
+            await page.getByLabel('Email address').fill('qa-manager@example.test');
+            await page.getByLabel('Password',{exact:true}).fill(password);
+            await page.getByRole('button',{name:'Log in',exact:true}).click();
+            await page.getByRole('heading',{name:'Dasbor Operasional',exact:true}).waitFor();
+            await page.goto(`${url}/platform/operational-settings`);
+            for(const [label,paper,width] of [['58 mm','58mm',58],['80 mm','80mm',80],['A4','a4',210]]) {
+                await page.getByRole('combobox',{name:'Format kertas'}).click();
+                await page.getByRole('option',{name:label,exact:true}).click();
+                await page.getByRole('button',{name:'Uji cetak',exact:true}).click();
+                await page.locator(`.pos-receipt-print[data-paper="${paper}"]`).waitFor({state:'attached'});
+                await page.emulateMedia({media:'print'});
+                assert(await page.locator('.pos-receipt-print').isVisible());
+                assert(!(await page.locator('#app').isVisible()),'Workspace harus tersembunyi saat print');
+                const overflow=await page.locator('.pos-receipt-print .receipt-paper').evaluate(el=>el.scrollWidth>el.clientWidth);
+                assert(!overflow,'Receipt print overflow');
+                const pdf=await page.pdf({path:path.join(artifacts,`print-${paper}.pdf`),
+                    width:`${width}mm`,height:paper==='a4'?'297mm':'200mm',printBackground:true,preferCSSPageSize:true});
+                assert(pdf.length>1000 && pdf.subarray(0,5).toString()==='%PDF-','PDF kosong/tidak valid');
+                const media=pdf.toString('latin1').match(/\/MediaBox\s*\[0 0 ([\d.]+) ([\d.]+)\]/);
+                assert(media && Math.abs(Number(media[1])-width*72/25.4)<1,'Lebar PDF tidak sesuai kertas');
+                await page.emulateMedia({media:'screen'});
+                await page.getByRole('button',{name:'Tutup',exact:true}).click();
+            }
+            console.log(JSON.stringify({status:'PASS',checks:['58mm/80mm/A4 PDF dimensions','print-only portal','no text overflow'],artifacts:path.relative(root,artifacts)}));
+        } finally { await browser.close(); }
+    } else if (process.argv.includes('--operational-only')) {
+        await tool('navigate_page', {pageId, url: `${url}/platform/operational-settings`});
+        await tool('resize_page', {pageId, width:1440, height:1000});
+        await locate(pageId, 'heading', 'Pengaturan operasional');
+        const choosePaper = async (label) => { await click(pageId, 'combobox', 'Format kertas'); await click(pageId, 'option', label); };
+        await choosePaper('58 mm');
+        await click(pageId, 'checkbox', 'Backup otomatis harian');
+        await writeFile(path.join(artifacts,'operational-form-snapshot.txt'),await snapshot(pageId));
+        await tool('fill_form', {pageId, elements:[{uid:await locate(pageId,'InputTime','Jam backup (WIB)'),value:'22:15'}]});
+        // Puppeteer's time-input fill does not notify React; use native keyboard events.
+        await click(pageId,'spinbutton','Hours Hours');
+        await tool('press_key',{pageId,key:'ArrowUp'});
+        await tool('press_key',{pageId,key:'ArrowDown'});
+        await click(pageId, 'button', 'Simpan pengaturan');
+        await until(pageId, value => value.includes('Pengaturan operasional tersimpan.'), 'operational save');
+        await tool('navigate_page', {pageId, url: `${url}/platform/operational-settings`});
+        await locate(pageId,'heading','Pengaturan operasional');
+        const persisted=await inspect(pageId,`() => ({paper:document.querySelector('#receipt-paper')?.textContent,time:document.querySelector('#backup-time')?.value,enabled:document.querySelector('#backup-enabled')?.getAttribute('aria-checked')})`);
+        assert.deepEqual(persisted,{paper:'58 mm',time:'22:15',enabled:'true'},'Preferensi tidak tersimpan: '+JSON.stringify(persisted));
+        await tool('take_screenshot', {pageId,filePath:path.join(artifacts,'desktop-operational.png')});
+        for (const [label, paper, millimeters] of [['58 mm','58mm',54],['80 mm','80mm',76],['A4','a4',null]]) {
+            await choosePaper(label);
+            await click(pageId, 'button', 'Uji cetak');
+            await locate(pageId, 'dialog', 'Uji cetak');
+            const frame = await inspect(pageId, `() => {
+                const receipt=document.querySelector('.pos-receipt-print');
+                const sample=document.querySelector('[role="dialog"] .receipt-paper');
+                return {paper:receipt?.dataset.paper,width:sample?.getBoundingClientRect().width,
+                    overflow:sample.scrollWidth > sample.clientWidth, bodyOverflow:document.documentElement.scrollWidth>innerWidth,
+                    sample:sample.textContent.includes('Bukan bukti transaksi')};
+            }`);
+            assert.equal(frame.paper,paper); assert(frame.sample && !frame.overflow && !frame.bodyOverflow);
+            if (millimeters) assert(Math.abs(frame.width - millimeters * 96 / 25.4) < 2, 'Lebar receipt tidak sesuai');
+            await tool('take_screenshot',{pageId,filePath:path.join(artifacts,`preview-${paper}.png`)});
+            await click(pageId, 'button', 'Tutup');
+        }
+        await choosePaper('80 mm');
+        await click(pageId, 'checkbox', 'Backup otomatis harian');
+        await click(pageId, 'button', 'Simpan pengaturan');
+        await until(pageId, value => value.includes('Backup otomatis nonaktif'), 'backup disabled');
+        await tool('resize_page',{pageId,width:1024,height:768});
+        const frame = await inspect(pageId,'() => ({overflow:document.documentElement.scrollWidth>innerWidth})');
+        assert(!frame.overflow,'Overflow pengaturan tablet');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'tablet-operational.png')});
+        const errors=await tool('list_console_messages',{pageId,types:['error']});
+        assert(errors.includes('<no console messages found>'),'Console errors');
+        const state=fixture({verify_operational:true});
+        const report={status:'PASS',checks:['save/reload paper+optional schedule','58/80/A4 preview widths','no business mutations','desktop/tablet','clean console'],state,artifacts:path.relative(root,artifacts)};
+        await writeFile(path.join(artifacts,'operational-report.json'),JSON.stringify(report,null,2));
+        console.log(JSON.stringify(report));
+    } else if (process.argv.includes('--navigation-only')) {
         await tool('resize_page', {pageId, width:1024, height:768});
         const layout = await inspect(pageId, `() => {
             const link = [...document.querySelectorAll('a')].find(a => a.getAttribute('href') === '/platform/company-settings');

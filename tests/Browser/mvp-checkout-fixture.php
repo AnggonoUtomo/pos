@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Modules\Platform\CompanySettings\Database\Seeders\CompanySettingsAccessSeeder;
+use App\Modules\Platform\OperationalSettings\Database\Seeders\OperationalSettingsAccessSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessSeeder;
 use App\Modules\Reporting\OperationalReports\Database\Seeders\OperationalReportsAccessSeeder;
@@ -28,6 +29,17 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     throw new LogicException('Fixture hanya SQLite disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+if (($input['verify_operational'] ?? false) === true) {
+    if (DB::table('operational_settings')->value('receipt_paper') !== '80mm'
+        || (bool) DB::table('operational_settings')->value('backup_enabled') !== false
+        || DB::table('operational_settings')->value('backup_time') !== '22:15'
+        || DB::table('operational_backup_runs')->exists() || DB::table('stock_movements')->exists()
+        || DB::table('sales_invoices')->exists() || DB::table('purchase_orders')->exists()) {
+        throw new RuntimeException('Pengaturan UI atau guard non-transaksional tidak sesuai.');
+    }
+    echo json_encode(['status' => 'PASS', 'no_transactions' => true, 'automatic_backup_disabled' => true]);
+    exit;
+}
 if (($input['verify'] ?? false) === true) {
     $invoice = DB::table('sales_invoices')->sole();
     if ((string) $invoice->total !== '199800.00' || DB::table('payment_disbursements')->count() !== 2
@@ -47,6 +59,12 @@ DB::statement('PRAGMA journal_mode=MEMORY');
 DB::statement('PRAGMA synchronous=OFF');
 Artisan::call('migrate', ['--force' => true]);
 $manager = User::create(['name' => 'QA manager', 'email' => 'qa-manager@example.test', 'password' => $input['password'], 'email_verified_at' => now()]);
+if (($input['operational_only'] ?? false) === true) {
+    app(OperationalSettingsAccessSeeder::class)->run();
+    $manager->givePermissionTo(Permission::all());
+    echo json_encode(['status' => 'READY']);
+    exit;
+}
 User::factory()->create();
 PurchaseReturnRefundFixture::purchase('10', '120000');
 foreach ([PartiesDemoSeeder::class, ItemPricesDemoSeeder::class, POSAccessSeeder::class, PurchaseOrdersAccessSeeder::class,
