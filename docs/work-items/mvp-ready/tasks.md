@@ -22,6 +22,12 @@
 
 ## Paket 2: Transaksi POS
 
+- [x] Penerimaan dan pelunasan pembelian satu konfirmasi atomik.
+  - Acceptance: alur utama draft -> diterima/lunas; pembayaran gagal tidak
+    meninggalkan stok/pembelian posted tanpa uang. Dokumen legacy belum dibayar
+    tetap dapat dilunasi, tanpa dianggap utang baru.
+  - Verification: sukses, replay, rollback pembayaran dan dua permission.
+
 - [x] Diskon persen/nominal dan pajak server-authoritative.
   - Acceptance: subtotal, pembulatan, total dan pembayaran konsisten;
     harga level/satuan, permission dan stok tidak boleh dilewati.
@@ -34,10 +40,10 @@
 
 ## Paket 3: Administrasi Toko
 
-- [ ] Pengaturan identitas toko/struk dengan permission dan audit.
+- [x] Pengaturan identitas toko/struk dengan permission dan audit.
   - Acceptance: input tervalidasi; struk baru memakai snapshot identitas toko.
   - Verification: test update/permission/snapshot dan browser.
-- [ ] Laporan operasional minimum dari data nyata.
+- [x] Laporan operasional minimum dari data nyata.
   - Acceptance: ringkasan penjualan, pembelian, retur, stok dan pembayaran;
     filter tanggal/gudang sesuai arti data; bukan klaim saldo bank/laba bersih.
   - Verification: fixture relasional, total/refund/filter/permission.
@@ -45,9 +51,12 @@
 
 ## Paket 4: Persiapan Penggunaan
 
-- [ ] Aktivasi aman tanpa reset data, grant berlebih, atau demo transaksi otomatis.
-- [ ] Backup dan restore database teruji pada database disposable.
-- [ ] Konfigurasi produksi, build assets dan keamanan dasar diperiksa.
+- [x] Aktivasi aman tanpa reset data, grant berlebih, atau demo transaksi otomatis.
+- [x] Backup dan restore database teruji pada database disposable.
+- [x] Konfigurasi produksi, build assets dan keamanan dasar diperiksa.
+  - Produksi belum diaktifkan pada environment local; readiness --production
+    sengaja menolak debug/local/HTTP dan identitas toko kosong. Ini pending
+    konfigurasi deploy/operator, bukan bukti produksi sudah berjalan.
 - [ ] Skenario operator desktop/tablet: master -> beli/lunas -> stok -> jual/lunas
   -> retur -> uang kembali -> transfer/koreksi -> laporan/struk.
 - [ ] Blocker ditutup; kebutuhan printer/perangkat dan persetujuan operator dicatat.

@@ -1009,3 +1009,31 @@ applied_amount) serta tendered_amount/change_amount untuk incoming. Tanpa
 metadata bank/credential/request_hash/actor. Pilihan dari snapshot ledger max1000,
 bukan master aktif/live. GET tidak mengubah ledger/audit atau mengimpor model
 privat POS/Purchasing. Detail [specification](modules/Finance/Payments/specification.md#riwayat-pembayaran-readonly).
+
+## Endpoint MVP Operasional
+
+- POST inventory/transfers/{id}/post: version draft, permission
+  inventory.transfers.post; issue/receipt/FIFO/status/audit atomik. Replay versi
+  asal tidak menggandakan stok; revisi lain ditolak, posted immutable.
+- POST inventory/stock/adjustments: idempotency_key ULID, warehouse_id, item_id,
+  direction in/out, quantity canonical base unit, reason wajib, unit_cost wajib
+  positif untuk in dan dilarang untuk out. Permission inventory.stock.adjust.
+- POST purchasing/purchase-orders/{id}/receive-and-pay: version/payments seperti
+  endpoint pay, tetapi versi draft. Memerlukan post dan pay; seluruh penerimaan
+  dan pelunasan rollback jika salah satu gagal. Legacy pay tetap tersedia.
+- POST pos/quote dan pos/invoices menerima pricing opsional:
+  discount_type fixed/percent, discount_value dan tax_rate canonical string
+  maksimal2desimal. Default0; persentase <=100, diskon <subtotal. Quote memuat
+  total/discount_amount/tax_amount/pricing, fingerprint meliputi hasilnya.
+  Checkout membayar total, bukan subtotal; request key/fingerprint tetap wajib.
+  Snapshot per baris menjadi basis refund. Bukan harga override bebas.
+- GET/PUT platform/company-settings: view/manage terpisah, PUT name wajib,
+  address/phone/receipt_footer opsional dan version. CompanyProfile adalah
+  public read boundary; invoice baru menyimpan company_snapshot untuk struk.
+- GET reports/operations dan /data: reporting.operational.view; from/to Y-m-d
+  inklusif WIB, periode <=366hari, warehouse_id opsional. Public report readers
+  dari module sumber, tanpa mutation. Stok terkini, pembayaran seluruh gudang
+  per periode; bukan saldo bank/laba bersih. Tidak menampilkan metadata rekening.
+
+Semua endpoint memakai auth/CSRF/authorization backend. Detail dan bukti pada
+[MVP siap toko](work-items/mvp-ready/tasks.md), aturan biaya/harga pada ADR-019.

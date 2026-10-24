@@ -2,8 +2,10 @@
 
 namespace App\Modules\Purchasing\Returns;
 
+use App\Modules\Purchasing\Returns\Application\Contracts\PurchaseReturnReportReader;
 use App\Modules\Purchasing\Returns\Application\Contracts\ReturnDraftRepository;
 use App\Modules\Purchasing\Returns\Application\Contracts\ReturnRefundRepository;
+use App\Modules\Purchasing\Returns\Infrastructure\Persistence\Repositories\DatabasePurchaseReturnReportReader;
 use App\Modules\Purchasing\Returns\Infrastructure\Persistence\Repositories\EloquentReturnDraftRepository;
 use App\Modules\Purchasing\Returns\Infrastructure\Persistence\Repositories\EloquentReturnRefundRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -12,6 +14,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(PurchaseReturnReportReader::class, DatabasePurchaseReturnReportReader::class);
         $this->app->bind(ReturnRefundRepository::class, EloquentReturnRefundRepository::class);
         $this->app->bind(ReturnDraftRepository::class, EloquentReturnDraftRepository::class);
     }

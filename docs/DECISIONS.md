@@ -25,3 +25,7 @@ Dokumen ini menjadi indeks singkat ADR yang berlaku.
 
 Tambahkan ADR baru hanya untuk keputusan yang mahal, sulit dibalik, atau
 mengubah baseline arsitektur/domain.
+
+[ADR-019](decisions/ADR-019-OPERATIONAL-MVP-POSTING-AND-PRICING.md) menetapkan
+posting transfer/koreksi, diskon/pajak, penerimaan pembelian langsung lunas,
+serta snapshot identitas toko dalam scope empat paket MVP.

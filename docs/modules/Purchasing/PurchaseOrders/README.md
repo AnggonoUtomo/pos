@@ -29,9 +29,16 @@ Permission view/manage/post/pay terpisah, catalog tanpa auto-grant. Aktivasi
 tidak menambah draft demo, mem-posting draft user atau mengubah data lama.
 Demo module hanya eksplisit pada local/testing dan QA disposable. Penerimaan
 sekali penuh menambah saldo/movement/FIFO atomic; replay versi asal tidak
-menggandakan ledger. Posted readonly; pembayaran melalui operasi terpisah setelah
+menggandakan ledger. Posted readonly. Alur utama MVP memakai Terima dan bayar:
+receipt/FIFO, status dan pelunasan commit bersama melalui ReceiveAndPayPurchase.
+Endpoint receive-and-pay memerlukan post dan pay sekaligus, menerima version
+draft/payments; replay memakai versi draft yang sama, gagal payment rollback
+receipt. Jalur pembayaran terpisah dipertahankan untuk dokumen lama yang sudah
 diterima. Multi-metode harus tepat tanpa kembalian, snapshot readonly dan retry
 tidak menambah pengeluaran. Data lama tetap Belum dicatat, bukan otomatis lunas.
 Parsial, utang/jatuh tempo, running balance kas/bank dan reversal belum dibuat.
 Retur barang/penerimaan uang dimiliki [Purchasing/Returns](../Returns/README.md),
 bukan mutation source PO. QA: [Quality](../../../QUALITY.md#qa-pembayaran-pembelian-lunas).
+
+PurchaseReportReader menerbitkan ringkasan posted readonly untuk Reporting.
+Checklist MVP: [empat paket](../../../work-items/mvp-ready/tasks.md).

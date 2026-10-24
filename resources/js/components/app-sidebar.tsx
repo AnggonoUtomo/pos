@@ -42,11 +42,11 @@ const mainNavGroups: NavGroup[] = [
             },
             {
                 title: 'Pengaturan Perusahaan',
-                url: '',
+                url: '/platform/company-settings',
                 icon: Settings,
-                badge: 'Segera',
+                badge: 'Aktif',
                 badgeTone: 'blue',
-                comingSoon: true,
+                permission: 'platform.company-settings.view',
             },
         ],
     },
@@ -89,7 +89,7 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Transfer antar-gudang',
                 url: '/inventory/transfers',
                 icon: ArrowRightLeft,
-                badge: 'Draft',
+                badge: 'Aktif',
                 badgeTone: 'blue',
                 permission: 'inventory.transfers.view',
             },
@@ -195,11 +195,11 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Laporan Operasional',
-                url: '',
+                url: '/reports/operations',
                 icon: BarChart3,
-                badge: 'Segera',
+                badge: 'Aktif',
                 badgeTone: 'blue',
-                comingSoon: true,
+                permission: 'reporting.operational.view',
             },
             {
                 title: 'Harga',

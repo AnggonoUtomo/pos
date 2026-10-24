@@ -10,6 +10,13 @@ import './receipt.css';
 function ReceiptBody({ receipt }: { receipt: PostedInvoice }) {
     return (
         <article className="space-y-4" data-testid="posted-receipt">
+            {receipt.company_snapshot?.name && (
+                <header className="space-y-1 text-center">
+                    <h2 className="text-lg font-semibold break-words">{receipt.company_snapshot.name}</h2>
+                    {receipt.company_snapshot.address && <p className="text-xs break-words">{receipt.company_snapshot.address}</p>}
+                    {receipt.company_snapshot.phone && <p className="text-xs break-words">{receipt.company_snapshot.phone}</p>}
+                </header>
+            )}
             <div className="flex flex-wrap items-start justify-between gap-3 border-b pb-3">
                 <div className="min-w-0">
                     <p className="font-semibold break-all">{receipt.number}</p>
@@ -79,6 +86,9 @@ function ReceiptBody({ receipt }: { receipt: PostedInvoice }) {
                     <span className="max-w-[60%] text-right break-all">{money(receipt.payments.change)}</span>
                 </div>
             </div>
+            {receipt.company_snapshot?.receipt_footer && (
+                <p className="border-t pt-3 text-center text-xs break-words whitespace-pre-wrap">{receipt.company_snapshot.receipt_footer}</p>
+            )}
         </article>
     );
 }

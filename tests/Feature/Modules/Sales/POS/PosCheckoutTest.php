@@ -10,6 +10,7 @@ use App\Modules\Inventory\Stock\Application\Contracts\SaleStockWriter;
 use App\Modules\Inventory\Stock\Database\Seeders\StockDemoSeeder;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
 use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
+use App\Modules\Platform\CompanySettings\Application\Actions\UpdateCompanySettings;
 use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use App\Modules\Sales\POS\Application\Actions\PostInvoice;
@@ -19,6 +20,7 @@ use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
 use App\Modules\Sales\Returns\Domain\ValueObjects\RefundInvoiceBasis;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Activity;
@@ -88,6 +90,15 @@ class PosCheckoutTest extends TestCase
         $this->assertSame($before, $this->fingerprint());
     }
 
+    public function test_receipt_keeps_original_company_identity_after_settings_change(): void
+    {
+        $settings = app(UpdateCompanySettings::class);
+        $settings->handle(['name' => 'Toko Lama', 'version' => 0], $this->cashier->id);
+        $invoice = $this->postJson('/pos/invoices', $this->input)->assertCreated()->assertJsonPath('company_snapshot.name', 'Toko Lama')->json();
+        $settings->handle(['name' => 'Toko Baru', 'version' => 1], $this->cashier->id);
+        $this->getJson('/pos/invoices/'.$invoice['id'])->assertOk()->assertJsonPath('company_snapshot.name', 'Toko Lama');
+    }
+
     public function test_posting_is_atomic_and_receipt_does_not_leak_private_data(): void
     {
         $response = $this->postJson('/pos/invoices', $this->input)->assertCreated();
@@ -103,7 +114,7 @@ class PosCheckoutTest extends TestCase
         $receipt = $this->getJson('/pos/invoices/'.$id)->assertOk()->json();
         $this->assertSame($response->json(), $receipt);
         foreach (['total_cost', 'request_hash', 'idempotency_key', 'account_number', 'account_holder', 'phone', 'email', 'address', 'bank_name'] as $private) {
-            $this->assertStringNotContainsString('"'.$private.'"', json_encode($receipt));
+            $this->assertStringNotContainsString('"'.$private.'"', json_encode(Arr::except($receipt, ['company_snapshot'])));
         }
         $line = DB::table('sales_invoice_lines')->where('invoice_id', $id)->sole();
         $this->assertSame('Kamera IP 2MP', $line->name);

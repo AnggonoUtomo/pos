@@ -46,6 +46,7 @@ export type CheckoutPayload = {
 export type InvoicePricing = { discount_type: 'fixed' | 'percent'; discount_value: string; tax_rate: string };
 export type CheckoutAttempt = { version: 1; payload: CheckoutPayload; total: string; cart: CartLine[]; methods: PaymentMethod[] };
 export type PostedInvoice = {
+    company_snapshot?: { name: string; address: string; phone: string; receipt_footer: string } | null;
     id: string;
     number: string;
     warehouse_id: string;

@@ -18,6 +18,23 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
         'supplier-refund' => ['header' => 'purchase_refund_receipts', 'lines' => 'purchase_refund_receipt_lines', 'foreign' => 'receipt_id', 'time' => 'received_at', 'scale' => 6, 'direction' => 'incoming', 'source' => 'purchase_return'],
     ];
 
+    public function summary(string $from, string $until): array
+    {
+        $incoming = $outgoing = BigDecimal::zero()->toScale(6);
+        foreach (self::LEDGERS as $key => $ledger) {
+            foreach ($this->query($key, ['from' => $from, 'until' => $until])->orderBy('h.id')->cursor() as $row) {
+                if ($ledger['direction'] === 'incoming') {
+                    $incoming = $incoming->plus((string) $row->total);
+                } else {
+                    $outgoing = $outgoing->plus((string) $row->total);
+                }
+            }
+        }
+
+        return ['incoming' => (string) $incoming, 'outgoing' => (string) $outgoing,
+            'net_movement' => (string) $incoming->minus($outgoing), 'scope' => 'all_warehouses'];
+    }
+
     private function query(string $direction, array $filters): Builder
     {
         $ledger = self::LEDGERS[$direction];

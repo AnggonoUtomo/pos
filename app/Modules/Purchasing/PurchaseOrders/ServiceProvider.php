@@ -3,7 +3,9 @@
 namespace App\Modules\Purchasing\PurchaseOrders;
 
 use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\PurchaseOrderRepository;
+use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\PurchaseReportReader;
 use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\ReturnPurchaseLookup;
+use App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Repositories\DatabasePurchaseReportReader;
 use App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Repositories\DatabaseReturnPurchaseLookup;
 use App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Repositories\EloquentPurchaseOrderRepository;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -12,6 +14,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(PurchaseReportReader::class, DatabasePurchaseReportReader::class);
         $this->app->bind(PurchaseOrderRepository::class, EloquentPurchaseOrderRepository::class);
         $this->app->bind(ReturnPurchaseLookup::class, DatabaseReturnPurchaseLookup::class);
     }

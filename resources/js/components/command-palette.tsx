@@ -29,7 +29,7 @@ import { useEffect, useMemo, useState } from 'react';
 const commandItems = [
     {
         title: 'Transfer antar-gudang',
-        description: 'Draft transfer antar-gudang',
+        description: 'Draft dan posting transfer stok',
         url: '/inventory/transfers',
         permission: 'inventory.transfers.view',
         icon: ArrowRightLeft,
@@ -65,7 +65,8 @@ const commandItems = [
         description: 'Konfigurasi perusahaan dan preferensi sistem',
         icon: Settings,
         tone: 'text-slate-600 dark:text-slate-300',
-        disabled: true,
+        url: '/platform/company-settings',
+        permission: 'platform.company-settings.view',
     },
     {
         title: 'Barang',
@@ -176,7 +177,8 @@ const commandItems = [
         description: 'Laporan ringkas penjualan dan stok',
         icon: BarChart3,
         tone: 'text-indigo-600 dark:text-indigo-300',
-        disabled: true,
+        url: '/reports/operations',
+        permission: 'reporting.operational.view',
     },
     {
         title: 'Harga',

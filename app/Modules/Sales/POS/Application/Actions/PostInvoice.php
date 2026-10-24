@@ -7,6 +7,7 @@ use App\Modules\Finance\Payments\Application\DTOs\SalePaymentRequest;
 use App\Modules\Inventory\Stock\Application\Contracts\SaleStockWriter;
 use App\Modules\Inventory\Stock\Application\DTOs\SaleStockRequest;
 use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseLookup;
+use App\Modules\Platform\CompanySettings\Application\Contracts\CompanyProfile;
 use App\Modules\Sales\POS\Application\Contracts\InvoiceRepository;
 use App\Modules\Sales\POS\Application\DTOs\CartLineData;
 use App\Modules\Sales\POS\Application\DTOs\InvoiceReceipt;
@@ -23,7 +24,7 @@ use InvalidArgumentException;
 class PostInvoice
 {
     public function __construct(private InvoiceRepository $invoices, private CheckCart $cart, private WarehouseLookup $warehouses,
-        private SaleStockWriter $stock, private SalePaymentWriter $payments) {}
+        private SaleStockWriter $stock, private SalePaymentWriter $payments, private CompanyProfile $company) {}
 
     public function handle(array $input, int $actorId): array
     {
@@ -73,6 +74,7 @@ class PostInvoice
                     'customer_level_id' => $customer->levelId, 'customer_level_name' => $customer->levelName,
                     'subtotal' => $quote['subtotal'], 'discount_amount' => $quote['discount_amount'], 'tax_amount' => $quote['tax_amount'], 'total' => $quote['total'],
                     'pricing' => json_encode($quote['pricing'], JSON_THROW_ON_ERROR),
+                    'company_snapshot' => json_encode($this->company->read(), JSON_THROW_ON_ERROR),
                     'total_cost' => (string) $cost, 'stock_issue_id' => $stock->id, 'payment_receipt_id' => $payment->id,
                     'payments' => $payment->snapshot, 'posted_at' => now()], $rows);
                 $this->invoices->audit($id, $actorId);

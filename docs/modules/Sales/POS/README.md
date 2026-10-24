@@ -10,9 +10,15 @@ saldo dan FIFO Stock. Tidak mengambil model/repository privat module lain.
 
 Backend posting lunas tersedia pada Increment 4: invoice/snapshot/idempotency,
 pengeluaran FIFO dan penerimaan pembayaran atomic. Increment 5 mengaktifkan UI
-multi-payment, retry/recovery dan receipt cetak browser. Tidak ada reservasi, input diskon/pajak, retur,
-piutang atau closing shift. Snapshot diskon/pajak eksplisit nol.
+multi-payment, retry/recovery dan receipt cetak browser. Paket MVP menambah input
+diskon nota persen/nominal, pajak tambahan, alokasi exact2, serta snapshot identitas
+toko melalui CompanyProfile. Retur/refund memakai snapshot nilai bersih. Tidak
+ada reservasi, piutang, pajak inklusif/multi-tarif, barang gratis atau closing shift.
 Theme existing dipertahankan; desktop/tablet, bukan mobile.
+
+Published SalesReportReader dikonsumsi Reporting/OperationalReports untuk
+ringkasan readonly. Detail MVP/QA pada [checklist](../../../work-items/mvp-ready/tasks.md)
+dan ADR-019; identitas struk lama tidak ditulis ulang.
 
 Public input route tetap /pos (pos.index). Permission existing
 sales.pos.invoices.create dipakai untuk index/catalog/quote; invoices.post

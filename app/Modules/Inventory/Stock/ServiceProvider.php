@@ -14,10 +14,12 @@ use App\Modules\Inventory\Stock\Application\Contracts\SaleReturnStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\SaleStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\StockAvailability;
 use App\Modules\Inventory\Stock\Application\Contracts\StockReceiptRepository;
+use App\Modules\Inventory\Stock\Application\Contracts\StockReportReader;
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
 use App\Modules\Inventory\Stock\Application\Contracts\TransferStockWriter;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseStockAvailability;
+use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseStockReportReader;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\EloquentAdjustmentRepository;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\EloquentStockReceiptRepository;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\EloquentStockRepository;
@@ -27,6 +29,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(StockReportReader::class, DatabaseStockReportReader::class);
         $this->app->bind(TransferStockWriter::class, WriteOperationalStock::class);
         $this->app->bind(AdjustmentRepository::class, EloquentAdjustmentRepository::class);
         $this->app->bind(SaleStockWriter::class, IssueStock::class);
