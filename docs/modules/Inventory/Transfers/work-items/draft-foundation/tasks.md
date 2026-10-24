@@ -44,7 +44,7 @@
 
 ## Increment 6: QA Dan Aktivasi
 
-- [ ] Native MySQL/full gate, activation disposable/lokal dua kali.
+- [x] Native MySQL/full gate, activation disposable/lokal dua kali.
   - Acceptance: worker stale/lock/JSON/exact6/audit/FK/down guard, source/Stock/
     Finance/grant lama identik, tidak membuat draft demo pada database toko.
   - Verification: scripts QA, full test/Pint, route/status, browser/fingerprint.
@@ -54,9 +54,9 @@
 
 ## Sesudah Coding
 
-- [ ] Acceptance dan status increment sesuai bukti.
-- [ ] Backend/UI/native/browser/activation relevan lulus.
-- [ ] Docs/API/module index selaras; gap/non-scope dicatat.
+- [x] Acceptance dan status increment sesuai bukti.
+- [x] Backend/UI/native/browser/activation relevan lulus.
+- [x] Docs/API/module index selaras; gap/non-scope dicatat.
 - [ ] Commit incremental dan delivery terverifikasi.
 
 ## Hasil Verifikasi
@@ -84,3 +84,34 @@ collapsed desktop1440/tablet1024/768, console/network bersih. Tujuh screenshot/
 report ignored pada storage/framework/testing/transfer-draft-browser-311231d1944e5803;
 tablet Light dan Dark ditinjau visual. Fixture membuktikan empat audit lifecycle,
 version4 serta Stock/FIFO/Finance/master identik. Tidak menguji posting transfer.
+
+## Bukti Increment 6
+
+- Native MySQL PASS: empty down/up, decimal20,6, no-op, dua worker LOCK WAIT,
+  concurrent edit stale tanpa lost update, current read gudang nonaktif,
+  audit rollback, restore/FK/down guard dan fingerprint populated source/Stock/
+  Finance/master. Database/worker dibersihkan pada finally.
+- Activation MySQL disposable PASS: baseline tanpa schema transfer, dua child
+  activation, dua tabel baru kosong, catalog unik, role/grant lama identik,
+  kemudian rerun mempertahankan draft fixture. Cache permission QA array.
+- Activation lokal dua kali PASS, migration2026_10_23_000003 Ran batch26;
+  draft0 dan dua permission catalog. Tidak menjalankan demo/master reset,
+  posting stok, mutation Finance, akun/password atau grant otomatis.
+- Full777 test/6142 assertion; focused16/126, Pint scoped, lint resources/js,
+  typecheck/build PASS. Route7 sesuai scope. MCP namespace langsung tersedia:
+  list_pages dan guest URL http://pos.test/inventory/transfers diarahkan ke
+  login; snapshot/console PASS tanpa menggunakan sesi user. Tab QA ditutup.
+- PRD mengonsolidasikan scope produk yang sudah disetujui; tidak menambah
+  requirement. Tidak perlu ADR posting karena posting belum ditetapkan.
+
+## Review Dan Risiko Terbuka
+
+Review correctness/layer/security/readability/query: dependency hanya published
+read contracts, lock terurut, strict payload/version, audit atomic, projection
+bulk pagination25 dan opsi bounded. Tidak ada temuan tersisa dalam scope.
+Gap existing nama aksesibel tombol command/theme topnav tablet di luar scope;
+palette/tema diuji melalui pola existing. Mobile tidak diuji sesuai keputusan user.
+Biaya FIFO, layer tanggal transfer, posting satu/dua tahap, stok perjalanan,
+parsial dan reversal belum disetujui. Draft tidak mereservasi ketersediaan.
+Old-docs/theme/dependency/SampleUI26/LSP4 staged tidak disentuh. Delivery pending
+commit QA/docs ini dan verifikasi remote.

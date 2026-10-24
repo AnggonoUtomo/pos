@@ -1,6 +1,6 @@
 # Spesifikasi Fondasi Draft Transfer Antar-Gudang
 
-Status: Disetujui untuk fondasi draft; implementasi belum selesai.
+Status: Implemented untuk fondasi draft, QA/aktivasi lokal lulus 24 Oktober 2026.
 
 ## Tujuan Dan Scope
 
@@ -42,6 +42,8 @@ Stock/Finance contract baru sampai ada consumer posting nyata.
 
 Prefix inventory/transfers, name inventory.transfers.*, auth/verified/web/CSRF.
 GET / dan /data memakai view, GET /options dan mutation memakai manage.
+Props Inertia viewer hanya memakai pilihan gudang aktif untuk filter; pilihan
+barang/satuan input tetap disembunyikan tanpa permission manage.
 POST / menerima source_warehouse_id, destination_warehouse_id, notes opsional500,
 lines[{item_id,unit_id,quantity}]. PUT /{id} menambah version; DELETE /{id} dan
 POST /{id}/restore hanya version. Key tambahan ditolak, termasuk baris.

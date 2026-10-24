@@ -99,6 +99,38 @@ git diff --check
 Full gate digunakan untuk perubahan lintas area, risiko tinggi, atau sebelum
 release. Jangan menjalankannya berulang tanpa perubahan source.
 
+## QA Draft Transfer Antar-Gudang
+
+Focused: `php artisan test --compact tests/Feature/Modules/Inventory/Transfers tests/Unit/Modules/Inventory/Transfers`.
+16 test/126 assertion; full suite777/6142. Typecheck, ESLint resources/js, build2750
+module dan Pint scoped PASS. Draft saja, bukan bukti posting transfer FIFO.
+
+`php scripts/qa/transfer-drafts-mysql.php`: local/MySQL disposable random
+pos_transfer_draft_qa_ +16hex, selected database diverifikasi sebelum mutation.
+Native decimal20,6/no-op, dua worker LOCK WAIT untuk stale edit/current read
+gudang, audit rollback, restore/FK/down guard dan fingerprint source/Stock/
+Finance/master PASS. Proses/database dibersihkan pada finally.
+
+`php scripts/qa/activate-transfer-drafts-mysql.php`: baseline populated tanpa
+migration transfer, child activation dua kali, dua tabel kosong, catalog/grant
+dan sumber lama identik. Sesudah draft fixture, aktivasi ulang menjaga data.
+Cache permission QA diisolasi array; tidak mengakses grant/data bisnis user.
+
+`php scripts/qa/activate-transfer-drafts-local.php`: CLI local/MySQL, advisory
+lock, satu path migration dan TransfersAccessSeeder saja. Fingerprint seluruh
+kolom/row existing (metadata permission/migration existing per row), tanpa grant,
+demo/master reset atau mutasi ledger. Jalankan tanpa operasi bersamaan; DDL
+MySQL tidak rollback otomatis. Local Ran batch26, dua aktivasi PASS, draft0.
+
+`node scripts/qa/transfer-drafts-devtools.mjs` memakai QA_DEVTOOLS_ENTRY executable
+MCP existing, isolated stdio, roots workspace, SQLite disposable dan password
+random stdin. CRUD/lifecycle versi4, locale Indonesia, filter/empty, viewer,
+shortcut/palette, Light/Dark expanded/collapsed desktop1440/tablet1024/768,
+console/network dan fingerprint PASS. Screenshot/report ignored
+storage/framework/testing. MCP namespace langsung juga lulus discovery/list_pages
+dan guest redirect ke login pos.test tanpa error console. Tidak memakai sesi user.
+Mobile ditunda; posting/pengiriman/penerimaan transfer memerlukan work item baru.
+
 ## QA Settlement Refund Returns
 
 ### Penerimaan Uang Retur Supplier

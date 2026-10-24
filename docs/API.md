@@ -141,6 +141,43 @@ Purchasing atomic dalam transaction retry3; Stock/FIFO tidak berubah. Existing
 tidak otomatis lunas atau dibuatkan utang; saldo kas berjalan belum tersedia.
 Rincian [spesifikasi PurchaseOrders](modules/Purchasing/PurchaseOrders/specification.md).
 
+## Draft Transfer Antar-Gudang
+
+Inventory/Transfers memakai prefix `/inventory/transfers`, name
+`inventory.transfers.*`, middleware web/auth/verified dan CSRF pada mutation.
+
+| Method | Path | Action | Permission |
+| --- | --- | --- | --- |
+| GET | / | index (Inertia) | inventory.transfers.view |
+| GET | /data | data | inventory.transfers.view |
+| GET | /options | options | inventory.transfers.manage |
+| POST | / | store | inventory.transfers.manage |
+| PUT | /{id} | update | inventory.transfers.manage |
+| DELETE | /{id} | destroy | inventory.transfers.manage |
+| POST | /{id}/restore | restore | inventory.transfers.manage |
+
+Create menerima source_warehouse_id, destination_warehouse_id, notes opsional500,
+lines[{item_id,unit_id,quantity}]. Update menambah version wajib. Delete/restore
+hanya version. Field tambahan root/baris ditolak. IDs ULID, quantity string
+positif14/6; gudang aktif berbeda, barang unik dan satuan terdaftar/aktif.
+Satuan transfer tidak dibatasi flag jual/beli. Base quantity server exact6,
+overflow/rounding ditolak. Nomor TR-{ULID}, snapshot/nilai version server;
+tidak menerima harga/status/FIFO/cost/actor dari client.
+
+Simpan sukses JSON `{id}` (create201/update200) atau redirect flash; audit wajib
+satu transaction dengan header/baris. Stale/non-draft422 termasuk super-system;
+no-op tidak menaikkan version/audit. Soft delete/restore menaikkan version,
+restore menjaga snapshot meski master nonaktif. Missing/state salah404,
+permission403, CSRF419. Tidak ada endpoint post/dispatch/receive/void.
+
+Data `{data,meta}` pagination25, search literal150 nomor/kode/nama gudang,
+filter source_warehouse_id/destination_warehouse_id dan trashed0/1. Baris/rasio/
+base quantity memakai decimal string exact6; demo_key tidak diekspor. Inertia
+viewer menerima snapshot dan pilihan gudang aktif untuk filter, tanpa katalog
+barang/satuan input; /options tetap manage-only. UI memakai format Indonesia,
+shortcut/Sonner dan readonly viewer. Draft bukan reservasi atau perpindahan:
+saldo/Stock movement/FIFO/Finance/source tetap identik sepanjang lifecycle.
+
 ## Endpoint Internal Retur Pembelian
 
 ### Penerimaan Uang Supplier

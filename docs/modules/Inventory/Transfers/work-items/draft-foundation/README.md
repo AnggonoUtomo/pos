@@ -1,6 +1,7 @@
 # Fondasi Draft Transfer Antar-Gudang
 
-Status: In Progress. Scope disetujui 23 Oktober 2026.
+Status: In Progress (delivery). Implementasi, QA dan aktivasi lokal lulus
+24 Oktober 2026; scope disetujui 23 Oktober 2026. Push final masih pending.
 
 ## Owner Dan Kondisi Awal
 
@@ -17,11 +18,11 @@ Tidak menyentuh theme/dependency/Old-docs maupun file staged user.
 
 ## Acceptance
 
-- [ ] Gudang aktif berbeda, quantity/base exact6, item/satuan valid, no forgery.
-- [ ] CRUD/lifecycle/version/no-op/audit atomic dan snapshot readonly.
-- [ ] Permission403/CSRF419, UI/shortcut/viewer dan demo idempotent.
-- [ ] Stock/FIFO/Finance immutable, native concurrency dan migration guard.
-- [ ] Full QA/browser desktop-tablet/activation tanpa grant/demo lokal.
+- [x] Gudang aktif berbeda, quantity/base exact6, item/satuan valid, no forgery.
+- [x] CRUD/lifecycle/version/no-op/audit atomic dan snapshot readonly.
+- [x] Permission403/CSRF419, UI/shortcut/viewer dan demo idempotent.
+- [x] Stock/FIFO/Finance immutable, native concurrency dan migration guard.
+- [x] Full QA/browser desktop-tablet/activation tanpa grant/demo lokal.
 - [ ] Dokumen/checklist/commit per increment dan delivery terverifikasi.
 
 ## Dampak Dan Dependency
@@ -31,3 +32,4 @@ page/nav/palette, audit dan demo draft. Public dependencies WarehouseLookup,
 ItemStockLookup, UnitLookup. Tidak ada event/port eksternal baru tanpa consumer.
 Aktivasi additive schema/catalog lokal setelah QA disposable, dua kali.
 Rencana: [plan](plan.md), checklist: [tasks](tasks.md).
+Kebutuhan produk: [PRD](PRD.md).

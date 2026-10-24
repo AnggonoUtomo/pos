@@ -2,7 +2,8 @@
 
 ## Status
 
-Planned. Scope fondasi draft disetujui 23 Oktober 2026. Source mengikuti
+Active untuk fondasi draft. QA dan aktivasi lokal batch26 lulus 24 Oktober 2026;
+belum memiliki posting transfer. Source mengikuti
 [arsitektur](../../../ARCHITECTURE.md) dan [struktur](../../../FOLDER-STRUCTURE.md).
 
 ## Tujuan Dan Boundary
@@ -32,6 +33,9 @@ Tidak membuat master/role/stock/payment sebagai efek seeder transfer.
 Rincian [spesifikasi](specification.md), [rencana](plan.md), [checklist](tasks.md)
 dan [work item](work-items/draft-foundation/README.md). Aktivasi lokal hanya
 schema dan catalog setelah QA disposable, tanpa seed demo/grant/reset data.
+Database toko tetap tanpa draft demo. Detail produk:
+[PRD](work-items/draft-foundation/PRD.md). Route aktif:
+[Transfer antar-gudang](http://pos.test/inventory/transfers).
 
 ```powershell
 php artisan test --compact tests/Feature/Modules/Inventory/Transfers tests/Unit/Modules/Inventory/Transfers
