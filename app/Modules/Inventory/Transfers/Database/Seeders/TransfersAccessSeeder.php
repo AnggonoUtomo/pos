@@ -9,7 +9,7 @@ class TransfersAccessSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['inventory.transfers.view', 'inventory.transfers.manage'] as $name) {
+        foreach (['inventory.transfers.view', 'inventory.transfers.manage', 'inventory.transfers.post'] as $name) {
             Permission::findOrCreate($name, 'web');
         }
     }

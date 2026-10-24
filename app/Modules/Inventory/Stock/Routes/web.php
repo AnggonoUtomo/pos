@@ -1,9 +1,11 @@
 <?php
 
+use App\Modules\Inventory\Stock\Presentation\Controllers\AdjustmentController;
 use App\Modules\Inventory\Stock\Presentation\Controllers\StockOpeningController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified'])->prefix('inventory/stock')->name('inventory.stock.')->group(function (): void {
+    Route::post('adjustments', [AdjustmentController::class, 'store'])->name('adjustments.store');
     Route::get('/', [StockOpeningController::class, 'index'])->name('index');
     Route::get('data', [StockOpeningController::class, 'data'])->name('data');
     Route::post('openings', [StockOpeningController::class, 'store'])->name('openings.store');

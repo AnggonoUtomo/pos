@@ -43,6 +43,7 @@ export interface StockOptions {
     items: { id: string; sku: string; name: string; base_unit_id: string; units: { unit_id: string; conversion_ratio: string }[] }[];
 }
 export interface StockPageProps {
+    adjustmentKey: string;
     filters: StockFilters;
     records: { data: StockRow[]; meta: { current_page: number; last_page: number; per_page: number; total: number } };
     options: StockOptions;

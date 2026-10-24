@@ -16,6 +16,8 @@ import type { TransferFilters, TransferPageProps, TransferRow } from './types';
 export default function Transfers({ records, filters, options }: TransferPageProps) {
     const { can } = usePermission();
     const canManage = can('inventory.transfers.manage');
+    const canPost = can('inventory.transfers.post');
+    const [posting, setPosting] = useState<TransferRow | null>(null);
     const [search, setSearch] = useState(filters.search);
     const [loading, setLoading] = useState(false);
     const [dialog, setDialog] = useState<{ record: TransferRow | null; readOnly: boolean } | null>(null);
@@ -56,7 +58,7 @@ export default function Transfers({ records, filters, options }: TransferPagePro
             <Head title="Transfer antar-gudang" />
             <WorkspaceShortcutDropdown
                 title="Transfer antar-gudang"
-                description={`${records.meta.total} draft ${filters.trashed ? 'terhapus' : 'tersedia'}`}
+                description={`${records.meta.total} transfer ${filters.trashed ? 'terhapus' : 'tersedia'}`}
                 shortcuts={[
                     { label: 'Cari', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
                     {
@@ -149,12 +151,14 @@ export default function Transfers({ records, filters, options }: TransferPagePro
                 <TransferDataTable
                     rows={records.data}
                     canManage={canManage}
+                    canPost={canPost}
+                    onPost={setPosting}
                     onOpen={(record, readOnly) => setDialog({ record, readOnly })}
                     onLifecycle={setLifecycle}
                 />
                 <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-3 text-sm">
                     <span>
-                        {records.meta.total} draft / Halaman {records.meta.current_page} dari {records.meta.last_page}
+                        {records.meta.total} transfer / Halaman {records.meta.current_page} dari {records.meta.last_page}
                     </span>
                     <div className="flex gap-2">
                         <Button
@@ -190,6 +194,7 @@ export default function Transfers({ records, filters, options }: TransferPagePro
                 />
             )}
             {canManage && lifecycle && <LifecycleDialog key={lifecycle.id} record={lifecycle} onClose={() => setLifecycle(null)} />}
+            {canPost && posting && <LifecycleDialog key={`post-${posting.id}`} record={posting} posting onClose={() => setPosting(null)} />}
         </AppLayout>
     );
 }

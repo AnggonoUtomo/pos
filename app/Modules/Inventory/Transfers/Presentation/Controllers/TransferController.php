@@ -4,6 +4,7 @@ namespace App\Modules\Inventory\Transfers\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Inventory\Transfers\Application\Actions\ManageTransferDraft;
+use App\Modules\Inventory\Transfers\Application\Actions\PostTransfer;
 use App\Modules\Inventory\Transfers\Application\Queries\TransferWorkspace;
 use App\Modules\Inventory\Transfers\Presentation\Requests\ListTransfersRequest;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +19,7 @@ class TransferController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
     {
-        return [new Middleware('can:inventory.transfers.view', only: ['index', 'data']),
+        return [new Middleware('can:inventory.transfers.post', only: ['post']), new Middleware('can:inventory.transfers.view', only: ['index', 'data']),
             new Middleware('can:inventory.transfers.manage', only: ['options', 'store', 'update', 'destroy', 'restore'])];
     }
 
@@ -66,5 +67,12 @@ class TransferController extends Controller implements HasMiddleware
         $action->restore(strtolower($id), $request->all());
 
         return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Draft transfer berhasil dipulihkan.');
+    }
+
+    public function post(Request $request, string $id, PostTransfer $action): JsonResponse|RedirectResponse
+    {
+        $action->handle(strtolower($id), $request->all(), $request->user()->id);
+
+        return $request->expectsJson() ? response()->json(['id' => strtolower($id)]) : back()->with('success', 'Stok berhasil dipindahkan.');
     }
 }

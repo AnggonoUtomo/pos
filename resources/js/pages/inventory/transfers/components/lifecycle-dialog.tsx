@@ -2,12 +2,12 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useForm } from '@inertiajs/react';
-import { LoaderCircle, RotateCcw, Trash2 } from 'lucide-react';
+import { Check, LoaderCircle, RotateCcw, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 import type { TransferRow } from '../types';
 
-export function LifecycleDialog({ record, onClose }: { record: TransferRow; onClose: () => void }) {
+export function LifecycleDialog({ record, onClose, posting = false }: { record: TransferRow; onClose: () => void; posting?: boolean }) {
     const form = useForm({ version: record.version });
     const busy = useRef(false);
     const deleted = Boolean(record.deleted_at);
@@ -17,7 +17,7 @@ export function LifecycleDialog({ record, onClose }: { record: TransferRow; onCl
         const config = {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success(deleted ? 'Draft berhasil dipulihkan.' : 'Draft berhasil dihapus.');
+                toast.success(posting ? 'Stok berhasil dipindahkan.' : deleted ? 'Draft berhasil dipulihkan.' : 'Draft berhasil dihapus.');
                 onClose();
             },
             onError: () => toast.error('Operasi belum berhasil. Periksa revisi draft.'),
@@ -25,7 +25,8 @@ export function LifecycleDialog({ record, onClose }: { record: TransferRow; onCl
                 busy.current = false;
             },
         };
-        if (deleted) form.post(route('inventory.transfers.restore', { id: record.id }), config);
+        if (posting) form.post(route('inventory.transfers.post', { id: record.id }), config);
+        else if (deleted) form.post(route('inventory.transfers.restore', { id: record.id }), config);
         else form.delete(route('inventory.transfers.destroy', { id: record.id }), config);
     };
     return (
@@ -50,7 +51,7 @@ export function LifecycleDialog({ record, onClose }: { record: TransferRow; onCl
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle>{deleted ? 'Pulihkan draft transfer?' : 'Hapus draft transfer?'}</DialogTitle>
+                    <DialogTitle>{posting ? 'Posting transfer stok?' : deleted ? 'Pulihkan draft transfer?' : 'Hapus draft transfer?'}</DialogTitle>
                     <DialogDescription className="break-all">
                         {record.number} / Revisi {record.version}
                     </DialogDescription>
@@ -60,15 +61,17 @@ export function LifecycleDialog({ record, onClose }: { record: TransferRow; onCl
                     <Button variant="outline" disabled={form.processing} onClick={onClose}>
                         Batal
                     </Button>
-                    <Button variant={deleted ? 'default' : 'destructive'} disabled={form.processing} onClick={submit}>
+                    <Button variant={posting || deleted ? 'default' : 'destructive'} disabled={form.processing} onClick={submit}>
                         {form.processing ? (
                             <LoaderCircle className="size-4 animate-spin" />
+                        ) : posting ? (
+                            <Check className="size-4" />
                         ) : deleted ? (
                             <RotateCcw className="size-4" />
                         ) : (
                             <Trash2 className="size-4" />
                         )}
-                        {deleted ? 'Pulihkan draft' : 'Hapus draft'}
+                        {posting ? 'Posting transfer' : deleted ? 'Pulihkan draft' : 'Hapus draft'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

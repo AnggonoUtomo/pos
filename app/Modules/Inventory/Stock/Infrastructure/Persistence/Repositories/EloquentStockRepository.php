@@ -257,7 +257,7 @@ class EloquentStockRepository implements StockRepository, StockUsage
         } else {
             $logger->causedBy($actorId);
         }
-        $activity = $logger->log($issue->source_type === 'purchase_return' ? 'Pengeluaran stok retur pembelian' : 'Pengeluaran stok penjualan');
+        $activity = $logger->log('Pengeluaran stok '.$issue->source_type);
         if ($activity === null || ! $activity->exists) {
             throw new \RuntimeException('Audit pengeluaran stok tidak tersimpan.');
         }

@@ -1,16 +1,20 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Pencil, RotateCcw, Trash2 } from 'lucide-react';
+import { Check, Eye, Pencil, RotateCcw, Trash2 } from 'lucide-react';
 import type { TransferRow } from '../types';
 
 export function TransferDataTable({
     rows,
     canManage,
+    canPost,
+    onPost,
     onOpen,
     onLifecycle,
 }: {
     rows: TransferRow[];
     canManage: boolean;
+    canPost: boolean;
+    onPost: (row: TransferRow) => void;
     onOpen: (row: TransferRow, readOnly: boolean) => void;
     onLifecycle: (row: TransferRow) => void;
 }) {
@@ -52,11 +56,22 @@ export function TransferDataTable({
                             <td className="p-3">{row.version}</td>
                             <td className="p-3">
                                 <Badge variant={row.deleted_at ? 'outline' : 'secondary'}>
-                                    {row.deleted_at ? 'Terhapus' : row.status === 'draft' ? 'Draft' : row.status}
+                                    {row.deleted_at ? 'Terhapus' : row.status === 'draft' ? 'Draft' : 'Posted'}
                                 </Badge>
                             </td>
                             <td className="p-3">
                                 <div className="flex gap-1">
+                                    {canPost && row.status === 'draft' && !row.deleted_at && (
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            title="Posting transfer"
+                                            aria-label={`Posting ${row.number}`}
+                                            onClick={() => onPost(row)}
+                                        >
+                                            <Check className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                        </Button>
+                                    )}
                                     <Button
                                         size="icon"
                                         variant="ghost"

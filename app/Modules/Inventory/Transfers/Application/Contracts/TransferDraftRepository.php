@@ -4,6 +4,8 @@ namespace App\Modules\Inventory\Transfers\Application\Contracts;
 
 interface TransferDraftRepository
 {
+    public function markPosted(string $id, int $actorId): void;
+
     public function lock(string $id, bool $deleted = false): array;
 
     public function save(array $header, array $lines, ?string $id = null): string;

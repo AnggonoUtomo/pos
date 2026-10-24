@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,7 +33,7 @@ class StockOpeningController extends Controller implements HasMiddleware
         $filters = $request->filters();
 
         return Inertia::render('inventory/stock/index', ['records' => $query->records($filters, (int) $request->validated('page', 1)),
-            'filters' => $filters, 'options' => $query->options()]);
+            'filters' => $filters, 'options' => $query->options(), 'adjustmentKey' => strtolower((string) Str::ulid())]);
     }
 
     public function data(StockListRequest $request, StockWorkspace $query): JsonResponse

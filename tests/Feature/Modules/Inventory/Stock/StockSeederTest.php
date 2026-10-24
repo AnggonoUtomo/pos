@@ -25,7 +25,7 @@ class StockSeederTest extends TestCase
         $this->seed([StockAccessSeeder::class, StockDemoSeeder::class]);
         $this->assertDatabaseCount('users', 0);
         $this->assertDatabaseCount('roles', 0);
-        $this->assertDatabaseCount('permissions', 3);
+        $this->assertDatabaseCount('permissions', 4);
         $this->assertDatabaseCount('stock_openings', 1);
         $this->assertDatabaseCount('stock_movements', 5);
         $this->assertDatabaseCount('fifo_layers', 5);

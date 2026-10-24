@@ -99,6 +99,17 @@ class EloquentTransferDraftRepository implements TransferDraftRepository
         }
     }
 
+    public function markPosted(string $id, int $actorId): void
+    {
+        $this->requireTransaction();
+        $model = StockTransfer::query()->lockForUpdate()->findOrFail($id);
+        $model->fill(['status' => 'posted', 'version' => $model->version + 1, 'posted_at' => now(), 'posted_by' => $actorId]);
+        if (! $model->save()) {
+            throw new RuntimeException('Posting transfer gagal disimpan.');
+        }
+        $this->audit($model, 'posted');
+    }
+
     public function paginate(int $page, array $filters): array
     {
         $query = ! empty($filters['trashed']) ? StockTransfer::onlyTrashed() : StockTransfer::query();

@@ -22,6 +22,16 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
 if (($input['verify'] ?? false) === true) {
+    if (($input['operational'] ?? false) === true) {
+        $draft = DB::table('stock_transfers')->sole();
+        if ($draft->status !== 'posted' || DB::table('stock_adjustments')->count() !== 1
+            || DB::table('stock_receipts')->where('source_type', 'transfer')->count() !== 1
+            || DB::table('stock_issues')->where('source_type', 'transfer')->count() !== 1) {
+            throw new RuntimeException('Ledger operasional browser tidak sesuai.');
+        }
+        echo json_encode(['status' => 'PASS', 'transfer' => 'posted', 'adjustments' => 1]);
+        exit;
+    }
     $draft = DB::table('stock_transfers')->sole();
     $events = DB::table('activity_log')->where('log_name', 'inventory.transfers')->orderBy('id')->pluck('event')->all();
     if (! hash_equals($input['fingerprint'], TransferDraftFixture::fingerprint()) || $draft->status !== 'draft'
@@ -42,6 +52,10 @@ foreach (['manager', 'viewer'] as $role) {
     $user->givePermissionTo('inventory.transfers.view');
     if ($role === 'manager') {
         $user->givePermissionTo('inventory.transfers.manage');
+        if (($input['operational'] ?? false) === true) {
+            app(\App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder::class)->run();
+            $user->givePermissionTo(['inventory.transfers.post', 'inventory.stock.view', 'inventory.stock.adjust']);
+        }
     }
 }
 echo json_encode(['status' => 'READY', 'fingerprint' => TransferDraftFixture::fingerprint(), 'payload' => $payload]);

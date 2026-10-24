@@ -11,4 +11,5 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('inventory/transfers')->n
     Route::put('{id}', [TransferController::class, 'update'])->whereUlid('id')->name('update');
     Route::delete('{id}', [TransferController::class, 'destroy'])->whereUlid('id')->name('destroy');
     Route::post('{id}/restore', [TransferController::class, 'restore'])->whereUlid('id')->name('restore');
+    Route::post('{id}/post', [TransferController::class, 'post'])->whereUlid('id')->name('post');
 });

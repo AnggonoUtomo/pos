@@ -83,7 +83,7 @@ class EloquentStockReceiptRepository implements StockReceiptRepository
         } else {
             $logger->causedBy($actorId);
         }
-        $log = $logger->log($receipt->source_type === 'sale_return' ? 'Penerimaan retur penjualan' : 'Penerimaan stok pembelian');
+        $log = $logger->log('Penerimaan stok '.$receipt->source_type);
         if ($log === null || ! $log->exists) {
             throw new RuntimeException('Audit receipt tidak tersimpan.');
         }

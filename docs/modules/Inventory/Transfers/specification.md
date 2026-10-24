@@ -1,5 +1,16 @@
 # Spesifikasi Fondasi Draft Transfer Antar-Gudang
 
+## Posting MVP
+
+Scope aktif diperluas oleh [MVP siap toko](../../../work-items/mvp-ready/tasks.md):
+POST /{id}/post menerima version dan memerlukan inventory.transfers.post.
+Penuh satu kali atomik, tanpa in-transit/parsial. Source FIFO keluar dan receipt
+tujuan masuk melalui TransferStockWriter publik; setiap segmen biaya asal
+dipertahankan pada layer tujuan baru bertanggal posting dengan jejak layer asal.
+Status posted/version/audit commit bersama kedua ledger; replay tidak menggandakan
+stok. Posted immutable. Gudang terurut -> satuan terurut -> barang terurut.
+Keterangan fondasi draft di bawah merupakan scope draft, bukan batas posting MVP.
+
 Status: Implemented untuk fondasi draft, QA/aktivasi lokal lulus 24 Oktober 2026.
 
 ## Tujuan Dan Scope

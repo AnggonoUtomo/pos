@@ -9,12 +9,12 @@
 
 ## Paket 1: Operasional Stok
 
-- [ ] Posting transfer penuh antar-gudang melalui public contract Stock.
+- [x] Posting transfer penuh antar-gudang melalui public contract Stock.
   - Acceptance: stok asal berkurang FIFO, tujuan bertambah dengan biaya sama;
     status, ledger dan audit atomik; tidak minus/duplikasi posting.
   - Verification: test integrasi sukses, kurang stok, rollback, idempotensi,
     permission, biaya; migration/status dan browser alur posting.
-- [ ] Koreksi stok minimum dengan alasan dan permission khusus.
+- [x] Koreksi stok minimum dengan alasan dan permission khusus.
   - Acceptance: selisih masuk/keluar masuk ledger/FIFO, posted immutable,
     audit wajib, kuantitas/nilai tetap konsisten.
   - Verification: test terfokus dan browser alur koreksi.
@@ -57,3 +57,7 @@
 ## Bukti Verifikasi
 
 Belum ada verifikasi runtime baru untuk empat paket ini.
+
+Paket stok: test terfokus baru 9/71 PASS; regresi backend 783/6194 PASS.
+Typecheck, ESLint Stock/Transfers, build2751 dan Pint scoped PASS. Browser
+operasional sedang diselesaikan; belum aktivasi migration lokal/push paket.

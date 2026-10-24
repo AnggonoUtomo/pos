@@ -3,6 +3,11 @@
 Mulai dari test paling spesifik dan naik ke gate yang lebih luas sesuai risiko.
 Jangan mengklaim selesai jika command gagal atau belum dijalankan.
 
+Prioritas MVP: test terfokus selama coding, satu gate lengkap per paket pada
+`work-items/mvp-ready/tasks.md`. Bukti lulus dipakai kembali bila source tidak
+berubah. Browser hanya alur berubah pada desktop/tablet representatif, bukan
+ulang semua tema/viewport. Ulang gate hanya untuk perubahan yang memengaruhinya.
+
 ## Matriks Verifikasi
 
 | Perubahan | Verifikasi minimum |

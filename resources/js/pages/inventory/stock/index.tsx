@@ -5,18 +5,21 @@ import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, LoaderCircle, Plus, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ClipboardCheck, LoaderCircle, Plus, Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { AdjustmentDialog } from './components/adjustment-dialog';
 import { DataTable } from './components/data-table';
 import { OpeningActionDialog } from './components/opening-action-dialog';
 import { OpeningDialog } from './components/opening-dialog';
 import type { StockFilters, StockPageProps, StockRow } from './types';
 
-export default function StockIndex({ filters, records, options }: StockPageProps) {
+export default function StockIndex({ filters, records, options, adjustmentKey }: StockPageProps) {
     const { can } = usePermission();
     const canManage = can('inventory.stock.manage');
     const canPost = can('inventory.stock.post');
+    const canAdjust = can('inventory.stock.adjust');
+    const [adjusting, setAdjusting] = useState(false);
     const [dialog, setDialog] = useState<{ record: StockRow | null; readOnly: boolean } | null>(null);
     const [action, setAction] = useState<{ record: StockRow; action: 'post' | 'destroy' | 'restore' } | null>(null);
     const [search, setSearch] = useState(filters.search);
@@ -34,6 +37,10 @@ export default function StockIndex({ filters, records, options }: StockPageProps
     useEffect(() => {
         const handler = (event: KeyboardEvent) => {
             if (document.querySelector('[role="dialog"]')) return;
+            if (event.altKey && event.key.toLowerCase() === 'a' && canAdjust) {
+                event.preventDefault();
+                setAdjusting(true);
+            }
             if (event.altKey && event.key.toLowerCase() === 'f') {
                 event.preventDefault();
                 searchRef.current?.focus();
@@ -52,7 +59,7 @@ export default function StockIndex({ filters, records, options }: StockPageProps
         };
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
-    }, [canManage, filters.tab, filters.trashed]);
+    }, [canManage, canAdjust, filters.tab, filters.trashed]);
     const visit = (patch: Partial<StockFilters>, page = 1) => {
         const next = { ...filters, ...patch };
         router.get(
@@ -69,6 +76,7 @@ export default function StockIndex({ filters, records, options }: StockPageProps
                 description={`${records.meta.total} data`}
                 shortcuts={[
                     { label: 'Cari', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
+                    { label: 'Koreksi stok', description: 'Posting selisih hitung fisik', keys: ['Alt', 'A'], disabled: !canAdjust },
                     {
                         label: 'Tambah',
                         description: 'Tambah stok awal',
@@ -79,7 +87,7 @@ export default function StockIndex({ filters, records, options }: StockPageProps
                         label: 'Simpan / Konfirmasi',
                         description: 'Operasi dialog aktif',
                         keys: ['Ctrl/Cmd', 'Enter'],
-                        disabled: !canManage && !canPost,
+                        disabled: !canManage && !canPost && !canAdjust,
                     },
                     { label: 'Tutup', description: 'Tutup dialog', keys: ['Esc'] },
                 ]}
@@ -87,6 +95,12 @@ export default function StockIndex({ filters, records, options }: StockPageProps
             <section className="min-w-0 flex-1 space-y-4 p-4 lg:p-6" aria-busy={loading}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <h1 className="text-xl font-semibold">Stok</h1>
+                    {canAdjust && (
+                        <Button variant="outline" disabled={loading} onClick={() => setAdjusting(true)}>
+                            <ClipboardCheck className="size-4 text-amber-600 dark:text-amber-300" />
+                            Koreksi stok
+                        </Button>
+                    )}
                     {canManage && filters.tab === 'openings' && !filters.trashed && (
                         <Button disabled={loading} onClick={() => setDialog({ record: null, readOnly: false })}>
                             <Plus className="size-4" />
@@ -249,6 +263,9 @@ export default function StockIndex({ filters, records, options }: StockPageProps
                 <OpeningDialog record={dialog.record} options={options} readOnly={dialog.readOnly} onClose={() => setDialog(null)} />
             )}
             {action && (action.action === 'post' ? canPost : canManage) && <OpeningActionDialog {...action} onClose={() => setAction(null)} />}
+            {canAdjust && adjusting && (
+                <AdjustmentDialog key={adjustmentKey} operationKey={adjustmentKey} options={options} onClose={() => setAdjusting(false)} />
+            )}
         </AppLayout>
     );
 }

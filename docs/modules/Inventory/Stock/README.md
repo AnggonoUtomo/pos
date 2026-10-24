@@ -16,8 +16,16 @@ juga telah lulus gate.
 
 Memiliki dokumen stok awal draft/posted, saldo dalam satuan dasar, movement,
 dan layer FIFO per barang + gudang. Activity log bukan ledger stok.
-Tidak memiliki dokumen penjualan/pembelian, transfer, adjustment, reversal UI,
+Tidak memiliki dokumen penjualan/pembelian, transfer, reversal UI,
 payment, pajak, diskon, atau harga level pelanggan.
+
+Paket MVP pada [checklist lintas module](../../../work-items/mvp-ready/tasks.md)
+menambah koreksi stok langsung posted dan `TransferStockWriter` untuk consumer
+Transfers. Koreksi memakai satuan dasar, alasan wajib, masuk dengan harga pokok
+positif exact6; keluar memakai FIFO. Kunci operasi ULID/idempotent, audit wajib,
+permission `inventory.stock.adjust`. Tidak ada edit/hapus ledger. Layer tujuan
+transfer dibuat saat posting, per segmen biaya asal dengan origin_fifo_layer_id.
+Tidak ada demo koreksi/transfer posted otomatis; uji memakai fixture disposable.
 
 ## Public Boundary Dan Dependency
 
