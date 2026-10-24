@@ -18,7 +18,7 @@
   - Acceptance: selisih masuk/keluar masuk ledger/FIFO, posted immutable,
     audit wajib, kuantitas/nilai tetap konsisten.
   - Verification: test terfokus dan browser alur koreksi.
-- [ ] Gate paket lulus, catatan aktivasi, commit dan push diverifikasi.
+- [x] Gate paket lulus, catatan aktivasi, commit dan push diverifikasi.
 
 ## Paket 2: Transaksi POS
 
@@ -36,7 +36,7 @@
   - Acceptance: refund tidak melebihi penjualan setelah diskon/pajak;
     sisa pembulatan terjaga.
   - Verification: test retur dan browser transaksi lengkap.
-- [ ] Gate paket lulus, commit dan push diverifikasi.
+- [x] Gate paket lulus, commit dan push diverifikasi.
 
 ## Paket 3: Administrasi Toko
 
@@ -47,7 +47,7 @@
   - Acceptance: ringkasan penjualan, pembelian, retur, stok dan pembayaran;
     filter tanggal/gudang sesuai arti data; bukan klaim saldo bank/laba bersih.
   - Verification: fixture relasional, total/refund/filter/permission.
-- [ ] Gate paket lulus, commit dan push diverifikasi.
+- [x] Gate paket lulus, commit dan push diverifikasi.
 
 ## Paket 4: Persiapan Penggunaan
 
@@ -63,7 +63,7 @@
 - [x] Patch dependency existing sesuai persetujuan user, tanpa major/dependency baru.
   - Verification: Vite6.4.3 ->6.4.5, follow-redirects1.16.0 ->1.16.1;
     npm audit penuh/production0, Composer0; lint/typecheck/build dan browser PASS.
-- [ ] Gate final sekali, commit/push diverifikasi; tidak mengklaim UAT manusia
+- [x] Gate final sekali, commit/push diverifikasi; tidak mengklaim UAT manusia
   selesai tanpa pelaksanaan operator.
 
 ## Bukti Verifikasi
@@ -120,6 +120,14 @@ menutupi Pembayaran dipindah ke kanan atas dan alur diuji ulang sampai selesai.
 Sesudah label navigasi dipendekkan menjadi Pengaturan toko, hanya
 `--navigation-only` yang diulang: batas teks/badge tablet tidak bertumpuk,
 tanpa mengulang workflow checkout di UI. Bukti mvp-browser-6b6705fd47e07ed8.
+
+## Pengiriman Git
+
+Implementasi, patch dependency, QA dan panduan operasional sudah dikirim ke
+`origin/main` sampai `12ad441`. Push berhasil; HEAD lokal cocok dengan
+`refs/heads/main` remote dan divergence `0 0`. Checklist pengiriman diperbarui
+sesudah verifikasi tersebut, bukan sebelum push. Perubahan staged milik user
+di SampleUI/storage tidak dimasukkan; Old-docs tidak disentuh.
 
 ## Pending Operator / Go-Live
 
