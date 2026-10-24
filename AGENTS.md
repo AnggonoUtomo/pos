@@ -34,6 +34,16 @@ module cukup signifikan, buat dokumen module sebelum coding.
 
 ## Cara Bekerja
 
+- Prioritas aktif: tuntaskan empat paket pada
+  `docs/work-items/mvp-ready/tasks.md` sampai alur toko dapat dipakai.
+  MVP penjualan/pembelian langsung lunas; fitur di luar empat paket ditunda.
+- Hindari QA berulang: gunakan test terfokus selama implementasi, satu gate
+  regresi lengkap pada akhir paket, dan ulang hanya pemeriksaan yang terdampak
+  perubahan sesudahnya. Hasil lulus pada source yang sama dipakai kembali.
+- QA browser hanya alur berubah pada desktop/tablet representatif; jangan
+  mengulang seluruh kombinasi tema/viewport untuk tampilan yang tidak berubah.
+- Kerjakan alur operasional utuh; jangan berhenti meminta persetujuan setiap
+  increment kecil. Pertanyaan hanya untuk keputusan bisnis yang menghambat.
 - Utamakan perubahan kecil dan terfokus.
 - Jangan memperluas scope atau menutup risiko lain tanpa persetujuan user.
 - Pecah perubahan multi-file menjadi increment yang dapat diverifikasi.
