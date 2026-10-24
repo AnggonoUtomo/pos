@@ -9,6 +9,14 @@ Urutan eksekusi: stok, transaksi POS, administrasi toko, kesiapan penggunaan.
 Pekerjaan yang selesai tetap memakai implementasi existing, bukan ditulis ulang.
 Satu checklist ini menjadi acuan progres lintas module.
 
+## Status
+
+Implementasi empat paket dan QA automated selesai; siap uji operasional lokal.
+Migration MVP sudah aktif tanpa reset/grant/demo posted otomatis. Persetujuan
+go-live, perangkat/printer nyata, dan konfigurasi deploy produksi tetap milik
+operator/admin, belum dianggap selesai oleh agent. Fitur tambahan tetap
+dibekukan sampai UAT pada [panduan operasional](OPERASIONAL.md) disetujui.
+
 ## Batas MVP
 
 - Transfer penuh satu posting atomik; tidak ada barang dalam perjalanan.
