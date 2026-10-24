@@ -38,4 +38,9 @@ class TransferWorkspace
 
         return ['warehouses' => $this->warehouses->choices(), 'units' => $units, 'items' => $items];
     }
+
+    public function warehouseChoices(): array
+    {
+        return $this->warehouses->choices();
+    }
 }

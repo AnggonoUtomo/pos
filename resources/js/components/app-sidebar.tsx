@@ -3,6 +3,7 @@ import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton,
 import { type NavGroup } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
+    ArrowRightLeft,
     BarChart3,
     Boxes,
     Building2,
@@ -83,6 +84,14 @@ const mainNavGroups: NavGroup[] = [
                 badge: 'Aktif',
                 badgeTone: 'amber',
                 permission: 'inventory.stock.view',
+            },
+            {
+                title: 'Transfer antar-gudang',
+                url: '/inventory/transfers',
+                icon: ArrowRightLeft,
+                badge: 'Draft',
+                badgeTone: 'blue',
+                permission: 'inventory.transfers.view',
             },
         ],
     },

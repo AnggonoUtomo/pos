@@ -27,7 +27,7 @@ class TransferController extends Controller implements HasMiddleware
         $filters = $request->filters();
 
         return Inertia::render('inventory/transfers/index', ['records' => $query->records((int) $request->validated('page', 1), $filters),
-            'filters' => $filters, 'options' => $request->user()->can('inventory.transfers.manage') ? $query->options() : ['items' => [], 'units' => [], 'warehouses' => []]]);
+            'filters' => $filters, 'options' => $request->user()->can('inventory.transfers.manage') ? $query->options() : ['items' => [], 'units' => [], 'warehouses' => $query->warehouseChoices()]]);
     }
 
     public function data(ListTransfersRequest $request, TransferWorkspace $query): JsonResponse

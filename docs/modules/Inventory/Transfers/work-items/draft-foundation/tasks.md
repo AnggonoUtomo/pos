@@ -37,7 +37,7 @@
 
 ## Increment 5: UI
 
-- [ ] Workspace/dialog/table/filter/nav/palette/shortcut/Sonner.
+- [x] Workspace/dialog/table/filter/nav/palette/shortcut/Sonner.
   - Acceptance: format Indonesia, active/trashed/viewer, master unavailable,
     validation/loading/error/processing; tidak ada tombol posting palsu.
   - Verification: lint/typecheck/build, DevTools MCP1440/1024/768 Light/Dark.
@@ -75,3 +75,12 @@ Increment4: 16 test/126 assertion PASS; lifecycle/stale/immutable super-system,
 audit veto seluruh mutation, model veto, down populated guard dan demo CCTV/
 kelistrikan idempotent/skip/production refusal. Master/ledger/grant tidak
 dimutasi oleh demo. Pint PASS. Tidak ada duplicate inherited test pada suite.
+
+Increment5: typecheck, ESLint resources/js, build2750 module PASS. Full suite
+777 test/6142 assertion PASS. Chrome DevTools MCP discovery/list_pages PASS;
+runner isolated/stdio existing juga PASS untuk CRUD via shortcut, konversi
+Indonesia, filter empty, viewer readonly, palette, Light/Dark sidebar expanded/
+collapsed desktop1440/tablet1024/768, console/network bersih. Tujuh screenshot/
+report ignored pada storage/framework/testing/transfer-draft-browser-311231d1944e5803;
+tablet Light dan Dark ditinjau visual. Fixture membuktikan empat audit lifecycle,
+version4 serta Stock/FIFO/Finance/master identik. Tidak menguji posting transfer.

@@ -5,6 +5,7 @@ import { usePermission } from '@/hooks/use-permission';
 import { cn } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import {
+    ArrowRightLeft,
     BarChart3,
     Boxes,
     Building2,
@@ -26,6 +27,14 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
+    {
+        title: 'Transfer antar-gudang',
+        description: 'Draft transfer antar-gudang',
+        url: '/inventory/transfers',
+        permission: 'inventory.transfers.view',
+        icon: ArrowRightLeft,
+        tone: 'text-cyan-600 dark:text-cyan-300',
+    },
     {
         title: 'Riwayat Penjualan',
         description: 'Invoice posted dan cetak ulang bukti',
