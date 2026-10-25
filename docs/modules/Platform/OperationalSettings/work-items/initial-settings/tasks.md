@@ -52,7 +52,7 @@
 - [x] Cabut task PowerShell buatan agent dan hapus installer/runner otomatis.
   - Acceptance: tidak memasang pengganti; cron/penjadwal disiapkan admin server.
   - Verification: pemeriksaan task spesifik dan source/dokumen terfokus.
-- [ ] Selaraskan panduan Linux/Windows, catat bukti, commit dan push setelah
+- [x] Selaraskan panduan Linux/Windows, catat bukti, commit dan push setelah
   pekerjaan utuh terverifikasi. Tidak mengubah data/grant/secret.
 
 ## Bukti
@@ -121,3 +121,5 @@
   belum diuji pada server Linux nyata; contoh cron bukan klaim deploy Linux.
 - Tidak ada perubahan grant/role/account, database bisnis, secret/.env,
   schema, Old-docs, atau file LSP staged/untracked milik user.
+- Commit perbaikan 287e425 sudah dipush ke origin/main; HEAD dan ls-remote
+  identik, divergence0/0. Checklist delivery diisi sesudah verifikasi tersebut.
