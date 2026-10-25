@@ -1,7 +1,9 @@
 # UAT Operator Dan Printer
 
-Status: BELUM DILAKSANAKAN OPERATOR. QA otomatis sebelumnya tidak menggantikan
-lembar ini. Target: PC Windows/Laragon dan tablet di jaringan toko.
+Status: UAT lengkap BELUM DISAHKAN. User sudah mengonfirmasi uji awal login
+HTTPS dan backup manual berhasil pada PC produksi. Skenario transaksi/printer
+di bawah tetap pending; QA otomatis tidak menggantikan lembar ini.
+Target: PC Windows/Laragon dan tablet di jaringan toko.
 
 ## Persiapan
 
@@ -26,7 +28,7 @@ Harga jual pcs pada level uji Rp200.000, harga beli Rp120.000/pcs.
 
 | ID | Tindakan operator | Hasil yang diharapkan | Status / bukti |
 | --- | --- | --- | --- |
-| U01 | Login operator berizin; coba aksi yang tidak diberi permission | Aksi berizin berhasil; aksi terlarang ditolak backend, bukan hanya tombol disembunyikan | PENDING |
+| U01 | Login operator berizin; coba aksi yang tidak diberi permission | Aksi berizin berhasil; aksi terlarang ditolak backend, bukan hanya tombol disembunyikan | PARSIAL: login HTTPS PC dikonfirmasi user; uji larangan akses operator masih pending |
 | U02 | Periksa barang CCTV, kabel, konversi meter/rol dan matriks harga | Nama/satuan sesuai; angka 1 dan 0,5 tidak tampil sebagai 1.000000/0.500000; harga mengikuti level dan satuan | PENDING |
 | U03 | Beli 4 pcs kamera lalu Terima dan bayar Rp480.000 | Pembelian diterima/lunas; stok asal naik 4 pcs; uang keluar Rp480.000; nota pembayaran tersedia | PENDING |
 | U04 | Jual 2 pcs, diskon 10%, pajak uji 11% | Subtotal Rp400.000, diskon Rp40.000, pajak Rp39.600, total Rp399.600 | PENDING |
@@ -55,6 +57,12 @@ fisik yang diklaim PASS. Konfigurasi produksi/HTTPS PC dan backup/restore
 lokal sudah terverifikasi agent, bukan pengganti UAT manusia di tabel ini.
 User memilih backup root project dan jam22:00WIB; ini belum merupakan media
 terpisah atau bukti pemicu otomatis sudah dijalankan admin.
+
+Uji operator awal25Oktober2026: user menyatakan login dan tombol backup manual
+berhasil di server produksi. Audit last_manual succeeded cocok dengan berkas
+pos-20261025-115343-9d118eb8.sql,205869byte di folder backups. Agent tidak
+membuat transaksi penjualan/pembelian uji pada database toko untuk bukti ini.
+Ini belum menyetujui keseluruhan UAT atau go-live, dan bukan bukti off-device.
 
 Pilihan A4/58/80 tersedia di Operasional beserta Uji cetak tanpa transaksi.
 Preview otomatis dan PDF ketiga ukuran sudah PASS; hasil fisik tetap pending.

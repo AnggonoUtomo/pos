@@ -328,3 +328,8 @@ Backup manual: [rencana/checklist/QA module](../../modules/Platform/OperationalS
 Regresi terfokus30/329 PASS; lint/typecheck/build2758 dan Pint PASS. Sesudah
 cache produksi diaktifkan, QA mendapat path cache sendiri: focused6/38 dan
 DevTools desktop/tablet PASS, tanpa membersihkan cache/memuat DB produksi.
+
+User kemudian mengonfirmasi login HTTPS dan tombol backup manual produksi
+berhasil. Audit succeeded cocok dengan file root backups
+pos-20261025-115343-9d118eb8.sql (205869byte). Uji operator awal ini tercatat
+pada lembar UAT; tidak menggantikan skenario transaksi, printer atau go-live.

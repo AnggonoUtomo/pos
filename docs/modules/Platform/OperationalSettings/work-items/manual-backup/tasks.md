@@ -54,3 +54,9 @@ di environment Apache. Audit hasil tidak menjamin restore/off-device. Backend
 mencegah dump bersamaan melalui cache lock; instalasi multi-proses harus memakai
 cache bersama (database existing), bukan cache array. Admin tetap menyiapkan
 pemicu Laravel Scheduler. UAT operator/printer dan media eksternal pending.
+
+Konfirmasi operator awal: user telah login HTTPS dan menjalankan tombol backup
+manual pada server produksi dengan hasil berhasil. Audit last_manual succeeded
+dan file pos-20261025-115343-9d118eb8.sql (205869byte) cocok di filesystem lokal.
+Dengan demikian executor web nyata juga sudah dicoba user, bukan hanya stub
+browser QA. Ini tidak menandai uji transaksi/printer/off-device selesai.
