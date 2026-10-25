@@ -89,3 +89,33 @@ file LSP user tidak termasuk commit.
 - Prettier CSS/sidebar, ESLint sidebar, `npx tsc --noEmit`, build2757 module,
   dan `git diff --check`: PASS. Test backend/transaksi sebelumnya tidak diulang
   karena tidak ada perubahan source behavior backend/transaksi.
+
+## Increment 4: Koreksi Paduan Warna Dark
+
+- [x] Klarifikasi user: pertahankan kepekatan sebelum Increment 3, bukan
+  menyamakan semua dark menjadi abu-abu. Selaraskan rona sidebar/workspace
+  menurut tema; light, Stone dan urutan menu tidak berubah.
+- [x] Sesuaikan regression check dengan baseline sebelum Increment 3.
+- [x] Kembalikan kedalaman dark dan selaraskan hue surface per tema.
+- [x] Verifikasi light/Stone identik, kepekatan/aksen terjaga dan pasangan
+  warna sidebar/workspace selaras; screenshot desktop/tablet dan build.
+- [x] Catat hasil dan review diff scoped sebelum commit/push.
+
+### Hasil Increment 4
+
+- Acuan kedalaman/aksen: baseline sebelum Increment 3, direkam pada source
+  `39886d7`, bukan palette netral hasil Increment 3.
+- RED: pemeriksaan hue default gagal pada surface netral; GREEN setelah
+  koreksi memakai `--surface-hue` untuk menyelaraskan rona surface dark.
+- `--dark-theme-only`: PASS; seluruh token light 11 tema dan dark Stone
+  identik, primary tidak berubah, kedalaman background/card/popover/sidebar
+  kembali sesuai baseline (toleransi kuantisasi RGB 0,6 poin persen HSL),
+  serta hue sidebar/workspace/topbar mengikuti masing-masing tema.
+- Screenshot desktop Default/Forest/Ruby dan tablet Forest collapse diperiksa
+  visual; urutan Platform tetap sesuai. Tidak ada overflow atau console error;
+  fingerprint ledger fixture tetap identik.
+- Bukti ignored:
+  `storage/framework/testing/mvp-browser-8731777ad4940fd7/dark-theme-report.json`.
+- Prettier CSS, `node --check scripts/qa/mvp-checkout-devtools.mjs`, build2757
+  module dan `git diff --check`: PASS. Tidak mengulang backend test,
+  lint/typecheck TSX atau transaksi karena source PHP/TSX tidak berubah.

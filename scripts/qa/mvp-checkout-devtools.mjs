@@ -173,24 +173,39 @@ try {
             const before=JSON.parse(await readFile(process.env.QA_THEME_BASELINE,'utf8')).palette;
             assert.deepEqual(palette.light,before.light,'Warna light berubah');
             assert.deepEqual(palette.dark.stone,before.dark.stone,'Warna Stone dark berubah');
-            const expected={'background':28,'card':41,'popover':41,'sidebar-background':33,'app-workspace':28,
-                'app-topbar':36,'app-panel':41,'app-panel-strong':51,'border':66,'app-border':66,'sidebar-border':66,'input':71};
+            const hsl=rgb=>{
+                const [r,g,b]=rgb.map(channel=>channel/255), high=Math.max(r,g,b), low=Math.min(r,g,b), delta=high-low;
+                const lightness=(high+low)/2;
+                const hue=delta===0?0:60*(high===r?((g-b)/delta+6)%6:high===g?(b-r)/delta+2:(r-g)/delta+4);
+                return {hue,lightness,saturation:delta===0?0:delta/(1-Math.abs(2*lightness-1))};
+            };
+            const expectedHues={default:215,clean:220,grey:220,forest:150,ruby:348,quartz:266,aurora:188,copper:20,saffron:42,plum:292};
             for(const [theme,colors] of Object.entries(palette.dark)) {
                 if(theme==='stone') continue;
-                for(const [key,channel] of Object.entries(expected)) assert.deepEqual(colors[key],[channel,channel,channel],theme+': '+key);
+                for(const key of ['background','card','sidebar-background','app-topbar']) {
+                    const color=hsl(colors[key]), distance=Math.abs(color.hue-expectedHues[theme]);
+                    assert(color.saturation>0.05 && Math.min(distance,360-distance)<12,theme+': '+key+' hue');
+                }
+                for(const key of ['background','card','popover','sidebar-background']) {
+                    assert(Math.abs(hsl(colors[key]).lightness-hsl(before.dark[theme][key]).lightness)<0.006,theme+': '+key+' depth');
+                }
                 assert.deepEqual(colors.primary,before.dark[theme].primary,'Aksen berubah: '+theme);
             }
             const platform=await inspect(pageId,`() => Array.from(document.querySelectorAll('[data-sidebar="group"]')[0].querySelectorAll('a'),el=>el.textContent.trim())`);
             assert.deepEqual(platform,['Dasbor','Identitas & Akses','Pengaturan toko','Operasional']);
             await click(pageId,'button','Tema');
             await click(pageId,'menuitem','Dark');
-            for(const [theme,label] of [['default','Default'],['forest','Forest'],['stone','Stone']]) {
+            for(const [theme,label] of [['default','Default'],['forest','Forest'],['ruby','Ruby']]) {
                 await click(pageId,'button','Tema');
                 await click(pageId,'button',label);
                 await tool('press_key',{pageId,key:'Escape'});
                 await new Promise(resolve=>setTimeout(resolve,200));
                 await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'desktop-dark-'+theme+'.png')});
             }
+            await click(pageId,'button','Tema');
+            await click(pageId,'button','Forest');
+            await tool('press_key',{pageId,key:'Escape'});
+            await new Promise(resolve=>setTimeout(resolve,200));
             await tool('resize_page',{pageId,width:1024,height:768});
             await click(pageId,'button','Toggle Sidebar');
             assert.equal(await inspect(pageId,'() => document.documentElement.scrollWidth > innerWidth'),false,'Overflow tablet');
@@ -200,7 +215,7 @@ try {
         }
         const state=fixture({verify_dashboard:true,fingerprint:setup.fingerprint});
         const report={status:themeBaseline?'BASELINE':'PASS',checks:themeBaseline?['palette before change']:
-            ['all light palettes unchanged','Stone dark unchanged','10 neutral dark palettes and accents','platform order','desktop/tablet no overflow','readonly/clean console'],
+            ['all light palettes unchanged','Stone dark unchanged','original dark depth and accents','theme-matched sidebar/workspace/topbar','platform order','desktop/tablet no overflow','readonly/clean console'],
             palette,state,artifacts:path.relative(root,artifacts)};
         await writeFile(reportPath,JSON.stringify(report,null,2));
         console.log(JSON.stringify({status:report.status,checks:report.checks,report:path.relative(root,reportPath)}));
