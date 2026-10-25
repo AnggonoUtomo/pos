@@ -13,7 +13,9 @@ Artefak referensi ignored: storage/framework/testing/ui-references.
 - Sidebar penuh setinggi layar, pemisah tipis; workspace tidak menjadi kartu
   dekoratif besar. Logo POS existing, bukan merek/ilustrasi produk referensi.
 - Light: sidebar/topbar putih, workspace sejuk tipis; ringkasan pastel semantic.
-  Dark: surface berlapis netral dingin, aksen warna terkontrol, kontras terbaca.
+  Dark: surface berlapis netral, aksen warna terkontrol, kontras terbaca.
+  Stone mempertahankan palette existing; dark lainnya memakai kedalaman
+  serupa dengan dasar abu-abu netral dan warna pada aksen interaktif.
 - Menu aktif tegas, icon semantic, badge/transaksi tetap bermakna. Tidak
   menambahkan footer sidebar, grafik palsu, tren, shift atau angka demo.
 - Kartu maksimal radius8px; tipografi tetap Instrument Sans, letter spacing0.

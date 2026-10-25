@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, unlink } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import path from 'node:path';
 import { createInterface } from 'node:readline';
@@ -67,7 +67,9 @@ try {
     const formOnly = process.argv.includes('--operational-form-only');
     const sidebarUx = process.argv.includes('--sidebar-ux-only');
     const uiRefresh = process.argv.includes('--ui-refresh-only');
-    const dashboardOnly = uiRefresh || process.argv.includes('--dashboard-only');
+    const themeBaseline = process.argv.includes('--dark-theme-baseline');
+    const darkThemeOnly = themeBaseline || process.argv.includes('--dark-theme-only');
+    const dashboardOnly = darkThemeOnly || uiRefresh || process.argv.includes('--dashboard-only');
     const manualBackup = process.argv.includes('--manual-backup-only');
     const operational = manualBackup || sidebarUx || formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
     const setup = fixture({ password, operational_only: operational, dashboard_only: dashboardOnly, manual_backup: manualBackup });
@@ -135,7 +137,74 @@ try {
     };
     const pageId = await login('manager');
 
-    if (uiRefresh) {
+    if (darkThemeOnly) {
+        await tool('resize_page',{pageId,width:1440,height:1000});
+        // Sample only the isolated fixture; never change appearance on a production session.
+        const palette=await inspect(pageId,`() => {
+            const root=document.documentElement, originalTheme=root.dataset.theme, originalClass=root.className;
+            const context=document.createElement('canvas').getContext('2d');
+            const sample=()=>{
+                const style=getComputedStyle(root), colors={};
+                for(const key of ['background','foreground','card','card-foreground','popover','popover-foreground','primary',
+                    'primary-foreground','secondary','secondary-foreground','muted','muted-foreground','accent','accent-foreground',
+                    'border','input','ring','sidebar-background','sidebar-foreground','sidebar-primary','sidebar-primary-foreground',
+                    'sidebar-accent','sidebar-accent-foreground','sidebar-border','sidebar-ring','app-workspace','app-topbar',
+                    'app-panel','app-panel-strong','app-border']) {
+                    context.fillStyle=style.getPropertyValue('--'+key).trim(); context.fillRect(0,0,1,1);
+                    colors[key]=Array.from(context.getImageData(0,0,1,1).data).slice(0,3);
+                }
+                return colors;
+            };
+            const result={};
+            try {
+                for(const mode of ['light','dark']) {
+                    root.classList.toggle('dark',mode==='dark'); result[mode]={};
+                    for(const theme of ['default','clean','grey','stone','forest','ruby','quartz','aurora','copper','saffron','plum']) {
+                        root.dataset.theme=theme; result[mode][theme]=sample();
+                    }
+                }
+            } finally {root.className=originalClass; root.dataset.theme=originalTheme;}
+            return result;
+        }`);
+        const reportPath=path.join(artifacts,'dark-theme-report.json');
+        await writeFile(reportPath,JSON.stringify({palette},null,2));
+        if (!themeBaseline) {
+            assert(process.env.QA_THEME_BASELINE,'Baseline palette wajib disediakan.');
+            const before=JSON.parse(await readFile(process.env.QA_THEME_BASELINE,'utf8')).palette;
+            assert.deepEqual(palette.light,before.light,'Warna light berubah');
+            assert.deepEqual(palette.dark.stone,before.dark.stone,'Warna Stone dark berubah');
+            const expected={'background':28,'card':41,'popover':41,'sidebar-background':33,'app-workspace':28,
+                'app-topbar':36,'app-panel':41,'app-panel-strong':51,'border':66,'app-border':66,'sidebar-border':66,'input':71};
+            for(const [theme,colors] of Object.entries(palette.dark)) {
+                if(theme==='stone') continue;
+                for(const [key,channel] of Object.entries(expected)) assert.deepEqual(colors[key],[channel,channel,channel],theme+': '+key);
+                assert.deepEqual(colors.primary,before.dark[theme].primary,'Aksen berubah: '+theme);
+            }
+            const platform=await inspect(pageId,`() => Array.from(document.querySelectorAll('[data-sidebar="group"]')[0].querySelectorAll('a'),el=>el.textContent.trim())`);
+            assert.deepEqual(platform,['Dasbor','Identitas & Akses','Pengaturan toko','Operasional']);
+            await click(pageId,'button','Tema');
+            await click(pageId,'menuitem','Dark');
+            for(const [theme,label] of [['default','Default'],['forest','Forest'],['stone','Stone']]) {
+                await click(pageId,'button','Tema');
+                await click(pageId,'button',label);
+                await tool('press_key',{pageId,key:'Escape'});
+                await new Promise(resolve=>setTimeout(resolve,200));
+                await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'desktop-dark-'+theme+'.png')});
+            }
+            await tool('resize_page',{pageId,width:1024,height:768});
+            await click(pageId,'button','Toggle Sidebar');
+            assert.equal(await inspect(pageId,'() => document.documentElement.scrollWidth > innerWidth'),false,'Overflow tablet');
+            await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'tablet-dark-collapsed.png')});
+            const errors=await tool('list_console_messages',{pageId,types:['error']});
+            assert(errors.includes('<no console messages found>'),'Console error theme');
+        }
+        const state=fixture({verify_dashboard:true,fingerprint:setup.fingerprint});
+        const report={status:themeBaseline?'BASELINE':'PASS',checks:themeBaseline?['palette before change']:
+            ['all light palettes unchanged','Stone dark unchanged','10 neutral dark palettes and accents','platform order','desktop/tablet no overflow','readonly/clean console'],
+            palette,state,artifacts:path.relative(root,artifacts)};
+        await writeFile(reportPath,JSON.stringify(report,null,2));
+        console.log(JSON.stringify({status:report.status,checks:report.checks,report:path.relative(root,reportPath)}));
+    } else if (uiRefresh) {
         const rootResponse = await fetch(`${url}/`, { redirect: 'manual' });
         assert.equal(rootResponse.status, 302);
         assert.equal(rootResponse.headers.get('location'), `${url}/login`);

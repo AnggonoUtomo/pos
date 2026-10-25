@@ -57,3 +57,35 @@ Tidak mengubah aturan transaksi, permission, database/migration, seeder,
 konfigurasi produksi atau scheduler. Pending UAT/printer/tablet fisik dan
 salinan backup terpisah tetap ditunda sesuai instruksi user. Old-docs dan
 file LSP user tidak termasuk commit.
+
+## Increment 3: Konsistensi Dark Dan Urutan Platform
+
+- [x] Konfirmasi user: dark netral seperti Stone, warna hanya pada aksen;
+  light dan Stone dipertahankan.
+- [x] Rekam baseline warna light semua tema dan dark Stone sebelum koreksi.
+- [x] Terapkan surface dark netral bersama tanpa mengubah warna aksen.
+- [x] Pindahkan Operasional tepat di bawah Pengaturan toko; guard tetap.
+- [x] Verifikasi baseline light/Stone identik, surface dark konsisten,
+  screenshot desktop/tablet, console, lint/typecheck/build dan diff scoped.
+- [x] Catat hasil dan review scope; commit/push setelah gate terkait lulus.
+
+### Hasil Increment 3
+
+- Baseline computed color sebelum koreksi:
+  `storage/framework/testing/mvp-browser-f41a70837c488743/dark-theme-report.json`.
+- RED: default dark background masih RGB22/27/35, bukan netral RGB28/28/28.
+- GREEN: seluruh token light 11 tema dan dark Stone identik dengan baseline;
+  surface utama 10 tema dark lainnya netral/konsisten, primary masing-masing
+  tema tidak berubah. Guard, route dan behavior sidebar tidak diubah.
+- Chrome DevTools MCP:
+  `node scripts/qa/mvp-checkout-devtools.mjs --dark-theme-only`, dengan
+  `QA_THEME_BASELINE` menunjuk laporan baseline dan executable existing via
+  `QA_DEVTOOLS_ENTRY`: PASS. Baseline direkam dengan `--dark-theme-baseline`.
+- Screenshot desktop1440x1000 Default/Forest/Stone dan tablet1024x768 collapse
+  diperiksa visual; urutan Platform sesuai, tidak ada overflow/console error,
+  dan fingerprint ledger fixture identik. Tidak memakai data toko.
+- Bukti ignored:
+  `storage/framework/testing/mvp-browser-32aa28a1136e6e8b/dark-theme-report.json`.
+- Prettier CSS/sidebar, ESLint sidebar, `npx tsc --noEmit`, build2757 module,
+  dan `git diff --check`: PASS. Test backend/transaksi sebelumnya tidak diulang
+  karena tidak ada perubahan source behavior backend/transaksi.

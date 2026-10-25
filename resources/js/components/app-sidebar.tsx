@@ -30,14 +30,6 @@ const mainNavGroups: NavGroup[] = [
         title: 'Platform',
         items: [
             {
-                title: 'Operasional',
-                url: '/platform/operational-settings',
-                icon: SlidersHorizontal,
-                badge: 'Aktif',
-                badgeTone: 'amber',
-                permission: 'platform.operational-settings.view',
-            },
-            {
                 title: 'Dasbor',
                 url: '/dashboard',
                 icon: LayoutGrid,
@@ -57,6 +49,14 @@ const mainNavGroups: NavGroup[] = [
                 badge: 'Aktif',
                 badgeTone: 'blue',
                 permission: 'platform.company-settings.view',
+            },
+            {
+                title: 'Operasional',
+                url: '/platform/operational-settings',
+                icon: SlidersHorizontal,
+                badge: 'Aktif',
+                badgeTone: 'amber',
+                permission: 'platform.operational-settings.view',
             },
         ],
     },
