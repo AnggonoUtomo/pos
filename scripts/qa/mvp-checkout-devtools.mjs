@@ -64,7 +64,7 @@ try {
     };
     const password = randomBytes(32).toString('hex');
     const formOnly = process.argv.includes('--operational-form-only');
-    const operational = formOnly || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
+    const operational = formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
     const setup = fixture({ password, operational_only: operational });
     assert.equal(setup.status, 'READY');
     console.log('PASS: fixture MVP disposable siap');
@@ -224,8 +224,18 @@ try {
             return {valid:range.getBoundingClientRect().right + 4 <= badge.getBoundingClientRect().left, overflow:document.documentElement.scrollWidth>innerWidth};
         }`);
         assert(layout.valid && !layout.overflow, 'Label dan badge navigasi bertumpuk.');
+        const navigation=await snapshot(pageId);
+        assert(!navigation.includes('button "Harga"') && !navigation.includes('link "Harga"'), 'Placeholder Harga masih ada di sidebar');
         await tool('take_screenshot', {pageId,filePath:path.join(artifacts,'tablet-navigation.png')});
-        console.log(JSON.stringify({status:'PASS',checks:['tablet navigation label/badge nonoverlap'],artifacts:path.relative(root,artifacts)}));
+        await tool('press_key',{pageId,key:'Control+k'});
+        await locate(pageId,'dialog','Command Palette');
+        const palette=await snapshot(pageId);
+        assert(!palette.includes('Harga level pelanggan dan multi satuan'), 'Placeholder Harga masih ada di command palette');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'tablet-command-palette.png')});
+        await tool('press_key',{pageId,key:'Escape'});
+        const errors=await tool('list_console_messages',{pageId,types:['error']});
+        assert(errors.includes('<no console messages found>'),'Console errors');
+        console.log(JSON.stringify({status:'PASS',checks:['tablet navigation label/badge nonoverlap','no Harga placeholder in sidebar/palette','command palette opens normally','clean console'],artifacts:path.relative(root,artifacts)}));
     } else {
 
 

@@ -210,14 +210,6 @@ const mainNavGroups: NavGroup[] = [
                 badgeTone: 'blue',
                 permission: 'reporting.operational.view',
             },
-            {
-                title: 'Harga',
-                url: '',
-                icon: Tags,
-                badge: 'Segera',
-                badgeTone: 'amber',
-                comingSoon: true,
-            },
         ],
     },
 ];

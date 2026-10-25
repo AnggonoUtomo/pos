@@ -211,3 +211,14 @@ perangkat terpisah masih pending; checklist tersebut sengaja tidak dicentang.
 
 Pengiriman software/panduan lanjutan: b11cb54 sudah di origin/main;
 HEAD/ls-remote identik dan divergence0/0. Ini bukan persetujuan go-live manusia.
+
+### Perapian Menu Harga
+
+- [x] Hapus placeholder Harga dari sidebar dan command palette sesuai user.
+- [x] Pertahankan pengaturan harga per satuan/level pada form Barang; tidak
+  mengubah backend, data harga atau permission.
+- [x] Verifikasi terfokus: assertion source RED/GREEN, ESLint dua komponen,
+  typecheck dan build PASS. Chrome DevTools MCP --navigation-only PASS:
+  Harga tidak tampil di sidebar/palette, palette tetap terbuka, tablet tanpa
+  overlap dan console bersih. Fixture disposable tanpa transaksi; artefak
+  ignored mvp-browser-2559ae1ffb84045e. Tidak mengulang QA harga/transaksi.

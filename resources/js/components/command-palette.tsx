@@ -189,13 +189,6 @@ const commandItems = [
         url: '/reports/operations',
         permission: 'reporting.operational.view',
     },
-    {
-        title: 'Harga',
-        description: 'Harga level pelanggan dan multi satuan',
-        icon: Tags,
-        tone: 'text-yellow-700 dark:text-yellow-300',
-        disabled: true,
-    },
 ];
 
 export function CommandPalette() {
@@ -232,7 +225,7 @@ export function CommandPalette() {
     }, [query, can, canAny]);
 
     const runCommand = (item: (typeof commandItems)[number]) => {
-        if (item.disabled || !item.url) {
+        if (!item.url) {
             return;
         }
 
@@ -293,13 +286,10 @@ export function CommandPalette() {
                             <button
                                 key={item.title}
                                 type="button"
-                                disabled={item.disabled}
                                 onClick={() => runCommand(item)}
                                 className={cn(
                                     'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm outline-hidden transition-colors',
-                                    item.disabled
-                                        ? 'cursor-not-allowed opacity-50'
-                                        : 'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                                    'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
                                 )}
                             >
                                 <span className="bg-muted flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -309,7 +299,6 @@ export function CommandPalette() {
                                     <span className="block font-medium">{item.title}</span>
                                     <span className="text-muted-foreground block truncate text-xs">{item.description}</span>
                                 </span>
-                                {item.disabled && <span className="text-muted-foreground text-xs">Segera</span>}
                             </button>
                         ))}
                     </div>
