@@ -22,6 +22,7 @@ import {
     Truck,
     Warehouse,
 } from 'lucide-react';
+import { useLayoutEffect, useRef } from 'react';
 import AppLogo from './app-logo';
 
 const mainNavGroups: NavGroup[] = [
@@ -214,14 +215,33 @@ const mainNavGroups: NavGroup[] = [
     },
 ];
 
+// Page layouts remount during Inertia navigation; retain only the sidebar offset.
+let sidebarScrollTop = 0;
+
 export function AppSidebar() {
+    const contentRef = useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+        const content = contentRef.current;
+        if (!content) return;
+
+        content.scrollTop = sidebarScrollTop;
+        const rememberScroll = () => {
+            sidebarScrollTop = content.scrollTop;
+        };
+        content.addEventListener('scroll', rememberScroll, { passive: true });
+
+        return () => {
+            rememberScroll();
+            content.removeEventListener('scroll', rememberScroll);
+        };
+    }, []);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" tooltip="Dasbor" asChild>
-                            <Link href="/dashboard" prefetch>
+                            <Link href="/dashboard">
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -229,7 +249,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="scrollbar-none group-data-[collapsible=icon]:overflow-auto">
+            <SidebarContent ref={contentRef} className="scrollbar-none group-data-[collapsible=icon]:overflow-auto">
                 <NavMain groups={mainNavGroups} />
             </SidebarContent>
         </Sidebar>

@@ -53,7 +53,7 @@ function NavMainItem({ item }: { item: NavItem }) {
     return (
         <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
-                <Link href={item.url} prefetch>
+                <Link href={item.url}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                 </Link>

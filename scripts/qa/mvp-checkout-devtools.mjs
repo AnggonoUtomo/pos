@@ -64,7 +64,8 @@ try {
     };
     const password = randomBytes(32).toString('hex');
     const formOnly = process.argv.includes('--operational-form-only');
-    const operational = formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
+    const sidebarUx = process.argv.includes('--sidebar-ux-only');
+    const operational = sidebarUx || formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
     const setup = fixture({ password, operational_only: operational });
     assert.equal(setup.status, 'READY');
     console.log('PASS: fixture MVP disposable siap');
@@ -125,7 +126,44 @@ try {
     };
     const pageId = await login('manager');
 
-    if (process.argv.includes('--operational-pdf-only')) {
+    if (sidebarUx) {
+        await tool('resize_page',{pageId,width:1440,height:800});
+        await click(pageId,'combobox','Format kertas');
+        await click(pageId,'option','58 mm');
+        const initial=await inspect(pageId,'() => ({origin:performance.timeOrigin,paper:document.querySelector("#receipt-paper").textContent})');
+        await tool('hover',{pageId,uid:await locate(pageId,'link','Gudang')});
+        await new Promise(resolve=>setTimeout(resolve,700));
+        const network=await tool('list_network_requests',{pageId,resourceTypes:['xhr','fetch','prefetch']});
+        const hovered=await inspect(pageId,'() => ({origin:performance.timeOrigin,paper:document.querySelector("#receipt-paper").textContent})');
+        assert.deepEqual(hovered,initial,'Hover mengubah dokumen atau draft aktif');
+        const cases=[];
+        for (const collapsed of [false,true]) {
+            if(collapsed) {
+                await tool('navigate_page',{pageId,url:`${url}/platform/operational-settings`});
+                await tool('resize_page',{pageId,width:1024,height:600});
+                await click(pageId,'button','Toggle Sidebar');
+            }
+            const before=await inspect(pageId,`() => {
+                const el=document.querySelector('[data-sidebar="content"]');
+                el.scrollTop=el.scrollHeight; window.scrollTo(0,100);
+                return {top:el.scrollTop,origin:performance.timeOrigin,body:window.scrollY};
+            }`);
+            assert(before.top>0,'Fixture sidebar harus dapat discroll');
+            await click(pageId,'link','Laporan Operasional');
+            await locate(pageId,'heading','Laporan operasional');
+            const after=await inspect(pageId,`() => ({top:document.querySelector('[data-sidebar="content"]').scrollTop,origin:performance.timeOrigin,body:window.scrollY})`);
+            cases.push({collapsed,before,after});
+            await tool('take_screenshot',{pageId,filePath:path.join(artifacts,collapsed?'tablet-sidebar-scroll.png':'desktop-sidebar-scroll.png')});
+        }
+        const observed={hoverPrefetch:network.includes(`${url}/inventory/warehouses`),cases};
+        await writeFile(path.join(artifacts,'sidebar-observed.json'),JSON.stringify(observed,null,2));
+        assert(!observed.hoverPrefetch && cases.every(({before,after})=>Math.abs(before.top-after.top)<2 && before.origin===after.origin && after.body===0),
+            'Hover/scroll sidebar belum sesuai: '+JSON.stringify(observed));
+        const errors=await tool('list_console_messages',{pageId,types:['error']});
+        assert(errors.includes('<no console messages found>'),'Console errors');
+        const state=fixture({verify_navigation:true});
+        console.log(JSON.stringify({status:'PASS',checks:['hover without request/reload/draft reset','sidebar scroll retained expanded/collapsed','new workspace scroll independent','no business mutations','clean console'],state,artifacts:path.relative(root,artifacts)}));
+    } else if (process.argv.includes('--operational-pdf-only')) {
         assert(process.env.QA_PLAYWRIGHT_MODULE,'Gunakan Playwright existing hanya untuk print-to-PDF.');
         const {chromium}=createRequire(import.meta.url)(process.env.QA_PLAYWRIGHT_MODULE);
         const browser=await chromium.launch({channel:'chrome',headless:true});

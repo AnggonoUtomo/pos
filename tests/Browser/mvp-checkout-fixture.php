@@ -30,6 +30,15 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     throw new LogicException('Fixture hanya SQLite disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+if (($input['verify_navigation'] ?? false) === true) {
+    if (DB::table('stock_movements')->exists() || DB::table('sales_invoices')->exists()
+        || DB::table('purchase_orders')->exists() || DB::table('operational_backup_runs')->exists()
+        || (int) DB::table('operational_settings')->value('version') !== 0) {
+        throw new RuntimeException('Navigasi tidak boleh mengubah data bisnis/pengaturan.');
+    }
+    echo json_encode(['status' => 'PASS', 'no_business_mutations' => true]);
+    exit;
+}
 if (($input['verify_operational'] ?? false) === true) {
     if (DB::table('operational_settings')->value('receipt_paper') !== '80mm'
         || (bool) DB::table('operational_settings')->value('backup_enabled') !== false

@@ -222,3 +222,29 @@ HEAD/ls-remote identik dan divergence0/0. Ini bukan persetujuan go-live manusia.
   Harga tidak tampil di sidebar/palette, palette tetap terbuka, tablet tanpa
   overlap dan console bersih. Fixture disposable tanpa transaksi; artefak
   ignored mvp-browser-2559ae1ffb84045e. Tidak mengulang QA harga/transaksi.
+
+### Perbaikan UX Navigasi Sidebar
+
+- [x] Reproduksi request hover, kestabilan form aktif dan reset scroll sidebar.
+  - Acceptance: hover tidak menavigasi/mengubah draft; sidebar tidak kembali
+    ke atas saat memilih modul lain; scroll workspace baru tetap independen.
+  - Verification: browser RED/GREEN, network/timeOrigin/draft dan scroll offset.
+- [x] Matikan prefetch hover sidebar dan pertahankan offset sidebar ketika
+  shell halaman dibuat ulang, tanpa refactor seluruh page/layout.
+  - Scope: NavMain/AppSidebar; tidak mengubah business flow, permission, theme
+    atau perilaku form modul. Tidak memakai preserveScroll global untuk body.
+- [x] Verifikasi expanded desktop dan collapsed tablet, console, lint,
+  typecheck/build. Commit/push dilakukan setelah gate ini lulus.
+
+Hasil Chrome DevTools MCP `--sidebar-ux-only`: RED membuktikan request hover
+ke Gudang serta reset sidebar 208 -> 0 px (desktop) dan 200 -> 0 px (tablet
+collapse). `performance.timeOrigin` dan draft format kertas tetap sama:
+prefetch bukan reload dokumen penuh. GREEN tanpa request hover, draft tetap,
+offset 208 -> 208 px dan 200 -> 200 px; workspace baru kembali ke atas.
+Console bersih dan fixture SQLite disposable tidak memutasi data bisnis atau
+pengaturan. Artefak ignored: `mvp-browser-3ea8d188fe4b4eaf`.
+
+ESLint dua komponen, `tsc --noEmit`, `npm run build`, Pint fixture,
+`node --check scripts/qa/mvp-checkout-devtools.mjs` dan `git diff --check`
+PASS. Tidak mengulang QA transaksi/tema yang tidak berubah. Tidak mengubah
+schema, permission, data lokal, Old-docs atau file LSP milik user.
