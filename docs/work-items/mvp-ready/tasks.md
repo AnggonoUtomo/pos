@@ -54,9 +54,9 @@
 - [x] Aktivasi aman tanpa reset data, grant berlebih, atau demo transaksi otomatis.
 - [x] Backup dan restore database teruji pada database disposable.
 - [x] Konfigurasi produksi, build assets dan keamanan dasar diperiksa.
-  - Produksi belum diaktifkan pada environment local; readiness --production
-    sengaja menolak debug/local/HTTP dan identitas toko kosong. Ini pending
-    konfigurasi deploy/operator, bukan bukti produksi sudah berjalan.
+  - Produksi kini aktif pada PC Windows/Laragon yang disetujui user;
+    readiness --production PASS. Trust LAN/tablet, pemicu scheduler dan
+    persetujuan operator tetap terpisah dari konfigurasi PC.
 - [x] Skenario otomatis desktop/tablet: master -> beli/lunas -> stok -> jual/lunas
   -> retur -> uang kembali -> transfer/koreksi -> laporan/struk.
 - [x] Blocker teknis ditutup; kebutuhan printer/perangkat dan persetujuan operator dicatat.
@@ -133,8 +133,9 @@ di SampleUI/storage tidak dimasukkan; Old-docs tidak disentuh.
 
 - [ ] Persetujuan UAT pemilik/operator dengan data dan perangkat toko nyata.
 - [ ] Printer fisik/lebar kertas dan prosedur cetak diverifikasi operator.
-- [ ] Penanggung jawab, jadwal dan salinan backup terpisah ditetapkan.
-- [ ] Konfigurasi production/HTTPS/debug/cookie pada server tujuan diverifikasi.
+- [x] Jadwal backup lokal ditetapkan user pukul22:00WIB dan disimpan aktif.
+- [ ] Penanggung jawab, pemicu scheduler dan salinan backup terpisah ditetapkan.
+- [x] Konfigurasi production/HTTPS/debug/cookie PC server diverifikasi.
 
 Rincian [OPERASIONAL.md](OPERASIONAL.md). Pending manusia/deploy ini tidak
 ditandai selesai hanya karena QA automated lulus. Tidak menambah fitur baru.
@@ -170,8 +171,8 @@ di jaringan toko. Ini penyelesaian Paket 4, bukan penambahan fitur/modul.
 ### Increment 3: Konfigurasi Dan Persetujuan Penggunaan
 
 - [ ] Uji akses tablet lewat hostname yang sama dan sertifikat terpercaya.
-- [ ] Terapkan document root public, HTTPS, production/debug/cookie setelah
-  rute akses client siap; pertahankan APP_KEY/data/grant existing.
+- [x] Terapkan document root public, HTTPS, production/debug/cookie PC server;
+  pertahankan APP_KEY/data/grant existing. Validasi client LAN tetap pending.
   - Verification: sintaks Apache, readiness production, login dan asset
     PC/tablet; perubahan server tidak mengganggu virtual host project lain.
 - [ ] Operator melaksanakan UAT dan printer fisik; agent hanya merekam bukti.
@@ -206,7 +207,7 @@ preferensi/status, preview desktop/
 tablet dan rendering PDF tiga ukuran PASS. PDF bukan bukti cetak fisik.
 
 User mengonfirmasi tablet BELUM tersedia. Maka pengujian LAN/TLS tablet,
-konfigurasi production aktif, UAT manusia/printer serta salinan backup di
+UAT manusia/printer serta salinan backup di
 perangkat terpisah masih pending; checklist tersebut sengaja tidak dicentang.
 
 Pengiriman software/panduan lanjutan: b11cb54 sudah di origin/main;
@@ -288,3 +289,42 @@ Tidak menambah schema, dependency, permission/grant, seeder produksi, polling,
 atau runner OS. MySQL lokal, tema, Old-docs dan file LSP user tidak diubah.
 Migration/status tidak diperlukan karena schema tidak berubah. Data dashboard
 adalah posisi saat dimuat/refresh, bukan stream realtime otomatis.
+
+### Aktivasi Produksi Dan Penerimaan Operator
+
+- [x] Baca runbook aktif dan inventaris konfigurasi; backup/restore lokal
+  terverifikasi sebelum perubahan. Tidak mengganti APP_KEY/data/grant.
+- [x] Terapkan custom vhost POS ke public dan redirect HTTP ke HTTPS; simpan
+  rollback private, uji sintaks sebelum reload, tidak mengubah host lain.
+- [x] Aktifkan environment production/debug off, URL HTTPS dan secure cookie;
+  cache konfigurasi/route/view, cek readiness dan smoke HTTP/TLS/asset.
+- [x] Siapkan folder backup root project (bukan akses web), jadwal22:00WIB
+  sesuai user, dan tombol manual backup yang telah dikonfirmasi user.
+  - Salinan lokal bukan media terpisah; tidak memasang pemicu OS otomatis.
+- [x] Catat bukti aktual; commit hasil software setelah gate lulus. Printer fisik belum
+  tersedia menurut user; UAT operator, media eksternal dan tablet tetap pending
+  sampai benar-benar diuji/disetujui. Jangan membuat transaksi uji di DB toko.
+
+Readiness --production PASS pada25Oktober2026: env production/debugfalse,
+HTTPS/secure cookie, build tanpa Vite, MySQL/migration/identitas dan FIFO.
+Config/route/view cache aktif. APP_KEY dan seluruh DB_* identik dengan backup
+konfigurasi sebelum aktivasi (nilai tidak dicetak). Apache Syntax OK; user
+melakukan Reload karena Apache Laragon bukan service. Custom pos.test.conf
+aktif80/443 tanpa vhost POS duplikat, host project lain tidak diubah.
+PC HTTPS/login200 dengan validasi TLS normal; HTTP/login301 menuju HTTPS
+dengan query terjaga; cookie Secure/HttpOnly/SameSite=lax; /up200, guest
+dashboard302, JS/CSS200. /.env, /composer.json, /storage/app/private,
+/backups dan URL berkas dump404. Slash akhir private path menghasilkan301
+normalisasi sebelum404, bukan akses file. Firewall/DNS/tablet tidak diubah.
+
+Dump sebelum aktivasi private dan dump baru `backups/pos-20261025-115403-a74088fd.sql`
+lulus pos:backup --verify: restore disposable identik, DB bisnis tidak ditimpa.
+Folder baru ignored Git, dapat diakses File Explorer, bukan off-device.
+Preferensi lokal aktif22:00WIB disimpan melalui action/audit anonim CLI sesuai
+instruksi user, tanpa mengubah receipt_paper atau grant. Pemicu OS tetap belum
+dipasang; schedule:list adalah bukti definisi Laravel, bukan eksekusi periodik.
+
+Backup manual: [rencana/checklist/QA module](../../modules/Platform/OperationalSettings/work-items/manual-backup/tasks.md).
+Regresi terfokus30/329 PASS; lint/typecheck/build2758 dan Pint PASS. Sesudah
+cache produksi diaktifkan, QA mendapat path cache sendiri: focused6/38 dan
+DevTools desktop/tablet PASS, tanpa membersihkan cache/memuat DB produksi.

@@ -54,6 +54,7 @@ try {
     });
     const url = `http://127.0.0.1:${port}`;
     const env = { ...process.env, APP_ENV: 'testing', APP_DEBUG: 'false', APP_URL: url, DB_CONNECTION: 'sqlite',
+        APP_CONFIG_CACHE: path.join(artifacts, 'config.php'), APP_ROUTES_CACHE: path.join(artifacts, 'routes.php'),
         DB_DATABASE: database, CACHE_STORE: 'array', SESSION_DRIVER: 'database', SESSION_COOKIE: `return_post_${id}`,
         SESSION_DOMAIN: 'null', SESSION_SECURE_COOKIE: 'false', MAIL_MAILER: 'array', BCRYPT_ROUNDS: '4' };
     const fixture = (input) => {
@@ -66,11 +67,12 @@ try {
     const formOnly = process.argv.includes('--operational-form-only');
     const sidebarUx = process.argv.includes('--sidebar-ux-only');
     const dashboardOnly = process.argv.includes('--dashboard-only');
-    const operational = sidebarUx || formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
-    const setup = fixture({ password, operational_only: operational, dashboard_only: dashboardOnly });
+    const manualBackup = process.argv.includes('--manual-backup-only');
+    const operational = manualBackup || sidebarUx || formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
+    const setup = fixture({ password, operational_only: operational, dashboard_only: dashboardOnly, manual_backup: manualBackup });
     assert.equal(setup.status, 'READY');
     console.log('PASS: fixture MVP disposable siap');
-    server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')],
+    server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, manualBackup ? 'tests/Browser/manual-backup-router.php' : 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')],
         { cwd: path.join(root, 'public'), env, stdio: 'ignore', windowsHide: true });
     let ready = false;
     for (let attempt = 0; attempt < 40; attempt++) {
@@ -127,7 +129,28 @@ try {
     };
     const pageId = await login('manager');
 
-    if (dashboardOnly) {
+    if (manualBackup) {
+        await tool('resize_page',{pageId,width:1440,height:900});
+        await click(pageId,'button','Backup sekarang');
+        await locate(pageId,'dialog','Backup database sekarang?');
+        await click(pageId,'button','Batal');
+        await tool('press_key',{pageId,key:'Alt+b'});
+        await locate(pageId,'dialog','Backup database sekarang?');
+        await click(pageId,'button','Buat backup');
+        await until(pageId,current=>current.includes('pos-20261025-220000-1234abcd.sql'),'backup result');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'desktop-manual-backup.png')});
+        await tool('resize_page',{pageId,width:1024,height:768});
+        assert.equal(await inspect(pageId,'() => document.documentElement.scrollWidth > innerWidth'),false,'Overflow backup tablet');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'tablet-manual-backup.png')});
+        const readonly = await login('readonly');
+        assert(!(await snapshot(readonly)).includes('button "Backup sekarang"'),'Tombol backup terbuka ke viewer');
+        for(const current of [pageId,readonly]) {
+            const errors=await tool('list_console_messages',{pageId:current,types:['error']});
+            assert(errors.includes('<no console messages found>'),'Console error backup');
+        }
+        const state=fixture({verify_manual_backup:true});
+        console.log(JSON.stringify({status:'PASS',checks:['confirmation/cancel/shortcut','manual result and audit','view-only guard','desktop/tablet and clean console'],state,artifacts:path.relative(root,artifacts)}));
+    } else if (dashboardOnly) {
         const money = value => {
             const [whole, fraction=''] = value.split('.');
             const tail = fraction.replace(/0+$/, '');

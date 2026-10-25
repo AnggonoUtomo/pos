@@ -5,6 +5,14 @@ format struk 58 mm/80 mm/A4 melalui dialog browser, backup otomatis opsional
 dengan jam Asia/Jakarta, dan status backup terakhir. Bukan pengaturan company,
 secret, database, jaringan, firewall, sertifikat, atau APP_ENV dari UI.
 
+Tambahan disetujui user25Oktober2026: tombol **Backup sekarang** memakai
+permission manage, konfirmasi, progress, Sonner dan audit requested/succeeded/
+failed. File disimpan ke `base_path('backups')`, ignored Git dan bukan unduhan
+web. UI hanya menampilkan basename aman/status/waktu manual terakhir. Manual
+tidak mengisi sukses jadwal harian dan boleh dijalankan ulang. Command memiliki
+lock bersama manual/scheduler/CLI selama dump/verify. Tidak ada restore dari UI.
+Rencana/bukti: [backup manual](work-items/manual-backup/tasks.md).
+
 Default: format A4 untuk mempertahankan cetak existing; backup otomatis mati,
 jam awal 21:00 WIB. Semua opsi dapat disiapkan/disimpan saat backup nonaktif.
 Scheduler Laravel netral OS; admin deployment memasang cron di Linux atau

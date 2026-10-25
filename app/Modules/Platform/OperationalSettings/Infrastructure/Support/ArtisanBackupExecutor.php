@@ -11,7 +11,7 @@ class ArtisanBackupExecutor implements BackupExecutor
     public function run(): string
     {
         $result = Artisan::call('pos:backup');
-        if ($result !== 0 || ! preg_match('~Backup tersimpan: storage/app/private/backups/(pos-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.sql)~', Artisan::output(), $match)) {
+        if ($result !== 0 || ! preg_match('~Backup tersimpan: backups/(pos-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.sql)~', Artisan::output(), $match)) {
             throw new RuntimeException('Backup gagal.');
         }
 

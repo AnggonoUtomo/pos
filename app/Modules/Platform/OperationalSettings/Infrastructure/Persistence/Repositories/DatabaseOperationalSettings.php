@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
+use Spatie\Activitylog\Models\Activity;
 
 class DatabaseOperationalSettings implements OperationalSettingsRepository, PrintingPreferences
 {
@@ -54,9 +55,26 @@ class DatabaseOperationalSettings implements OperationalSettingsRepository, Prin
     public function status(): array
     {
         $run = DB::table('operational_backup_runs')->orderByDesc('scheduled_for')->first();
+        $manual = Activity::query()->where('log_name', 'platform.operational-settings')
+            ->whereIn('event', ['backup.manual.succeeded', 'backup.manual.failed'])->latest('id')->first();
 
         return ['scheduler_seen_at' => OperationalSetting::findOrFail(self::ID)->scheduler_seen_at,
-            'last_run' => $run ? Arr::only((array) $run, ['scheduled_for', 'status', 'attempts', 'started_at', 'finished_at', 'error_code']) : null];
+            'last_run' => $run ? Arr::only((array) $run, ['scheduled_for', 'status', 'attempts', 'started_at', 'finished_at', 'error_code']) : null,
+            'last_manual' => $manual ? ['status' => $manual->properties['status'], 'file' => $manual->properties['file'],
+                'finished_at' => $manual->created_at->toISOString()] : null];
+    }
+
+    public function recordManualBackup(string $status, ?string $file, int $actorId): void
+    {
+        if (! in_array($status, ['requested', 'succeeded', 'failed'], true)
+            || ($file !== null && ! preg_match('/^pos-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.sql$/D', $file))) {
+            throw new \LogicException('Hasil backup manual tidak valid.');
+        }
+        $log = activity('platform.operational-settings')->causedBy($actorId)->event('backup.manual.'.$status)
+            ->withProperties(['status' => $status, 'file' => $file])->log('Eksekusi backup manual');
+        if ($log === null || ! $log->exists) {
+            throw new RuntimeException('Audit backup gagal disimpan.');
+        }
     }
 
     public function claimDue(): ?array

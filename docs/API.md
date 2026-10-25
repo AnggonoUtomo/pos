@@ -1047,14 +1047,22 @@ menerima receipt_paper (`a4`, `58mm`, `80mm`), backup_enabled boolean,
 backup_time `HH:mm` 24 jam Asia/Jakarta, version integer. Unknown field422,
 stale version422, mutation/audit atomic; no-op tidak membuat audit ganda.
 
-Index memuat settings dan backup {scheduler_seen_at,last_run}; last_run berisi
+Index memuat settings dan backup {scheduler_seen_at,last_run,last_manual}; last_run berisi
 scheduled_for/status/attempts/started_at/finished_at/error_code, bukan output
 command, credential atau akses unduh dump. Timestamp disimpan UTC dan UI WIB.
 Shared Inertia printing {paper} tersedia hanya untuk user terautentikasi,
 tidak membocorkan konfigurasi/status backup kepada role tanpa view settings.
 
-Tidak ada endpoint web untuk menjalankan backup, edit .env, mengirim ESC/POS,
-mengunggah/mengunduh dump atau menulis path arbitrary. CLI `pos:backup-due`
+POST `/platform/operational-settings/backup`, nama route
+`platform.operational-settings.backup`: web/auth/verified, manage dan CSRF.
+Body kosong (selain CSRF token); unknown field422. Sukses JSON {status,file}
+atau redirect ke halaman Operasional, gagal422 dengan pesan sanitized. Audit
+requested harus berhasil sebelum executor berjalan; sukses/gagal diaudit dengan
+actor. last_manual memuat status/file/finished_at, bukan path absolut/credential.
+Manual tidak mengubah jadwal atau catatan harian; overlap dump ditolak command.
+
+Tidak ada endpoint untuk edit .env, mengirim ESC/POS, mengunggah/mengunduh dump
+atau menulis path arbitrary. CLI `pos:backup-due`
 dipanggil scheduler setiap menit; jadwal aplikasi opsional/default mati.
 Jam tetap dapat diubah saat backup nonaktif. Pemicu Laravel Scheduler disiapkan
 admin saat deployment, bukan dipasang otomatis oleh aplikasi pada OS pengguna.

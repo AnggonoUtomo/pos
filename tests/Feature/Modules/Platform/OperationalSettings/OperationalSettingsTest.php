@@ -208,7 +208,7 @@ class OperationalSettingsTest extends TestCase
     public function test_executor_uses_existing_backup_command_and_returns_only_safe_basename(): void
     {
         Artisan::shouldReceive('call')->once()->with('pos:backup')->andReturn(0);
-        Artisan::shouldReceive('output')->once()->andReturn("Backup tersimpan: storage/app/private/backups/pos-20261025-140000-1234abcd.sql\n");
+        Artisan::shouldReceive('output')->once()->andReturn("Backup tersimpan: backups/pos-20261025-140000-1234abcd.sql\n");
         $this->assertSame('pos-20261025-140000-1234abcd.sql', app(ArtisanBackupExecutor::class)->run());
     }
 

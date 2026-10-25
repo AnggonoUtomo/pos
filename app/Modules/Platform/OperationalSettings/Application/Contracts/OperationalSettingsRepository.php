@@ -10,6 +10,8 @@ interface OperationalSettingsRepository
 
     public function status(): array;
 
+    public function recordManualBackup(string $status, ?string $file, int $actorId): void;
+
     public function claimDue(): ?array;
 
     public function finish(array $claim, string $status, ?string $file): void;

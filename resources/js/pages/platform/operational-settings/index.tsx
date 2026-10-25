@@ -13,6 +13,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { Clock3, DatabaseBackup, LoaderCircle, Printer, RefreshCw, Save, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { ManualBackupDialog } from './components/manual-backup-dialog';
 import { PrintPreview } from './components/print-preview';
 import type { BackupStatus, Settings } from './types';
 
@@ -23,8 +24,10 @@ const statuses = { running: 'Berjalan', succeeded: 'Berhasil', failed: 'Gagal' }
 export default function OperationalSettings({ settings, backup }: { settings: Settings; backup: BackupStatus }) {
     const editable = usePermission().can('platform.operational-settings.manage');
     const form = useForm(settings);
+    const manual = useForm({});
     const formRef = useRef<HTMLFormElement>(null);
     const [preview, setPreview] = useState(false);
+    const [confirmBackup, setConfirmBackup] = useState(false);
     const { setData } = form;
     useEffect(() => setData(settings), [settings, setData]);
     useEffect(() => {
@@ -36,6 +39,10 @@ export default function OperationalSettings({ settings, backup }: { settings: Se
             if (event.altKey && event.key.toLowerCase() === 'p') {
                 event.preventDefault();
                 setPreview(true);
+            }
+            if (event.altKey && event.key.toLowerCase() === 'b' && editable) {
+                event.preventDefault();
+                setConfirmBackup(true);
             }
         };
         window.addEventListener('keydown', key);
@@ -51,6 +58,7 @@ export default function OperationalSettings({ settings, backup }: { settings: Se
                 shortcuts={[
                     { label: 'Simpan', description: 'Simpan pengaturan', keys: ['Ctrl/Cmd', 'Enter'], disabled: !editable },
                     { label: 'Uji cetak', description: 'Buka contoh struk', keys: ['Alt', 'P'] },
+                    { label: 'Backup sekarang', description: 'Konfirmasi backup manual', keys: ['Alt', 'B'], disabled: !editable },
                 ]}
             />
             <section className="min-w-0 flex-1 space-y-6 p-4 lg:p-6">
@@ -165,6 +173,23 @@ export default function OperationalSettings({ settings, backup }: { settings: Se
                         >
                             {connected ? 'Runner terhubung' : 'Runner belum terhubung'}
                         </Badge>
+                        <div className="space-y-3 border-y py-4">
+                            <h3 className="text-sm font-medium">Backup manual</h3>
+                            <p className="text-muted-foreground text-xs">Folder server: backups</p>
+                            {editable && (
+                                <Button type="button" variant="outline" disabled={manual.processing} onClick={() => setConfirmBackup(true)}>
+                                    <DatabaseBackup className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                    Backup sekarang
+                                </Button>
+                            )}
+                            <InputError message={(manual.errors as Record<string, string>).backup} />
+                            <p className="text-sm">
+                                {backup.last_manual
+                                    ? `${statuses[backup.last_manual.status]} - ${dateLabel(backup.last_manual.finished_at)}`
+                                    : 'Belum ada backup manual'}
+                            </p>
+                            {backup.last_manual?.file && <p className="text-muted-foreground text-xs break-all">{backup.last_manual.file}</p>}
+                        </div>
                         <dl className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 text-sm">
                             <dt className="text-muted-foreground flex items-start gap-1">
                                 <Clock3 className="size-4 shrink-0 text-amber-600" />
@@ -191,6 +216,25 @@ export default function OperationalSettings({ settings, backup }: { settings: Se
                 </div>
             </section>
             <PrintPreview open={preview} onOpenChange={setPreview} paper={form.data.receipt_paper} />
+            <ManualBackupDialog
+                open={confirmBackup}
+                processing={manual.processing}
+                onOpenChange={setConfirmBackup}
+                onConfirm={() => {
+                    if (manual.processing) return;
+                    manual.post(route('platform.operational-settings.backup'), {
+                        preserveScroll: true,
+                        onSuccess: () => {
+                            setConfirmBackup(false);
+                            toast.success('Backup manual berhasil.');
+                        },
+                        onError: () => {
+                            setConfirmBackup(false);
+                            toast.error('Backup manual gagal. Periksa status dan layanan backup.');
+                        },
+                    });
+                }}
+            />
         </AppLayout>
     );
 }

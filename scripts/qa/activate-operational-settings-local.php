@@ -16,7 +16,7 @@ set_exception_handler(static function (Throwable $error): never {
 if (! app()->environment('local') || DB::connection()->getDriverName() !== 'mysql') {
     throw new LogicException('Aktivasi hanya local/MySQL.');
 }
-$backups = glob(storage_path('app/private/backups/*.sql')) ?: [];
+$backups = array_merge(glob(base_path('backups/*.sql')) ?: [], glob(storage_path('app/private/backups/*.sql')) ?: []);
 if (! array_filter($backups, fn ($file) => filemtime($file) > time() - 3600 && filesize($file) > 0)) {
     throw new LogicException('Buat backup terverifikasi sebelum aktivasi.');
 }

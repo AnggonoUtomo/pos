@@ -3,6 +3,13 @@
 Mulai dari test paling spesifik dan naik ke gate yang lebih luas sesuai risiko.
 Jangan mengklaim selesai jika command gagal atau belum dijalankan.
 
+Workspace PC toko kini memakai config/route cache produksi. PHPUnit dan harness
+browser MVP memakai path cache khusus testing agar tidak memuat konfigurasi
+MySQL produksi. Jangan menjalankan RefreshDatabase, fixture atau QA mutation
+dengan bootstrap/cache/config.php produksi. PHPUnit force APP_CONFIG_CACHE dan
+APP_ROUTES_CACHE ke storage/framework/testing; harness memakai folder acaknya.
+Jangan menghapus cache produksi hanya untuk menjalankan QA disposable.
+
 Prioritas MVP: test terfokus selama coding, satu gate lengkap per paket pada
 `work-items/mvp-ready/tasks.md`. Bukti lulus dipakai kembali bila source tidak
 berubah. Browser hanya alur berubah pada desktop/tablet representatif, bukan

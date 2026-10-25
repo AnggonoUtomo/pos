@@ -32,6 +32,15 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     throw new LogicException('Fixture hanya SQLite disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+if (($input['verify_manual_backup'] ?? false) === true) {
+    if (DB::table('stock_movements')->exists() || DB::table('sales_invoices')->exists()
+        || DB::table('operational_backup_runs')->exists()
+        || DB::table('activity_log')->where('event', 'backup.manual.succeeded')->count() !== 1) {
+        throw new RuntimeException('Backup manual QA atau pemisahan data tidak sesuai.');
+    }
+    echo json_encode(['status' => 'PASS', 'executor' => 'stub', 'no_business_mutations' => true]);
+    exit;
+}
 if (($input['verify_dashboard'] ?? false) === true) {
     if (! hash_equals(PurchaseReturnRefundFixture::fingerprint(), $input['fingerprint'] ?? '')) {
         throw new RuntimeException('Dashboard tidak boleh memutasi ledger.');
@@ -101,6 +110,10 @@ if (($input['dashboard_only'] ?? false) === true) {
 if (($input['operational_only'] ?? false) === true) {
     app(OperationalSettingsAccessSeeder::class)->run();
     $manager->assignRole(Role::findOrCreate('super-system', 'web'));
+    if (($input['manual_backup'] ?? false) === true) {
+        User::factory()->create(['email' => 'qa-readonly@example.test', 'password' => $input['password']])
+            ->givePermissionTo('platform.operational-settings.view');
+    }
     echo json_encode(['status' => 'READY']);
     exit;
 }

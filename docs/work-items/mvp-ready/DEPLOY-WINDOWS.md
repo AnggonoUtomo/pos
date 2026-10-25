@@ -1,8 +1,9 @@
 # Operasional Windows Dan Jaringan Toko
 
 Target disetujui: PC Windows/Laragon ini sebagai server, kasir dan tablet pada
-LAN toko. Status: persiapan; konfigurasi produksi aktif BELUM diubah.
-User mengonfirmasi tablet belum tersedia; akses LAN/TLS client tetap pending.
+LAN toko. Status25Oktober2026: konfigurasi produksi aktif pada PC, readiness
+production PASS. User mengonfirmasi tablet belum tersedia; akses LAN/TLS client
+tetap pending, bukan dianggap lulus berdasarkan pemeriksaan PC.
 
 ## Jaringan Dan HTTPS
 
@@ -22,9 +23,11 @@ User mengonfirmasi tablet belum tersedia; akses LAN/TLS client tetap pending.
 
 ## Apache Laragon
 
-Vhost yang ditemukan: `C:/laragon/etc/apache2/sites-enabled/auto.pos.test.conf`.
-Saat audit DocumentRoot masih `C:/laragon/www/pos`; sebelum produksi arahkan
-HTTP/HTTPS POS ke `C:/laragon/www/pos/public`. Jangan mengubah host project lain.
+Vhost aktif: `C:/laragon/etc/apache2/sites-enabled/pos.test.conf`, dengan
+DocumentRoot `C:/laragon/www/pos/public` dan HTTP301 ke hostname HTTPS tetap.
+Template terverifikasi: [apache-pos.conf](apache-pos.conf). File auto sebelumnya
+dipindah ke rollback private agar tidak ada dua vhost POS. Tidak mengubah host
+project lain. Nama custom tanpa auto. dipertahankan Laragon saat reload.
 
 Simpan backup konfigurasi di luar document root. Gunakan custom vhost yang tidak
 ditimpa autogenerator Laragon, tanpa meninggalkan dua vhost POS yang bentrok.
@@ -41,14 +44,16 @@ DocumentRoot "C:/laragon/www/pos/public"
 
 Vhost HTTP harus mengarahkan ke `https://pos.test/` tanpa memakai Host header
 bebas sebagai tujuan redirect. Uji sintaks dengan executable Apache Laragon
-(`httpd.exe -t`) sebelum reload. Pastikan `/login`, asset dan `/up` berhasil,
+(`httpd.exe -t`) sebelum reload. Apache ini bukan service: gunakan Reload dari
+Laragon, bukan memasang service baru. Pastikan `/login`, asset dan `/up` berhasil,
 sementara `/.env`, `/composer.json` dan `/storage/app/private/` tidak dapat
 diakses. Jangan menampilkan isi file sensitif saat pemeriksaan.
 
 ## Environment Dan Aktivasi
 
 Lakukan saat toko belum bertransaksi; backup terverifikasi terlebih dahulu.
-Jangan menyalin `.env` ke Git. Sesuaikan HANYA setelah HTTPS client siap:
+Jangan menyalin `.env` ke Git. Nilai berikut sudah aktif/terverifikasi di PC;
+setiap client LAN masih wajib menguji trust HTTPS sebelum dipakai:
 
 ```dotenv
 APP_ENV=production
@@ -110,6 +115,12 @@ dump historis palsu.
 - Jangan menghapus backup lama otomatis sebelum kebijakan retensi dan salinan
   terpisah disetujui. Sertakan konfigurasi/APP_KEY secara aman di luar Git.
 
+Preferensi lokal saat ini: aktif22:00WIB sesuai user. Tombol Backup sekarang
+tersedia untuk manage dengan audit; hasil root project `backups/`, bukan
+unduhan publik. Directory dan file SQL diabaikan Git. Dump lama private tidak
+dihapus/dipindahkan. Pemicu periodik admin belum tersedia; menyimpan jadwal
+bukan bukti backup otomatis sudah bekerja. Root folder lokal bukan off-device.
+
 ## Persetujuan Dan Pemulihan
 
 Lengkapi [UAT operator/printer](UAT-OPERATOR.md). Pemilik menetapkan penanggung
@@ -120,9 +131,18 @@ Jika smoke test gagal, hentikan transaksi dan pulihkan konfigurasi vhost/.env
 yang baru diubah, bersihkan cache konfigurasi sesuai kebutuhan, lalu uji login.
 Jangan rollback data/ledger atau restore backup bisnis tanpa rekonsiliasi.
 
+Rollback lokal sebelum aktivasi ada di storage/app/private/deployment/
+20261025-production (ignored, bukan web). Jangan commit/cetak isi .env.before.
+Pulihkan hanya konfigurasi yang relevan, validasi Apache, reload, lalu bangun
+ulang cache konfigurasi/route; jangan menimpa database atau APP_KEY baru.
+
 ## Sumber Teknis
 
 - [Laravel 12: deployment](https://laravel.com/docs/12.x/deployment): document
   root public, cache konfigurasi dan debug produksi.
+- [Laragon: custom vhost](https://laragon.org/docs/pretty-urls): hapus prefix
+  auto. agar konfigurasi custom tidak ditimpa.
+- [Apache Windows](https://httpd.apache.org/docs/2.4/platform/windows.html):
+  perbedaan pengendalian proses console dan service.
 - [Microsoft: pengaturan Scheduled Tasks](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasksettingsset):
   jadwal terlewat, restart dan kebijakan instance bersamaan.

@@ -50,6 +50,12 @@ layout, tetapi bukan bukti printer fisik, pemotong kertas atau koneksi berfungsi
 
 Model: belum dikonfirmasi. Kertas: belum dikonfirmasi. USB/LAN: belum dikonfirmasi.
 
+Konfirmasi user25Oktober2026: printer fisik **belum ada**. Tidak ada cetak
+fisik yang diklaim PASS. Konfigurasi produksi/HTTPS PC dan backup/restore
+lokal sudah terverifikasi agent, bukan pengganti UAT manusia di tabel ini.
+User memilih backup root project dan jam22:00WIB; ini belum merupakan media
+terpisah atau bukti pemicu otomatis sudah dijalankan admin.
+
 Pilihan A4/58/80 tersedia di Operasional beserta Uji cetak tanpa transaksi.
 Preview otomatis dan PDF ketiga ukuran sudah PASS; hasil fisik tetap pending.
 Driver/dialog printer harus memakai kertas yang sama. Area thermal 54/76 mm

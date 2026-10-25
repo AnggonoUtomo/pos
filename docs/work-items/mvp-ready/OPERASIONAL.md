@@ -8,7 +8,7 @@ Panduan spesifik [Windows/LAN](DEPLOY-WINDOWS.md) dan
 
 1. Start All Laragon, pastikan MySQL dan virtual host pos.test berjalan.
 2. Hentikan transaksi sementara, lalu jalankan `php artisan pos:backup --verify`.
-   Dump disimpan pada storage/app/private/backups (diabaikan Git), dipulihkan
+   Dump baru disimpan pada backups di root project (diabaikan Git), dipulihkan
    ke database pos_restore_qa_ acak, dibandingkan fingerprint dan dibersihkan.
    Database toko tidak ditimpa. Tool mysql/mysqldump harus tersedia di PATH.
 3. Jalankan migration additive dan katalog permission (tanpa grant otomatis):
@@ -116,3 +116,19 @@ Jangan rollback migration berisi ledger posted atau menghapus baris posted.
 Restore database bisnis hanya melalui prosedur admin berizin setelah seluruh
 transaksi sejak backup direkonsiliasi; command --verify tidak melakukan restore
 ke database bisnis dan bukan tombol reset toko.
+
+## Status PC Toko25Oktober2026
+
+Konfigurasi produksi PC sudah aktif dan pos:readiness --production PASS.
+Gunakan https://pos.test; HTTP otomatis redirect. APP_KEY/DB_* dipertahankan.
+Backup manual dapat diminta melalui **Operasional > Backup sekarang** oleh
+pemegang manage, dengan konfirmasi/audit. Command manual tetap `php artisan
+pos:backup`, verifikasi restore memakai `php artisan pos:backup --verify`.
+Hasil baru ada pada `C:/laragon/www/pos/backups`, bukan folder public atau URL
+download. File lama pada storage/app/private/backups dipertahankan.
+
+Jadwal otomatis lokal disimpan aktif22:00WIB atas arahan user. Tidak ada
+pemicu OS yang dipasang agent; admin masih harus menghubungkan Laravel
+Scheduler agar jadwal benar-benar dieksekusi. Folder backups di PC yang sama
+bukan salinan terpisah. Printer fisik belum tersedia dan UAT operator belum
+disahkan; aktivasi konfigurasi bukan persetujuan go-live.

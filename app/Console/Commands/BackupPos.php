@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
 use Throwable;
@@ -21,15 +22,22 @@ class BackupPos extends Command
 
             return self::FAILURE;
         }
-        $config = $connection->getConfig();
-        unset($config['name']);
-        $name = $connection->getDatabaseName();
+        $lock = Cache::lock('pos:database-backup', 900);
+        if (! $lock->get()) {
+            $this->error('Backup lain sedang berjalan. Coba lagi setelah selesai.');
+
+            return self::FAILURE;
+        }
+        $name = null;
         $target = null;
         $created = false;
         $file = null;
         $stage = 'initialization';
         try {
-            $directory = storage_path('app/private/backups');
+            $config = $connection->getConfig();
+            unset($config['name']);
+            $name = $connection->getDatabaseName();
+            $directory = base_path('backups');
             if (! is_dir($directory) && ! mkdir($directory, 0700, true) && ! is_dir($directory)) {
                 throw new \RuntimeException('Directory backup tidak tersedia.');
             }
@@ -80,7 +88,7 @@ class BackupPos extends Command
                 }
                 $this->info('PASS: restore disposable identik; database toko tidak ditimpa.');
             }
-            $this->info('Backup tersimpan: storage/app/private/backups/'.basename($file));
+            $this->info('Backup tersimpan: backups/'.basename($file));
 
             return self::SUCCESS;
         } catch (Throwable $error) {
@@ -89,6 +97,7 @@ class BackupPos extends Command
 
             return self::FAILURE;
         } finally {
+            $lock->release();
             DB::purge('pos_restore_verify');
             if ($created && is_string($target) && preg_match('/^pos_restore_qa_[a-f0-9]{16}$/D', $target) && $target !== $name) {
                 $connection->statement('DROP DATABASE `'.$target.'`');
