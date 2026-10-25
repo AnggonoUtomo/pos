@@ -13,6 +13,7 @@ use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\Fixtures\PurchaseReturnRefundFixture;
 
 require __DIR__.'/../../vendor/autoload.php';
@@ -61,7 +62,7 @@ Artisan::call('migrate', ['--force' => true]);
 $manager = User::create(['name' => 'QA manager', 'email' => 'qa-manager@example.test', 'password' => $input['password'], 'email_verified_at' => now()]);
 if (($input['operational_only'] ?? false) === true) {
     app(OperationalSettingsAccessSeeder::class)->run();
-    $manager->givePermissionTo(Permission::all());
+    $manager->assignRole(Role::findOrCreate('super-system', 'web'));
     echo json_encode(['status' => 'READY']);
     exit;
 }

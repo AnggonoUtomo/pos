@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class OperationalSettingsTest extends TestCase
@@ -71,6 +72,19 @@ class OperationalSettingsTest extends TestCase
             $this->putJson('/platform/operational-settings', array_replace($input, ['version' => 1], $bad))->assertUnprocessable();
         }
         $this->assertDatabaseCount('operational_backup_runs', 0);
+    }
+
+    public function test_super_system_can_prepare_settings_without_enabling_backup_or_new_grants(): void
+    {
+        $user = User::factory()->create()->assignRole(Role::findOrCreate('super-system', 'web'));
+        $this->assertFalse($user->getAllPermissions()->contains('name', 'platform.operational-settings.manage'));
+        $this->actingAs($user)->get('/platform/operational-settings')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('auth.superSystem', true)->where('settings.backup_enabled', false));
+        $this->putJson('/platform/operational-settings', $this->input(['backup_time' => '18:45', 'receipt_paper' => '80mm']))->assertOk();
+        $this->assertDatabaseHas('operational_settings', ['backup_time' => '18:45', 'backup_enabled' => false, 'receipt_paper' => '80mm']);
+        $this->assertDatabaseCount('operational_backup_runs', 0);
+        $this->assertDatabaseCount('model_has_permissions', 0);
+        $this->assertDatabaseCount('role_has_permissions', 0);
     }
 
     public function test_audit_failure_rolls_back_settings(): void

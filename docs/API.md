@@ -1056,6 +1056,8 @@ tidak membocorkan konfigurasi/status backup kepada role tanpa view settings.
 Tidak ada endpoint web untuk menjalankan backup, edit .env, mengirim ESC/POS,
 mengunggah/mengunduh dump atau menulis path arbitrary. CLI `pos:backup-due`
 dipanggil scheduler setiap menit; jadwal aplikasi opsional/default mati.
+Jam tetap dapat diubah saat backup nonaktif. Pemicu Laravel Scheduler disiapkan
+admin saat deployment, bukan dipasang otomatis oleh aplikasi pada OS pengguna.
 Satu sukses/hari WIB, retry gagal maksimal3/jeda10menit, lease15menit dan
 token fencing menolak completion dari attempt lama. Hari terlewat tidak
 direkonstruksi. Ukuran thermal mengatur area cetak 54/76 mm dengan margin2 mm;

@@ -63,7 +63,8 @@ try {
         return JSON.parse(result.stdout);
     };
     const password = randomBytes(32).toString('hex');
-    const operational = process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
+    const formOnly = process.argv.includes('--operational-form-only');
+    const operational = formOnly || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
     const setup = fixture({ password, operational_only: operational });
     assert.equal(setup.status, 'READY');
     console.log('PASS: fixture MVP disposable siap');
@@ -156,13 +157,13 @@ try {
             }
             console.log(JSON.stringify({status:'PASS',checks:['58mm/80mm/A4 PDF dimensions','print-only portal','no text overflow'],artifacts:path.relative(root,artifacts)}));
         } finally { await browser.close(); }
-    } else if (process.argv.includes('--operational-only')) {
+    } else if (formOnly || process.argv.includes('--operational-only')) {
         await tool('navigate_page', {pageId, url: `${url}/platform/operational-settings`});
         await tool('resize_page', {pageId, width:1440, height:1000});
         await locate(pageId, 'heading', 'Pengaturan operasional');
         const choosePaper = async (label) => { await click(pageId, 'combobox', 'Format kertas'); await click(pageId, 'option', label); };
-        await choosePaper('58 mm');
-        await click(pageId, 'checkbox', 'Backup otomatis harian');
+        const unlocked=await inspect(pageId,`() => ({paperDisabled:document.querySelector('#receipt-paper').matches(':disabled'),timeDisabled:document.querySelector('#backup-time').matches(':disabled'),backupDisabled:document.querySelector('#backup-enabled').matches(':disabled'),enabled:document.querySelector('#backup-enabled').getAttribute('aria-checked')})`);
+        assert.deepEqual(unlocked,{paperDisabled:false,timeDisabled:false,backupDisabled:false,enabled:'false'},'Form harus dapat disiapkan sebelum backup aktif');
         await writeFile(path.join(artifacts,'operational-form-snapshot.txt'),await snapshot(pageId));
         await tool('fill_form', {pageId, elements:[{uid:await locate(pageId,'InputTime','Jam backup (WIB)'),value:'22:15'}]});
         // Puppeteer's time-input fill does not notify React; use native keyboard events.
@@ -173,10 +174,16 @@ try {
         await until(pageId, value => value.includes('Pengaturan operasional tersimpan.'), 'operational save');
         await tool('navigate_page', {pageId, url: `${url}/platform/operational-settings`});
         await locate(pageId,'heading','Pengaturan operasional');
+        const prepared=await inspect(pageId,`() => ({time:document.querySelector('#backup-time').value,enabled:document.querySelector('#backup-enabled').getAttribute('aria-checked')})`);
+        assert.deepEqual(prepared,{time:'22:15',enabled:'false'},'Persiapan jam tidak boleh mengaktifkan backup');
+        await choosePaper('58 mm');
+        await click(pageId,'checkbox','Backup otomatis harian');
+        await click(pageId,'button','Simpan pengaturan');
+        await until(pageId,value=>value.includes('Jadwal tersimpan 22:15 WIB'),'enabled schedule');
         const persisted=await inspect(pageId,`() => ({paper:document.querySelector('#receipt-paper')?.textContent,time:document.querySelector('#backup-time')?.value,enabled:document.querySelector('#backup-enabled')?.getAttribute('aria-checked')})`);
         assert.deepEqual(persisted,{paper:'58 mm',time:'22:15',enabled:'true'},'Preferensi tidak tersimpan: '+JSON.stringify(persisted));
         await tool('take_screenshot', {pageId,filePath:path.join(artifacts,'desktop-operational.png')});
-        for (const [label, paper, millimeters] of [['58 mm','58mm',54],['80 mm','80mm',76],['A4','a4',null]]) {
+        for (const [label, paper, millimeters] of (formOnly ? [] : [['58 mm','58mm',54],['80 mm','80mm',76],['A4','a4',null]])) {
             await choosePaper(label);
             await click(pageId, 'button', 'Uji cetak');
             await locate(pageId, 'dialog', 'Uji cetak');
@@ -203,7 +210,7 @@ try {
         const errors=await tool('list_console_messages',{pageId,types:['error']});
         assert(errors.includes('<no console messages found>'),'Console errors');
         const state=fixture({verify_operational:true});
-        const report={status:'PASS',checks:['save/reload paper+optional schedule','58/80/A4 preview widths','no business mutations','desktop/tablet','clean console'],state,artifacts:path.relative(root,artifacts)};
+        const report={status:'PASS',checks:['super-system editable without explicit grants','edit/save time while backup disabled','save/reload paper+optional schedule',...(formOnly?[]:['58/80/A4 preview widths']),'no business mutations','desktop/tablet','clean console'],state,artifacts:path.relative(root,artifacts)};
         await writeFile(path.join(artifacts,'operational-report.json'),JSON.stringify(report,null,2));
         console.log(JSON.stringify(report));
     } else if (process.argv.includes('--navigation-only')) {

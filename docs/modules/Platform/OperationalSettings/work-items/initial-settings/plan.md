@@ -5,8 +5,9 @@
    pos:backup existing. Test terfokus sebelum implementasi.
 2. UI dan cetak: form shadcn/ui, shortcut/Sonner, sidebar/palette, shared
    PrintingPreferences, receipt format A4/58/80 dan preview non-transaksional.
-3. Runner Windows dan aktivasi: runner schedule:run memakai tool absolut,
-   instruksi task terbatas, migration/seeder tanpa reset/grant/demo aktif,
+3. Scheduler dan aktivasi: admin deployment memanggil schedule:run setiap menit
+   melalui cron Linux atau penjadwal OS yang sesuai, tanpa installer otomatis.
+   Migration/seeder tanpa reset/grant/demo aktif,
    QA config/print desktop/tablet dan test scheduler dengan executor fake.
 
 Tidak mengulang suite MVP yang tidak berubah. Gate akhir terfokus meliputi

@@ -6,7 +6,10 @@ dengan jam Asia/Jakarta, dan status backup terakhir. Bukan pengaturan company,
 secret, database, jaringan, firewall, sertifikat, atau APP_ENV dari UI.
 
 Default: format A4 untuk mempertahankan cetak existing; backup otomatis mati,
-jam awal 21:00 WIB. Mengaktifkan jadwal memerlukan runner scheduler Windows.
+jam awal 21:00 WIB. Semua opsi dapat disiapkan/disimpan saat backup nonaktif.
+Scheduler Laravel netral OS; admin deployment memasang cron di Linux atau
+pemicu noninteraktif yang sesuai di Windows. Aplikasi tidak memasang task,
+service atau runner PowerShell otomatis pada komputer pengguna.
 Printer fisik dipilih di dialog OS; USB/LAN/raw ESC/POS tidak diimplementasikan.
 
 Update memakai version, permission view/manage terpisah, validasi backend dan

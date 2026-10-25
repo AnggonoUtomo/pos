@@ -41,6 +41,20 @@
 - [x] Gate akhir terfokus, catat command/bukti dan commit/push diverifikasi.
 - [x] Catat instalasi task aktual terpisah dari preferensi jadwal dan UAT fisik.
 
+## Increment 4: Perbaikan Form Dan Pemicu Scheduler
+
+- [x] Reproduksi kontrol jam terkunci ketika backup nonaktif.
+  - Acceptance: opsi dapat diubah/disimpan tanpa mengaktifkan pekerjaan;
+    user tanpa manage tetap readonly, super-system tidak membutuhkan grant baru.
+  - Verification: browser terfokus dan test permission/simpan jadwal nonaktif.
+- [x] Hapus kondisi penguncian jam yang tidak sesuai kebutuhan user.
+  - Verification: RED/GREEN browser save/reload, lint/typecheck/build relevan.
+- [x] Cabut task PowerShell buatan agent dan hapus installer/runner otomatis.
+  - Acceptance: tidak memasang pengganti; cron/penjadwal disiapkan admin server.
+  - Verification: pemeriksaan task spesifik dan source/dokumen terfokus.
+- [ ] Selaraskan panduan Linux/Windows, catat bukti, commit dan push setelah
+  pekerjaan utuh terverifikasi. Tidak mengubah data/grant/secret.
+
 ## Bukti
 
 - Generator dry-run dan generate canonical PASS; route:list dua endpoint dan
@@ -71,6 +85,8 @@
 - Installer dry-run dan -Install PASS; POS-OperationalScheduler Ready,
   principal Limited/Interactive, manual tick LastTaskResult=0. Hasil ini
   membuktikan runner, bukan dump otomatis saat preferensi masih mati.
+  Bukti awal ini dikoreksi pada Increment4: task dan installer sudah dicabut,
+  pemicu scheduler disiapkan admin deployment, tidak lagi dipasang agent.
 - pos:readiness lokal PASS. Tidak mengedit .env, vhost, firewall, DNS, cert,
   grant/password, Old-docs atau staged/untracked LSP milik user.
 - User menyatakan tablet belum tersedia. UAT operator/printer fisik, akses
@@ -79,3 +95,29 @@
 - Implementasi/panduan dikirim sebagai b11cb54 pada origin/main. Push PASS,
   ls-remote cocok dengan HEAD dan divergence0/0; checkbox delivery diisi sesudah
   verifikasi. Scope commit44 file tidak memuat Old-docs, LSP, dump atau PDF QA.
+
+### Bukti Perbaikan Increment 4
+
+- RED browser pada source awal: paperDisabled=false, backupDisabled=false,
+  timeDisabled=true ketika backup nonaktif. Jadi penyebab yang terkonfirmasi
+  adalah kondisi penguncian jam, bukan kurangnya grant pada super-system.
+- GREEN --operational-form-only via Chrome DevTools MCP existing/isolated:
+  super-system tanpa permission eksplisit bisa mengubah kertas, checkbox dan
+  jam; jam tersimpan saat backup tetap mati, reload sesuai, enable/disable
+  tetap berfungsi, desktop/tablet dan console PASS. Artefak ignored:
+  storage/framework/testing/mvp-browser-6553cf2d8ed25b7f.
+- php artisan test --compact --filter=OperationalSettingsTest: 12/115 PASS,
+  termasuk readonly/403 user view-only, super-system tanpa grant tambahan,
+  jadwal nonaktif tersimpan tanpa backup run/ledger/transaction baru.
+- ESLint page, typecheck global, build Vite6.4.5/2757 dan Pint scoped PASS.
+  Tidak mengulang suite transaksi atau matrix print/theme yang tidak berubah.
+- Task POS-OperationalScheduler dikenali dari action/working directory milik
+  workspace, dinonaktifkan dan dicabut setelah tidak Running. Task lain tidak
+  disentuh; tidak menghentikan paksa backup atau memasang pengganti.
+- Installer/runner PowerShell otomatis dihapus. schedule:list tetap memuat
+  pos:backup-due setiap menit. Pemicu cron Linux/penjadwal Windows disiapkan
+  manual oleh admin, tidak dari aplikasi/agent. Tidak ada dependency baru.
+- Dokumentasi operasional/module/AGENTS diselaraskan. Source runtime Linux
+  belum diuji pada server Linux nyata; contoh cron bukan klaim deploy Linux.
+- Tidak ada perubahan grant/role/account, database bisnis, secret/.env,
+  schema, Old-docs, atau file LSP staged/untracked milik user.

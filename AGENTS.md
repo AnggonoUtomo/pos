@@ -50,6 +50,9 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Jalankan test atau pemeriksaan yang proporsional dengan risiko perubahan.
 - Pertahankan perubahan user yang tidak terkait.
 - Jangan membuat branch atau memasang dependency tanpa permintaan eksplisit user.
+- Pemicu Laravel Scheduler (cron/penjadwal OS) disiapkan admin saat deployment.
+  Jangan memasang task, service atau runner OS otomatis pada komputer user;
+  aplikasi hanya menyimpan opsi jadwal dan menyediakan command Laravel.
 - Setelah task atau increment selesai dan verifikasi relevan lulus, buat commit
   otomatis sebagai save point.
 - Push hanya dilakukan saat keseluruhan work item/task besar selesai atau jika

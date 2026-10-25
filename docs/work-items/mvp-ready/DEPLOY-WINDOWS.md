@@ -75,30 +75,28 @@ Default mati, nilai awal jam21:00, bukan jadwal yang dipaksakan. Pengaturan
 disimpan di module Platform/OperationalSettings; tidak mengedit task OS per
 perubahan jam. Menonaktifkan mencegah attempt baru, bukan membatalkan dump aktif.
 
-Task `POS-OperationalScheduler` sudah terpasang pada PC ini: setiap menit,
-akun Windows interaktif terbatas, WorkingDirectory project, executable absolut,
-StartWhenAvailable dan IgnoreNew. User Windows harus tetap login, PC hidup,
-MySQL/Apache aktif. Tidak menyimpan password Windows/database di definisi task.
-Pada PC baru, dari root project jalankan:
+Task `POS-OperationalScheduler` buatan agent sudah dicabut karena menampilkan
+console berulang dan tidak sesuai kebutuhan user. Installer dan runner
+PowerShell otomatis dihapus; tidak dipasang runner/service pengganti.
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File scripts/operations/install-scheduler.ps1
-powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File scripts/operations/install-scheduler.ps1 -Install
-```
+Kode aplikasi memakai Laravel Scheduler yang sama dengan Linux. Admin server
+menyiapkan pemanggilan `php artisan schedule:run` tiap menit melalui penjadwal
+OS secara noninteraktif dengan executable PHP absolut, working directory
+project dan environment MySQL yang benar. Tidak ada instalasi task dari UI.
+Untuk Linux gunakan [contoh cron](OPERASIONAL.md#scheduler-lintas-os).
 
-Baris pertama dry-run. Installer tidak menimpa task bernama sama dengan action
-lain. RemoteSigned hanya untuk proses task, bukan mengganti kebijakan global.
-Runner memanggil schedule:run; module mendaftarkan pos:backup-due, lalu memanggil
-pos:backup existing hanya bila preferensi aktif dan jatuh tempo. Nilai
-LastTaskResult=0 membuktikan tick scheduler, BUKAN bukti dump sukses; lihat
-status backup terakhir dan keberadaan dump private. Maksimal3 attempt/hari,
-jeda10menit setelah gagal; tidak ada dump historis untuk hari PC mati.
+Tanpa pemicu yang disiapkan admin, opsi jadwal tetap bisa disimpan tetapi backup
+otomatis belum dieksekusi. Periksa heartbeat serta status backup pada UI;
+LastTaskResult=0 hanya membuktikan tick penjadwal, bukan dump sukses.
+Maksimal3 attempt/hari, jeda10menit setelah gagal; hari PC mati tidak dibuatkan
+dump historis palsu.
 
 - Media eksternal/NAS dan penanggung jawab belum dikonfirmasi; backup terpisah
   belum tersedia hanya karena task lokal berhasil dipasang.
-- Tentukan PATH MySQL/mysqldump pada runner, bukan mengandalkan terminal VS Code.
-- Cegah overlap; gunakan StartWhenAvailable dan retry terbatas bila MySQL belum
-  siap. Eksekusi terlewat tetap bergantung pada PC hidup dan akun task tersedia.
+- Admin menentukan PATH MySQL/mysqldump pada environment scheduler, bukan
+  mengandalkan terminal VS Code.
+- Cegah overlap dan pastikan pemicu berjalan saat server aktif. Eksekusi
+  terlewat tetap bergantung pada PC hidup dan akun penjadwal tersedia.
 - Jangan memasukkan password database atau password Windows pada command/log.
   Jika task memakai akun interaktif, dokumentasikan kewajiban login Windows.
 - Jalankan manual sekali melalui task dan cek LastTaskResult. Setelah backup

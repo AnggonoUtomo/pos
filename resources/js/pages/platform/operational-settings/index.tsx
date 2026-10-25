@@ -127,7 +127,7 @@ export default function OperationalSettings({ settings, backup }: { settings: Se
                                     step={60}
                                     value={form.data.backup_time}
                                     onChange={(event) => form.setData('backup_time', event.target.value)}
-                                    disabled={!form.data.backup_enabled || !editable || form.processing}
+                                    disabled={!editable || form.processing}
                                 />
                                 <InputError message={form.errors.backup_time} />
                             </div>

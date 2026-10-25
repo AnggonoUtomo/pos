@@ -160,11 +160,11 @@ di jaringan toko. Ini penyelesaian Paket 4, bukan penambahan fitur/modul.
 
 - [x] Konfirmasi jadwal opsional/jam WIB dikelola module Pengaturan Operasional.
 - [ ] Konfirmasi lokasi salinan terpisah bersama penanggung jawab toko.
-- [x] Daftarkan task Windows dengan path executable absolut, working directory
-  project, pencegah overlap dan penanganan jadwal terlewat.
-  - Acceptance: tanpa password pada argumen/file, tidak menimpa task unrelated;
-    status kegagalan terlihat dan tidak diklaim off-device bila masih satu PC.
-  - Verification: definisi task, run terkontrol dan LastTaskResult.
+- [x] Koreksi pemicu scheduler sesuai keputusan user: cabut task PowerShell
+  buatan agent, hapus installer otomatis, serahkan cron/penjadwal OS ke admin.
+  - Acceptance: Laravel Scheduler tetap menjadi standar lintas OS, tanpa task
+    atau service pengganti otomatis; status backup tidak diklaim off-device.
+  - Verification: task spesifik tidak ada; schedule:list dan source/dokumen.
 - [ ] Operator menetapkan penanggung jawab, media terpisah dan restore berkala.
 
 ### Increment 3: Konfigurasi Dan Persetujuan Penggunaan
@@ -198,9 +198,11 @@ raw printer dari UI. Implementasi dan QA tercatat pada
 Ini pengecualian freeze yang disetujui user, bukan penambahan fitur bisnis lain.
 
 Runbook Windows/LAN dan lembar UAT operator sudah tersedia. Module aktif lokal
-batch28 tanpa reset/grant; task Windows POS-OperationalScheduler terpasang,
-tick LastTaskResult=0. Backup otomatis tetap mati sampai operator mengaktifkan
-jadwal di UI. Backup/restore terverifikasi, preferensi/status, preview desktop/
+batch28 tanpa reset/grant. Task Windows POS-OperationalScheduler buatan agent
+sudah dicabut atas arahan user; tidak memasang pengganti. Admin deployment
+menyiapkan cron/penjadwal untuk Laravel Scheduler. Backup otomatis memerlukan
+opsi aktif di UI DAN pemicu server yang berjalan. Backup/restore terverifikasi,
+preferensi/status, preview desktop/
 tablet dan rendering PDF tiga ukuran PASS. PDF bukan bukti cetak fisik.
 
 User mengonfirmasi tablet BELUM tersedia. Maka pengujian LAN/TLS tablet,

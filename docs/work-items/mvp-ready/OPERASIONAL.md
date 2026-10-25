@@ -35,12 +35,38 @@ diatur admin melalui Identitas & Akses sesuai kebutuhan toko.
 
 Salin backup ke penyimpanan terpisah dengan akses terbatas dan enkripsi. Jadwalkan
 backup opsional dari halaman Operasional; runner OS mengikuti
-[panduan Windows](DEPLOY-WINDOWS.md). Verifikasi restore berkala
+[pengaturan scheduler](#scheduler-lintas-os). Verifikasi restore berkala
 saat tidak ada transaksi. Backup database belum mencakup .env/APP_KEY, file
 storage bisnis atau konfigurasi printer: simpan semuanya secara aman terpisah,
 bukan di Git atau dokumentasi. Tidak ada upload/retention otomatis pada fase ini.
 
-## Konfigurasi Deploy
+## Scheduler Lintas OS
+
+Seluruh jadwal pekerjaan dikelola Laravel Scheduler. UI hanya menyimpan opsi
+aktif/nonaktif dan jam WIB; jam boleh disiapkan saat backup nonaktif. Tidak ada
+installer cron, service, atau task PowerShell otomatis dari aplikasi.
+
+Admin memasang SATU pemicu setiap menit di server aplikasi, bukan di setiap
+komputer kasir. Untuk Linux, contoh pada crontab user aplikasi:
+
+```cron
+* * * * * cd /var/www/pos && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
+```
+
+Sesuaikan path deployment/PHP dan PATH mysql/mysqldump pada environment cron;
+jangan menyisipkan credential pada crontab. Untuk Windows, admin mengatur
+pemicu noninteraktif yang menjalankan command Laravel yang sama, menggunakan
+path PHP absolut dan working directory project. Bukan console PowerShell yang
+dibuka berulang pada desktop kasir. Aplikasi tidak mengubah scheduler OS.
+
+Verifikasi admin: `php artisan schedule:list`, tick `schedule:run`, heartbeat
+dan hasil backup pada UI. Tick yang berhasil bukan bukti dump/restore berhasil.
+Opsi aktif di UI tidak otomatis memasang atau membuktikan pemicu OS tersedia.
+Panduan Windows/LAN berada di [DEPLOY-WINDOWS.md](DEPLOY-WINDOWS.md).
+
+Lihat [Laravel 12: scheduler](https://laravel.com/docs/12.x/scheduling#running-the-scheduler).
+
+## Konfigurasi Produksi
 
 Untuk server produksi: arahkan document root ke public, gunakan HTTPS, set
 APP_ENV=production, APP_DEBUG=false, APP_URL sesuai host dan SESSION_SECURE_COOKIE=true.
