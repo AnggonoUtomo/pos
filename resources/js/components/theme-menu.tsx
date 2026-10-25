@@ -1,5 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAppearance, type AccentTheme, type Appearance } from '@/hooks/use-appearance';
 import { cn } from '@/lib/utils';
 import { Check, Monitor, Moon, Palette, Sun } from 'lucide-react';
@@ -11,7 +18,7 @@ const appearanceOptions: { value: Appearance; label: string; icon: typeof Sun }[
 ];
 
 const accentOptions: { value: AccentTheme; label: string; className: string }[] = [
-    { value: 'default', label: 'Default', className: 'bg-neutral-950' },
+    { value: 'default', label: 'Default', className: 'bg-blue-600' },
     { value: 'clean', label: 'Clean Default', className: 'bg-slate-300 ring-1 ring-slate-500' },
     { value: 'grey', label: 'Grey', className: 'bg-slate-500' },
     { value: 'stone', label: 'Stone', className: 'bg-stone-600' },
@@ -30,7 +37,14 @@ export function ThemeMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" size="sm" className="h-8 w-8 shrink-0 gap-0 px-0 xl:w-auto xl:gap-2 xl:px-3">
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    aria-label="Tema"
+                    title="Tema"
+                    className="h-9 w-9 shrink-0 gap-0 px-0 xl:w-auto xl:gap-2 xl:px-3"
+                >
                     <Palette className="size-4 text-violet-600 dark:text-violet-300" />
                     <span className="hidden xl:inline">Tema</span>
                 </Button>
@@ -39,7 +53,14 @@ export function ThemeMenu() {
                 <DropdownMenuLabel>Mode Tampilan</DropdownMenuLabel>
                 {appearanceOptions.map(({ value, label, icon: Icon }) => (
                     <DropdownMenuItem key={value} onClick={() => updateAppearance(value)}>
-                        <Icon className={cn('size-4', value === 'light' && 'text-amber-500', value === 'dark' && 'text-sky-500', value === 'system' && 'text-emerald-500')} />
+                        <Icon
+                            className={cn(
+                                'size-4',
+                                value === 'light' && 'text-amber-500',
+                                value === 'dark' && 'text-sky-500',
+                                value === 'system' && 'text-emerald-500',
+                            )}
+                        />
                         <span>{label}</span>
                         {appearance === value && <Check className="ml-auto size-4" />}
                     </DropdownMenuItem>
@@ -57,7 +78,7 @@ export function ThemeMenu() {
                                 accentTheme === option.value && 'bg-accent text-accent-foreground',
                             )}
                         >
-                            <span className={cn('size-3 rounded-full ring-2 ring-background', option.className)} />
+                            <span className={cn('ring-background size-3 rounded-full ring-2', option.className)} />
                             <span>{option.label}</span>
                             {accentTheme === option.value && <Check className="ml-auto size-3.5" />}
                         </button>

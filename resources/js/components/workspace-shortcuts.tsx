@@ -1,5 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { ChevronDown, Keyboard } from 'lucide-react';
 
@@ -34,7 +41,12 @@ export function WorkspaceShortcutDropdown({
     className?: string;
 }) {
     return (
-        <div className={cn('flex items-center justify-between gap-3 border-b bg-muted/30 px-4 py-2 lg:px-6', className)}>
+        <div
+            className={cn(
+                'flex items-center justify-between gap-3 border-b border-[var(--app-border)] bg-[var(--app-panel)] px-4 py-2.5 lg:px-6',
+                className,
+            )}
+        >
             <div className="min-w-0">
                 <p className="text-sm font-medium">{title}</p>
                 <p className="text-muted-foreground truncate text-xs">{description}</p>
@@ -51,7 +63,11 @@ export function WorkspaceShortcutDropdown({
                     <DropdownMenuLabel>Shortcut Halaman</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {shortcuts.map((shortcut) => (
-                        <DropdownMenuItem key={`${shortcut.label}-${shortcut.keys.join('-')}`} disabled={shortcut.disabled} className="items-start gap-3 py-2">
+                        <DropdownMenuItem
+                            key={`${shortcut.label}-${shortcut.keys.join('-')}`}
+                            disabled={shortcut.disabled}
+                            className="items-start gap-3 py-2"
+                        >
                             <div className="min-w-0">
                                 <p className="text-sm font-medium">{shortcut.label}</p>
                                 <p className="text-muted-foreground text-xs">{shortcut.description}</p>

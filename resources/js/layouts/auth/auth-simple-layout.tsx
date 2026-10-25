@@ -1,4 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon';
+import { ThemeMenu } from '@/components/theme-menu';
 import { Link } from '@inertiajs/react';
 
 interface AuthLayoutProps {
@@ -10,15 +11,18 @@ interface AuthLayoutProps {
 
 export default function AuthSimpleLayout({ children, title, description }: AuthLayoutProps) {
     return (
-        <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div className="w-full max-w-sm">
-                <div className="flex flex-col gap-8">
+        <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-[var(--app-workspace)] p-6 md:p-10">
+            <div className="absolute top-5 right-5">
+                <ThemeMenu />
+            </div>
+            <div className="w-full max-w-[420px] rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] p-7 shadow-[var(--app-shadow)] sm:p-8">
+                <div className="flex flex-col gap-7">
                     <div className="flex flex-col items-center gap-4">
-                        <Link href={route('home')} className="flex flex-col items-center gap-2 font-medium">
-                            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
+                        <Link href={route('home')} className="mb-2 flex items-center gap-3 font-semibold">
+                            <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg">
+                                <AppLogoIcon className="size-7 fill-current" />
                             </div>
-                            <span className="sr-only">{title}</span>
+                            <span className="text-lg">POS Modular</span>
                         </Link>
 
                         <div className="space-y-2 text-center">

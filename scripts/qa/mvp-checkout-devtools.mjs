@@ -66,7 +66,8 @@ try {
     const password = randomBytes(32).toString('hex');
     const formOnly = process.argv.includes('--operational-form-only');
     const sidebarUx = process.argv.includes('--sidebar-ux-only');
-    const dashboardOnly = process.argv.includes('--dashboard-only');
+    const uiRefresh = process.argv.includes('--ui-refresh-only');
+    const dashboardOnly = uiRefresh || process.argv.includes('--dashboard-only');
     const manualBackup = process.argv.includes('--manual-backup-only');
     const operational = manualBackup || sidebarUx || formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
     const setup = fixture({ password, operational_only: operational, dashboard_only: dashboardOnly, manual_backup: manualBackup });
@@ -118,6 +119,11 @@ try {
         const opened = await tool('new_page', { url: `${url}/login`, isolatedContext: `purchase-return-${role}-${id}` });
         const pageId = Number(opened.match(/(?:^|\n)(\d+):[^\n]*\[selected\]/)?.[1]);
         assert(Number.isInteger(pageId), 'ID halaman QA tidak ditemukan.');
+        if (uiRefresh) {
+            await tool('resize_page', { pageId, width: 1440, height: 1000 });
+            await locate(pageId, 'textbox', 'Email address');
+            await tool('take_screenshot', { pageId, filePath: path.join(artifacts, 'login.png') });
+        }
         await tool('fill_form', { pageId, elements: [
             { uid: await locate(pageId, 'textbox', 'Email address'), value: `qa-${role}@example.test` },
             { uid: await locate(pageId, 'textbox', 'Password'), value: password },
@@ -129,7 +135,123 @@ try {
     };
     const pageId = await login('manager');
 
-    if (manualBackup) {
+    if (uiRefresh) {
+        const rootResponse = await fetch(`${url}/`, { redirect: 'manual' });
+        assert.equal(rootResponse.status, 302);
+        assert.equal(rootResponse.headers.get('location'), `${url}/login`);
+        const noOverflow = async () => assert.equal(await inspect(pageId,
+            '() => document.documentElement.scrollWidth > innerWidth'), false, 'Workspace overflow');
+        const capture = name => tool('take_screenshot', { pageId, filePath: path.join(artifacts, `${name}.png`) });
+        const chooseMode = async mode => {
+            await click(pageId, 'button', 'Tema');
+            await click(pageId, 'menuitem', mode);
+        };
+        const surfaces = [];
+        for (const mode of ['Light', 'Dark']) {
+            await chooseMode(mode);
+            await noOverflow();
+            const colors = await inspect(pageId, `() => {
+                const color = (selector) => getComputedStyle(document.querySelector(selector)).backgroundColor;
+                return {dark:document.documentElement.classList.contains('dark'),
+                    metrics:Array.from(document.querySelectorAll('.dashboard-metric'), el=>getComputedStyle(el).backgroundColor),
+                    header:color('header[data-scrolled]'), sidebar:color('[data-sidebar="sidebar"]')};
+            }`);
+            assert.equal(colors.dark, mode === 'Dark');
+            assert.equal(new Set(colors.metrics).size, 4, 'Surface metric harus berbeda');
+            assert((await snapshot(pageId)).includes(setup.invoice_number), 'Invoice nyata hilang');
+            surfaces.push({mode,...colors});
+            await capture(`desktop-${mode.toLowerCase()}`);
+        }
+        await tool('press_key', {pageId,key:'Control+k'});
+        await locate(pageId,'dialog','Command Palette');
+        await tool('press_key',{pageId,key:'Escape'});
+        await new Promise(resolve=>setTimeout(resolve,250));
+        await click(pageId,'button','Shortcut');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'shortcut-dropdown.png')});
+        const shortcut=await inspect(pageId,`() => ({expanded:Array.from(document.querySelectorAll('button')).find(el=>el.textContent.includes('Shortcut'))?.getAttribute('aria-expanded'),
+            menu:document.querySelector('[role=menu]')?.textContent})`);
+        assert(shortcut.expanded==='true' && shortcut.menu?.includes('Shortcut Halaman'),JSON.stringify(shortcut));
+        await tool('press_key',{pageId,key:'Escape'});
+        await new Promise(resolve=>setTimeout(resolve,250));
+        await click(pageId,'button','Tema');
+        await click(pageId,'button','Forest');
+        await tool('press_key',{pageId,key:'Escape'});
+        await tool('navigate_page',{pageId,url:`${url}/inventory/items`});
+        await locate(pageId,'heading','Barang');
+        assert.equal(await inspect(pageId,'() => document.documentElement.dataset.theme'),'forest','Accent tidak dipertahankan');
+        await click(pageId,'button','Tambah barang');
+        await locate(pageId,'dialog','Tambah barang');
+        await noOverflow();
+        await capture('desktop-master-dialog');
+        await click(pageId,'button','Batal');
+        await click(pageId,'button','Tema');
+        await click(pageId,'button','Default');
+        await tool('press_key',{pageId,key:'Escape'});
+        await tool('navigate_page',{pageId,url:`${url}/dashboard`});
+        await locate(pageId,'heading','Dasbor Operasional');
+        await tool('resize_page',{pageId,width:1024,height:768});
+        await chooseMode('Dark');
+        await noOverflow();
+        await capture('tablet-expanded');
+        await click(pageId,'button','Toggle Sidebar');
+        const before=await inspect(pageId,`() => {
+            const el=document.querySelector('[data-sidebar="content"]'); el.scrollTop=el.scrollHeight;
+            return {top:el.scrollTop,origin:performance.timeOrigin};
+        }`);
+        assert(before.top>0,'Sidebar harus dapat discroll');
+        await click(pageId,'link','Laporan Operasional');
+        await locate(pageId,'heading','Laporan operasional');
+        const after=await inspect(pageId,`() => ({top:document.querySelector('[data-sidebar="content"]').scrollTop,origin:performance.timeOrigin})`);
+        assert(Math.abs(before.top-after.top)<2 && before.origin===after.origin,'Scroll sidebar tidak dipertahankan');
+        await inspect(pageId,'() => {document.querySelector("[data-sidebar=content]").scrollTop=0; return true}');
+        await new Promise(resolve=>setTimeout(resolve,350));
+        await tool('hover',{pageId,uid:await locate(pageId,'link','Gudang')});
+        await new Promise(resolve=>setTimeout(resolve,500));
+        await capture('tablet-tooltip');
+        const tooltip=await inspect(pageId,`() => ({state:document.querySelector('[data-collapsible]').dataset.state,
+            tips:Array.from(document.querySelectorAll('[role=tooltip]'),el=>({text:el.textContent,hidden:el.hidden}))})`);
+        assert(tooltip.state==='collapsed' && tooltip.tips.some(tip=>tip.text==='Gudang' && !tip.hidden),JSON.stringify(tooltip));
+        const requests=await tool('list_network_requests',{pageId,resourceTypes:['xhr','fetch','prefetch']});
+        assert(!requests.includes(`${url}/inventory/warehouses`),'Hover memicu request');
+        const bounds=await inspect(pageId,`() => ({sidebar:document.querySelector('[data-sidebar="sidebar"]').getBoundingClientRect().right,
+            header:document.querySelector('header[data-scrolled]').getBoundingClientRect().left})`);
+        assert(bounds.header>=bounds.sidebar,'Header menutupi sidebar');
+        await capture('tablet-collapsed');
+        await inspect(pageId,'() => {window.scrollTo(0,180); return true}');
+        await new Promise(resolve=>setTimeout(resolve,200));
+        assert.equal(await inspect(pageId,'() => document.querySelector("header[data-scrolled]").dataset.scrolled'),'true','Header glass tidak aktif');
+        await capture('tablet-glass');
+        await tool('navigate_page',{pageId,url:`${url}/pos`});
+        await locate(pageId,'heading','POS');
+        for(const [label,value] of [['Gudang','Gudang Utama'],['Pelanggan','Installer CCTV Demo']]) {
+            await click(pageId,'combobox',label);
+            await click(pageId,'option',value);
+        }
+        await click(pageId,'button','Tambah Kamera IP 2MP');
+        await click(pageId,'button','Periksa keranjang');
+        await locate(pageId,'button','Pembayaran');
+        await click(pageId,'button','Pembayaran');
+        await locate(pageId,'dialog','Pembayaran');
+        await locate(pageId,'combobox','Metode 1');
+        await noOverflow();
+        await capture('tablet-pos-payment');
+        await click(pageId,'button','Batal');
+        await until(pageId,value=>!value.includes('Keranjang berhasil diperiksa.'),'toast selesai');
+        await capture('tablet-pos');
+        await tool('resize_page',{pageId,width:1440,height:1000});
+        await chooseMode('Light');
+        await noOverflow();
+        await capture('desktop-pos-light');
+        const errors=await tool('list_console_messages',{pageId,types:['error']});
+        assert(errors.includes('<no console messages found>'),'Console error UI');
+        const state=fixture({verify_dashboard:true,fingerprint:setup.fingerprint});
+        const report={status:'PASS',checks:['root/login','light/dark metric surfaces','command palette/shortcut','accent persistence','master dialog',
+            'sidebar scroll/tooltip/no hover request','tablet expanded/collapsed no overlap','glass header',
+            'POS quote/payment dialog','no business mutations/clean console'],
+            surfaces,state,artifacts:path.relative(root,artifacts)};
+        await writeFile(path.join(artifacts,'ui-refresh-report.json'),JSON.stringify(report,null,2));
+        console.log(JSON.stringify(report));
+    } else if (manualBackup) {
         await tool('resize_page',{pageId,width:1440,height:900});
         await click(pageId,'button','Backup sekarang');
         await locate(pageId,'dialog','Backup database sekarang?');

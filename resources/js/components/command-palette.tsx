@@ -240,12 +240,14 @@ export function CommandPalette() {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="hidden h-8 w-8 shrink-0 gap-0 px-0 md:flex xl:w-auto xl:gap-2 xl:px-3"
+                className="text-muted-foreground hidden h-9 w-9 shrink-0 gap-0 border-[var(--app-border)] bg-[var(--app-workspace)] px-0 md:flex 2xl:w-56 2xl:justify-start 2xl:gap-2 2xl:px-3"
+                aria-label="Buka command palette"
+                title="Buka command palette"
                 onClick={() => setOpen(true)}
             >
                 <Search className="size-4 text-cyan-600 dark:text-cyan-300" />
-                <span className="hidden xl:inline">Command</span>
-                <kbd className="bg-muted text-muted-foreground hidden rounded border px-1.5 py-0.5 text-[11px] leading-none font-medium xl:inline-flex">
+                <span className="hidden 2xl:inline">Cari menu...</span>
+                <kbd className="bg-card text-muted-foreground ml-auto hidden rounded border px-1.5 py-0.5 text-[11px] leading-none font-medium 2xl:inline-flex">
                     Ctrl K
                 </kbd>
             </Button>

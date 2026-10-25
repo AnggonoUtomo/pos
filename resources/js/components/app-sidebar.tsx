@@ -236,11 +236,16 @@ export function AppSidebar() {
         };
     }, []);
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="sidebar">
+            <SidebarHeader className="h-[76px] justify-center px-4 group-data-[collapsible=icon]:px-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" tooltip="Dasbor" asChild>
+                        <SidebarMenuButton
+                            size="lg"
+                            tooltip="Dasbor"
+                            className="h-12 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! hover:bg-transparent"
+                            asChild
+                        >
                             <Link href="/dashboard">
                                 <AppLogo />
                             </Link>
@@ -249,7 +254,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent ref={contentRef} className="scrollbar-none group-data-[collapsible=icon]:overflow-auto">
+            <SidebarContent ref={contentRef} className="scrollbar-none gap-3 pb-5 group-data-[collapsible=icon]:overflow-auto">
                 <NavMain groups={mainNavGroups} />
             </SidebarContent>
         </Sidebar>

@@ -69,28 +69,28 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                   value: summary.sales.total,
                   detail: `${summary.sales.count} nota lunas · sebelum retur`,
                   icon: ReceiptText,
-                  tone: 'text-emerald-600 dark:text-emerald-300',
+                  tone: 'sky',
               },
               {
                   label: 'Pembelian diterima hari ini',
                   value: summary.purchases.total_value,
                   detail: `${summary.purchases.count} dokumen`,
                   icon: PackageCheck,
-                  tone: 'text-sky-600 dark:text-sky-300',
+                  tone: 'emerald',
               },
               {
                   label: 'Pembayaran masuk hari ini',
                   value: summary.payments.incoming,
                   detail: 'Seluruh gudang · termasuk uang kembali supplier',
                   icon: ArrowDownLeft,
-                  tone: 'text-teal-600 dark:text-teal-300',
+                  tone: 'amber',
               },
               {
                   label: 'Pembayaran keluar hari ini',
                   value: summary.payments.outgoing,
                   detail: 'Seluruh gudang · termasuk refund pelanggan',
                   icon: ArrowUpRight,
-                  tone: 'text-rose-600 dark:text-rose-300',
+                  tone: 'rose',
               },
           ]
         : [];
@@ -99,10 +99,10 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
         <AppLayout breadcrumbs={[{ title: 'Dasbor', href: '/dashboard' }]}>
             <Head title="Dasbor" />
             <WorkspaceShortcutDropdown title="Dasbor" shortcuts={shortcuts} />
-            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-5 lg:px-6" aria-busy={refreshing}>
+            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:px-7 lg:py-7" aria-busy={refreshing}>
                 <header className="flex flex-wrap items-center justify-between gap-3">
                     <div className="min-w-0">
-                        <h1 className="text-primary text-2xl font-semibold">Dasbor Operasional</h1>
+                        <h1 className="text-2xl font-semibold">Dasbor Operasional</h1>
                         <p className="text-muted-foreground mt-1 text-sm">Diperbarui {dateTime(generated_at)} WIB</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -147,19 +147,28 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                         </div>
                         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Ringkasan hari ini">
                             {metrics.map((metric) => (
-                                <Card key={metric.label} className="min-w-0 border-[var(--app-border)] bg-[var(--app-panel)]">
-                                    <CardContent className="space-y-2 p-4">
+                                <Card
+                                    key={metric.label}
+                                    data-tone={metric.tone}
+                                    className="dashboard-metric min-w-0 border-transparent bg-[var(--metric-surface)] shadow-none"
+                                >
+                                    <CardContent className="space-y-3 p-5">
                                         <div className="flex items-start justify-between gap-2">
-                                            <h2 className="text-muted-foreground text-sm">{metric.label}</h2>
-                                            <metric.icon className={`size-5 shrink-0 ${metric.tone}`} />
+                                            <h2 className="min-h-10 text-sm font-medium">{metric.label}</h2>
+                                            <span className="dashboard-metric-icon grid size-10 shrink-0 place-items-center rounded-lg">
+                                                <metric.icon className="size-5" />
+                                            </span>
                                         </div>
-                                        <p className="text-xl font-semibold [overflow-wrap:anywhere] break-words">{money(metric.value)}</p>
+                                        <p className="text-2xl font-semibold [overflow-wrap:anywhere] break-words">{money(metric.value)}</p>
                                         <p className="text-muted-foreground text-xs">{metric.detail}</p>
                                     </CardContent>
                                 </Card>
                             ))}
                         </section>
-                        <section className="grid gap-6 border-y py-5 md:grid-cols-2 xl:grid-cols-4" aria-label="Stok terkini dan retur hari ini">
+                        <section
+                            className="grid gap-6 border-y border-[var(--app-border)] bg-[var(--app-panel)] px-5 py-6 md:grid-cols-2 xl:grid-cols-4"
+                            aria-label="Stok terkini dan retur hari ini"
+                        >
                             <div className="min-w-0">
                                 <h2 className="text-muted-foreground flex items-center gap-2 text-sm">
                                     <Boxes className="size-4 text-amber-600 dark:text-amber-300" />
@@ -204,7 +213,7 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                                 </Link>
                             </Button>
                         </div>
-                        <div className="overflow-x-auto border border-[var(--app-border)]">
+                        <div className="overflow-x-auto rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] shadow-[var(--app-shadow)]">
                             <table className="w-full min-w-[680px] text-sm">
                                 <thead className="text-muted-foreground bg-[var(--app-panel-strong)]">
                                     <tr>
@@ -217,10 +226,10 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                                 </thead>
                                 <tbody>
                                     {recent_sales.map((sale) => (
-                                        <tr key={sale.id} className="border-t">
+                                        <tr key={sale.id} className="border-t transition-colors hover:bg-[var(--app-panel-strong)]">
                                             <td className="px-4 py-3">
                                                 <Link
-                                                href={`/sales/invoices?search=${encodeURIComponent(sale.number)}`}
+                                                    href={`/sales/invoices?search=${encodeURIComponent(sale.number)}`}
                                                     className="text-primary font-medium underline-offset-4 hover:underline"
                                                 >
                                                     {sale.number}
