@@ -6,9 +6,11 @@ garis besar PRD dan ADR lama yang sudah dipindahkan ke dokumen aktif ini.
 
 ## Mulai Di Sini
 
-Prioritas aktif dikunci pada [empat paket MVP siap toko](work-items/mvp-ready/tasks.md).
-Tidak menambah scope sampai alur lunas utuh dapat dipakai. Panduan aktivasi,
-backup dan UAT: [Operasional](work-items/mvp-ready/OPERASIONAL.md).
+Prioritas sekarang adalah koreksi/perbaikan/tambahan kecil per module atau
+lintas module sesuai arahan user. [Backlog skala menengah](BACKLOG.md) dicatat
+untuk nanti, bukan instruksi implementasi otomatis. Baseline alur lunas tetap
+mengacu pada [empat paket MVP](work-items/mvp-ready/tasks.md). Panduan aktivasi,
+backup dan pending UAT: [Operasional](work-items/mvp-ready/OPERASIONAL.md).
 
 1. Baca [Project](PROJECT.md) untuk tujuan, scope, dan batas produk.
 2. Baca [Arsitektur](ARCHITECTURE.md) untuk boundary module dan dependency.

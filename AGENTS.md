@@ -34,9 +34,12 @@ module cukup signifikan, buat dokumen module sebelum coding.
 
 ## Cara Bekerja
 
-- Prioritas aktif: tuntaskan empat paket pada
-  `docs/work-items/mvp-ready/tasks.md` sampai alur toko dapat dipakai.
-  MVP penjualan/pembelian langsung lunas; fitur di luar empat paket ditunda.
+- Prioritas aktif: koreksi/perbaikan/tambahan kecil per module atau lintas
+  module sesuai instruksi user. `docs/BACKLOG.md` hanya menampung rencana
+  skala menengah untuk nanti; jangan memulai entri backlog secara otomatis.
+  Baseline MVP langsung lunas dan pending penerimaan operasional tetap
+  mengacu pada `docs/work-items/mvp-ready/tasks.md`; status pending tidak
+  dianggap selesai atau diaktifkan kembali tanpa arahan user.
 - Hindari QA berulang: gunakan test terfokus selama implementasi, satu gate
   regresi lengkap pada akhir paket, dan ulang hanya pemeriksaan yang terdampak
   perubahan sesudahnya. Hasil lulus pada source yang sama dipakai kembali.
