@@ -30,7 +30,7 @@ Status yang digunakan:
 | Purchasing | PurchaseOrders | Draft multi-satuan/harga positif, snapshot exact, CRUD/version/audit/demo; penerimaan penuh dan pembayaran lunas atomic/replay/readonly; belum parsial/utang | Suppliers (SupplierLookup), Items (ItemStockLookup), Units (UnitLookup), Warehouses (WarehouseLookup), Stock (PurchaseStockWriter), Payments (PurchasePaymentWriter, PurchasePaymentMethods) | Active |
 | Purchasing | Returns | Draft/lifecycle, posting dari layer receipt asal, quote dan penerimaan uang supplier pembelian lunas exact6 dengan residual/nol/replay/audit, UI readonly/recovery | PurchaseOrders (ReturnPurchaseLookup/refundBasis), Stock (PurchaseReturnStockWriter), Finance (PurchaseRefundReceiptWriter/Methods) | Active |
 | Finance | Payments | Master kas/bank/metode, penerimaan penjualan exact2, pengeluaran pembelian exact6, refund penjualan exact2 dan receipt supplier exact6; snapshot/replay/guard/audit dan history readonly empat sumber; belum running balance/piutang/utang | Laravel auth, Eloquent, Spatie Permission, Spatie Activitylog | Active |
-| Reporting | OperationalReports | Ringkasan penjualan/pembelian/retur, stok terkini dan arus pembayaran readonly berizin | Public report readers POS, PurchaseOrders, kedua Returns, Stock, PaymentHistoryReader | Active |
+| Reporting | OperationalReports | Ringkasan penjualan/pembelian/retur, stok terkini, arus pembayaran dan dashboard nyata readonly berizin | Public report readers POS, PurchaseOrders, kedua Returns, Stock, PaymentHistoryReader, InvoiceHistoryReader (scope kasir) | Active |
 
 ## Aturan Penambahan Module
 

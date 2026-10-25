@@ -65,8 +65,9 @@ try {
     const password = randomBytes(32).toString('hex');
     const formOnly = process.argv.includes('--operational-form-only');
     const sidebarUx = process.argv.includes('--sidebar-ux-only');
+    const dashboardOnly = process.argv.includes('--dashboard-only');
     const operational = sidebarUx || formOnly || process.argv.includes('--navigation-only') || process.argv.includes('--operational-only') || process.argv.includes('--operational-pdf-only');
-    const setup = fixture({ password, operational_only: operational });
+    const setup = fixture({ password, operational_only: operational, dashboard_only: dashboardOnly });
     assert.equal(setup.status, 'READY');
     console.log('PASS: fixture MVP disposable siap');
     server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')],
@@ -121,12 +122,68 @@ try {
         ] });
         await click(pageId, 'button', 'Log in');
         await locate(pageId, 'heading', 'Dasbor Operasional');
-        await tool('navigate_page', { pageId, url: `${url}${operational ? '/platform/operational-settings' : '/platform/company-settings'}` });
+        if (!dashboardOnly) await tool('navigate_page', { pageId, url: `${url}${operational ? '/platform/operational-settings' : '/platform/company-settings'}` });
         return pageId;
     };
     const pageId = await login('manager');
 
-    if (sidebarUx) {
+    if (dashboardOnly) {
+        const money = value => {
+            const [whole, fraction=''] = value.split('.');
+            const tail = fraction.replace(/0+$/, '');
+            return `Rp ${new Intl.NumberFormat('id-ID').format(BigInt(whole))}${tail ? ','+tail : ''}`;
+        };
+        const checkMetrics = async expected => {
+            const current = await inspect(pageId, `() => Array.from(document.querySelectorAll('[aria-label="Ringkasan hari ini"] h2'), el => el.parentElement.parentElement.querySelector('p').textContent)`);
+            assert.deepEqual(current, [expected.sales.total, expected.purchases.total_value, expected.payments.incoming, expected.payments.outgoing].map(money));
+        };
+        await tool('resize_page',{pageId,width:1440,height:900});
+        await checkMetrics(setup.report);
+        let current = await snapshot(pageId);
+        assert(current.includes(setup.invoice_number) && current.includes(money(setup.report.stock.total_value)), 'Data invoice/stok nyata tidak tampil');
+        assert(!/Realtime mock|Shift aktif|18\.420\.000|FIFO layer sehat|24 antre|Baseline Yang Dijaga/.test(current), 'Placeholder dashboard masih tampil');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'desktop-dashboard.png')});
+        await click(pageId,'link',setup.invoice_number);
+        await locate(pageId,'heading','Riwayat penjualan');
+        await click(pageId,'button',`Lihat ${setup.invoice_number}`);
+        await locate(pageId,'dialog','Bukti penjualan');
+        await until(pageId, value=>value.includes('100,00') || value.includes('Rp 100'), 'receipt snapshot');
+        await click(pageId,'button','Selesai');
+        await tool('navigate_page',{pageId,url:`${url}/dashboard`});
+        await locate(pageId,'heading','Dasbor Operasional');
+        const before = await inspect(pageId,'() => performance.timeOrigin');
+        const changed = fixture({dashboard_add_sale:true});
+        await click(pageId,'button','Muat ulang ringkasan');
+        await until(pageId, value=>value.includes(`${changed.report.sales.count} nota lunas`), 'refreshed data');
+        await checkMetrics(changed.report);
+        await tool('press_key',{pageId,key:'Alt+r'});
+        await locate(pageId,'button','Muat ulang ringkasan');
+        assert.equal(await inspect(pageId,'() => performance.timeOrigin'),before,'Refresh memuat ulang dokumen penuh');
+        await tool('resize_page',{pageId,width:1024,height:768});
+        assert.equal(await inspect(pageId,'() => document.documentElement.scrollWidth > innerWidth'),false,'Dashboard overflow tablet');
+        await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'tablet-dashboard.png')});
+        for (const role of ['cashier','empty-cashier','limited']) {
+            const scoped = await login(role);
+            const view = await snapshot(scoped);
+            assert(!view.includes('heading "Penjualan hari ini"'), 'Ringkasan toko bocor ke user tanpa izin');
+            if(role==='cashier') {
+                assert(view.includes(setup.invoice_number) && view.includes('Penjualan terbaru milik Anda'), 'Scope kasir keliru');
+                assert.equal(await inspect(scoped,'() => document.querySelectorAll("tbody tr").length'),1);
+            } else if(role==='empty-cashier') {
+                assert.equal(await inspect(scoped,'() => document.querySelector("tbody").textContent'),'Belum ada penjualan milik Anda.','Empty state hilang');
+                await tool('take_screenshot',{pageId:scoped,filePath:path.join(artifacts,'empty-dashboard.png')});
+            }
+            else assert(!view.includes('heading "Penjualan terbaru"'),'Invoice bocor ke user terbatas');
+            const errors = await tool('list_console_messages',{pageId:scoped,types:['error']});
+            assert(errors.includes('<no console messages found>'),'Console error user terbatas');
+        }
+        const errors=await tool('list_console_messages',{pageId,types:['error']});
+        assert(errors.includes('<no console messages found>'),'Console error dashboard');
+        const state=fixture({verify_dashboard:true,fingerprint:changed.fingerprint});
+        const report={status:'PASS',checks:['real metrics and stock','manual/shortcut refresh without document reload','invoice history/receipt','desktop/tablet no overflow','cashier/limited/empty states','readonly and clean console'],state,artifacts:path.relative(root,artifacts)};
+        await writeFile(path.join(artifacts,'dashboard-report.json'),JSON.stringify(report,null,2));
+        console.log(JSON.stringify(report));
+    } else if (sidebarUx) {
         await tool('resize_page',{pageId,width:1440,height:800});
         await click(pageId,'combobox','Format kertas');
         await click(pageId,'option','58 mm');

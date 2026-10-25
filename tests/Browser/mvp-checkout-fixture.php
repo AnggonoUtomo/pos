@@ -5,6 +5,7 @@ use App\Modules\Platform\CompanySettings\Database\Seeders\CompanySettingsAccessS
 use App\Modules\Platform\OperationalSettings\Database\Seeders\OperationalSettingsAccessSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessSeeder;
+use App\Modules\Reporting\OperationalReports\Application\Queries\OperationalReport;
 use App\Modules\Reporting\OperationalReports\Database\Seeders\OperationalReportsAccessSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\Fixtures\PurchaseReturnRefundFixture;
+use Tests\Fixtures\ReturnRefundFixture;
 
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
@@ -30,6 +32,18 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     throw new LogicException('Fixture hanya SQLite disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+if (($input['verify_dashboard'] ?? false) === true) {
+    if (! hash_equals(PurchaseReturnRefundFixture::fingerprint(), $input['fingerprint'] ?? '')) {
+        throw new RuntimeException('Dashboard tidak boleh memutasi ledger.');
+    }
+    echo json_encode(['status' => 'PASS', 'readonly' => true]);
+    exit;
+}
+if (($input['dashboard_add_sale'] ?? false) === true) {
+    ReturnRefundFixture::invoice('200.00');
+    echo json_encode(['report' => app(OperationalReport::class)->handle([]), 'fingerprint' => PurchaseReturnRefundFixture::fingerprint()]);
+    exit;
+}
 if (($input['verify_navigation'] ?? false) === true) {
     if (DB::table('stock_movements')->exists() || DB::table('sales_invoices')->exists()
         || DB::table('purchase_orders')->exists() || DB::table('operational_backup_runs')->exists()
@@ -69,6 +83,21 @@ DB::statement('PRAGMA journal_mode=MEMORY');
 DB::statement('PRAGMA synchronous=OFF');
 Artisan::call('migrate', ['--force' => true]);
 $manager = User::create(['name' => 'QA manager', 'email' => 'qa-manager@example.test', 'password' => $input['password'], 'email_verified_at' => now()]);
+if (($input['dashboard_only'] ?? false) === true) {
+    $invoice = ReturnRefundFixture::invoice();
+    ReturnRefundFixture::posted($invoice, '0.5');
+    PurchaseReturnRefundFixture::purchase();
+    $manager->assignRole(Role::findOrCreate('super-system', 'web'));
+    User::factory()->create(['email' => 'qa-limited@example.test', 'password' => $input['password']]);
+    User::factory()->create(['email' => 'qa-empty-cashier@example.test', 'password' => $input['password']])
+        ->givePermissionTo(Permission::findOrCreate('sales.pos.invoices.post', 'web'));
+    $cashier = User::findOrFail(DB::table('sales_invoices')->where('id', $invoice['id'])->value('actor_id'));
+    $cashier->forceFill(['email' => 'qa-cashier@example.test', 'password' => $input['password']])->save();
+    $cashier->givePermissionTo('sales.pos.invoices.post');
+    echo json_encode(['status' => 'READY', 'invoice_number' => $invoice['number'],
+        'report' => app(OperationalReport::class)->handle([]), 'fingerprint' => PurchaseReturnRefundFixture::fingerprint()]);
+    exit;
+}
 if (($input['operational_only'] ?? false) === true) {
     app(OperationalSettingsAccessSeeder::class)->run();
     $manager->assignRole(Role::findOrCreate('super-system', 'web'));

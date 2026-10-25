@@ -1062,3 +1062,21 @@ Satu sukses/hari WIB, retry gagal maksimal3/jeda10menit, lease15menit dan
 token fencing menolak completion dari attempt lama. Hari terlewat tidak
 direkonstruksi. Ukuran thermal mengatur area cetak 54/76 mm dengan margin2 mm;
 driver/dialog OS tetap harus memilih kertas fisik 58/80 mm yang sesuai.
+
+## Dashboard Operasional
+
+GET `/dashboard`, nama route `dashboard`, web/auth. Route dimiliki
+Reporting/OperationalReports; nama page Inertia `dashboard` tetap sama.
+Props `summary`, `recent_sales`, `sales_scope`, `generated_at`. `summary`
+hanya tersedia dengan `reporting.operational.view`; selain itu null, bukan
+angka nol semu. Hari ini Asia/Jakarta, semua gudang. Memuat sales {count,total},
+purchases {count,total_value}, sales_returns/purchase_returns {count,settled_total},
+payments {incoming,outgoing,net_movement,scope}, stock {count,total_value}, date.
+Nominal berupa decimal string, tanpa saldo/laba/kontak rekening.
+
+`recent_sales` maksimal lima invoice dari public InvoiceHistoryReader: semua
+kasir dengan `sales.pos.invoices.view`, hanya actor sendiri dengan
+`sales.pos.invoices.post`, null tanpa kedua izin. `sales_scope` all/own/null.
+Tidak ada mutation, polling atau permission baru. Link nomor invoice membuka
+riwayat terfilter untuk melihat bukti melalui alur existing. Refresh Inertia
+parsial meminta ulang props di atas; bukan endpoint API baru.

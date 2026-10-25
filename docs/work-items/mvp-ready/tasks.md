@@ -248,3 +248,43 @@ ESLint dua komponen, `tsc --noEmit`, `npm run build`, Pint fixture,
 `node --check scripts/qa/mvp-checkout-devtools.mjs` dan `git diff --check`
 PASS. Tidak mengulang QA transaksi/tema yang tidak berubah. Tidak mengubah
 schema, permission, data lokal, Old-docs atau file LSP milik user.
+
+### Dashboard Data Operasional Nyata
+
+- [x] Increment 1: tulis test RED untuk data posted, periode hari ini WIB,
+  kondisi kosong, super-system dan batas akses laporan/riwayat kasir.
+  - Acceptance: tidak ada angka contoh atau kebocoran lintas kasir; read-only.
+- [x] Increment 2: hubungkan dashboard ke Reporting/OperationalReports melalui
+  contract laporan dan InvoiceHistoryReader yang ada; tanpa tabel/permission baru.
+  - Acceptance: penjualan/pembelian/arus pembayaran hari ini, posisi stok saat
+    ini dan lima penjualan terbaru sesuai akses. Total penjualan tidak dikurangi
+    retur; refund/uang kembali ditampilkan terpisah. Arus kas bukan saldo.
+  - Scope: hapus shift/antrean/tren/persentase gudang dan stok menipis semu;
+    tidak membuat aturan stok minimum, shift, grafik atau polling otomatis.
+- [x] Increment 3: UI kosong/akses terbatas, refresh manual dan shortcut aktif;
+  verifikasi focused PHP, lint/typecheck/build dan browser desktop/tablet.
+  - Verification: cocokkan angka fixture dengan UI, refresh, detail invoice,
+    tidak ada mock/console error/overflow; data MySQL lokal tidak dimutasi.
+- [x] Review scope dan catat hasil; commit/push dilakukan setelah gate lulus.
+
+Hasil: RED lima test gagal karena props data nyata belum tersedia; GREEN
+DashboardTest 7 test/157 assertion. Regresi terfokus DashboardTest, laporan
+operasional, pengaturan operasional dan login: 24 test/291 assertion PASS.
+Route `dashboard` tunggal, web/auth, kini dimiliki controller module Reporting;
+nama page/route dan akses shell pengguna login tetap kompatibel.
+
+ESLint dashboard, `tsc --noEmit`, Vite build 2757 module dan Pint scoped PASS.
+Chrome DevTools MCP melalui harness existing `--dashboard-only` PASS:
+empat angka ringkasan dan nilai stok cocok dengan fixture posted, refresh tombol
+dan Alt+R tidak memuat ulang dokumen, data berubah setelah transaksi tambahan
+disposable, nomor invoice membuka riwayat terfilter dan bukti existing.
+Desktop1440/tablet1024 tanpa overflow halaman, kondisi kosong/akses terbatas,
+scope invoice kasir, console bersih serta fingerprint ledger readonly PASS.
+Artefak ignored: `mvp-browser-9a5f7f092faa32ae`. Assertion awal empty state
+disesuaikan ke textContent karena snapshot memisahkan node teks React; tidak
+memerlukan perubahan runtime. Gate frontend/backend lulus dipakai kembali.
+
+Tidak menambah schema, dependency, permission/grant, seeder produksi, polling,
+atau runner OS. MySQL lokal, tema, Old-docs dan file LSP user tidak diubah.
+Migration/status tidak diperlukan karena schema tidak berubah. Data dashboard
+adalah posisi saat dimuat/refresh, bukan stream realtime otomatis.

@@ -18,3 +18,21 @@ akuntansi/laba bersih. Ringkasan tidak menampilkan nomor rekening/kontak pribadi
 Tidak perlu migration tabel laporan atau demo transaksi khusus: menggunakan
 data posted nyata/fixture relasional disposable. Seed hanya katalog permission.
 Rencana/checklist/QA: [MVP siap toko](../../../work-items/mvp-ready/tasks.md).
+
+## Dashboard
+
+Dashboard `/dashboard` tetap dapat dibuka setiap user yang login. Ringkasan
+toko hanya dikirim bila Gate mengizinkan `reporting.operational.view`.
+Periode hari ini memakai Asia/Jakarta dengan batas akhir eksklusif, mengikuti
+query laporan existing. Penjualan merupakan nilai invoice posted sebelum
+pengurang retur, pembelian merupakan dokumen diterima (bukan hanya lunas),
+arus pembayaran merupakan mutasi seluruh gudang (bukan saldo/laba).
+Stok adalah posisi terkini barang + gudang, bukan jumlah barang unik.
+
+Lima penjualan terbaru menggunakan contract publik `InvoiceHistoryReader`
+Sales/POS: `sales.pos.invoices.view` melihat semua, sedangkan pemegang
+`sales.pos.invoices.post` hanya miliknya. Izin laporan tidak otomatis memberi
+akses daftar invoice. Backend tidak mengirim ringkasan atau invoice yang tidak
+diizinkan. Super-system mengikuti Gate::before. Tidak ada indikator contoh,
+persentase kapasitas gudang, tren, shift atau batas stok menipis buatan.
+Refresh manual; tidak ada polling, migration, mutation atau demo seeder baru.

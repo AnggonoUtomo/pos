@@ -1,266 +1,257 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { WorkspaceShortcutDropdown, type WorkspaceShortcut } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
-import { cn } from '@/lib/utils';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { ArrowDownRight, ArrowUpRight, Boxes, CreditCard, PackageSearch, ReceiptText, ShoppingCart, Warehouse } from 'lucide-react';
-import { type ReactNode } from 'react';
+import { money } from '@/pages/reporting/operational-reports/lib/format';
+import { type OperationalReport } from '@/pages/reporting/operational-reports/types';
+import { Head, Link, router } from '@inertiajs/react';
+import { ArrowDownLeft, ArrowUpRight, BarChart3, Boxes, PackageCheck, ReceiptText, RefreshCw, ShoppingCart } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dasbor',
-        href: '/dashboard',
-    },
-];
-
-const summaryCards = [
-    {
-        title: 'Penjualan Hari Ini',
-        value: 'Rp 18.420.000',
-        note: '128 transaksi selesai',
-        trend: '+12,4%',
-        tone: 'emerald',
-        iconTone: 'text-emerald-600 dark:text-emerald-300',
-        icon: ReceiptText,
-    },
-    {
-        title: 'Transaksi POS',
-        value: '24 antre',
-        note: '3 draft payment',
-        trend: 'Live',
-        tone: 'blue',
-        iconTone: 'text-sky-600 dark:text-sky-300',
-        icon: ShoppingCart,
-    },
-    {
-        title: 'Stok Menipis',
-        value: '17 item',
-        note: 'Butuh pembelian ulang',
-        trend: 'Cek',
-        tone: 'amber',
-        iconTone: 'text-amber-600 dark:text-amber-300',
-        icon: Boxes,
-    },
-    {
-        title: 'Retur Pending',
-        value: '5 dokumen',
-        note: 'Menunggu review admin',
-        trend: '-2',
-        tone: 'rose',
-        iconTone: 'text-rose-600 dark:text-rose-300',
-        icon: ArrowDownRight,
-    },
-];
-
-const warehouseStatus = [
-    { name: 'Gudang Utama', value: '68%', detail: 'FIFO layer sehat', tone: 'emerald' },
-    { name: 'Etalase Toko', value: '42%', detail: '7 item stok tipis', tone: 'amber' },
-    { name: 'Gudang Retur', value: '18%', detail: 'Butuh adjustment', tone: 'rose' },
-];
-
-const recentTransactions = [
-    { code: 'POS-260913-0128', customer: 'Umum', warehouse: 'Etalase Toko', total: 'Rp 428.000', status: 'Lunas', tone: 'emerald' },
-    { code: 'POS-260913-0127', customer: 'Grosir A', warehouse: 'Gudang Utama', total: 'Rp 2.340.000', status: 'Multi Payment', tone: 'blue' },
-    { code: 'POS-260913-0126', customer: 'Reseller Timur', warehouse: 'Gudang Utama', total: 'Rp 1.190.000', status: 'Draft', tone: 'amber' },
-    { code: 'RET-260913-0005', customer: 'Umum', warehouse: 'Gudang Retur', total: 'Rp 86.000', status: 'Review', tone: 'rose' },
-];
-
-const operations = [
-    { title: 'Harga level pelanggan', value: '3 level aktif', icon: CreditCard, iconTone: 'text-[var(--chart-1)]' },
-    { title: 'Multi satuan', value: 'Base unit terkunci', icon: PackageSearch, iconTone: 'text-[var(--chart-2)]' },
-    { title: 'Multi gudang', value: 'Pilih gudang per transaksi', icon: Warehouse, iconTone: 'text-[var(--chart-3)]' },
-];
-
-const dashboardShortcuts: WorkspaceShortcut[] = [
-    {
-        label: 'Buka command palette',
-        description: 'Cari menu dan operasi global aplikasi.',
-        keys: ['Ctrl', 'K'],
-    },
-    {
-        label: 'Buka layar POS',
-        description: 'Akses cepat ke mode kasir fullscreen.',
-        keys: ['Alt', 'P'],
-        disabled: true,
-    },
-    {
-        label: 'Refresh ringkasan',
-        description: 'Muat ulang data ringkasan halaman ketika query real tersedia.',
-        keys: ['R'],
-        disabled: true,
-    },
-];
-
-const toneClasses: Record<string, string> = {
-    emerald: 'border-emerald-200 bg-emerald-500/10 text-emerald-700 dark:border-emerald-900 dark:text-emerald-300',
-    blue: 'border-sky-200 bg-sky-500/10 text-sky-700 dark:border-sky-900 dark:text-sky-300',
-    amber: 'border-amber-200 bg-amber-500/10 text-amber-700 dark:border-amber-900 dark:text-amber-300',
-    rose: 'border-rose-200 bg-rose-500/10 text-rose-700 dark:border-rose-900 dark:text-rose-300',
+type DashboardProps = {
+    summary: null | {
+        date: string;
+        sales: { count: number; total: string };
+        purchases: OperationalReport['purchases'];
+        sales_returns: OperationalReport['sales_returns'];
+        purchase_returns: OperationalReport['purchase_returns'];
+        payments: OperationalReport['payments'];
+        stock: { count: number; total_value: string };
+    };
+    recent_sales: null | { id: string; number: string; customer_name: string; warehouse_name: string; total: string; posted_at: string }[];
+    sales_scope: 'all' | 'own' | null;
+    generated_at: string;
 };
 
-function ToneBadge({ children, tone }: { children: ReactNode; tone: string }) {
-    return (
-        <Badge variant="outline" className={cn('shrink-0', toneClasses[tone])}>
-            {children}
-        </Badge>
-    );
-}
+const dateTime = (value: string) => new Date(value).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'medium', timeStyle: 'short' });
 
-export default function Dashboard() {
+export default function Dashboard({ summary, recent_sales, sales_scope, generated_at }: DashboardProps) {
     const { can } = usePermission();
+    const canOpenPos = can('sales.pos.invoices.create');
+    const [refreshing, setRefreshing] = useState(false);
+    const refresh = useCallback(() => {
+        if (refreshing) return;
+        setRefreshing(true);
+        router.reload({
+            only: ['summary', 'recent_sales', 'sales_scope', 'generated_at'],
+            onError: () => toast.error('Ringkasan gagal dimuat.'),
+            onFinish: () => setRefreshing(false),
+        });
+    }, [refreshing]);
+    useEffect(() => {
+        const handleKey = (event: KeyboardEvent) => {
+            if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.repeat) return;
+            if (event.key.toLowerCase() === 'r') {
+                event.preventDefault();
+                refresh();
+            }
+            if (event.key.toLowerCase() === 'p' && canOpenPos) {
+                event.preventDefault();
+                router.visit('/pos');
+            }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [refresh, canOpenPos]);
+    const shortcuts: WorkspaceShortcut[] = [
+        { label: 'Command palette', description: 'Navigasi global', keys: ['Ctrl/Cmd', 'K'] },
+        { label: 'Muat ulang ringkasan', description: 'Perbarui data', keys: ['Alt', 'R'] },
+        ...(canOpenPos ? [{ label: 'Buka POS', description: 'Layar kasir', keys: ['Alt', 'P'] }] : []),
+    ];
+    const metrics = summary
+        ? [
+              {
+                  label: 'Penjualan hari ini',
+                  value: summary.sales.total,
+                  detail: `${summary.sales.count} nota lunas · sebelum retur`,
+                  icon: ReceiptText,
+                  tone: 'text-emerald-600 dark:text-emerald-300',
+              },
+              {
+                  label: 'Pembelian diterima hari ini',
+                  value: summary.purchases.total_value,
+                  detail: `${summary.purchases.count} dokumen`,
+                  icon: PackageCheck,
+                  tone: 'text-sky-600 dark:text-sky-300',
+              },
+              {
+                  label: 'Pembayaran masuk hari ini',
+                  value: summary.payments.incoming,
+                  detail: 'Seluruh gudang · termasuk uang kembali supplier',
+                  icon: ArrowDownLeft,
+                  tone: 'text-teal-600 dark:text-teal-300',
+              },
+              {
+                  label: 'Pembayaran keluar hari ini',
+                  value: summary.payments.outgoing,
+                  detail: 'Seluruh gudang · termasuk refund pelanggan',
+                  icon: ArrowUpRight,
+                  tone: 'text-rose-600 dark:text-rose-300',
+              },
+          ]
+        : [];
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={[{ title: 'Dasbor', href: '/dashboard' }]}>
             <Head title="Dasbor" />
-
-            <WorkspaceShortcutDropdown
-                title="Shortcut Operasi Dasbor"
-                description="Shortcut wajib tampil di atas panel workspace setiap halaman module."
-                shortcuts={dashboardShortcuts}
-            />
-
-            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 lg:px-6">
-                <section className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <WorkspaceShortcutDropdown title="Dasbor" shortcuts={shortcuts} />
+            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-5 lg:px-6" aria-busy={refreshing}>
+                <header className="flex flex-wrap items-center justify-between gap-3">
                     <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                            <h1 className="text-primary text-2xl font-semibold tracking-normal">Dasbor Operasional</h1>
-                            <ToneBadge tone="emerald">Shift aktif</ToneBadge>
-                        </div>
-                        <p className="text-muted-foreground mt-1 text-sm">
-                            Ringkasan awal untuk penjualan, gudang, harga level pelanggan, dan Finance Lite.
-                        </p>
+                        <h1 className="text-primary text-2xl font-semibold">Dasbor Operasional</h1>
+                        <p className="text-muted-foreground mt-1 text-sm">Diperbarui {dateTime(generated_at)} WIB</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                        {can('sales.pos.invoices.create') && (
-                            <Button asChild variant="outline" size="sm" className="text-primary border-[var(--app-border)] bg-[var(--app-panel)]">
-                                <Link href="/pos" prefetch>
-                                    <ShoppingCart className="size-4 text-[var(--chart-3)]" />
+                        {canOpenPos && (
+                            <Button asChild variant="outline" size="sm">
+                                <Link href="/pos">
+                                    <ShoppingCart className="size-4 text-sky-600 dark:text-sky-300" />
                                     Buka POS
                                 </Link>
                             </Button>
                         )}
-                        <Button size="sm" disabled>
-                            <ReceiptText className="size-4" />
-                            Rekap Hari Ini
-                        </Button>
+                        {summary && (
+                            <Button asChild variant="outline" size="sm">
+                                <Link href="/reports/operations">
+                                    <BarChart3 className="size-4 text-violet-600 dark:text-violet-300" />
+                                    Laporan operasional
+                                </Link>
+                            </Button>
+                        )}
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="outline" size="icon" aria-label="Muat ulang ringkasan" disabled={refreshing} onClick={refresh}>
+                                    <RefreshCw className={`size-4 text-amber-600 dark:text-amber-300 ${refreshing ? 'animate-spin' : ''}`} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Muat ulang ringkasan</TooltipContent>
+                        </Tooltip>
                     </div>
-                </section>
+                </header>
 
-                <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    {summaryCards.map((item) => (
-                        <Card key={item.title} className="border-[var(--app-border)] bg-[var(--app-panel)]">
-                            <CardContent className="p-4">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <p className="text-muted-foreground text-sm">{item.title}</p>
-                                        <p className="mt-2 text-2xl font-semibold tracking-normal">{item.value}</p>
-                                        <p className="text-muted-foreground mt-1 text-xs">{item.note}</p>
-                                    </div>
-                                    <div className={cn('rounded-lg border p-2', toneClasses[item.tone])}>
-                                        <item.icon className={cn('size-4', item.iconTone)} />
-                                    </div>
-                                </div>
-                                <div className="mt-4 flex items-center justify-between">
-                                    <ToneBadge tone={item.tone}>{item.trend}</ToneBadge>
-                                    <ArrowUpRight className="text-muted-foreground size-4" />
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </section>
-
-                <section className="grid gap-4 xl:grid-cols-[1fr_380px]">
-                    <Card className="border-[var(--app-border)] bg-[var(--app-panel)]">
-                        <CardHeader className="flex-row items-center justify-between space-y-0 p-4">
-                            <div>
-                                <CardTitle className="text-base">Transaksi Terbaru</CardTitle>
-                                <p className="text-muted-foreground text-sm">Snapshot operasional untuk baseline UI.</p>
+                {summary ? (
+                    <>
+                        <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                            <span>
+                                {new Date(`${summary.date}T00:00:00+07:00`).toLocaleDateString('id-ID', {
+                                    timeZone: 'Asia/Jakarta',
+                                    dateStyle: 'long',
+                                })}{' '}
+                                · Semua gudang
+                            </span>
+                            <span>Arus pembayaran bukan saldo rekening.</span>
+                        </div>
+                        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Ringkasan hari ini">
+                            {metrics.map((metric) => (
+                                <Card key={metric.label} className="min-w-0 border-[var(--app-border)] bg-[var(--app-panel)]">
+                                    <CardContent className="space-y-2 p-4">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <h2 className="text-muted-foreground text-sm">{metric.label}</h2>
+                                            <metric.icon className={`size-5 shrink-0 ${metric.tone}`} />
+                                        </div>
+                                        <p className="text-xl font-semibold [overflow-wrap:anywhere] break-words">{money(metric.value)}</p>
+                                        <p className="text-muted-foreground text-xs">{metric.detail}</p>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </section>
+                        <section className="grid gap-6 border-y py-5 md:grid-cols-2 xl:grid-cols-4" aria-label="Stok terkini dan retur hari ini">
+                            <div className="min-w-0">
+                                <h2 className="text-muted-foreground flex items-center gap-2 text-sm">
+                                    <Boxes className="size-4 text-amber-600 dark:text-amber-300" />
+                                    Nilai persediaan terkini
+                                </h2>
+                                <p className="mt-2 font-semibold [overflow-wrap:anywhere] break-words">{money(summary.stock.total_value)}</p>
+                                <p className="text-muted-foreground mt-1 text-xs">{summary.stock.count} posisi barang/gudang</p>
                             </div>
-                            <ToneBadge tone="blue">Realtime mock</ToneBadge>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="overflow-x-auto">
-                                <table className="w-full min-w-[680px] text-sm">
-                                    <thead className="text-muted-foreground bg-[var(--app-panel-strong)]">
-                                        <tr className="border-y">
-                                            <th className="px-4 py-3 text-left font-medium">Nomor</th>
-                                            <th className="px-4 py-3 text-left font-medium">Pelanggan</th>
-                                            <th className="px-4 py-3 text-left font-medium">Gudang</th>
-                                            <th className="px-4 py-3 text-right font-medium">Total</th>
-                                            <th className="px-4 py-3 text-right font-medium">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {recentTransactions.map((transaction) => (
-                                            <tr key={transaction.code} className="border-b last:border-b-0">
-                                                <td className="px-4 py-3 font-medium">{transaction.code}</td>
-                                                <td className="px-4 py-3">{transaction.customer}</td>
-                                                <td className="text-muted-foreground px-4 py-3">{transaction.warehouse}</td>
-                                                <td className="px-4 py-3 text-right font-medium">{transaction.total}</td>
-                                                <td className="px-4 py-3 text-right">
-                                                    <ToneBadge tone={transaction.tone}>{transaction.status}</ToneBadge>
-                                                </td>
-                                            </tr>
+                            <div className="min-w-0">
+                                <h2 className="text-muted-foreground text-sm">Selisih pembayaran hari ini</h2>
+                                <p className="mt-2 font-semibold [overflow-wrap:anywhere] break-words">{money(summary.payments.net_movement)}</p>
+                                <p className="text-muted-foreground mt-1 text-xs">Mutasi masuk − keluar, bukan laba</p>
+                            </div>
+                            <div className="min-w-0">
+                                <h2 className="text-muted-foreground text-sm">Retur penjualan diterima hari ini</h2>
+                                <p className="mt-2 font-semibold">{summary.sales_returns.count} dokumen</p>
+                                <p className="text-muted-foreground mt-1 text-xs break-words">
+                                    Refund selesai {money(summary.sales_returns.settled_total)}
+                                </p>
+                            </div>
+                            <div className="min-w-0">
+                                <h2 className="text-muted-foreground text-sm">Retur supplier dikirim hari ini</h2>
+                                <p className="mt-2 font-semibold">{summary.purchase_returns.count} dokumen</p>
+                                <p className="text-muted-foreground mt-1 text-xs break-words">
+                                    Uang kembali {money(summary.purchase_returns.settled_total)}
+                                </p>
+                            </div>
+                        </section>
+                    </>
+                ) : (
+                    <p className="text-muted-foreground border-y py-5 text-sm">Ringkasan toko memerlukan izin Laporan Operasional.</p>
+                )}
+
+                {recent_sales !== null && (
+                    <section className="min-w-0 space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="text-base font-semibold">Penjualan terbaru{sales_scope === 'own' ? ' milik Anda' : ''}</h2>
+                            <Button asChild variant="outline" size="sm">
+                                <Link href="/sales/invoices">
+                                    <ReceiptText className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                    Riwayat penjualan
+                                </Link>
+                            </Button>
+                        </div>
+                        <div className="overflow-x-auto border border-[var(--app-border)]">
+                            <table className="w-full min-w-[680px] text-sm">
+                                <thead className="text-muted-foreground bg-[var(--app-panel-strong)]">
+                                    <tr>
+                                        {['Nomor / Waktu WIB', 'Pelanggan', 'Gudang', 'Total', 'Status'].map((label) => (
+                                            <th key={label} className={`px-4 py-3 font-medium ${label === 'Total' ? 'text-right' : 'text-left'}`}>
+                                                {label}
+                                            </th>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <div className="grid gap-4">
-                        <Card className="border-[var(--app-border)] bg-[var(--app-panel)]">
-                            <CardHeader className="p-4">
-                                <CardTitle className="text-base">Status Gudang</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4 p-4 pt-0">
-                                {warehouseStatus.map((warehouse) => (
-                                    <div key={warehouse.name} className="space-y-2">
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div>
-                                                <p className="text-sm font-medium">{warehouse.name}</p>
-                                                <p className="text-muted-foreground text-xs">{warehouse.detail}</p>
-                                            </div>
-                                            <ToneBadge tone={warehouse.tone}>{warehouse.value}</ToneBadge>
-                                        </div>
-                                        <div className="h-2 overflow-hidden rounded-full bg-[var(--app-panel-strong)]">
-                                            <div
-                                                className={cn('h-full rounded-full', toneClasses[warehouse.tone].split(' ')[1])}
-                                                style={{ width: warehouse.value }}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-[var(--app-border)] bg-[var(--app-panel)]">
-                            <CardHeader className="p-4">
-                                <CardTitle className="text-base">Baseline Yang Dijaga</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3 p-4 pt-0">
-                                {operations.map((operation, index) => (
-                                    <div key={operation.title}>
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex size-9 items-center justify-center rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-strong)]">
-                                                <operation.icon className={cn('size-4', operation.iconTone)} />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-sm font-medium">{operation.title}</p>
-                                                <p className="text-muted-foreground text-xs">{operation.value}</p>
-                                            </div>
-                                        </div>
-                                        {index < operations.length - 1 && <Separator className="mt-3" />}
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </div>
-                </section>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recent_sales.map((sale) => (
+                                        <tr key={sale.id} className="border-t">
+                                            <td className="px-4 py-3">
+                                                <Link
+                                                href={`/sales/invoices?search=${encodeURIComponent(sale.number)}`}
+                                                    className="text-primary font-medium underline-offset-4 hover:underline"
+                                                >
+                                                    {sale.number}
+                                                </Link>
+                                                <p className="text-muted-foreground mt-1 text-xs">{dateTime(sale.posted_at)}</p>
+                                            </td>
+                                            <td className="px-4 py-3">{sale.customer_name}</td>
+                                            <td className="px-4 py-3">{sale.warehouse_name}</td>
+                                            <td className="px-4 py-3 text-right font-medium whitespace-nowrap">{money(sale.total)}</td>
+                                            <td className="px-4 py-3">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-emerald-200 bg-emerald-500/10 text-emerald-700 dark:border-emerald-900 dark:text-emerald-300"
+                                                >
+                                                    Lunas
+                                                </Badge>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {!recent_sales.length && (
+                                        <tr>
+                                            <td colSpan={5} className="text-muted-foreground px-4 py-10 text-center">
+                                                Belum ada penjualan{sales_scope === 'own' ? ' milik Anda' : ''}.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                )}
             </div>
         </AppLayout>
     );
