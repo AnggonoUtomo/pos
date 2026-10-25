@@ -225,7 +225,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
             <main className="text-foreground flex h-dvh min-h-[44rem] flex-col overflow-hidden bg-[var(--app-workspace)]">
                 <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] bg-[var(--app-topbar)] px-5 py-3">
                     <div className="flex items-center gap-3">
-                        <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
+                        <div className="bg-primary-solid text-primary-solid-foreground flex size-9 items-center justify-center rounded-md">
                             <AppLogoIcon className="size-5 fill-current" />
                         </div>
                         <h1 className="text-lg font-semibold">POS</h1>

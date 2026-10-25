@@ -19,7 +19,7 @@ export default function AuthSimpleLayout({ children, title, description }: AuthL
                 <div className="flex flex-col gap-7">
                     <div className="flex flex-col items-center gap-4">
                         <Link href={route('home')} className="mb-2 flex items-center gap-3 font-semibold">
-                            <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg">
+                            <div className="bg-primary-solid text-primary-solid-foreground flex size-10 items-center justify-center rounded-lg">
                                 <AppLogoIcon className="size-7 fill-current" />
                             </div>
                             <span className="text-lg">POS Modular</span>

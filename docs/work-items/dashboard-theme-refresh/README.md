@@ -16,7 +16,11 @@ Artefak referensi ignored: storage/framework/testing/ui-references.
   Dark: pertahankan kepekatan palette sebelum penyeragaman netral. Sidebar,
   workspace, panel dan topbar memakai rona yang selaras dengan tema terpilih,
   bukan seluruh dark disamakan abu-abu. Stone mempertahankan palette existing.
-- Menu aktif tegas, icon semantic, badge/transaksi tetap bermakna. Tidak
+- Aksen solid tombol/menu aktif/logo memakai warna pekat light pada kedua
+  mode. Token `primary-solid` terpisah dari `primary` agar teks link dan mix
+  surface dark tidak ikut berubah; foreground solid menjaga kontras.
+- Menu aktif tegas dan icon semantic, tanpa badge Aktif pada sidebar; status
+  transaksi tetap bermakna. Tidak
   menambahkan footer sidebar, grafik palsu, tren, shift atau angka demo.
 - Kartu maksimal radius8px; tipografi tetap Instrument Sans, letter spacing0.
 - Semua accent/mode existing tetap tersedia. Topbar solid di awal, glass saat

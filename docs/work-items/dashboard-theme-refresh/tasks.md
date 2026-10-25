@@ -119,3 +119,33 @@ file LSP user tidak termasuk commit.
 - Prettier CSS, `node --check scripts/qa/mvp-checkout-devtools.mjs`, build2757
   module dan `git diff --check`: PASS. Tidak mengulang backend test,
   lint/typecheck TSX atau transaksi karena source PHP/TSX tidak berubah.
+
+## Increment 5: Aksen Pekat Dan Sidebar Tanpa Badge Aktif
+
+- [x] Scope user: pekatkan aksen dark seperti light; surface/paduan tema
+  lainnya tetap. Hilangkan badge Aktif pada sidebar, bukan indikator menu aktif.
+- [x] Gunakan warna solid untuk tombol/menu aktif/logo, dengan teks kontras;
+  warna link dan surface existing tetap.
+- [x] Hapus badge Aktif dan ruang sisanya; warna icon/guard/urutan tetap.
+- [x] Verifikasi palette surface/light tidak berubah, aksen solid dan kontras,
+  sidebar tanpa badge, desktop/tablet, serta lint/typecheck/build scoped.
+- [x] Catat hasil dan review scope; commit/push setelah gate terkait lulus.
+
+### Hasil Increment 5
+
+- Token `primary-solid` memakai warna primary light, sedangkan primary dark
+  untuk link/mix surface tetap. Foreground solid putih; khusus Saffron dark
+  hitam agar rasio kontras teks minimal4,5:1 tanpa mengubah warna light.
+- Button/badge/checkbox/aksi toast dan logo menggunakan token solid; behavior
+  komponen tidak diubah. Konfigurasi sidebar tidak lagi memasok badge Aktif,
+  sehingga komponen existing juga tidak menyisakan padding khusus badge.
+- RED: aksen solid belum tersedia; GREEN `--dark-theme-only` terhadap baseline
+  Increment4: seluruh warna light dan surface/link dark identik, aksen solid
+  sama dengan primary light, kontras lolos, sidebar tanpa badge dan urutan
+  tetap. Screenshot desktop/tablet serta tombol Tambah barang diperiksa.
+- Console bersih, tidak ada overflow tablet, fingerprint ledger fixture tetap.
+  Bukti ignored:
+  `storage/framework/testing/mvp-browser-eaf3d7b49d6c26a7/dark-theme-report.json`.
+- Prettier scoped, ESLint seluruh TSX yang berubah, typecheck, build2757 module
+  dan `git diff --check`: PASS. Tidak mengulang backend/transaksi test karena
+  tidak ada perubahan behavior backend/transaksi; data toko tidak disentuh.

@@ -149,8 +149,10 @@ try {
                     'primary-foreground','secondary','secondary-foreground','muted','muted-foreground','accent','accent-foreground',
                     'border','input','ring','sidebar-background','sidebar-foreground','sidebar-primary','sidebar-primary-foreground',
                     'sidebar-accent','sidebar-accent-foreground','sidebar-border','sidebar-ring','app-workspace','app-topbar',
-                    'app-panel','app-panel-strong','app-border']) {
-                    context.fillStyle=style.getPropertyValue('--'+key).trim(); context.fillRect(0,0,1,1);
+                    'app-panel','app-panel-strong','app-border','primary-solid','primary-solid-foreground']) {
+                    const value=style.getPropertyValue('--'+key).trim();
+                    if(!value) {colors[key]=null; continue;}
+                    context.fillStyle=value; context.fillRect(0,0,1,1);
                     colors[key]=Array.from(context.getImageData(0,0,1,1).data).slice(0,3);
                 }
                 return colors;
@@ -171,8 +173,19 @@ try {
         if (!themeBaseline) {
             assert(process.env.QA_THEME_BASELINE,'Baseline palette wajib disediakan.');
             const before=JSON.parse(await readFile(process.env.QA_THEME_BASELINE,'utf8')).palette;
-            assert.deepEqual(palette.light,before.light,'Warna light berubah');
-            assert.deepEqual(palette.dark.stone,before.dark.stone,'Warna Stone dark berubah');
+            const pick=(colors,keys)=>Object.fromEntries(keys.map(key=>[key,colors[key]]));
+            const luminance=rgb=>rgb.map(channel=>channel/255).map(value=>value<=0.04045?value/12.92:((value+0.055)/1.055)**2.4)
+                .reduce((sum,value,index)=>sum+value*[0.2126,0.7152,0.0722][index],0);
+            const contrast=(a,b)=>(Math.max(luminance(a),luminance(b))+0.05)/(Math.min(luminance(a),luminance(b))+0.05);
+            for(const [theme,colors] of Object.entries(palette.dark)) {
+                assert.deepEqual(pick(palette.light[theme],Object.keys(before.light[theme])),before.light[theme],'Light berubah: '+theme);
+                const stable=Object.keys(before.dark[theme]).filter(key=>!['sidebar-primary','sidebar-primary-foreground'].includes(key));
+                assert.deepEqual(pick(colors,stable),pick(before.dark[theme],stable),'Surface/link berubah: '+theme);
+                assert.deepEqual(colors['primary-solid'],palette.light[theme].primary,'Aksen solid bukan warna light: '+theme);
+                assert.deepEqual(colors['sidebar-primary'],colors['primary-solid'],'Aksen sidebar berbeda: '+theme);
+                assert.deepEqual(colors['sidebar-primary-foreground'],colors['primary-solid-foreground'],'Teks sidebar berbeda: '+theme);
+                assert(contrast(colors['primary-solid'],colors['primary-solid-foreground'])>=4.5,'Kontras aksen: '+theme);
+            }
             const hsl=rgb=>{
                 const [r,g,b]=rgb.map(channel=>channel/255), high=Math.max(r,g,b), low=Math.min(r,g,b), delta=high-low;
                 const lightness=(high+low)/2;
@@ -193,6 +206,7 @@ try {
             }
             const platform=await inspect(pageId,`() => Array.from(document.querySelectorAll('[data-sidebar="group"]')[0].querySelectorAll('a'),el=>el.textContent.trim())`);
             assert.deepEqual(platform,['Dasbor','Identitas & Akses','Pengaturan toko','Operasional']);
+            assert.equal(await inspect(pageId,'() => document.querySelectorAll("[data-sidebar=menu-badge]").length'),0,'Badge sidebar tersisa');
             await click(pageId,'button','Tema');
             await click(pageId,'menuitem','Dark');
             for(const [theme,label] of [['default','Default'],['forest','Forest'],['ruby','Ruby']]) {
@@ -210,12 +224,23 @@ try {
             await click(pageId,'button','Toggle Sidebar');
             assert.equal(await inspect(pageId,'() => document.documentElement.scrollWidth > innerWidth'),false,'Overflow tablet');
             await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'tablet-dark-collapsed.png')});
+            await tool('resize_page',{pageId,width:1440,height:1000});
+            await tool('navigate_page',{pageId,url:`${url}/inventory/items`});
+            await locate(pageId,'heading','Barang');
+            await locate(pageId,'button','Tambah barang');
+            const action=await inspect(pageId,`() => {
+                const button=Array.from(document.querySelectorAll('button')).find(el=>el.textContent.includes('Tambah barang'));
+                const style=getComputedStyle(button); return {background:style.backgroundColor,foreground:style.color};
+            }`);
+            assert.equal(action.background,'rgb('+palette.dark.forest['primary-solid'].join(', ')+')','Tombol belum memakai aksen solid');
+            assert.equal(action.foreground,'rgb('+palette.dark.forest['primary-solid-foreground'].join(', ')+')','Teks tombol belum kontras');
+            await tool('take_screenshot',{pageId,filePath:path.join(artifacts,'desktop-solid-action.png')});
             const errors=await tool('list_console_messages',{pageId,types:['error']});
             assert(errors.includes('<no console messages found>'),'Console error theme');
         }
         const state=fixture({verify_dashboard:true,fingerprint:setup.fingerprint});
         const report={status:themeBaseline?'BASELINE':'PASS',checks:themeBaseline?['palette before change']:
-            ['all light palettes unchanged','Stone dark unchanged','original dark depth and accents','theme-matched sidebar/workspace/topbar','platform order','desktop/tablet no overflow','readonly/clean console'],
+            ['light and dark surfaces/links unchanged','solid accents match light with readable text','sidebar without active badges','theme-matched sidebar/workspace/topbar','platform order','desktop/tablet and master action','readonly/clean console'],
             palette,state,artifacts:path.relative(root,artifacts)};
         await writeFile(reportPath,JSON.stringify(report,null,2));
         console.log(JSON.stringify({status:report.status,checks:report.checks,report:path.relative(root,reportPath)}));
