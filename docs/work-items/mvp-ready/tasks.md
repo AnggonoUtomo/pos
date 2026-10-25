@@ -154,7 +154,7 @@ di jaringan toko. Ini penyelesaian Paket 4, bukan penambahan fitur/modul.
   - Acceptance: hasil harapan terukur, persetujuan manusia tetap pending;
     `.env` aktif, data, firewall dan service tidak diubah tanpa kesiapan target.
   - Verification: review skenario, link relatif dan `git diff --check`.
-- [ ] Commit increment dokumentasi yang sudah diverifikasi.
+- [x] Commit increment dokumentasi yang sudah diverifikasi.
 
 ### Increment 2: Jadwal Dan Media Backup
 
@@ -206,3 +206,6 @@ tablet dan rendering PDF tiga ukuran PASS. PDF bukan bukti cetak fisik.
 User mengonfirmasi tablet BELUM tersedia. Maka pengujian LAN/TLS tablet,
 konfigurasi production aktif, UAT manusia/printer serta salinan backup di
 perangkat terpisah masih pending; checklist tersebut sengaja tidak dicentang.
+
+Pengiriman software/panduan lanjutan: b11cb54 sudah di origin/main;
+HEAD/ls-remote identik dan divergence0/0. Ini bukan persetujuan go-live manusia.

@@ -19,7 +19,7 @@
 - [x] Adapter memanggil pos:backup existing; scheduler didaftarkan module.
   - Acceptance: tidak ada dump dari request web; gagal tampak sebagai gagal.
   - Verification: executor fake dalam test; schedule:list dan command smoke.
-- [ ] Commit increment terverifikasi.
+- [x] Commit increment terverifikasi.
 
 ## Increment 2: UI Dan Cetak
 
@@ -30,7 +30,7 @@
     memotong nominal/nama panjang; invoice/stock/payment tidak berubah.
   - Verification: focused frontend/HTTP tests dan browser print/screenshot.
 - [x] Sidebar/palette/module index/API/dokumen operasional diselaraskan.
-- [ ] Commit increment terverifikasi.
+- [x] Commit increment terverifikasi.
 
 ## Increment 3: Aktivasi Dan Handoff
 
@@ -38,7 +38,7 @@
   tanpa secret di argumen dan tanpa overwrite task lain.
 - [x] Aktivasi migration dan katalog permission lokal dengan backup terlebih dulu.
   - Acceptance: tanpa grant/password/reset data; backup otomatis tetap mati.
-- [ ] Gate akhir terfokus, catat command/bukti dan commit/push diverifikasi.
+- [x] Gate akhir terfokus, catat command/bukti dan commit/push diverifikasi.
 - [x] Catat instalasi task aktual terpisah dari preferensi jadwal dan UAT fisik.
 
 ## Bukti
@@ -76,3 +76,6 @@
 - User menyatakan tablet belum tersedia. UAT operator/printer fisik, akses
   tablet/TLS, media backup terpisah dan production activation tetap pending
   pada [checklist operasional](../../../../../work-items/mvp-ready/tasks.md).
+- Implementasi/panduan dikirim sebagai b11cb54 pada origin/main. Push PASS,
+  ls-remote cocok dengan HEAD dan divergence0/0; checkbox delivery diisi sesudah
+  verifikasi. Scope commit44 file tidak memuat Old-docs, LSP, dump atau PDF QA.
