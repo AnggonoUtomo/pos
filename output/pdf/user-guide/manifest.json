@@ -1,0 +1,131 @@
+{
+    "edition":  "27 Oktober 2026",
+    "sourceRevision":  "af410c1",
+    "sourceSha256":  {
+                         "docs/user-guide/README.md":  "5202fccdb943369d6a0ef60c0ac54ba190639eeedfbe2c80ded0272d45ebda94",
+                         "docs/user-guide/01-alur-global.md":  "082daba319627334f464ce36b6a68c2f1e391b07ac1e83e37ccc1c07a7a3f04d",
+                         "docs/user-guide/02-panduan-modul.md":  "2f27bdbad669d6adecf7f49aa6c43b0d6f7fe607581edaaaa6d34fa80e262165",
+                         "docs/user-guide/03-role-dan-akses.md":  "6cb022d7ec1ecd10bdfa38a4c1ac32871ee6d8af554a5900e6d5c59a282dff23",
+                         "docs/user-guide/roles/administrator-sistem.md":  "dd36c98765a6aa9bb58b3b4b880737909825956f904368fb1193d3158190695b",
+                         "docs/user-guide/roles/pemilik-supervisor.md":  "cf729e15439d6ce000374ce3d03b6d3aa356329b5def3d786960c53876670d7d",
+                         "docs/user-guide/roles/admin-master.md":  "3e30c663623293360b780485a7ec9a59571bad8b626ec6761a740dfa018a6d16",
+                         "docs/user-guide/roles/kasir.md":  "f8f0dd48b90f2beff3ec573b9fb5f419a5581c3551dca3a4c99d3185e13fcd92",
+                         "docs/user-guide/roles/staf-gudang.md":  "a36c0dc5f65d21f39735e194cd2024e85147361045ff65eeda46be7cbcfa4e30",
+                         "docs/user-guide/roles/staf-pembelian.md":  "28046eaf8205e9c4818c6fe69ea4f688a29bde3aaab930d81370f084d46dce0d",
+                         "docs/user-guide/roles/staf-keuangan.md":  "62bdacfa38ca6611ef3a9bc148bbc4aa3e9024aec8a2fcbe9ecd95a9dcb53b07"
+                     },
+    "results":  [
+                    {
+                        "name":  "panduan-global-pos",
+                        "bytes":  440991,
+                        "sha256":  "c2e24ff5c42e08de03d151a9cfba5794816572a61f3f923481477d1db8c45a93",
+                        "paragraphs":  79,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  22,
+                        "nonblankPages":  22
+                    },
+                    {
+                        "name":  "administrator-sistem",
+                        "bytes":  103354,
+                        "sha256":  "bb8a29b1983462c1bcd7def3c4bb6ac048e9158553ab3aa345775cb1d1aad270",
+                        "paragraphs":  7,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    },
+                    {
+                        "name":  "pemilik-supervisor",
+                        "bytes":  97773,
+                        "sha256":  "786c427edf6e66c30a68e635495a7e10ce7add3e7c2a9b6edf72ee2d8214117c",
+                        "paragraphs":  6,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    },
+                    {
+                        "name":  "admin-master",
+                        "bytes":  99216,
+                        "sha256":  "8f21b02c3285ef637351e11594e9495fecb7cd5f2f779049d75749cd63ce6288",
+                        "paragraphs":  7,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    },
+                    {
+                        "name":  "kasir",
+                        "bytes":  100032,
+                        "sha256":  "3738924e2a14c0b218a64177d1a6bcdf4ed98b4db4a55800ebdcd5fa35eaedcc",
+                        "paragraphs":  7,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    },
+                    {
+                        "name":  "staf-gudang",
+                        "bytes":  96362,
+                        "sha256":  "704267224ee772b0619ae1f8bbfe7f80df503bbbaf60b28fe4211b9a76a2a28a",
+                        "paragraphs":  9,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    },
+                    {
+                        "name":  "staf-pembelian",
+                        "bytes":  93624,
+                        "sha256":  "8c49d2d7e7dd2c07188d377fed92b3fa71ce4840cb52db15e2d331a746306855",
+                        "paragraphs":  7,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    },
+                    {
+                        "name":  "staf-keuangan",
+                        "bytes":  99983,
+                        "sha256":  "94ec6fcb6dfa4c3c99372343e105a47afb6d2934a9565dc609823a9d206508dc",
+                        "paragraphs":  7,
+                        "overflow":  [
+
+                                     ],
+                        "brokenAnchors":  [
+
+                                          ],
+                        "pageCount":  3,
+                        "nonblankPages":  3
+                    }
+                ]
+}
