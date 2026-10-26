@@ -53,3 +53,11 @@ Chrome hanya HTML cetak lokal tanpa jaringan/akun toko.
 - Aplikasi, database, .env, scheduler OS, dependency dan Old-docs tidak diubah.
 - File sementara/render berada di `storage/framework/testing/user-guide/`
   yang ignored; tidak ikut commit. PDF final memang disertakan sebagai hasil user.
+
+## Pengiriman
+
+Naskah tersimpan pada `df8d7ec`, PDF/tool dan bukti QA pada `ebd740d`.
+Push `origin/main` berhasil; SHA remote `ebd740d74b5dedac5844712bb6d414112139afc2`
+diverifikasi melalui `git ls-remote`, divergence `0/0` sebelum pencatatan
+penutupan ini. Empat file LSP staged dan empat file LSP untracked user tetap
+di tempatnya, tidak masuk commit panduan.

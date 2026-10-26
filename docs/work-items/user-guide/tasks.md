@@ -33,6 +33,6 @@
 - [x] Verifikasi link, permission, konsistensi sumber/PDF dan diff scoped.
   - Acceptance: tautan lokal/output lengkap; permission nyata; tidak menyertakan file user.
   - Verification: 40 tautan, 42 key, manifest SHA-256, sintaks/Pint dan staged diff check.
-- [ ] Catat hasil, commit dan push tanpa file user.
+- [x] Catat hasil, commit dan push tanpa file user.
   - Acceptance: laporan hasil tersedia, dua increment tersimpan, remote sama dengan HEAD.
   - Verification: commit scoped, push origin main, verifikasi SHA remote dan divergence 0/0.
