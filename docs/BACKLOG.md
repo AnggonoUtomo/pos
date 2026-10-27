@@ -2,15 +2,19 @@
 
 ## Status Dan Prioritas Aktif
 
-Dicatat pada 26 Oktober 2026 atas arahan user. Dokumen ini menampung usulan
-pengembangan untuk dikerjakan nanti, bukan instruksi implementasi sekarang.
+Dicatat pada 26 Oktober 2026 atas arahan user. Pada 27 Oktober 2026 user
+mengaktifkan arah tiga tahap: operasional harian, stok/purnajual, dan
+grosir/proyek. Peta capability serta status pekerjaan ada pada
+[work item POS skala menengah](work-items/medium-scale-pos/README.md).
+Implementasi pertama adalah barang/barcode/gambar; aturan rinci capability
+berikutnya ditetapkan saat dikerjakan, bukan diasumsikan telah disahkan.
 Persetujuan pencatatan bukan persetujuan seluruh requirement bisnis atau
 pembuatan module baru.
 
-Prioritas sekarang adalah koreksi, perbaikan, atau tambahan kecil per module
-maupun lintas module yang disampaikan user. Jangan mengambil pekerjaan dari
-backlog ini secara otomatis. Aktivasi fitur besar menunggu instruksi dan
-penetapan scope bersama user.
+Prioritas sekarang mengikuti pekerjaan yang dipilih user dan urutan work item
+aktif di atas. Jangan mengambil fitur lain dari backlog secara otomatis atau
+menetapkan aturan bisnis yang belum disepakati. Koreksi/perbaikan kecil dari
+user tetap dapat didahulukan.
 
 Baseline berjalan mengacu pada [daftar module](MODULES.md) dan
 [empat paket MVP](work-items/mvp-ready/tasks.md). Pending UAT operator, printer,
@@ -30,7 +34,9 @@ baru. Boundary baru hanya ditetapkan bila ada kebutuhan bisnis nyata.
 
 ## Daftar Usulan
 
-Seluruh entri berstatus **Ditunda / Belum Diimplementasikan** pada backlog ini.
+Status awal entri adalah **Belum Diimplementasikan**, kecuali capability
+existing yang disebutkan. Tiga tahap telah dipilih untuk pengembangan; status
+implementasi aktual mengikuti checklist work item yang ditautkan di atas.
 Capability dasar yang sudah ada tidak dianggap hilang; yang diusulkan adalah
 pengembangan di atasnya.
 
@@ -53,8 +59,8 @@ pengembangan di atasnya.
 
 ## Urutan Pembahasan Yang Diusulkan
 
-Ini pengelompokan calon pekerjaan, bukan increment coding atau jadwal yang
-telah disahkan.
+Pengelompokan berikut sudah dipilih user; increment dan progres aktual berada
+pada work item aktif, bukan jadwal atau janji penyelesaian seluruh fitur sekaligus.
 
 1. **Operasional harian:** BG-004, BG-001, BG-003 dan BG-002. Permudah master
    barang/layanan kasir, lalu lengkapi pencatatan uang dan kontrol shift.

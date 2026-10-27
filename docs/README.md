@@ -8,7 +8,9 @@ garis besar PRD dan ADR lama yang sudah dipindahkan ke dokumen aktif ini.
 
 Prioritas sekarang adalah koreksi/perbaikan/tambahan kecil per module atau
 lintas module sesuai arahan user. [Backlog skala menengah](BACKLOG.md) dicatat
-untuk nanti, bukan instruksi implementasi otomatis. Baseline alur lunas tetap
+sebagai peta usulan. Tiga tahap diaktifkan user pada 27 Oktober 2026, dimulai
+dari barang/barcode/gambar: [pengembangan POS skala menengah](work-items/medium-scale-pos/README.md).
+Entri lain tidak menjadi instruksi implementasi otomatis. Baseline alur lunas tetap
 mengacu pada [empat paket MVP](work-items/mvp-ready/tasks.md). Panduan aktivasi,
 backup dan pending UAT: [Operasional](work-items/mvp-ready/OPERASIONAL.md).
 
