@@ -24,10 +24,10 @@
 - [x] Satu gate backend lengkap dan backup restore verified.
   - Acceptance: tidak ada regresi, backup baru dapat dipulihkan tanpa menimpa toko.
   - Verification: full PHPUnit sekali, pos:backup --verify.
-- [ ] Ganti database bisnis satu kali dan verifikasi.
+- [x] Ganti database bisnis satu kali dan verifikasi.
   - Acceptance: data lama hilang, skenario/angka expected cocok, protected fingerprint identik.
   - Verification: MySQL apply dengan fingerprint pinned, rerun seeder no-op, reset kedua ditolak.
-- [ ] Panduan lifecycle aktual dan handoff.
+- [x] Panduan lifecycle aktual dan handoff.
   - Acceptance: urutan belajar, dokumen posted/draft, harga/satuan dan hasil expected jelas.
   - Verification: report readonly, link check, diff scoped; tidak mengulang semua QA browser/tema.
 - [ ] Commit dan push scoped.

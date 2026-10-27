@@ -34,28 +34,69 @@ Old-docs, role produksi, UI dan file user tidak disentuh.
 - `.env` toko tetap tidak diubah. Test memakai .env.testing sementara berisi
   SQLite/array dan APP_KEY acak pada proses; file sementara sudah dibersihkan.
 
-## Status Aktivasi: Pending Koneksi MySQL
+## Status Aktivasi: Aktif
 
-Penggantian database aktif **belum dilakukan**. Fingerprint lama yang disetujui
-dan dipatok helper: `6158fd7712840fb6d48f2254006992c0eadab342dca5de697c035f1a613e4c63`.
-Preview: 12 barang, 5 invoice, 1 pembelian, 1 stok awal, 1 draft transfer;
-seluruh data bisnis target berada pada allowlist 46 tabel.
+Penggantian **satu kali selesai** pada production/MySQL, 27 Oktober 2026.
+Fingerprint lama sebelum penggantian tetap cocok dengan persetujuan:
+`6158fd7712840fb6d48f2254006992c0eadab342dca5de697c035f1a613e4c63`.
+Seluruh 46 tabel bisnis lama dibersihkan transactional, lalu dataset baru dibuat.
+Enam belas tabel protected termasuk row audit lama identik. Akun tetap 2 dan
+role tetap 8; tidak mengganti password, assignment, pengaturan, backup atau OS.
 
-QA MySQL pertama terinterupsi server has gone away dan cleanup tertahan.
-Database disposable milik run ini: `pos_lifecycle_qa_5f8dda96fdcad100`;
-bersihkan setelah server aktif dengan guard prefix dan target bukan database toko.
-User sudah mencoba Start MySQL, tetapi pemeriksaan ulang belum menemukan
-proses MySQL/port 3306-3308. Percobaan ulang koneksi tetap ditolak. Tidak ada
-perubahan konfigurasi OS/server atau penghapusan data toko untuk mengatasi ini.
+Gangguan MySQL sebelumnya diselesaikan dengan Start oleh user. Database QA
+orphan `pos_lifecycle_qa_5f8dda96fdcad100` sudah dibersihkan dengan guard nama
+dan target bukan database toko. Seluruh database sementara run berikutnya
+dibersihkan pada finally. Tidak ada perubahan server/.env untuk mengatasi gangguan.
 
-Lanjut setelah MySQL benar-benar Running:
+## Verifikasi Lanjutan MySQL
 
-1. Bersihkan hanya database QA orphan di atas, bukan folder data MySQL.
-2. Ulang QA MySQL disposable yang terganggu; hasil SQLite/full suite tetap dipakai.
-3. Pastikan fingerprint preview tetap cocok; bila berbeda, berhenti dan minta arahan.
-4. Pastikan backup masih baru; ulang backup jika perlu, bukan gate aplikasi penuh.
-5. Jalankan helper --apply-once setelah QA MySQL lulus, periksa data/report/protected.
-6. Ubah status panduan menjadi aktif dan catat nomor dokumen, selesaikan checklist.
+- Pemeriksaan native menemukan Schema::getTables tanpa scope ikut menampilkan
+  tabel proyek lain. Diperbaiki menggunakan getCurrentSchemaListing; regresi RED
+  lalu GREEN terfokus **9 test / 86 assertion** PASS. Tidak membaca/mengubah row
+  proyek lain. Full suite 835/6754 di atas adalah hasil sebelum perbaikan sempit
+  ini; hanya gate yang terdampak diulang sesuai kebijakan project.
+- Pembandingan hasil JSON pada harness dinormalisasi menggunakan Arr::sortRecursive
+  karena MySQL dapat mengubah urutan key object. Fingerprint database tetap exact,
+  termasuk audit; tidak melemahkan pemeriksaan row/no-op.
+- `php scripts/qa/operational-lifecycle-mysql.php`: PASS schema disposable,
+  replacement fixture populated ledger/FIFO/payment, protected, rekonsiliasi
+  exact, rerun no-op dan reset kedua ditolak. Semua source final terkait Pint PASS.
+- `php scripts/qa/replace-operational-learning-once.php --apply-once`: PASS satu
+  kali pada database toko. Laporan ignored:
+  storage/framework/testing/operational-lifecycle/activation.json.
+- Seeder dijalankan ulang pada database aktual: fingerprint 46 tabel bisnis dan
+  jumlah audit tetap identik. Percobaan helper --apply-once kedua ditolak dengan
+  LogicException/exit 1 sebelum penghapusan; ini hasil pengaman yang diharapkan.
+- Readonly saldo/report: Kamera Utama 3 Unit, Cadangan 2 Unit; MCB 24 Unit;
+  NVR 4 Unit; NYM 97,5 Meter; RJ45 100 Buah; UTP 305 Meter. SKU bukan LAT- = 0.
+- Total penjualan Rp1.138.650, nilai stok Rp8.210.000, selisih arus uang keluar
+  bersih Rp1.411.350. Semua sama dengan expected; bukan saldo kas/laba.
+- Tidak mengulang build/browser/tema atau migration database toko: tidak ada
+  perubahan UI/runtime/schema. Data lifecycle diperiksa lewat use case laporan
+  dan query readonly setelah aktivasi. UAT operator/printer tetap terpisah.
+
+## Nomor Dokumen Aktual
+
+Gunakan pencarian nomor pada halaman module, jangan mem-posting ulang dokumen
+yang sudah selesai. Empat draft sengaja disisakan untuk latihan lanjutan.
+
+| Tahap | Nomor Dokumen | Keadaan |
+| --- | --- | --- |
+| Stok awal | SA-01M5Y55YEMN6DRT11YGA8PF6GD | Posted |
+| Pembelian kamera | PO-01M5Y55YG9TFJTJFCJ262BQ74M | Diterima dan lunas |
+| Jual Installer | POS-01M5Y55YKA0BB18N2H96MX37P5 | Lunas Rp900.000 |
+| Jual Eceran | POS-01M5Y55YN0MJPQ4WWQKF7S6XSR | Lunas Rp38.850 |
+| Jual Grosir | POS-01M5Y55YPD8ZTVNJA5A8VBYN26 | Lunas Rp199.800 |
+| Retur pelanggan | SR-01M5Y55YQFT7EG988MV0C4DH6H | Barang diterima, refund Rp450.000 selesai |
+| Retur supplier | PR-01M5Y55YVSWGAE6QNCQQW7ZF65 | Barang diserahkan, uang Rp300.000 diterima |
+| Transfer kamera | TR-01M5Y55Z075EBNG3C4WHV7JZRD | Posted |
+| Koreksi kamera | AD-01M5Y55Z1T6ACYKXB70RQPKW85 | Posted keluar 1 Unit |
+| Draft pembelian MCB | PO-01M5Y55Z2HYTP7Y7MCXFJ9M1F5 | Draft |
+| Draft retur pelanggan | SR-01M5Y55Z2RQ8T5G6RXQSX5X0FD | Draft |
+| Draft retur supplier | PR-01M5Y55Z2ZBCG6VP58APT1HBYV | Draft |
+| Draft transfer UTP | TR-01M5Y55Z395KVPZR7XM7JVEVBD | Draft |
+
+Panduan langkah dan angka lengkap: [lifecycle latihan](../../user-guide/LIFECYCLE-LATIHAN.md).
 
 ## Pengaman Penggantian
 

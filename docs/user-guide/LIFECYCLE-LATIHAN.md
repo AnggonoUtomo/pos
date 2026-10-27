@@ -1,7 +1,7 @@
 # Dataset Latihan Operasional CCTV Dan Kelistrikan
 
-**Status aktivasi: PENDING MySQL.** Dokumen ini menjelaskan target dataset
-yang lulus test disposable; belum merupakan bukti database toko sudah diganti.
+**Status aktivasi: AKTIF, 27 Oktober 2026.** Database telah diganti satu kali
+dan hasil saldo/arus uang di bawah sudah dicocokkan dengan laporan aktual.
 
 Dataset ini **bukan transaksi toko sungguhan**. Seluruh nama/kode berawalan
 LAT- adalah fiktif. Pada 27 Oktober 2026 user mengizinkan penggantian seluruh
@@ -11,7 +11,7 @@ dipertahankan. Audit lama bukan bukti bahwa transaksi lamanya masih tersedia;
 arsip lengkap sebelum penggantian berada pada backup.
 
 Dokumen ini melengkapi [panduan penggunaan](README.md). Urutan di bawah
-menjelaskan data yang **dibuat oleh seeder setelah aktivasi**, bukan instruksi mengulang
+menjelaskan data yang **sudah dibuat oleh seeder**, bukan instruksi mengulang
 posting yang sama. Nomor dokumen aktual dicatat pada work item setelah aktivasi.
 
 ## 1. Master Yang Dipakai
