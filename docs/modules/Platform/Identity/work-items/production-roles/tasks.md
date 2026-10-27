@@ -18,13 +18,13 @@
 
 ## Increment 2: Aktivasi Dan Handoff
 
-- [ ] Verifikasi regresi otorisasi backend.
+- [x] Verifikasi regresi otorisasi backend.
   - Acceptance: bypass super-system tetap benar, batas kasir/gudang/finance benar.
   - Verification: test Identity dan suite backend; frontend/browser hanya bila UI berubah.
-- [ ] Terapkan seeder ke MySQL toko dan verifikasi ulang.
+- [x] Terapkan seeder ke MySQL toko dan verifikasi ulang.
   - Acceptance: tujuh profil tersedia; rerun no-op; akun/pivot/direct grant/data bisnis tetap.
   - Verification: fingerprint sebelum/sesudah dan matriks permission aktual.
-- [ ] Dokumentasikan matriks dan cara assignment.
+- [x] Dokumentasikan matriks dan cara assignment.
   - Acceptance: administrator dapat memilih role tanpa menganggap pengguna sudah diganti.
   - Verification: review dokumentasi dan tautan, tidak menyatakan role usulan lama otomatis aktif.
 - [ ] Commit dan push scoped.

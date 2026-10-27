@@ -53,6 +53,11 @@ identity.manage. Permission create tanpa manage boleh membuat akun tanpa role.
 - `IdentityRolesDemoSeeder`: cashier/inventory-manager/inventory-viewer untuk
   local/testing; memakai permission modul yang sudah tersedia, tidak membuat
   akun atau menimpa role existing. Prasyarat tidak tersedia menyebabkan rollback.
+- `ProductionRolesSeeder`: tujuh profil produksi guard web, permission minimal,
+  audit atomic dan rerun no-op. Tidak membuat akun/grant user, tidak mereset
+  super-system existing; konflik matriks berhenti tanpa penimpaan. Detail
+  [matriks produksi](production-roles.md) dan
+  [work item](work-items/production-roles/README.md).
 - `IdentityDemoSeeder`/`IdentityAccessSeeder` existing dapat membuat atau
   memperbarui akun demo. Jangan gunakan untuk rollout UI akses atau migrasi role.
 - Identifier User/Role/Permission existing tetap integer starter kit/package;
