@@ -47,9 +47,12 @@ scheduler dan salinan backup terpisah tetap mengikuti work item MVP.
 - Test terfokus selama coding; satu gate akhir paket, bukan seluruh QA diulang
   setiap perubahan kecil.
 
-## Progres Awal
+## Progres Aktif
 
-Spatie Laravel Media Library 11.23.11 terpasang tanpa major upgrade package
-existing. Belum ada migration media, upload, perubahan form atau aktivasi
-database dari tahap persiapan tersebut. User kemudian memilih satu gambar utama;
-implementasi mengikuti [work item gambar](../../modules/Inventory/Items/work-items/item-image/README.md).
+Spatie Laravel Media Library 11.23.11 dan satu gambar utama barang telah
+diimplementasikan, termasuk preview/ganti/hapus, thumbnail master, gambar POS,
+permission, audit, rollback file dan migration additive lokal. Barcode tetap
+per satuan, dengan scan dus/harga level terverifikasi. Bukti pada
+[work item gambar](../../modules/Inventory/Items/work-items/item-image/README.md).
+Capability berikutnya adalah keranjang tertahan; buku kas/shift dan tahap 2/3
+belum diimplementasikan. Tidak menganggap seluruh roadmap selesai.

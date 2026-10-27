@@ -1,3 +1,4 @@
+import { ItemImage } from '@/components/shared/item-image';
 import { MasterActions } from '@/components/shared/master-actions';
 import { Badge } from '@/components/ui/badge';
 import { Package } from 'lucide-react';
@@ -55,7 +56,12 @@ export function DataTable({
                     rows.map((row) => (
                         <tr key={row.id} className="hover:bg-muted/30">
                             <td className="max-w-56 px-4 py-3 font-mono text-xs break-all">{row.sku}</td>
-                            <td className="max-w-sm min-w-36 px-4 py-3 font-medium break-words">{row.name}</td>
+                            <td className="max-w-sm min-w-36 px-4 py-3 font-medium break-words">
+                                <div className="flex items-center gap-3">
+                                    <ItemImage src={row.image_url} name={row.name} />
+                                    <span className="min-w-0 break-words">{row.name}</span>
+                                </div>
+                            </td>
                             <td className="px-4 py-3">{labels.get(row.base_unit_id)?.name ?? row.base_unit_id}</td>
                             <td className="px-4 py-3">
                                 <Badge variant="outline" className="border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300">

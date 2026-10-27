@@ -1,7 +1,16 @@
 export type WarehouseOption = { id: string; code: string; name: string };
 export type CustomerOption = { id: string; code: string; name: string; levelId: string; levelName: string };
 export type UnitOption = { id: string; code: string; name: string; ratio: string; barcode: string | null; price: string | null };
-export type PosItem = { id: string; sku: string; name: string; base_unit_id: string; base_unit_name: string; stock: string; units: UnitOption[] };
+export type PosItem = {
+    id: string;
+    sku: string;
+    name: string;
+    image_url?: string | null;
+    base_unit_id: string;
+    base_unit_name: string;
+    stock: string;
+    units: UnitOption[];
+};
 export type CartLine = { item: PosItem; unitId: string; quantity: string };
 export type CatalogResult = { items: PosItem[]; has_more: boolean; customer: CustomerOption };
 export type QuoteLine = {

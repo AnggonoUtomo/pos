@@ -28,7 +28,7 @@ class ItemImageTest extends TestCase
         parent::setUp();
         Storage::fake('local');
         $this->withoutVite();
-        foreach (['inventory.view', 'inventory.manage', 'sales.pos.create'] as $key) {
+        foreach (['inventory.view', 'inventory.manage', 'sales.pos.invoices.create'] as $key) {
             Permission::findOrCreate($key, 'web');
         }
         $this->actingAs(User::factory()->create()->assignRole(Role::findOrCreate('super-system', 'web')));
@@ -93,6 +93,7 @@ class ItemImageTest extends TestCase
         $this->putJson("/inventory/items/{$id}", $this->payload)->assertOk();
         $this->assertSame($before, DB::table('activity_log')->count());
         $this->deleteJson("/inventory/items/{$id}")->assertOk();
+        $this->assertNull(Item::withTrashed()->findOrFail($id)->imageUrl());
         $this->get($url)->assertNotFound();
         $this->postJson("/inventory/items/{$id}/restore")->assertOk();
         $this->get($url)->assertOk();
@@ -117,7 +118,7 @@ class ItemImageTest extends TestCase
     {
         [$id, $url] = $this->createImage();
         $viewer = User::factory()->create()->givePermissionTo('inventory.view');
-        $cashier = User::factory()->create()->givePermissionTo('sales.pos.create');
+        $cashier = User::factory()->create()->givePermissionTo('sales.pos.invoices.create');
         $outsider = User::factory()->create();
         $this->actingAs($viewer)->get($url)->assertOk();
         $this->postJson('/inventory/items', [...$this->payload, 'image' => UploadedFile::fake()->image('x.png')])->assertForbidden();

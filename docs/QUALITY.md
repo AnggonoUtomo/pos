@@ -17,6 +17,30 @@ ulang semua tema/viewport. Ulang gate hanya untuk perubahan yang memengaruhinya.
 
 ## Matriks Verifikasi
 
+### Gambar Barang
+
+`php artisan test --filter=ItemImageTest --compact` memakai database disposable
+dan disk fake. Test menggunakan DatabaseMigrations agar commit serta cleanup
+file afterCommit benar-benar terjadi. Meliputi upload, replace/remove, file
+invalid, permission kasir/master, harga/barcode, storage/audit gagal dan rollback.
+
+`php scripts/qa/item-image-mysql.php` membuat database acak
+`pos_item_image_qa_[16hex]`, menguji schema/morph ULID serta lifecycle file;
+database dan direktori fixture dibersihkan pada finally. Bukan database toko.
+Jika package baru dipasang, cache konfigurasi harus diperbarui saat deployment
+agar default Media Library tersedia; jangan mengabaikan cache produksi lama.
+
+Fallback `node scripts/qa/item-image-browser.mjs` menggunakan
+QA_PLAYWRIGHT_MODULE existing dan channel Chrome yang sudah terpasang, tanpa
+instalasi. Fixture SQLite parties-browser dan LARAVEL_STORAGE_PATH diisolasi
+di storage/framework/testing. Menguji file invalid, multipart upload, preview,
+reload, batal/undo, replace/remove, foto POS dan scan barcode dus dengan harga
+Installer pada desktop 1440x1000 dan tablet 1024x768. Screenshot/report ignored.
+Server dan browser ditutup pada finally; tidak membuat transaksi di data toko.
+Coba discovery DevTools dahulu dan catat BLOCKED terpisah bila tool tidak ada.
+
+### Matriks Umum
+
 | Perubahan | Verifikasi minimum |
 | --- | --- |
 | Dokumentasi | Link relatif dicek manual sesuai scope dan `git diff --check` |

@@ -6,9 +6,15 @@ Active: fondasi backend Increment 4A/4B selesai dan terverifikasi pada
 9 Oktober 2026; endpoint internal data/store tersedia sejak Increment 5B pada
 10 Oktober 2026. CRUD backend dan UI desktop/tablet tersedia pada Increment 6;
 lookup barang/satuan serta guard histori stok awal tersedia melalui Stock.
-Transaksi POS/pembelian belum tersedia.
+Transaksi POS/pembelian tersedia pada module masing-masing; Items menyediakan
+katalog/satuan dan metadata gambar, bukan pemilik posting transaksi.
 
 ## Tujuan Dan Boundary
+
+Pengembangan gambar utama: [work item](work-items/item-image/README.md).
+Satu gambar opsional memakai Media Library, tetap terpisah dari barcode per
+satuan dan tidak mengubah harga/stok. Panduan operator:
+[gambar dan barcode](../../../user-guide/GAMBAR-BARANG.md).
 
 Memiliki barang, SKU, base unit, satuan jual/beli, barcode per satuan barang,
 dan rasio langsung ke base unit. Workflow form menyimpan matrix harga melalui

@@ -1,5 +1,8 @@
 # Gambar Utama Barang
 
+Status: implementasi dan aktivasi lokal selesai; gate backend, MySQL, frontend
+dan fallback browser lulus. Bukti serta status pengiriman di [tasks](tasks.md).
+
 ## Scope Dan Keputusan
 
 User memilih satu gambar utama per barang pada 27 Oktober 2026. Gambar opsional,
@@ -17,7 +20,7 @@ barcode wajib, kamera scanner, label cetak atau kategori/merek dari pekerjaan in
 - Response daftar barang dan katalog POS menambahkan `image_url` nullable.
   SaleItemData menambahkan imageUrl nullable dengan default null.
 - GET `inventory/items/{id}/image/{mediaId}` memerlukan auth, verified, dan
-  salah satu inventory.view atau sales.pos.create. Barang/media harus cocok,
+  salah satu inventory.view atau sales.pos.invoices.create. Barang/media harus cocok,
   aktif secara lifecycle (tidak terhapus), dan file ada. URL tidak mempublikasikan
   disk/path internal. Status aktif barang mengikuti master/catalog existing.
 - Mutation tetap memakai inventory.manage dan audit inventory.items; role

@@ -11,6 +11,7 @@ import { LoaderCircle, Save } from 'lucide-react';
 import { type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { baseRow, type ItemPriceInput, type ItemRow, type ItemUnitInput, type PriceLevel, type UnitOption } from '../types';
+import { ImageEditor } from './image-editor';
 import { PriceEditor, priceMatrix } from './price-editor';
 import { UnitEditor } from './unit-editor';
 
@@ -39,6 +40,8 @@ export function ItemFormDialog({
         base_unit_id: record?.base_unit_id ?? '',
         is_active: record?.is_active ?? true,
         units: initialUnits,
+        image: null as File | null,
+        remove_image: false,
         prices: record?.prices.map((price) => ({ ...price, amount: formatDecimalInput(price.amount) })) ?? ([] as ItemPriceInput[]),
     });
     const errors = form.errors as Record<string, string>;
@@ -69,7 +72,7 @@ export function ItemFormDialog({
             toast.error('Periksa format satuan dan harga jual.');
             return;
         }
-        form.transform((data) => ({ ...data, units, prices }));
+        form.transform((data) => ({ ...data, units, prices, ...(record && data.image ? { _method: 'put' } : {}) }));
         const config = {
             preserveScroll: true,
             onSuccess: () => {
@@ -78,7 +81,8 @@ export function ItemFormDialog({
             },
             onError: () => toast.error('Barang belum tersimpan. Periksa isian form.'),
         };
-        if (record) form.put(route('inventory.items.update', { id: record.id }), config);
+        if (record && form.data.image) form.post(route('inventory.items.update', { id: record.id }), { ...config, forceFormData: true });
+        else if (record) form.put(route('inventory.items.update', { id: record.id }), config);
         else form.post(route('inventory.items.store'), config);
     };
     const chooseBase = (id: string) => {
@@ -176,6 +180,22 @@ export function ItemFormDialog({
                             <Label htmlFor="item-active">Aktif</Label>
                         </div>
                     </div>
+                    <ImageEditor
+                        currentUrl={record?.image_url ?? null}
+                        file={form.data.image}
+                        removed={form.data.remove_image}
+                        name={form.data.name}
+                        disabled={form.processing}
+                        error={errors.image ?? errors.remove_image}
+                        onChange={(image, remove_image) => {
+                            form.clearErrors('image', 'remove_image');
+                            form.setData((data) => ({ ...data, image, remove_image }));
+                        }}
+                        onError={(message) => {
+                            form.setError('image', message);
+                            toast.error(message);
+                        }}
+                    />
                     <UnitEditor
                         units={form.data.units}
                         options={options}

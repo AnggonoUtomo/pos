@@ -30,6 +30,9 @@ class Item extends Model implements HasMedia
 
     public function imageUrl(): ?string
     {
+        if ($this->trashed()) {
+            return null;
+        }
         $image = $this->getFirstMedia('item-image');
 
         return $image === null ? null : route('inventory.items.image', ['id' => $this->id, 'mediaId' => $image->id]);

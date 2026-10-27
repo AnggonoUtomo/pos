@@ -1,3 +1,4 @@
+import { ItemImage } from '@/components/shared/item-image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,11 +14,14 @@ function CatalogItem({ item, onAdd }: { item: PosItem; onAdd: (item: PosItem, un
     const available = hasStock(item.stock) && unit?.price !== null;
     return (
         <article className="flex min-w-0 flex-col gap-3 rounded-md border border-[var(--app-border)] bg-[var(--app-panel-strong)] p-3">
-            <div className="min-w-0">
-                <h3 className="truncate text-sm font-semibold" title={item.name}>
-                    {item.name}
-                </h3>
-                <p className="text-muted-foreground text-xs break-all">{item.sku}</p>
+            <div className="flex min-w-0 items-center gap-3">
+                <ItemImage src={item.image_url ?? null} name={item.name} className="size-16" />
+                <div className="min-w-0">
+                    <h3 className="text-sm font-semibold break-words" title={item.name}>
+                        {item.name}
+                    </h3>
+                    <p className="text-muted-foreground text-xs break-all">{item.sku}</p>
+                </div>
             </div>
             <div className="flex items-center justify-between gap-2 text-sm">
                 <span className="min-w-0 break-all">{unit?.price ? money(unit.price) : 'Belum ada harga'}</span>

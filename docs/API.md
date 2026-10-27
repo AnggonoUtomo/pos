@@ -1071,6 +1071,25 @@ token fencing menolak completion dari attempt lama. Hari terlewat tidak
 direkonstruksi. Ukuran thermal mengatur area cetak 54/76 mm dengan margin2 mm;
 driver/dialog OS tetap harus memilih kertas fisik 58/80 mm yang sesuai.
 
+## Gambar Utama Barang
+
+Store/update Inventory/Items menerima `image` upload JPEG/PNG/WebP maksimal
+2048 KB dan dimensi 4096 x 4096. `remove_image` boolean opsional; true bersama
+image ditolak 422. Tanpa keduanya, gambar lama dipertahankan. Mutation tetap
+inventory.manage. Update multipart memakai POST dengan `_method=put`.
+
+GET `/inventory/items/{id}/image/{mediaId}`, route `inventory.items.image`,
+memerlukan web/auth/verified dan salah satu `inventory.view` atau
+`sales.pos.invoices.create`. Kedua identifier ULID harus cocok pada barang yang
+belum terhapus dan collection item-image. File tidak ditemukan/milik barang
+lain/terhapus: 404; permission gagal: 403. Response binary memakai MIME image,
+nosniff dan private/no-store. Tidak menyediakan URL storage publik.
+
+ListItems rows dan `/pos/catalog` items menambahkan `image_url: string|null`.
+DTO publik SaleItemData menambahkan imageUrl nullable/default null; model,
+disk/path dan properties package tidak diekspor. Checkout/snapshot invoice
+tidak menambahkan foto atau mengubah fingerprint harga karena gambar berubah.
+
 ## Dashboard Operasional
 
 GET `/dashboard`, nama route `dashboard`, web/auth. Route dimiliki

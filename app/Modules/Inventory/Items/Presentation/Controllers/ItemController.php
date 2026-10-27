@@ -45,7 +45,7 @@ class ItemController extends Controller implements HasMiddleware
 
     public function image(string $id, string $mediaId, GetItemImage $query): BinaryFileResponse
     {
-        abort_unless(Gate::any(['inventory.view', 'sales.pos.create']), 403);
+        abort_unless(Gate::any(['inventory.view', 'sales.pos.invoices.create']), 403);
         $file = $query->handle($id, $mediaId);
         abort_if($file === null, 404);
 

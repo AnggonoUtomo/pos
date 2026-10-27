@@ -15,6 +15,7 @@ export interface ItemUnitInput {
 }
 export interface ItemRow extends MasterRecord {
     sku: string;
+    image_url: string | null;
     base_unit_id: string;
     units: (ItemUnitInput & { id: string; item_id: string })[];
     prices: ItemPriceInput[];

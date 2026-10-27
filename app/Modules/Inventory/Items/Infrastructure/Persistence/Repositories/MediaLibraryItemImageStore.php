@@ -52,10 +52,10 @@ class MediaLibraryItemImageStore implements ItemImageStore
 
     public function discardUncommitted(string $mediaId): void
     {
-        if (! Str::isUlid($mediaId) || ItemMedia::whereKey($mediaId)->exists()) {
-            return;
-        }
         try {
+            if (! Str::isUlid($mediaId) || ItemMedia::whereKey($mediaId)->exists()) {
+                return;
+            }
             Storage::disk('local')->deleteDirectory('item-images/'.$mediaId);
         } catch (Throwable) {
             Log::warning('Uncommitted item image cleanup failed.', ['media_id' => $mediaId]);

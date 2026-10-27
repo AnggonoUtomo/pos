@@ -32,11 +32,11 @@
 - [x] Buat work item Items beserta acceptance dan checklist sebelum coding.
   - Pilihan user: satu gambar utama, bisa diganti/dihapus.
   - Detail: [gambar barang](../../modules/Inventory/Items/work-items/item-image/README.md).
-- [ ] Implementasikan persistence/adapter media, validasi, permission dan audit.
-- [ ] Integrasikan form, tampilan master dan katalog POS lewat public DTO.
-- [ ] Verifikasi upload/ganti/hapus, akses ditolak, file invalid, barcode dan
+- [x] Implementasikan persistence/adapter media, validasi, permission dan audit.
+- [x] Integrasikan form, tampilan master dan katalog POS lewat public DTO.
+- [x] Verifikasi upload/ganti/hapus, akses ditolak, file invalid, barcode dan
   harga multi-satuan, rollback, serta soft delete/restore.
-- [ ] Verifikasi schema disposable, frontend dan browser terfokus; aktifkan
+- [x] Verifikasi schema disposable, frontend dan browser terfokus; aktifkan
   migration additive secara aman, catat hasil dan commit.
 
 ## Increment 3: Keranjang Tertahan
@@ -92,3 +92,6 @@
   verifikasi tersebut wajib saat increment gambar diimplementasikan.
 - Commit persiapan diverifikasi: hanya delapan file roadmap/package, tanpa
   file LSP user. Belum push karena work item pengembangan masih berjalan.
+- Increment gambar/barcode selesai: detail gate dan aktivasi pada work item
+  gambar. Commit/push capability mengikuti checklist-nya, bukan klaim tiga
+  tahap skala menengah sudah selesai. Berikutnya: keranjang tertahan.
