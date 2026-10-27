@@ -53,7 +53,7 @@ final class ReplaceOperationalTrainingOnce
             if (! hash_equals($expectedFingerprint, self::fingerprint())) {
                 throw new LogicException('Data lama berubah sejak persetujuan. Tidak ada penghapusan.');
             }
-            $tables = array_column(Schema::getTables(), 'name');
+            $tables = array_column(Schema::getTables(Schema::getCurrentSchemaListing()), 'name');
             $business = OperationalLifecycleSeeder::BUSINESS_TABLES;
             $foreignKeys = [];
             $protected = [];

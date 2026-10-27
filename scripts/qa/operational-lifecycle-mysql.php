@@ -4,6 +4,8 @@ use App\Models\User;
 use Database\Seeders\OperationalLifecycleSeeder;
 use Database\Seeders\Support\ReplaceOperationalTrainingOnce;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -15,8 +17,19 @@ use Tests\Fixtures\MvpOperationalScenario;
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
-set_exception_handler(static function (Throwable $error): never {
-    fwrite(STDERR, 'FAIL lifecycle MySQL: '.class_basename($error).' pada '.basename($error->getFile()).':'.$error->getLine().PHP_EOL);
+$stage = 'connection';
+set_exception_handler(static function (Throwable $error) use (&$stage): never {
+    $detail = '';
+    if ($error instanceof QueryException) {
+        $detail = ' SQLSTATE='.($error->errorInfo[0] ?? '').' code='.($error->errorInfo[1] ?? '');
+        if (preg_match('/\b(?:into|table|update|from)\s+[`"]?([a-z_]+)/i', $error->getSql(), $match)) {
+            $detail .= ' table='.$match[1];
+        }
+        if (preg_match('/Unknown column [\x27`]([a-z_\.]+)[\x27`]/i', $error->errorInfo[2] ?? '', $match)) {
+            $detail .= ' column='.$match[1];
+        }
+    }
+    fwrite(STDERR, 'FAIL lifecycle MySQL: stage='.$stage.' '.class_basename($error).$detail.' pada '.basename($error->getFile()).':'.$error->getLine().PHP_EOL);
     exit(1);
 });
 if (DB::connection()->getDriverName() !== 'mysql') {
@@ -42,17 +55,23 @@ try {
     app(PermissionRegistrar::class)->initializeCache();
     app(PermissionRegistrar::class)->forgetCachedPermissions();
     $app->detectEnvironment(fn () => 'testing');
+    $stage = 'migrations';
     if (Artisan::call('migrate', ['--force' => true, '--database' => 'lifecycle_qa']) !== 0) {
         throw new RuntimeException('Migration disposable gagal.');
     }
     $actor = User::factory()->create();
     $actor->assignRole(Role::findOrCreate('super-system', 'web'));
+    $stage = 'old-fixture';
+    echo 'PASS: schema MySQL disposable siap.'.PHP_EOL;
     MvpOperationalScenario::run();
+    $stage = 'replacement';
     $old = ReplaceOperationalTrainingOnce::fingerprint();
     $result = app(ReplaceOperationalTrainingOnce::class)->run($old, $actor->id);
+    $stage = 'rerun';
     $hash = ReplaceOperationalTrainingOnce::fingerprint();
     $auditCount = Activity::count();
-    if ($result['result'] !== app(OperationalLifecycleSeeder::class)->run($actor->id)
+    // MySQL JSON normalizes object key order; database fingerprints still compare exact rows.
+    if (Arr::sortRecursive($result['result']) !== Arr::sortRecursive(app(OperationalLifecycleSeeder::class)->run($actor->id))
         || $hash !== ReplaceOperationalTrainingOnce::fingerprint() || $auditCount !== Activity::count()) {
         throw new RuntimeException('Rerun bukan no-op.');
     }

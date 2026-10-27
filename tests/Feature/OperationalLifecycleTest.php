@@ -178,4 +178,19 @@ class OperationalLifecycleTest extends TestCase
             Schema::drop('protected_reference');
         }
     }
+
+    public function test_replacement_only_introspects_the_current_database_schema(): void
+    {
+        $actor = $this->actor();
+        $schema = Schema::getFacadeRoot();
+        $scoped = \Mockery::mock($schema);
+        $scoped->shouldReceive('getTables')->with($schema->getCurrentSchemaListing())->once()
+            ->andReturn($schema->getTables($schema->getCurrentSchemaListing()));
+        Schema::swap($scoped);
+        try {
+            app(ReplaceOperationalTrainingOnce::class)->run(ReplaceOperationalTrainingOnce::fingerprint(), $actor->id);
+        } finally {
+            Schema::swap($schema);
+        }
+    }
 }
