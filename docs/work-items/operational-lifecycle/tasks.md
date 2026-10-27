@@ -30,6 +30,6 @@
 - [x] Panduan lifecycle aktual dan handoff.
   - Acceptance: urutan belajar, dokumen posted/draft, harga/satuan dan hasil expected jelas.
   - Verification: report readonly, link check, diff scoped; tidak mengulang semua QA browser/tema.
-- [ ] Commit dan push scoped.
+- [x] Commit dan push scoped.
   - Acceptance: file LSP user/backup/temporary tidak masuk commit.
   - Verification: scope, push, SHA remote dan divergence 0/0.

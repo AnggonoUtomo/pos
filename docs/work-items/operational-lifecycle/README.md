@@ -111,3 +111,10 @@ Seeder root adalah bootstrap composition; master tetap dibuat oleh seeder
 module masing-masing. Tidak menambahkan dependency konkret lintas module pada
 runtime Application/Domain. Seeder lama tetap fixture regression, bukan pengisian
 database toko baru. Tidak membuat endpoint reset atau pemicu startup/scheduler.
+
+## Pengiriman
+
+Implementasi awal tersimpan pada e0c1deb, perbaikan scope schema/QA MySQL pada
+6407eec, dan bukti aktivasi/panduan aktual pada 65a60a3. Push origin/main berhasil;
+SHA remote diverifikasi sama dengan HEAD dan divergence 0/0 sebelum pencatatan
+penutupan ini. File LSP user tetap staged/untracked dan tidak masuk commit.
