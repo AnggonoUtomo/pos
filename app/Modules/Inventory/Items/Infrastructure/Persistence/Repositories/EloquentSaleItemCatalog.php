@@ -19,7 +19,7 @@ class EloquentSaleItemCatalog implements SaleItemCatalog
     private function query(): Builder
     {
         return Item::where('is_active', true)->whereHas('units', fn ($q) => $q->where('is_sale_unit', true))
-            ->with(['units' => fn ($q) => $q->where('is_sale_unit', true)->orderBy('id')]);
+            ->with(['media', 'units' => fn ($q) => $q->where('is_sale_unit', true)->orderBy('id')]);
     }
 
     public function search(string $query, int $page): array
@@ -78,6 +78,8 @@ class EloquentSaleItemCatalog implements SaleItemCatalog
             }
         }
 
+        $rows->load('media');
+
         return $this->map($rows, $units);
     }
 
@@ -99,7 +101,7 @@ class EloquentSaleItemCatalog implements SaleItemCatalog
                 }
             }
             if ($sale !== []) {
-                $result[$item->id] = new SaleItemData($item->id, $item->sku, $item->name, $base->id, $base->name, $sale);
+                $result[$item->id] = new SaleItemData($item->id, $item->sku, $item->name, $base->id, $base->name, $sale, $item->imageUrl());
             }
         }
 

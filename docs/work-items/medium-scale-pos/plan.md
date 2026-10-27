@@ -43,10 +43,10 @@ dependency saldo/ledger dan integritas stok tidak boleh dilewati.
 - Commit otomatis setiap increment terverifikasi; push ketika work item selesai.
 - Update panduan penggunaan berdasarkan fitur yang benar-benar tersedia.
 
-## Titik Pertama Yang Menunggu Keputusan
+## Keputusan Gambar Barang
 
-Untuk `item-identification`, pilih satu gambar utama per barang atau galeri.
-Rekomendasi awal: satu gambar utama yang dapat diganti/dihapus dan tampil pada
+Untuk `item-identification`, user memilih satu gambar utama per barang.
+Gambar dapat diganti/dihapus dan tampil pada
 master serta katalog POS. Barcode tetap per satuan barang. Belum ditetapkan
 barcode wajib, format kode baru, cetak label, scanner kamera, impor massal,
 kategori atau merek hanya dari permintaan gambar/barcode ini.

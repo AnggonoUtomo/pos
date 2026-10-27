@@ -28,8 +28,10 @@
 
 ## Increment 2: Identifikasi Dan Gambar Barang
 
-- [ ] Tetapkan satu gambar utama atau galeri berdasarkan jawaban user.
-- [ ] Buat work item Items beserta acceptance dan checklist sebelum coding.
+- [x] Tetapkan satu gambar utama atau galeri berdasarkan jawaban user.
+- [x] Buat work item Items beserta acceptance dan checklist sebelum coding.
+  - Pilihan user: satu gambar utama, bisa diganti/dihapus.
+  - Detail: [gambar barang](../../modules/Inventory/Items/work-items/item-image/README.md).
 - [ ] Implementasikan persistence/adapter media, validasi, permission dan audit.
 - [ ] Integrasikan form, tampilan master dan katalog POS lewat public DTO.
 - [ ] Verifikasi upload/ganti/hapus, akses ditolak, file invalid, barcode dan

@@ -72,12 +72,12 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
         if ($filters !== []) {
             $columns[] = 'deleted_at';
         }
-        $paginator = $query->with(['units' => fn ($query) => $query
+        $paginator = $query->with(['media', 'units' => fn ($query) => $query
             ->select(['id', 'item_id', 'unit_id', 'conversion_ratio', 'barcode', 'is_sale_unit', 'is_purchase_unit'])->orderBy('id')])
             ->orderBy('sku')->orderBy('id')->paginate(25, $columns, page: $page);
 
         return [
-            'data' => $paginator->getCollection()->toArray(),
+            'data' => $paginator->getCollection()->map(fn (Item $item) => [...$item->toArray(), 'image_url' => $item->imageUrl()])->all(),
             'meta' => [
                 'current_page' => $paginator->currentPage(), 'last_page' => $paginator->lastPage(),
                 'per_page' => $paginator->perPage(), 'total' => $paginator->total(),

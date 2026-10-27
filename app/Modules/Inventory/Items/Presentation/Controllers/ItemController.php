@@ -7,6 +7,7 @@ use App\Modules\Inventory\Items\Application\Actions\ManageItem;
 use App\Modules\Inventory\Items\Application\Actions\SaveItemCatalog;
 use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Application\DTOs\ItemUnitData;
+use App\Modules\Inventory\Items\Application\Queries\GetItemImage;
 use App\Modules\Inventory\Items\Application\Queries\ListItems;
 use App\Modules\Inventory\Items\Presentation\Requests\ListItemsRequest;
 use App\Modules\Inventory\Items\Presentation\Requests\StoreItemRequest;
@@ -18,10 +19,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ItemController extends Controller implements HasMiddleware
 {
@@ -38,6 +41,16 @@ class ItemController extends Controller implements HasMiddleware
         $input = $request->validate(['page' => ['sometimes', 'integer', 'min:1', 'max:2147483647']]);
 
         return response()->json($query->handle((int) ($input['page'] ?? 1)));
+    }
+
+    public function image(string $id, string $mediaId, GetItemImage $query): BinaryFileResponse
+    {
+        abort_unless(Gate::any(['inventory.view', 'sales.pos.create']), 403);
+        $file = $query->handle($id, $mediaId);
+        abort_if($file === null, 404);
+
+        return response()->file($file->path, ['Content-Type' => $file->mimeType,
+            'X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store']);
     }
 
     public function index(ListItemsRequest $request, ListItems $query): Response
@@ -58,7 +71,7 @@ class ItemController extends Controller implements HasMiddleware
             (bool) ($unit['is_sale_unit'] ?? true), (bool) ($unit['is_purchase_unit'] ?? true),
         ), $input['units'] ?? []);
         try {
-            $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, (bool) $input['is_active']), $this->priceData($input), $id);
+            $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, (bool) $input['is_active']), $this->priceData($input), $id, $request->imageData(), $request->boolean('remove_image'));
         } catch (InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['units' => $exception->getMessage()]);
         } catch (UniqueConstraintViolationException) {
@@ -100,7 +113,7 @@ class ItemController extends Controller implements HasMiddleware
         ), $input['units'] ?? []);
 
         try {
-            $id = $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, $request->boolean('is_active', true)), $this->priceData($input));
+            $id = $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, $request->boolean('is_active', true)), $this->priceData($input), image: $request->imageData(), removeImage: $request->boolean('remove_image'));
         } catch (InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['units' => $exception->getMessage()]);
         } catch (UniqueConstraintViolationException) {

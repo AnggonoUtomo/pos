@@ -2,6 +2,7 @@
 
 namespace App\Modules\Inventory\Items\Presentation\Requests;
 
+use App\Modules\Inventory\Items\Application\DTOs\ItemImageUpload;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -58,6 +59,8 @@ class StoreItemRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'dimensions:max_width=4096,max_height=4096', Rule::prohibitedIf(fn () => $this->boolean('remove_image'))],
+            'remove_image' => ['sometimes', 'boolean'],
             'sku' => ['required', 'string', 'max:64', Rule::unique('items', 'sku')],
             'name' => ['required', 'string', 'max:150'],
             'base_unit_id' => ['required', 'ulid'],
@@ -75,5 +78,17 @@ class StoreItemRequest extends FormRequest
             'prices.*.customer_level_id' => ['required', 'ulid'],
             'prices.*.amount' => ['required', 'string', 'regex:/^\d{1,18}(?:\.\d{1,2})?$/D'],
         ];
+    }
+
+    public function imageData(): ?ItemImageUpload
+    {
+        $file = $this->file('image');
+        if ($file === null) {
+            return null;
+        }
+
+        return new ItemImageUpload($file->getPathname(), match ($file->getMimeType()) {
+            'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp',
+        });
     }
 }

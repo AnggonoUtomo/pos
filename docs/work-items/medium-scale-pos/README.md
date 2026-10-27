@@ -51,5 +51,5 @@ scheduler dan salinan backup terpisah tetap mengikuti work item MVP.
 
 Spatie Laravel Media Library 11.23.11 terpasang tanpa major upgrade package
 existing. Belum ada migration media, upload, perubahan form atau aktivasi
-database dari tahap persiapan ini. Jumlah gambar per barang masih menunggu
-pilihan user: satu gambar utama atau galeri.
+database dari tahap persiapan tersebut. User kemudian memilih satu gambar utama;
+implementasi mengikuti [work item gambar](../../modules/Inventory/Items/work-items/item-image/README.md).
