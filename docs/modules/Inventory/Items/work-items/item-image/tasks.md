@@ -32,7 +32,7 @@
   - Acceptance: dimensi stabil, object-contain, fallback ikon dan error gambar;
     barcode mengambil satuan/harga yang tepat dan tanpa foto tetap dapat dijual.
   - Verification: desktop/tablet, pencarian dan scan barcode existing.
-- [ ] Commit UI setelah verifikasi yang terdampak lulus.
+- [x] Commit UI setelah verifikasi yang terdampak lulus.
 
 ## Increment 3: Gate Dan Aktivasi
 
@@ -42,7 +42,7 @@
 - [x] Native MySQL migration disposable dan status/route tervalidasi.
 - [x] Migration additive lokal aktif; data/master/transaksi existing tetap.
 - [x] Panduan gambar dan batas backup binary ditulis; checklist diperbarui.
-- [ ] Commit/push dan local/remote diverifikasi, tanpa file LSP user.
+- [x] Commit/push dan local/remote diverifikasi, tanpa file LSP user.
 
 ## Bukti
 
@@ -88,3 +88,5 @@
 - Focused ulang guard URL terhapus: PASS, ItemImageTest 9 tests / 104 assertions.
   Pint guard model PASS; frontend/build/browser sebelumnya dipakai kembali
   karena source UI tidak berubah.
+- Commit UI/gate: 831f471. Push main sukses; ls-remote cocok dan divergence
+  0/0. File LSP user tetap staged/untracked semula, tidak masuk pengiriman.
