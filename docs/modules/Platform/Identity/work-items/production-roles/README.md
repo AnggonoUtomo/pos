@@ -76,3 +76,10 @@ yang diizinkan; pengulangan membandingkan seluruh row untuk memastikan no-op.
 - Dokumen/PDF panduan sebelumnya adalah snapshot penyusunan tanpa grant database;
   status provisioning terkini dan matriks aktual mengacu pada dokumen role produksi.
 - Old-docs dan file LSP staged/untracked user tidak disentuh.
+
+## Pengiriman
+
+Implementasi tersimpan pada `0890024`, matriks/bukti aktivasi pada `9600303`.
+Push origin/main berhasil dan SHA remote diverifikasi sama dengan HEAD,
+divergence 0/0 sebelum pencatatan penutupan ini. Empat file LSP staged dan
+empat untracked user tetap di workspace, tidak ikut commit.

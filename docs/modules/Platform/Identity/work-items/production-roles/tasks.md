@@ -27,6 +27,6 @@
 - [x] Dokumentasikan matriks dan cara assignment.
   - Acceptance: administrator dapat memilih role tanpa menganggap pengguna sudah diganti.
   - Verification: review dokumentasi dan tautan, tidak menyatakan role usulan lama otomatis aktif.
-- [ ] Commit dan push scoped.
+- [x] Commit dan push scoped.
   - Acceptance: hanya source/test/dokumen terkait; file staged user tidak ikut.
   - Verification: SHA remote sama dengan HEAD dan divergence 0/0.
