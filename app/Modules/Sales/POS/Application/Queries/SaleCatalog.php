@@ -6,6 +6,7 @@ use App\Modules\Inventory\Items\Application\Contracts\SaleItemCatalog;
 use App\Modules\Inventory\Stock\Application\Contracts\StockAvailability;
 use App\Modules\Sales\Parties\Application\Contracts\ItemPriceCatalog;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SaleCatalog
 {
@@ -19,6 +20,19 @@ class SaleCatalog
             $rows = $this->items->search($search, $page);
 
             return ['items' => $this->map($rows['data'], $warehouseId, $context['customer']->levelId), 'has_more' => $rows['has_more'], 'customer' => $context['customer']];
+        });
+    }
+
+    public function scan(string $warehouseId, string $customerId, string $code): array
+    {
+        return DB::transaction(function () use ($warehouseId, $customerId, $code): array {
+            $context = $this->context->resolve($warehouseId, $customerId);
+            $match = $this->items->scan($code);
+            if ($match === null) {
+                throw ValidationException::withMessages(['code' => 'Barcode atau SKU tidak tersedia untuk penjualan.']);
+            }
+
+            return ['item' => $this->map([$match->item], $warehouseId, $context['customer']->levelId)[0], 'unit_id' => $match->unitId];
         });
     }
 

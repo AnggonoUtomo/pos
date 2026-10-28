@@ -4,6 +4,7 @@ namespace Tests\Feature\Modules\Purchasing\PurchaseOrders;
 
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\PurchaseOrderRepository;
+use App\Modules\Purchasing\PurchaseOrders\Application\Queries\PurchaseWorkspace;
 use App\Modules\Purchasing\Suppliers\Application\Contracts\SupplierLookup;
 use App\Modules\Purchasing\Suppliers\Infrastructure\Persistence\Models\Supplier;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,20 @@ class PurchaseDraftTest extends StockTestCase
     protected function payload(): array
     {
         return parent::payload() + ['supplier_id' => $this->supplier];
+    }
+
+    public function test_purchase_options_expose_exact_barcode_only_for_available_purchase_units(): void
+    {
+        DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->box)->update(['barcode' => '00123456789012']);
+        $options = app(PurchaseWorkspace::class)->options();
+        $item = collect($options['items'])->firstWhere('id', $this->item);
+        $this->assertSame('00123456789012', collect($item['units'])->firstWhere('unit_id', $this->box)['barcode']);
+        DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->box)->update(['is_purchase_unit' => false]);
+        $options = app(PurchaseWorkspace::class)->options();
+        $item = collect($options['items'])->firstWhere('id', $this->item);
+        $this->assertNull(collect($item['units'])->firstWhere('unit_id', $this->box));
+        $this->assertDatabaseCount('purchase_orders', 0);
+        $this->assertDatabaseCount('stock_movements', 0);
     }
 
     private function record(string $id): array

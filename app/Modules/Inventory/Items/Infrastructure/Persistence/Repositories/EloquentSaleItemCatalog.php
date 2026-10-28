@@ -4,8 +4,10 @@ namespace App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Inventory\Items\Application\Contracts\SaleItemCatalog;
 use App\Modules\Inventory\Items\Application\DTOs\SaleItemData;
+use App\Modules\Inventory\Items\Application\DTOs\SaleScanData;
 use App\Modules\Inventory\Items\Application\DTOs\SaleUnitData;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
+use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemUnit;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -15,6 +17,27 @@ use InvalidArgumentException;
 class EloquentSaleItemCatalog implements SaleItemCatalog
 {
     public function __construct(private UnitLookup $units) {}
+
+    public function scan(string $code): ?SaleScanData
+    {
+        $code = mb_strtolower(trim($code));
+        if ($code === '' || mb_strlen($code) > 64) {
+            throw new InvalidArgumentException('Kode scan tidak valid.');
+        }
+        // A reserved barcode must not silently resolve to another item's SKU.
+        $row = ItemUnit::withTrashed()->whereRaw('LOWER(barcode) = ?', [$code])->first();
+        $rows = $row !== null
+            ? $this->query()->whereKey($row->item_id)->get()
+            : $this->query()->whereRaw('LOWER(sku) = ?', [$code])->get();
+        $item = array_values($this->map($rows))[0] ?? null;
+        if ($item === null || ($row !== null && $row->deleted_at !== null)) {
+            return null;
+        }
+        $unit = $row !== null ? collect($item->units)->firstWhere('id', $row->unit_id)
+            : (collect($item->units)->firstWhere('id', $item->baseUnitId) ?? $item->units[0]);
+
+        return $unit === null ? null : new SaleScanData($item, $unit->id);
+    }
 
     private function query(): Builder
     {

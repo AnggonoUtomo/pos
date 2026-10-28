@@ -29,7 +29,7 @@ class PurchaseWorkspace
             $choices = [];
             foreach ($item->units as $unit) {
                 if ($unit->isPurchaseUnit && isset($activeIds[$unit->unitId])) {
-                    $choices[] = ['unit_id' => $unit->unitId, 'conversion_ratio' => $unit->conversionRatio];
+                    $choices[] = ['unit_id' => $unit->unitId, 'conversion_ratio' => $unit->conversionRatio, 'barcode' => $unit->barcode];
                 }
             }
             if ($choices !== []) {

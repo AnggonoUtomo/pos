@@ -45,6 +45,43 @@ class PosCartTest extends TestCase
         return ['item_id' => $this->item, 'unit_id' => $unit ?? $this->unit, 'quantity' => $qty];
     }
 
+    public function test_scanner_resolves_exact_unit_leading_zero_and_sku_without_mutation(): void
+    {
+        DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->box)->update(['barcode' => '00123456789012']);
+        $before = $this->fingerprint();
+        $this->getJson('/pos/scan?'.http_build_query($this->context + ['code' => '00123456789012']))
+            ->assertOk()->assertJsonPath('unit_id', $this->box)->assertJsonPath('item.id', $this->item);
+        $this->getJson('/pos/scan?'.http_build_query($this->context + ['code' => 'DEMO-CCTV-IP-2MP']))
+            ->assertOk()->assertJsonPath('unit_id', $this->unit);
+        $this->getJson('/pos/scan?'.http_build_query($this->context + ['code' => '123456789012']))->assertUnprocessable();
+        $this->assertSame($before, $this->fingerprint());
+    }
+
+    public function test_scanner_validates_context_permission_and_sale_flags(): void
+    {
+        $url = '/pos/scan?'.http_build_query($this->context + ['code' => 'DEMO-CCTV-IP-2MP-BOX']);
+        DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->box)->update(['is_sale_unit' => false]);
+        $this->getJson($url)->assertUnprocessable();
+        $this->getJson('/pos/scan?'.http_build_query($this->context + ['code' => str_repeat('x', 65)]))->assertUnprocessable();
+        $this->actingAs(User::factory()->create())->getJson($url)->assertForbidden();
+        auth()->forgetGuards();
+        $this->getJson($url)->assertUnauthorized();
+    }
+
+    public function test_reserved_barcode_has_priority_over_sku_and_inactive_or_deleted_barcode_is_not_reassigned(): void
+    {
+        $code = 'DEMO-CCTV-NVR-8CH';
+        $row = DB::table('item_units')->where('item_id', $this->item)->where('unit_id', $this->unit);
+        $row->update(['barcode' => $code]);
+        $url = '/pos/scan?'.http_build_query($this->context + ['code' => strtolower($code)]);
+        $this->getJson($url)->assertOk()->assertJsonPath('item.id', $this->item)->assertJsonPath('unit_id', $this->unit);
+        $row->update(['deleted_at' => now()]);
+        $this->getJson($url)->assertUnprocessable();
+        $row->update(['deleted_at' => null]);
+        DB::table('items')->where('id', $this->item)->update(['is_active' => false]);
+        $this->getJson($url)->assertUnprocessable();
+    }
+
     public function test_catalog_prices_and_quote_use_real_level_unit_and_warehouse_without_mutation(): void
     {
         $before = $this->fingerprint();

@@ -10,6 +10,7 @@ use App\Modules\Sales\POS\Application\Queries\SaleContext;
 use App\Modules\Sales\POS\Presentation\Requests\CartQuoteRequest;
 use App\Modules\Sales\POS\Presentation\Requests\CatalogRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
@@ -19,7 +20,7 @@ class POSController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
     {
-        return [new Middleware('can:sales.pos.invoices.create', only: ['index', 'catalog', 'quote'])];
+        return [new Middleware('can:sales.pos.invoices.create', only: ['index', 'catalog', 'quote', 'scan'])];
     }
 
     public function index(SaleContext $context): Response
@@ -32,6 +33,14 @@ class POSController extends Controller implements HasMiddleware
         $data = $request->validated();
 
         return response()->json($query->handle($data['warehouse_id'], $data['customer_id'], $data['search'] ?? '', (int) ($data['page'] ?? 1)));
+    }
+
+    public function scan(Request $request, SaleCatalog $query): JsonResponse
+    {
+        $data = $request->validate(['warehouse_id' => ['required', 'ulid'], 'customer_id' => ['required', 'ulid'],
+            'code' => ['required', 'string', 'max:64', 'regex:/^[\x20-\x7E]+$/D']]);
+
+        return response()->json($query->scan(strtolower($data['warehouse_id']), strtolower($data['customer_id']), trim($data['code'])));
     }
 
     public function quote(CartQuoteRequest $request, CheckCart $query): JsonResponse

@@ -16,6 +16,7 @@ Route::middleware(['web'])->group(function () {
         Route::post('/pos/held-carts/{id}', [HeldCartController::class, 'store'])->whereUlid('id')->name('pos.held-carts.store');
         Route::post('/pos/held-carts/{id}/cancel', [HeldCartController::class, 'cancel'])->whereUlid('id')->name('pos.held-carts.cancel');
         Route::get('/pos/catalog', [POSController::class, 'catalog'])->name('pos.catalog');
+        Route::get('/pos/scan', [POSController::class, 'scan'])->name('pos.scan');
         Route::post('/pos/quote', [POSController::class, 'quote'])->name('pos.quote');
         Route::get('/pos/payment-methods', [InvoiceController::class, 'methods'])->name('pos.payment-methods');
         Route::post('/pos/invoices', [InvoiceController::class, 'store'])->name('pos.invoices.store');
