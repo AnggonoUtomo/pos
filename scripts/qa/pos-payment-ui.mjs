@@ -38,6 +38,11 @@ const identifier = '01K7M000000000000000000000';
 const item = { id: identifier, sku: 'CCTV', name: 'Kamera', base_unit_id: identifier, base_unit_name: 'Unit', stock: '8.000000', units: [{ id: identifier, code: 'PCS', name: 'Unit', ratio: '1.000000', price: '100000.00', barcode: null }] };
 const attempt = { version: 1, payload: { idempotency_key: key, warehouse_id: identifier, customer_id: identifier, quote_fingerprint: 'a'.repeat(64), lines: [{ item_id: identifier, unit_id: identifier, quantity: '1.000000' }], payments: [{ method_id: identifier, amount: '100000.00' }] }, total: '100000.00', cart: [{ item, unitId: identifier, quantity: '1' }], methods: [{ id: identifier, code: 'CASH', name: 'Tunai', type: 'cash' }] };
 assert.deepEqual(readAttempt(JSON.stringify(attempt)), attempt);
+const heldAttempt = { ...attempt, payload: { ...attempt.payload, held_cart: { id: identifier, version: 2 } } };
+assert.deepEqual(readAttempt(JSON.stringify(heldAttempt)), heldAttempt);
+for (const held_cart of [null, {}, { id: 'bad', version: 1 }, { id: identifier, version: 0 }, { id: identifier, version: 1.5 }, { id: identifier, version: 2147483647 }]) {
+    assert.throws(() => readAttempt(JSON.stringify({ ...attempt, payload: { ...attempt.payload, held_cart } })));
+}
 const priced = { ...attempt, payload: { ...attempt.payload, pricing: { discount_type: 'percent', discount_value: '10.00', tax_rate: '0.00' } } };
 assert.deepEqual(readAttempt(JSON.stringify(priced)), priced);
 assert.equal(readAttempt(null), null);

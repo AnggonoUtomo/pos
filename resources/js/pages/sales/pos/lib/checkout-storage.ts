@@ -15,6 +15,15 @@ export function readAttempt(raw: string | null): CheckoutAttempt | null {
     const lines = payload.lines;
     const payments = payload.payments;
     if (
+        payload.held_cart !== undefined &&
+        (!record(payload.held_cart) ||
+            !id(payload.held_cart.id) ||
+            !Number.isInteger(payload.held_cart.version) ||
+            Number(payload.held_cart.version) < 1 ||
+            Number(payload.held_cart.version) > 2147483646)
+    )
+        throw new Error('Sumber keranjang tertahan pemulihan tidak valid.');
+    if (
         payload.pricing !== undefined &&
         (!record(payload.pricing) ||
             !['fixed', 'percent'].includes(String(payload.pricing.discount_type)) ||

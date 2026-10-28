@@ -44,6 +44,7 @@ export type PosPageProps = { warehouses: WarehouseOption[]; customers: CustomerO
 export type PaymentMethod = { id: string; code: string; name: string; type: 'cash' | 'debit' | 'transfer' };
 export type PaymentDraft = { methodId: string; amount: string };
 export type CheckoutPayload = {
+    held_cart?: { id: string; version: number };
     pricing?: InvoicePricing;
     idempotency_key: string;
     warehouse_id: string;
@@ -53,6 +54,21 @@ export type CheckoutPayload = {
     payments: { method_id: string; amount: string }[];
 };
 export type InvoicePricing = { discount_type: 'fixed' | 'percent'; discount_value: string; tax_rate: string };
+export type HeldCartRef = { id: string; version: number; label: string };
+export type HeldCartRow = HeldCartRef & { warehouse_name: string; customer_name: string; line_count: number; updated_at: string };
+export type HeldCartList = { data: HeldCartRow[]; meta: { current_page: number; last_page: number; total: number } };
+export type HeldCartDraft = {
+    warehouse_id: string;
+    customer_id: string;
+    pricing: InvoicePricing;
+    lines: { item_id: string; unit_id: string; quantity: string }[];
+};
+export type RecalledCart = {
+    source: HeldCartRef;
+    cart: { warehouse_id: string; customer_id: string; pricing: InvoicePricing; lines: CartLine[] };
+    quote: CartQuote | null;
+    errors: Record<string, string[]>;
+};
 export type CheckoutAttempt = { version: 1; payload: CheckoutPayload; total: string; cart: CartLine[]; methods: PaymentMethod[] };
 export type PostedInvoice = {
     company_snapshot?: { name: string; address: string; phone: string; receipt_footer: string } | null;

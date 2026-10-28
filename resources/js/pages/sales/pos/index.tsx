@@ -6,22 +6,35 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, History, ReceiptText, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ClipboardList, History, PauseCircle, ReceiptText, RotateCcw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { CartPanel } from './components/cart-panel';
+import { HeldCartDialogs } from './components/held-cart-dialogs';
 import { ItemSearch } from './components/item-search';
 import { OrderSummary } from './components/order-summary';
 import { PaymentDialog } from './components/payment-dialog';
 import { ReceiptDialog } from './components/receipt-dialog';
 import { SaleContextBar } from './components/sale-context-bar';
 import { useCatalog } from './hooks/use-catalog';
+import { useHeldCarts } from './hooks/use-held-carts';
 import { usePaidCheckout } from './hooks/use-paid-checkout';
 import { checkoutKey } from './lib/checkout-key';
 import { localDecimal, parsePricingAmount, parseQuantity } from './lib/decimal';
 import { parsePaymentAmount } from './lib/payment';
 import { PosRequestError, posRequest } from './lib/request';
-import type { CartLine, CartQuote, CheckoutAttempt, InvoicePricing, PaymentDraft, PaymentMethod, PosItem, PosPageProps } from './types';
+import type {
+    CartLine,
+    CartQuote,
+    CheckoutAttempt,
+    HeldCartRef,
+    InvoicePricing,
+    PaymentDraft,
+    PaymentMethod,
+    PosItem,
+    PosPageProps,
+    RecalledCart,
+} from './types';
 
 export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [warehouseId, setWarehouseId] = useState('');
@@ -30,6 +43,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [page, setPage] = useState(1);
     const [catalogVersion, setCatalogVersion] = useState(0);
     const [lines, setLines] = useState<CartLine[]>([]);
+    const [heldSource, setHeldSource] = useState<HeldCartRef | null>(null);
     const [quote, setQuote] = useState<CartQuote | null>(null);
     const [pricing, setPricing] = useState<InvoicePricing>({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
     const [busy, setBusy] = useState(false);
@@ -51,6 +65,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         setBusy(false);
     }, []);
     const recovered = useCallback((attempt: CheckoutAttempt) => {
+        setHeldSource(attempt.payload.held_cart ? { ...attempt.payload.held_cart, label: '' } : null);
         setWarehouseId(attempt.payload.warehouse_id);
         setCustomerId(attempt.payload.customer_id);
         setLines(attempt.cart);
@@ -65,6 +80,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const posted = useCallback(() => {
         invalidate();
         setLines([]);
+        setHeldSource(null);
         setPricing({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
         setQuery('');
         setPage(1);
@@ -80,7 +96,51 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         [invalidate],
     );
     const checkout = usePaidCheckout(user?.id, canPost, recovered, posted, rejected);
-    const locked = Boolean(checkout.pending) || checkout.submitting || checkout.blocked || !checkout.ready;
+    const checkoutLocked = Boolean(checkout.pending) || checkout.submitting || checkout.blocked || !checkout.ready;
+    const applyHeld = (data: RecalledCart) => {
+        invalidate();
+        setWarehouseId(data.cart.warehouse_id);
+        setCustomerId(data.cart.customer_id);
+        setLines(data.cart.lines.map((line) => ({ ...line, quantity: localDecimal(line.quantity) })));
+        setPricing({
+            ...data.cart.pricing,
+            discount_value: localDecimal(data.cart.pricing.discount_value),
+            tax_rate: localDecimal(data.cart.pricing.tax_rate),
+        });
+        setHeldSource(data.source);
+        setQuote(data.quote);
+        setErrors(data.errors);
+        setError(Object.values(data.errors)[0]?.[0] ?? '');
+        setQuery('');
+        setPage(1);
+        setCatalogVersion((value) => value + 1);
+    };
+    const held = useHeldCarts({
+        enabled: !checkoutLocked && !busy && !paymentOpen,
+        hasLines: lines.length > 0,
+        source: heldSource,
+        draft: () => {
+            const discount = parsePricingAmount(pricing.discount_value);
+            const tax = parsePricingAmount(pricing.tax_rate);
+            if (!ready || discount === null || tax === null) throw new PosRequestError('Periksa gudang, pelanggan, diskon dan pajak.');
+            return {
+                warehouse_id: warehouseId,
+                customer_id: customerId,
+                pricing: { discount_type: pricing.discount_type, discount_value: discount, tax_rate: tax },
+                lines: lines.map((line) => {
+                    const quantity = parseQuantity(line.quantity);
+                    if (quantity === null) throw new PosRequestError('Periksa format kuantitas keranjang.');
+                    return { item_id: line.item.id, unit_id: line.unitId, quantity };
+                }),
+            };
+        },
+        onHeld: posted,
+        onRecall: applyHeld,
+        onCancelled: (id) => {
+            if (heldSource?.id === id) posted();
+        },
+    });
+    const locked = checkoutLocked || held.busy || held.uncertain;
     const clearPaymentError = checkout.clearError;
     const openPayment = useCallback(() => {
         if (canPost && quote && !busy && !locked) {
@@ -101,6 +161,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                 cart: lines,
                 methods: methods.filter((method) => rows.some((row) => row.methodId === method.id)),
                 payload: {
+                    ...(heldSource ? { held_cart: { id: heldSource.id, version: heldSource.version } } : {}),
                     idempotency_key: checkoutKey(),
                     warehouse_id: warehouseId,
                     customer_id: customerId,
@@ -181,6 +242,22 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         return () => window.removeEventListener('keydown', key);
     }, [check, busy, openPayment]);
 
+    useEffect(() => {
+        const key = (event: KeyboardEvent) => {
+            if (document.querySelector('[role="dialog"]')) return;
+            if (event.key === 'F6') {
+                event.preventDefault();
+                held.openHold();
+            }
+            if (event.key === 'F7') {
+                event.preventDefault();
+                held.openList();
+            }
+        };
+        window.addEventListener('keydown', key);
+        return () => window.removeEventListener('keydown', key);
+    }, [held]);
+
     const add = (item: PosItem, unitId: string) => {
         if (locked) return;
         if (lines.some((line) => line.item.id === item.id && line.unitId === unitId)) {
@@ -230,9 +307,22 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                         </div>
                         <h1 className="text-lg font-semibold">POS</h1>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center justify-end gap-2">
                         <CommandPalette />
                         <ThemeMenu />
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={locked || busy || paymentOpen || !ready || !lines.length}
+                            onClick={held.openHold}
+                        >
+                            <PauseCircle className="text-amber-600 dark:text-amber-300" />
+                            Tahan
+                        </Button>
+                        <Button variant="outline" size="sm" disabled={locked || busy || paymentOpen} onClick={held.openList}>
+                            <ClipboardList className="text-sky-600 dark:text-sky-300" />
+                            Tertahan
+                        </Button>
                         {canAny(['sales.pos.invoices.post', 'sales.pos.invoices.view']) && (
                             <Button variant="outline" size="sm" asChild disabled={locked}>
                                 <Link
@@ -276,6 +366,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     description={checkout.pending ? 'Pembayaran belum terkonfirmasi' : 'Belum diposting'}
                     shortcuts={[
                         { label: 'Cari barang', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
+                        { label: 'Tahan keranjang', description: 'Simpan keranjang kasir', keys: ['F6'] },
+                        { label: 'Keranjang tertahan', description: 'Panggil keranjang kasir', keys: ['F7'] },
                         { label: 'Periksa keranjang', description: 'Validasi stok dan harga', keys: ['Ctrl', 'Enter'] },
                         { label: 'Pembayaran', description: 'Pembayaran keranjang', keys: ['F8'], disabled: !canPost },
                         { label: 'Posting pembayaran', description: 'Pada dialog pembayaran', keys: ['Ctrl', 'Enter'], disabled: !canPost },
@@ -283,6 +375,11 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                         { label: 'Command palette', description: 'Navigasi', keys: ['Ctrl', 'K'] },
                     ]}
                 />
+                {heldSource && (
+                    <div className="border-b border-[var(--app-border)] px-5 py-2 text-sm text-amber-700 dark:text-amber-300" role="status">
+                        Keranjang tertahan: {heldSource.label || heldSource.id.slice(-8)}
+                    </div>
+                )}
                 {checkout.blocked && (
                     <p role="alert" className="text-destructive px-5 py-3 text-sm">
                         {checkout.error}
@@ -358,6 +455,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     </div>
                 </fieldset>
             </main>
+            <HeldCartDialogs held={held} />
             <PaymentDialog
                 open={paymentOpen}
                 onOpenChange={setPaymentOpen}
@@ -390,6 +488,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                             onClick={() => {
                                 invalidate();
                                 setLines([]);
+                                setHeldSource(null);
                                 setPricing({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
                                 setResetOpen(false);
                                 toast.success('Keranjang dikosongkan.');
