@@ -24,7 +24,7 @@ use InvalidArgumentException;
 class PostInvoice
 {
     public function __construct(private InvoiceRepository $invoices, private CheckCart $cart, private WarehouseLookup $warehouses,
-        private SaleStockWriter $stock, private SalePaymentWriter $payments, private CompanyProfile $company) {}
+        private SaleStockWriter $stock, private SalePaymentWriter $payments, private CompanyProfile $company, private ManageHeldCart $heldCarts) {}
 
     public function handle(array $input, int $actorId): array
     {
@@ -41,6 +41,9 @@ class PostInvoice
                 $existing = $this->invoices->lockByKey($actorId, $input['idempotency_key']);
                 if ($existing !== null) {
                     return $this->replay($existing, $hash);
+                }
+                if (isset($input['held_cart'])) {
+                    $this->heldCarts->checkoutSource($input['held_cart'], $actorId);
                 }
                 $lines = array_map(fn ($line) => new CartLineData($line['item_id'], $line['unit_id'], $line['quantity']), $input['lines']);
                 $quote = $this->cart->handle($input['warehouse_id'], $input['customer_id'], $lines, lock: true, pricing: $input['pricing'] ?? []);
@@ -78,6 +81,9 @@ class PostInvoice
                     'total_cost' => (string) $cost, 'stock_issue_id' => $stock->id, 'payment_receipt_id' => $payment->id,
                     'payments' => $payment->snapshot, 'posted_at' => now()], $rows);
                 $this->invoices->audit($id, $actorId);
+                if (isset($input['held_cart'])) {
+                    $this->heldCarts->complete($input['held_cart'], $actorId, $id);
+                }
 
                 return InvoiceReceipt::fromRecord($this->invoices->find($id));
             }, attempts: 3);
@@ -107,13 +113,15 @@ class PostInvoice
 
     private function normalize(array $input): array
     {
-        $allowed = ['idempotency_key', 'warehouse_id', 'customer_id', 'quote_fingerprint', 'lines', 'payments', 'pricing'];
+        $allowed = ['idempotency_key', 'warehouse_id', 'customer_id', 'quote_fingerprint', 'lines', 'payments', 'pricing', 'held_cart'];
         if (array_diff(array_keys($input), $allowed) !== []) {
             throw ValidationException::withMessages(['cart' => 'Payload checkout mengandung field yang tidak diizinkan.']);
         }
         $rules = ['required', 'ulid'];
         $data = Validator::make($input, ['idempotency_key' => $rules, 'warehouse_id' => $rules, 'customer_id' => $rules,
             'pricing' => ['sometimes', 'array:discount_type,discount_value,tax_rate'],
+            'held_cart' => ['sometimes', 'required', 'array:id,version'], 'held_cart.id' => ['required_with:held_cart', 'ulid'],
+            'held_cart.version' => ['required_with:held_cart', 'integer', 'min:1', 'max:2147483646'],
             'quote_fingerprint' => ['required', 'string', 'regex:/^[a-f0-9]{64}$/D'], 'lines' => ['required', 'array', 'list', 'min:1', 'max:100'],
             'lines.*' => ['required', 'array:item_id,unit_id,quantity'], 'lines.*.item_id' => $rules, 'lines.*.unit_id' => $rules,
             'lines.*.quantity' => ['required', 'string', 'regex:/^\d{1,14}(?:\.\d{1,6})?$/D'],
@@ -121,6 +129,9 @@ class PostInvoice
             'payments.*.method_id' => $rules, 'payments.*.amount' => ['required', 'string', 'regex:/^\d{1,28}(?:\.\d{1,2})?$/D']])->validate();
         foreach (['idempotency_key', 'warehouse_id', 'customer_id'] as $key) {
             $data[$key] = strtolower($data[$key]);
+        }
+        if (isset($data['held_cart'])) {
+            $data['held_cart'] = ['id' => strtolower($data['held_cart']['id']), 'version' => (int) $data['held_cart']['version']];
         }
         foreach ($data['lines'] as &$line) {
             $line = ['item_id' => strtolower($line['item_id']), 'unit_id' => strtolower($line['unit_id']),

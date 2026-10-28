@@ -41,7 +41,8 @@
 
 ## Increment 3: Keranjang Tertahan
 
-- [ ] Tetapkan perilaku ownership/pemanggilan dan dokumentasikan work item.
+- [x] Tetapkan perilaku ownership/pemanggilan dan dokumentasikan work item.
+  - Own-only, tanpa reservasi/pengalihan; [detail](../../modules/Sales/POS/work-items/held-carts/README.md).
 - [ ] Selesaikan alur tahan/panggil/batalkan, validasi ulang harga/stok, UI,
   permission, audit, test terfokus dan panduan.
 
