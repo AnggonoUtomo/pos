@@ -18,6 +18,13 @@ FIFO, matrix harga, checkout, seed, atau data toko. Tema existing dipertahankan.
 Referensi gambar bukan instruksi menambahkan kategori restoran, kredit, atau
 metode pembayaran baru. QA desktop/tablet menggunakan database disposable.
 
+Koreksi lanjutan: pemilih pelanggan Klasik/Visual memakai autocomplete lokal
+nama/kode/level dari pilihan aktif existing. Komponen memakai Input shadcn dan
+primitive Combobox Headless UI yang sudah terpasang, tanpa dependency baru.
+Keyboard/anchor mengikuti [dokumentasi resmi](https://headlessui.com/react/combobox).
+Hanya memilih hasil yang memanggil handler perubahan pelanggan existing;
+mengetik atau membatalkan pencarian bukan perubahan pelanggan/transaksi.
+
 ## Catatan Tertunda
 
 - UAT scanner fisik dan cetak label/printer fisik masih pending, bukan lulus

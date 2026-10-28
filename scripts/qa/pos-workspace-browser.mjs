@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkCustomerAutocomplete } from './pos-customer-scenarios.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 assert(process.env.QA_PLAYWRIGHT_MODULE, 'Gunakan Playwright existing.');
@@ -126,76 +127,80 @@ try {
     await page.goto(`${url}/pos`);
     await page.getByRole('button', { name: 'Tambah Kamera IP 2MP', exact: true }).waitFor();
     assert.match(await page.getByLabel('Gudang', { exact: true }).innerText(), /Gudang Utama/);
-    assert.match(await page.getByLabel('Pelanggan', { exact: true }).innerText(), /Pelanggan Umum/);
-    assert.equal(await page.locator('main').getAttribute('data-pos-view'), 'visual');
-    console.log('PASS: default Visual, Gudang Utama, pelanggan Eceran.');
-    const scan = page.getByLabel('Scan barcode', { exact: true });
-    await scan.fill('DEMO-CCTV-IP-2MP-UNIT');
-    await scan.press('Enter');
-    await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).waitFor();
-    await scan.fill('DEMO-CCTV-IP-2MP-UNIT');
-    await scan.press('Enter');
-    await page.waitForFunction(() => document.querySelector('[aria-label="Kuantitas Kamera IP 2MP"]')?.value === '2');
-    await page.getByLabel('Nilai diskon', { exact: true }).fill('1.000');
-    await page.getByLabel('Pajak (%)', { exact: true }).fill('1');
-    await page.getByRole('button', { name: 'Periksa keranjang', exact: true }).click();
-    await page.getByText('Terperiksa', { exact: true }).waitFor();
-    console.log('PASS: scan dan pemeriksaan keranjang.');
-    const total = await page.getByTestId('cart-total').innerText();
-    await shot('visual-desktop');
-    await switchView('Klasik');
-    assert.equal(await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).inputValue(), '2');
-    assert.equal(await page.getByLabel('Nilai diskon', { exact: true }).inputValue(), '1.000');
-    assert.equal(await page.getByLabel('Pajak (%)', { exact: true }).inputValue(), '1');
-    assert.equal(await page.getByTestId('cart-total').innerText(), total);
-    await shot('classic-desktop');
-    for (const size of [
-        { width: 1024, height: 768 },
-        { width: 768, height: 1024 },
-    ]) {
-        await page.setViewportSize(size);
-        await shot(`classic-${size.width}`);
-        await switchView('Visual');
-        await shot(`visual-${size.width}`);
+    if (process.env.QA_POS_WORKSPACE_FOCUS === 'customer') {
+        await checkCustomerAutocomplete(page, artifacts, checks);
+    } else {
+        assert.match(await page.getByLabel('Pelanggan', { exact: true }).inputValue(), /Pelanggan Umum/);
+        assert.equal(await page.locator('main').getAttribute('data-pos-view'), 'visual');
+        console.log('PASS: default Visual, Gudang Utama, pelanggan Eceran.');
+        const scan = page.getByLabel('Scan barcode', { exact: true });
+        await scan.fill('DEMO-CCTV-IP-2MP-UNIT');
+        await scan.press('Enter');
+        await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).waitFor();
+        await scan.fill('DEMO-CCTV-IP-2MP-UNIT');
+        await scan.press('Enter');
+        await page.waitForFunction(() => document.querySelector('[aria-label="Kuantitas Kamera IP 2MP"]')?.value === '2');
+        await page.getByLabel('Nilai diskon', { exact: true }).fill('1.000');
+        await page.getByLabel('Pajak (%)', { exact: true }).fill('1');
+        await page.getByRole('button', { name: 'Periksa keranjang', exact: true }).click();
+        await page.getByText('Terperiksa', { exact: true }).waitFor();
+        console.log('PASS: scan dan pemeriksaan keranjang.');
+        const total = await page.getByTestId('cart-total').innerText();
+        await shot('visual-desktop');
         await switchView('Klasik');
+        assert.equal(await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).inputValue(), '2');
+        assert.equal(await page.getByLabel('Nilai diskon', { exact: true }).inputValue(), '1.000');
+        assert.equal(await page.getByLabel('Pajak (%)', { exact: true }).inputValue(), '1');
+        assert.equal(await page.getByTestId('cart-total').innerText(), total);
+        await shot('classic-desktop');
+        for (const size of [
+            { width: 1024, height: 768 },
+            { width: 768, height: 1024 },
+        ]) {
+            await page.setViewportSize(size);
+            await shot(`classic-${size.width}`);
+            await switchView('Visual');
+            await shot(`visual-${size.width}`);
+            await switchView('Klasik');
+        }
+        await page.getByRole('button', { name: 'Tahan', exact: true }).click();
+        await page.getByLabel('Label keranjang (opsional)', { exact: true }).fill('QA dua tampilan');
+        await page.getByRole('button', { name: 'Simpan tertahan', exact: true }).click();
+        await page.getByRole('dialog').waitFor({ state: 'detached' });
+        await page.reload();
+        await page.getByRole('button', { name: 'Tertahan', exact: true }).click();
+        assert.equal(await page.locator('main').getAttribute('data-pos-view'), 'classic');
+        await page.getByRole('button', { name: 'Panggil QA dua tampilan', exact: true }).click();
+        await page.getByRole('dialog').waitFor({ state: 'detached' });
+        assert.equal(await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).inputValue(), '2');
+        assert.equal(await page.getByTestId('cart-total').innerText(), total);
+        await switchView('Visual');
+        await page.getByRole('button', { name: 'Pembayaran', exact: true }).click();
+        await page.getByLabel('Nominal 1', { exact: true }).waitFor();
+        await page.keyboard.press('Escape');
+        await page.getByRole('dialog').waitFor({ state: 'detached' });
+        await choose('Gudang', 'Gudang Tambahan');
+        await choose('Pelanggan', 'Installer CCTV Demo');
+        await switchView('Klasik');
+        assert.match(await page.getByLabel('Gudang', { exact: true }).innerText(), /Gudang Tambahan/);
+        assert.match(await page.getByLabel('Pelanggan', { exact: true }).inputValue(), /Installer CCTV Demo/);
+        checks.push(
+            'Default, scan burst, view switch preserves cart/pricing/quote, preference reload, hold/recall, payment dialog and manual context PASS',
+        );
+        await page.setViewportSize({ width: 640, height: 960 });
+        await switchView('Visual');
+        await page.getByRole('radio', { name: /Keranjang \(1\)/ }).click();
+        assert(await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).isVisible());
+        await page.keyboard.press('Alt+f');
+        await page.getByLabel('Cari barang', { exact: true }).waitFor({ state: 'visible' });
+        assert(await page.getByLabel('Cari barang', { exact: true }).evaluate((node) => node === document.activeElement));
+        await page.getByRole('radio', { name: /Keranjang \(1\)/ }).click();
+        await page.getByRole('radio', { name: 'Barang', exact: true }).click();
+        assert(await page.getByLabel('Cari barang', { exact: true }).isVisible());
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        await page.screenshot({ path: path.join(artifacts, 'visual-narrow.png'), fullPage: true });
+        checks.push('Narrow tablet panel switching retains cart without overflow PASS');
     }
-    await page.getByRole('button', { name: 'Tahan', exact: true }).click();
-    await page.getByLabel('Label keranjang (opsional)', { exact: true }).fill('QA dua tampilan');
-    await page.getByRole('button', { name: 'Simpan tertahan', exact: true }).click();
-    await page.getByRole('dialog').waitFor({ state: 'detached' });
-    await page.reload();
-    await page.getByRole('button', { name: 'Tertahan', exact: true }).click();
-    assert.equal(await page.locator('main').getAttribute('data-pos-view'), 'classic');
-    await page.getByRole('button', { name: 'Panggil QA dua tampilan', exact: true }).click();
-    await page.getByRole('dialog').waitFor({ state: 'detached' });
-    assert.equal(await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).inputValue(), '2');
-    assert.equal(await page.getByTestId('cart-total').innerText(), total);
-    await switchView('Visual');
-    await page.getByRole('button', { name: 'Pembayaran', exact: true }).click();
-    await page.getByLabel('Nominal 1', { exact: true }).waitFor();
-    await page.keyboard.press('Escape');
-    await page.getByRole('dialog').waitFor({ state: 'detached' });
-    await choose('Gudang', 'Gudang Tambahan');
-    await choose('Pelanggan', 'Installer CCTV Demo');
-    await switchView('Klasik');
-    assert.match(await page.getByLabel('Gudang', { exact: true }).innerText(), /Gudang Tambahan/);
-    assert.match(await page.getByLabel('Pelanggan', { exact: true }).innerText(), /Installer CCTV Demo/);
-    checks.push(
-        'Default, scan burst, view switch preserves cart/pricing/quote, preference reload, hold/recall, payment dialog and manual context PASS',
-    );
-    await page.setViewportSize({ width: 640, height: 960 });
-    await switchView('Visual');
-    await page.getByRole('radio', { name: /Keranjang \(1\)/ }).click();
-    assert(await page.getByLabel('Kuantitas Kamera IP 2MP', { exact: true }).isVisible());
-    await page.keyboard.press('Alt+f');
-    await page.getByLabel('Cari barang', { exact: true }).waitFor({ state: 'visible' });
-    assert(await page.getByLabel('Cari barang', { exact: true }).evaluate((node) => node === document.activeElement));
-    await page.getByRole('radio', { name: /Keranjang \(1\)/ }).click();
-    await page.getByRole('radio', { name: 'Barang', exact: true }).click();
-    assert(await page.getByLabel('Cari barang', { exact: true }).isVisible());
-    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    await page.screenshot({ path: path.join(artifacts, 'visual-narrow.png'), fullPage: true });
-    checks.push('Narrow tablet panel switching retains cart without overflow PASS');
     assert.equal(verify().ledger, baseline.ledger, 'No stock/finance ledger changes');
     assert.deepEqual(errors, []);
     const report = { status: 'PASS', checks, errors, artifacts };

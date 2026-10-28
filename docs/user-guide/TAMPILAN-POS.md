@@ -10,6 +10,14 @@ beberapa pelanggan Eceran, aplikasi tidak menebak pelanggan yang dimaksud.
 Selalu periksa gudang dan pelanggan sebelum mulai menjual; keduanya tetap
 bisa diganti. Pelanggan menentukan level harga, bukan bentuk tampilan POS.
 
+Kolom **Pelanggan** mendukung autocomplete. Ketik sebagian nama, kode, atau
+level pelanggan, lalu klik hasil yang sesuai atau gunakan panah dan Enter.
+Daftar menampilkan nama, kode dan level agar pelanggan bernama mirip lebih
+mudah dibedakan. Escape membatalkan pencarian dan mempertahankan pelanggan
+sebelumnya. Ketikan bebas bukan pelanggan baru dan tidak mengubah harga
+sebelum hasil dipilih. Setelah memilih pelanggan berbeda, klik **Periksa
+keranjang** kembali; isi barang tetap dipertahankan.
+
 ## 2. Pilih Klasik Atau Visual
 
 - **Klasik:** katalog berupa kartu daftar, mengikuti pola POS sebelumnya.

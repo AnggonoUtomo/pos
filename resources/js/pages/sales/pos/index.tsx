@@ -472,6 +472,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     context={
                         <SaleContextBar
                             compact={view === 'visual'}
+                            disabled={locked}
                             warehouses={warehouses}
                             customers={customers}
                             warehouseId={warehouseId}

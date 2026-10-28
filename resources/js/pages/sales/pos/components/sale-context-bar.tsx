@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { Users, Warehouse } from 'lucide-react';
 import type { CustomerOption, WarehouseOption } from '../types';
+import { CustomerAutocomplete } from './customer-autocomplete';
 
 export function SaleContextBar({
     warehouses,
@@ -14,6 +15,7 @@ export function SaleContextBar({
     onCustomerChange,
     activeCustomer,
     compact = false,
+    disabled = false,
 }: {
     warehouses: WarehouseOption[];
     customers: CustomerOption[];
@@ -23,6 +25,7 @@ export function SaleContextBar({
     onCustomerChange: (id: string) => void;
     activeCustomer?: CustomerOption;
     compact?: boolean;
+    disabled?: boolean;
 }) {
     const customer = activeCustomer?.id === customerId ? activeCustomer : customers.find((row) => row.id === customerId);
     return (
@@ -53,18 +56,7 @@ export function SaleContextBar({
                     </Label>
                     {compact && customer && <span className="truncate text-xs text-violet-600 dark:text-violet-300">{customer.levelName}</span>}
                 </div>
-                <Select value={customerId} onValueChange={onCustomerChange}>
-                    <SelectTrigger id="pos-customer" className="w-full min-w-0 [&>span]:truncate">
-                        <SelectValue placeholder="Pilih pelanggan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {customers.map((row) => (
-                            <SelectItem key={row.id} value={row.id}>
-                                {row.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <CustomerAutocomplete customers={customers} customer={customer} disabled={disabled} onChange={onCustomerChange} />
             </div>
             {customer && !compact && (
                 <Badge

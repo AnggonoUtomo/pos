@@ -61,3 +61,39 @@
   file LSP yang sudah staged/untracked milik user tetap tidak disertakan.
 
 UAT scanner/printer fisik dan advisory qs tetap pending seperti README.
+
+## Increment 3: Autocomplete Pelanggan
+
+- [x] Scope dibatasi pada pencarian pelanggan di Klasik/Visual; tanpa endpoint,
+  schema, seed, dependency baru atau perubahan aturan harga.
+- [x] Ganti select pelanggan dengan autocomplete nama/kode/level.
+  - Acceptance: hanya pilihan pelanggan aktif existing; ketikan bukan pelanggan
+    baru, batal tidak mengubah pilihan, nama/kode/level terlihat pada hasil.
+  - Verification: QA browser pencarian, keyboard, hasil kosong dan Escape.
+- [x] Verifikasi context/harga dan keranjang tetap aman.
+  - Acceptance: pemilihan mengganti level harga dan membatalkan quote lama,
+    bukan menghapus baris; mengetik/batal tidak mengganti pelanggan.
+  - Verification: test terfokus desktop/tablet pada kedua view, lint/type/build.
+- [x] Update panduan dan commit/push setelah lulus.
+  - Verification: diff scope dan status remote.
+
+### Hasil Increment 3
+
+- RED terkonfirmasi pada UI sebelumnya: inputValue gagal karena pelanggan
+  masih tombol Select, belum input autocomplete.
+- PASS QA terfokus dengan `QA_POS_WORKSPACE_FOCUS=customer` dan
+  `QA_PLAYWRIGHT_MODULE` existing: `node scripts/qa/pos-workspace-browser.mjs`.
+  Klasik 1024x768 dan Visual 1440x900: pencarian kode tidak peka huruf besar
+  dan trim spasi, pencarian nama/level, hasil kosong, Escape, keyboard/click,
+  framing dropdown, pembatalan quote lama, refresh level Eceran, serta baris
+  keranjang tetap ada. Console/page errors kosong dan hash ledger tidak berubah.
+- PASS lint POS, typecheck global, build, git diff --check dan review scope.
+  Tidak mengulang regresi backend/QA seluruh workspace: backend/schema dan
+  operasi posting tidak berubah. Seed hanya fixture SQLite disposable.
+- Screenshot/report ignored:
+  `storage/framework/testing/pos-workspace-4c8a29c20b7fbcf5/`.
+  Screenshot desktop/tablet direview. MCP tersedia; produksi beralih ke login,
+  sehingga interaksi diuji Chrome via Playwright terisolasi. MCP membuka bukti
+  screenshot, bukan mengklaim interaksi authenticated melalui MCP.
+- Panduan tampilan diperbarui; tidak menambah role, package, endpoint atau
+  perubahan data produksi. Default dan handler pemilihan existing dipertahankan.
