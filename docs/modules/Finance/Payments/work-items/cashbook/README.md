@@ -1,6 +1,7 @@
 # Buku Kas
 
-Status: implementasi berjalan. User menyetujui saldo awal/tanggal mulai per
+Status: selesai dan diaktifkan additive, bukti pada [checklist](tasks.md).
+User menyetujui saldo awal/tanggal mulai per
 akun serta saldo minus sebagai peringatan, bukan pengaman kecukupan dana.
 
 Ownership Finance/Payments. Scope: saldo awal satu kali per akun kas/bank,
@@ -35,3 +36,7 @@ atau perubahan pengaman stok, checkout, pembelian dan refund existing.
 
 QA fixture/demo hanya disposable/local/testing; tidak menghapus dataset toko,
 menetapkan cutover produksi, atau mengubah snapshot pembayaran lama.
+
+Produksi lokal: migration batch31 Ran; empat permission tersedia, opening dan
+mutasi masih kosong. Administrator menetapkan akses role dan posisi awal nyata.
+Panduan: [Buku Kas](../../../../../user-guide/BUKU-KAS.md).

@@ -60,7 +60,27 @@ audit satu kali dan database acak dibersihkan pada finally.
 
 ## Increment 3: Aktivasi Dan Delivery
 
-- [ ] Satu gate regresi akhir, MySQL disposable dan QA alur berubah.
-- [ ] Migrasi additive dan catalog permission lokal tanpa saldo awal otomatis.
-- [ ] Perbarui checklist berdasarkan hasil nyata, commit/push dan verifikasi
+- [x] Satu gate regresi akhir, MySQL disposable dan QA alur berubah.
+- [x] Migrasi additive dan catalog permission lokal tanpa saldo awal otomatis.
+- [x] Perbarui checklist berdasarkan hasil nyata, commit/push dan verifikasi
   remote. Pending operasional lama tetap pending.
+
+Hasil aktivasi 28 Oktober 2026:
+
+- `php artisan pos:backup --verify` PASS: restore disposable identik. Backup
+  ignored `backups/pos-20261028-141025-0dca8450.sql`; tidak ditambahkan ke Git.
+- `php scripts/qa/activate-cashbook-local.php` PASS: migration satu file dan
+  catalog additive, fingerprint seluruh data/grant/ledger existing identik.
+- `php artisan route:cache`, `route:list --path=finance/cashbook` PASS (5 route).
+- `migrate:status` migration Buku Kas Ran batch31. Readonly count: opening0,
+  entry0, permission4. Role/akun/posisi uang tidak diisi atau diganti otomatis.
+- HTTPS `/finance/cashbook` mengembalikan 302 ke login untuk guest, bukan 404;
+  akses authenticated dan permission diuji pada fixture disposable, bukan
+  membuat transaksi coba-coba di produksi.
+- `.env.testing` sementara dihapus setelah gate, config produksi tidak diubah.
+  Schema/native DB QA dan proses PHP/browser dibersihkan/dihentikan.
+- Save point backend `0a77d31`, UI/integrasi `81551d3`; delivery tidak mencakup
+  file LSP user yang tetap staged/untracked. Old-docs tidak disentuh.
+
+Tidak ada closing shift atau perubahan syarat checkout. Persetujuan operator,
+printer fisik, scheduler dan salinan backup terpisah lama tidak ditandai selesai.
