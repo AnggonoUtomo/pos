@@ -66,3 +66,9 @@ SaleScanData. Input scanner + Enter diproses antrean terbatas tanpa debounce;
 scan sama menambah qty satuan, aggregate stock lintas satuan diperiksa, dan
 checkout/hold menunggu scan. Barang/rasio/harga/stok tetap current saat quote/post.
 Detail [barcode scanner](../../../work-items/barcode-scanner/README.md).
+
+Workspace menyediakan Klasik (kartu daftar) dan Visual (tile gambar), berbagi
+state transaksi tanpa reload. Preferensi tampilan lokal browser; default awal
+Gudang Utama dan level Eceran hanya bila unik, tidak mengalahkan recall/recovery.
+Detail [work item](work-items/workspace-views/README.md) dan
+[panduan tampilan](../../../user-guide/TAMPILAN-POS.md).

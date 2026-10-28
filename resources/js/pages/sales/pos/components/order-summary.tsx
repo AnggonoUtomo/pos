@@ -31,8 +31,8 @@ export function OrderSummary({
     locked: boolean;
 }) {
     return (
-        <section className="space-y-3 border-t border-[var(--app-border)] bg-[var(--app-panel-strong)] p-4">
-            <fieldset disabled={locked || loading} className="grid grid-cols-[6.5rem_minmax(0,1fr)_minmax(0,1fr)] items-end gap-2">
+        <section className="max-h-[55%] shrink-0 space-y-2 overflow-y-auto border-t border-[var(--app-border)] bg-[var(--app-panel-strong)] p-3">
+            <fieldset disabled={locked || loading} className="grid grid-cols-[4rem_minmax(0,1fr)_minmax(0,1fr)] items-end gap-2">
                 <div className="space-y-1">
                     <Label>Diskon</Label>
                     <Select
@@ -99,10 +99,15 @@ export function OrderSummary({
                 <span className="text-muted-foreground text-xs">Belum diposting</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-                <Button onClick={onCheck} disabled={disabled || loading || locked}>
+                <Button className="h-auto min-h-9 px-2 py-2 text-xs whitespace-normal" onClick={onCheck} disabled={disabled || loading || locked}>
                     {loading ? <LoaderCircle className="size-4 animate-spin" /> : <CheckCheck className="size-4" />}Periksa keranjang
                 </Button>
-                <Button className="w-full" variant="outline" onClick={onPay} disabled={!quote || loading || disabled || locked || !canPay}>
+                <Button
+                    className="h-auto min-h-9 w-full px-2 py-2 text-xs whitespace-normal"
+                    variant="outline"
+                    onClick={onPay}
+                    disabled={!quote || loading || disabled || locked || !canPay}
+                >
                     <CreditCard className="size-4" />
                     Pembayaran
                 </Button>

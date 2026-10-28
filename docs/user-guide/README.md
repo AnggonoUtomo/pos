@@ -15,6 +15,8 @@ Panduan tambahan: [Gambar dan barcode barang](GAMBAR-BARANG.md) dan
 PDF global/per-role versi sebelumnya; PDF tersebut belum memuat kedua tambahan.
 Tambahan operasional: [Barcode scanner dan cetak label](BARCODE-SCANNER.md),
 juga belum digabungkan ke PDF global/per-role tersebut.
+Pilihan workspace: [Klasik dan Visual](TAMPILAN-POS.md), termasuk default
+gudang/pelanggan dan panel tablet; belum digabungkan ke PDF tersebut.
 
 [Unduh buku global PDF](../../output/pdf/user-guide/panduan-global-pos.pdf).
 PDF global berisi alur global, panduan modul, serta role/akses. Gunakan daftar

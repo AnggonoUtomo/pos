@@ -4,10 +4,11 @@ import { BarcodeInput } from '@/components/shared/barcode-input';
 import { ThemeMenu } from '@/components/theme-menu';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ClipboardList, History, PauseCircle, ReceiptText, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ClipboardList, History, LayoutGrid, List, PauseCircle, ReceiptText, RotateCcw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { CartPanel } from './components/cart-panel';
@@ -15,6 +16,7 @@ import { HeldCartDialogs } from './components/held-cart-dialogs';
 import { ItemSearch } from './components/item-search';
 import { OrderSummary } from './components/order-summary';
 import { PaymentDialog } from './components/payment-dialog';
+import { PosWorkspace } from './components/pos-workspace';
 import { ReceiptDialog } from './components/receipt-dialog';
 import { SaleContextBar } from './components/sale-context-bar';
 import { useCatalog } from './hooks/use-catalog';
@@ -26,6 +28,7 @@ import { checkoutKey } from './lib/checkout-key';
 import { localDecimal, parsePricingAmount, parseQuantity } from './lib/decimal';
 import { parsePaymentAmount } from './lib/payment';
 import { PosRequestError, posRequest } from './lib/request';
+import { initialPosContext, workspaceView, workspaceViewKey, type WorkspaceView } from './lib/workspace';
 import type {
     CartLine,
     CartQuote,
@@ -40,8 +43,26 @@ import type {
 } from './types';
 
 export default function PosIndex({ warehouses, customers }: PosPageProps) {
-    const [warehouseId, setWarehouseId] = useState('');
-    const [customerId, setCustomerId] = useState('');
+    const [warehouseId, setWarehouseId] = useState(() => initialPosContext(warehouses, customers).warehouseId);
+    const [customerId, setCustomerId] = useState(() => initialPosContext(warehouses, customers).customerId);
+    const [view, setView] = useState<WorkspaceView>('visual');
+    useEffect(() => {
+        try {
+            setView(workspaceView(localStorage.getItem(workspaceViewKey)));
+        } catch {
+            // Storage can be disabled; the workspace remains usable without it.
+        }
+    }, []);
+    const changeView = (value: string) => {
+        if (!value) return;
+        const next = workspaceView(value);
+        setView(next);
+        try {
+            localStorage.setItem(workspaceViewKey, next);
+        } catch {
+            // Preference persistence is optional, not transaction persistence.
+        }
+    };
     const [query, setQuery] = useState('');
     const [page, setPage] = useState(1);
     const [catalogVersion, setCatalogVersion] = useState(0);
@@ -302,13 +323,31 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     return (
         <>
             <Head title="POS" />
-            <main className="text-foreground flex h-dvh min-h-[44rem] flex-col overflow-hidden bg-[var(--app-workspace)]">
-                <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] bg-[var(--app-topbar)] px-5 py-3">
+            <main data-pos-view={view} className="text-foreground flex h-dvh min-h-[32rem] flex-col overflow-hidden bg-[var(--app-workspace)]">
+                <header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--app-border)] bg-[var(--app-topbar)] px-4 py-2">
                     <div className="flex items-center gap-3">
                         <div className="bg-primary-solid text-primary-solid-foreground flex size-9 items-center justify-center rounded-md">
                             <AppLogoIcon className="size-5 fill-current" />
                         </div>
                         <h1 className="text-lg font-semibold">POS</h1>
+                        <ToggleGroup
+                            type="single"
+                            value={view}
+                            onValueChange={changeView}
+                            disabled={locked || busy || paymentOpen}
+                            aria-label="Tampilan POS"
+                            variant="outline"
+                            size="sm"
+                        >
+                            <ToggleGroupItem value="classic" aria-label="Tampilan Klasik">
+                                <List className="mr-1 size-4 text-sky-600 dark:text-sky-300" />
+                                Klasik
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="visual" aria-label="Tampilan Visual">
+                                <LayoutGrid className="mr-1 size-4 text-teal-600 dark:text-teal-300" />
+                                Visual
+                            </ToggleGroupItem>
+                        </ToggleGroup>
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-2">
                         <CommandPalette />
@@ -318,53 +357,81 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                             size="sm"
                             disabled={locked || busy || paymentOpen || !ready || !lines.length}
                             onClick={held.openHold}
+                            aria-label="Tahan"
+                            title="Tahan (F6)"
                         >
                             <PauseCircle className="text-amber-600 dark:text-amber-300" />
-                            Tahan
+                            <span className="hidden xl:inline">Tahan</span>
                         </Button>
-                        <Button variant="outline" size="sm" disabled={locked || busy || paymentOpen} onClick={held.openList}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={locked || busy || paymentOpen}
+                            onClick={held.openList}
+                            aria-label="Tertahan"
+                            title="Tertahan (F7)"
+                        >
                             <ClipboardList className="text-sky-600 dark:text-sky-300" />
-                            Tertahan
+                            <span className="hidden xl:inline">Tertahan</span>
                         </Button>
                         {canAny(['sales.pos.invoices.post', 'sales.pos.invoices.view']) && (
                             <Button variant="outline" size="sm" asChild disabled={locked}>
                                 <Link
                                     href={route('sales.invoices.index')}
+                                    aria-label="Riwayat"
+                                    title="Riwayat penjualan"
                                     aria-disabled={locked}
                                     onClick={(event) => {
                                         if (locked) event.preventDefault();
                                     }}
                                 >
                                     <History className="text-sky-600 dark:text-sky-300" />
-                                    Riwayat
+                                    <span className="hidden xl:inline">Riwayat</span>
                                 </Link>
                             </Button>
                         )}
                         {checkout.lastId && (
-                            <Button variant="outline" size="sm" disabled={locked} onClick={() => void checkout.openReceipt()}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={locked}
+                                onClick={() => void checkout.openReceipt()}
+                                aria-label="Bukti terakhir"
+                                title="Bukti terakhir"
+                            >
                                 <ReceiptText className="text-emerald-600 dark:text-emerald-300" />
-                                Bukti terakhir
+                                <span className="hidden xl:inline">Bukti terakhir</span>
                             </Button>
                         )}
                         <Button variant="outline" size="sm" asChild disabled={locked}>
                             <Link
                                 href="/dashboard"
+                                aria-label="Admin"
+                                title="Kembali ke admin"
                                 aria-disabled={locked}
                                 onClick={(event) => {
                                     if (locked) event.preventDefault();
                                 }}
                             >
                                 <ArrowLeft className="text-sky-600 dark:text-sky-300" />
-                                Admin
+                                <span className="hidden xl:inline">Admin</span>
                             </Link>
                         </Button>
-                        <Button variant="outline" size="sm" disabled={!lines.length || locked} onClick={() => setResetOpen(true)}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={!lines.length || locked}
+                            onClick={() => setResetOpen(true)}
+                            aria-label="Reset"
+                            title="Kosongkan keranjang"
+                        >
                             <RotateCcw className="text-amber-600 dark:text-amber-300" />
-                            Reset
+                            <span className="hidden xl:inline">Reset</span>
                         </Button>
                     </div>
                 </header>
                 <WorkspaceShortcutDropdown
+                    className="shrink-0 py-1.5"
                     title="Operasi POS"
                     description={checkout.pending ? 'Pembayaran belum terkonfirmasi' : 'Belum diposting'}
                     shortcuts={[
@@ -390,36 +457,41 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                         {checkout.error}
                     </p>
                 )}
-                <div className="shrink-0 border-b border-[var(--app-border)] px-5 py-2">
-                    <div className="max-w-md">
+                <PosWorkspace
+                    view={view}
+                    locked={locked}
+                    count={lines.length}
+                    scanner={
                         <BarcodeInput
                             id="pos-barcode"
                             disabled={!ready || checkoutLocked || busy || paymentOpen || held.busy || held.uncertain}
                             busy={scanner.busy}
                             onScan={scanner.enqueue}
                         />
-                    </div>
-                </div>
-                <fieldset disabled={locked} className="contents">
-                    <SaleContextBar
-                        warehouses={warehouses}
-                        customers={customers}
-                        warehouseId={warehouseId}
-                        customerId={customerId}
-                        activeCustomer={quote?.customer ?? result?.customer}
-                        onWarehouseChange={(id) => {
-                            invalidate();
-                            setWarehouseId(id);
-                            setPage(1);
-                        }}
-                        onCustomerChange={(id) => {
-                            invalidate();
-                            setCustomerId(id);
-                            setPage(1);
-                        }}
-                    />
-                    <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:grid-rows-1">
+                    }
+                    context={
+                        <SaleContextBar
+                            compact={view === 'visual'}
+                            warehouses={warehouses}
+                            customers={customers}
+                            warehouseId={warehouseId}
+                            customerId={customerId}
+                            activeCustomer={quote?.customer ?? result?.customer}
+                            onWarehouseChange={(id) => {
+                                invalidate();
+                                setWarehouseId(id);
+                                setPage(1);
+                            }}
+                            onCustomerChange={(id) => {
+                                invalidate();
+                                setCustomerId(id);
+                                setPage(1);
+                            }}
+                        />
+                    }
+                    catalog={
                         <ItemSearch
+                            visual={view === 'visual'}
                             items={result?.items ?? []}
                             query={query}
                             page={page}
@@ -436,39 +508,41 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                             onBarcode={barcode}
                             onRetry={() => setCatalogVersion((value) => value + 1)}
                         />
-                        <div className="flex min-h-0 min-w-0 flex-col bg-[var(--app-panel)]">
-                            <CartPanel
-                                lines={lines}
-                                quote={quote}
-                                errors={errors}
-                                onQuantity={(index, quantity) => {
-                                    invalidate();
-                                    setLines(lines.map((line, i) => (i === index ? { ...line, quantity } : line)));
-                                }}
-                                onUnit={changeUnit}
-                                onRemove={(index) => {
-                                    invalidate();
-                                    setLines(lines.filter((_, i) => i !== index));
-                                }}
-                            />
-                            <OrderSummary
-                                pricing={pricing}
-                                onPricing={(next) => {
-                                    invalidate();
-                                    setPricing(next);
-                                }}
-                                quote={quote}
-                                loading={busy}
-                                disabled={!ready || !lines.length}
-                                error={error}
-                                onCheck={() => void check()}
-                                onPay={openPayment}
-                                canPay={canPost}
-                                locked={locked}
-                            />
-                        </div>
-                    </div>
-                </fieldset>
+                    }
+                    cart={
+                        <CartPanel
+                            lines={lines}
+                            quote={quote}
+                            errors={errors}
+                            onQuantity={(index, quantity) => {
+                                invalidate();
+                                setLines(lines.map((line, i) => (i === index ? { ...line, quantity } : line)));
+                            }}
+                            onUnit={changeUnit}
+                            onRemove={(index) => {
+                                invalidate();
+                                setLines(lines.filter((_, i) => i !== index));
+                            }}
+                        />
+                    }
+                    summary={
+                        <OrderSummary
+                            pricing={pricing}
+                            onPricing={(next) => {
+                                invalidate();
+                                setPricing(next);
+                            }}
+                            quote={quote}
+                            loading={busy}
+                            disabled={!ready || !lines.length}
+                            error={error}
+                            onCheck={() => void check()}
+                            onPay={openPayment}
+                            canPay={canPost}
+                            locked={locked}
+                        />
+                    }
+                />
             </main>
             <HeldCartDialogs held={held} />
             <PaymentDialog

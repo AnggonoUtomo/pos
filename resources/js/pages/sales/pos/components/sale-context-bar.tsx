@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { Users, Warehouse } from 'lucide-react';
 import type { CustomerOption, WarehouseOption } from '../types';
 
@@ -12,6 +13,7 @@ export function SaleContextBar({
     onWarehouseChange,
     onCustomerChange,
     activeCustomer,
+    compact = false,
 }: {
     warehouses: WarehouseOption[];
     customers: CustomerOption[];
@@ -20,17 +22,18 @@ export function SaleContextBar({
     onWarehouseChange: (id: string) => void;
     onCustomerChange: (id: string) => void;
     activeCustomer?: CustomerOption;
+    compact?: boolean;
 }) {
     const customer = activeCustomer?.id === customerId ? activeCustomer : customers.find((row) => row.id === customerId);
     return (
-        <div className="flex flex-wrap items-end gap-3 border-b border-[var(--app-border)] bg-[var(--app-panel)] px-5 py-3">
-            <div className="w-56 space-y-1.5">
+        <div className={cn('items-end gap-3 bg-[var(--app-panel)] px-4 py-2', compact ? 'grid grid-cols-2' : 'flex flex-wrap')}>
+            <div className={cn('min-w-0 space-y-1.5', compact ? '' : 'w-56')}>
                 <Label htmlFor="pos-warehouse" className="flex items-center gap-1.5">
                     <Warehouse className="size-4 text-emerald-600 dark:text-emerald-300" />
                     Gudang
                 </Label>
                 <Select value={warehouseId} onValueChange={onWarehouseChange}>
-                    <SelectTrigger id="pos-warehouse">
+                    <SelectTrigger id="pos-warehouse" className="w-full min-w-0 [&>span]:truncate">
                         <SelectValue placeholder="Pilih gudang" />
                     </SelectTrigger>
                     <SelectContent>
@@ -42,13 +45,16 @@ export function SaleContextBar({
                     </SelectContent>
                 </Select>
             </div>
-            <div className="w-72 space-y-1.5">
-                <Label htmlFor="pos-customer" className="flex items-center gap-1.5">
-                    <Users className="size-4 text-sky-600 dark:text-sky-300" />
-                    Pelanggan
-                </Label>
+            <div className={cn('min-w-0 space-y-1.5', compact ? '' : 'w-72')}>
+                <div className="flex min-w-0 items-center justify-between gap-2">
+                    <Label htmlFor="pos-customer" className="flex items-center gap-1.5">
+                        <Users className="size-4 text-sky-600 dark:text-sky-300" />
+                        Pelanggan
+                    </Label>
+                    {compact && customer && <span className="truncate text-xs text-violet-600 dark:text-violet-300">{customer.levelName}</span>}
+                </div>
                 <Select value={customerId} onValueChange={onCustomerChange}>
-                    <SelectTrigger id="pos-customer">
+                    <SelectTrigger id="pos-customer" className="w-full min-w-0 [&>span]:truncate">
                         <SelectValue placeholder="Pilih pelanggan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -60,7 +66,7 @@ export function SaleContextBar({
                     </SelectContent>
                 </Select>
             </div>
-            {customer && (
+            {customer && !compact && (
                 <Badge
                     className="mb-1 border-violet-200 bg-violet-500/10 text-violet-700 dark:border-violet-900 dark:text-violet-300"
                     variant="outline"

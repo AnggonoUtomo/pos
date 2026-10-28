@@ -3,21 +3,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, LoaderCircle, PackagePlus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { hasStock, localDecimal, money } from '../lib/decimal';
 import type { PosItem } from '../types';
 
-function CatalogItem({ item, onAdd }: { item: PosItem; onAdd: (item: PosItem, unitId: string) => void }) {
+function CatalogItem({ item, onAdd, visual }: { item: PosItem; onAdd: (item: PosItem, unitId: string) => void; visual: boolean }) {
     const [unitId, setUnitId] = useState(item.units.find((row) => row.id === item.base_unit_id)?.id ?? item.units[0]?.id);
     const unit = item.units.find((row) => row.id === unitId) ?? item.units[0];
     const available = hasStock(item.stock) && unit?.price !== null;
     return (
         <article className="flex min-w-0 flex-col gap-3 rounded-md border border-[var(--app-border)] bg-[var(--app-panel-strong)] p-3">
-            <div className="flex min-w-0 items-center gap-3">
-                <ItemImage src={item.image_url ?? null} name={item.name} className="size-16" />
+            <div className={cn('flex min-w-0 gap-3', visual ? 'flex-col' : 'items-center')}>
+                <ItemImage src={item.image_url ?? null} name={item.name} className={visual ? 'h-24 w-full rounded-sm' : 'size-16'} />
                 <div className="min-w-0">
-                    <h3 className="text-sm font-semibold break-words" title={item.name}>
+                    <h3 className={cn('text-sm font-semibold break-words', visual && 'line-clamp-2 min-h-10')} title={item.name}>
                         {item.name}
                     </h3>
                     <p className="text-muted-foreground text-xs break-all">{item.sku}</p>
@@ -70,6 +71,7 @@ export function ItemSearch({
     onAdd,
     onBarcode,
     onRetry,
+    visual = false,
 }: {
     items: PosItem[];
     query: string;
@@ -83,11 +85,14 @@ export function ItemSearch({
     onAdd: (item: PosItem, unitId: string) => void;
     onBarcode: () => void;
     onRetry: () => void;
+    visual?: boolean;
 }) {
     return (
-        <section className="flex min-h-0 min-w-0 flex-col border-[var(--app-border)] lg:border-r" aria-label="Katalog barang" aria-busy={loading}>
-            <div className="space-y-2 border-b border-[var(--app-border)] p-4">
-                <Label htmlFor="pos-search">Cari barang</Label>
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="Katalog barang" aria-busy={loading}>
+            <div className={cn('shrink-0 space-y-2 border-b border-[var(--app-border)]', visual ? 'p-3' : 'p-4')}>
+                <Label htmlFor="pos-search" className={visual ? 'sr-only' : ''}>
+                    Cari barang
+                </Label>
                 <div className="relative">
                     <Search className="text-muted-foreground pointer-events-none absolute top-3 left-3 size-4" />
                     <Input
@@ -107,7 +112,7 @@ export function ItemSearch({
                     />
                 </div>
             </div>
-            <div className="min-h-60 flex-1 overflow-auto p-4">
+            <div data-testid="catalog-scroll" className="min-h-0 flex-1 overflow-auto overscroll-contain p-3">
                 {loading ? (
                     <div role="status" className="flex items-center gap-2 text-sm">
                         <LoaderCircle className="size-4 animate-spin" />
@@ -123,9 +128,9 @@ export function ItemSearch({
                         </Button>
                     </div>
                 ) : items.length ? (
-                    <div className="grid gap-3 xl:grid-cols-2">
+                    <div className={cn('grid gap-3', visual ? 'grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))]' : 'xl:grid-cols-2')}>
                         {items.map((item) => (
-                            <CatalogItem key={item.id} item={item} onAdd={onAdd} />
+                            <CatalogItem key={item.id} item={item} onAdd={onAdd} visual={visual} />
                         ))}
                     </div>
                 ) : (
@@ -134,7 +139,7 @@ export function ItemSearch({
                     </p>
                 )}
             </div>
-            <div className="flex items-center justify-between border-t border-[var(--app-border)] px-4 py-3 text-sm">
+            <div className="flex shrink-0 items-center justify-between border-t border-[var(--app-border)] px-4 py-2 text-sm">
                 <span>Halaman {page}</span>
                 <div className="flex gap-2">
                     <Button
