@@ -54,5 +54,9 @@ diimplementasikan, termasuk preview/ganti/hapus, thumbnail master, gambar POS,
 permission, audit, rollback file dan migration additive lokal. Barcode tetap
 per satuan, dengan scan dus/harga level terverifikasi. Bukti pada
 [work item gambar](../../modules/Inventory/Items/work-items/item-image/README.md).
-Capability berikutnya adalah keranjang tertahan; buku kas/shift dan tahap 2/3
-belum diimplementasikan. Tidak menganggap seluruh roadmap selesai.
+Keranjang tertahan juga selesai: tahan/panggil/update/batal milik kasir sendiri,
+tanpa reservasi, reprice/recheck current dan checkout sumber atomik anti-double-pay.
+Migration lokal additive batch30 dan QA desktop/tablet serta MySQL concurrency
+terverifikasi; [bukti](../../modules/Sales/POS/work-items/held-carts/tasks.md).
+Berikutnya buku kas/shift, menunggu keputusan saldo/laci/modal/selisih. Tahap2/3
+belum diimplementasikan; seluruh roadmap belum dianggap selesai.

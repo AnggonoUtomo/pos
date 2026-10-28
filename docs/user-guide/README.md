@@ -10,8 +10,9 @@ fitur yang tersedia, bukan daftar fitur yang akan dibangun.
 3. Pelajari [pembagian role dan akses](03-role-dan-akses.md).
 4. Gunakan lembar tugas role masing-masing pada tabel berikut.
 
-Panduan tambahan: [Gambar dan barcode barang](GAMBAR-BARANG.md). Tambahan ini
-terpisah dari PDF global versi sebelumnya.
+Panduan tambahan: [Gambar dan barcode barang](GAMBAR-BARANG.md) dan
+[Keranjang tertahan kasir](KERANJANG-TERTAHAN.md). Tambahan ini terpisah dari
+PDF global/per-role versi sebelumnya; PDF tersebut belum memuat kedua tambahan.
 
 [Unduh buku global PDF](../../output/pdf/user-guide/panduan-global-pos.pdf).
 PDF global berisi alur global, panduan modul, serta role/akses. Gunakan daftar

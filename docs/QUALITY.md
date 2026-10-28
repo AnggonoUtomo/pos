@@ -972,6 +972,27 @@ filter snapshot dan privacy. Pastikan SELECT DATABASE() adalah nama random QA
 sebelum migrate; URL koneksi tidak boleh menimpa database disposable.
 Bukti aktual pada [checklist refund](work-items/sale-return-refund/tasks.md).
 
+## QA Keranjang Tertahan
+
+- Focused `HeldCartTest` + `PosCheckoutTest`: ownership juga untuk super-system,
+  permission, validation, no-ledger hold/cancel, reprice, optimistic version,
+  replay dan rollback audit/stock/payment.
+- `php scripts/qa/held-carts-mysql.php`: database random `pos_held_qa_*` terpisah,
+  migration native ULID/FK, dua checkout warehouse/key berbeda dibuktikan
+  menunggu held row yang sama di performance_schema. Tepat satu invoice,
+  stock issue dan receipt; worker lain ditolak dan replay pemenang aman.
+  Membutuhkan akses create/drop database QA dan baca performance_schema; tidak
+  pernah menjalankan reset/seeder pada database toko. DB QA dihapus di finally.
+- `node scripts/qa/held-carts-browser.mjs` dengan QA_PLAYWRIGHT_MODULE existing:
+  Chrome headless, SQLite/session/storage/server loopback terpisah, fixture
+  credential acak via stdin. Tahan/panggil/edit/batal/reload/reprice, dua tab,
+  recovery pembayaran, screenshot/framing desktop1440 dan tablet1024.
+  `QA_HELD_FOCUS=recovery` membatasi rerun ke recovery/update/cancel jika core
+  sudah lulus pada source runtime yang sama; jangan menafsirkannya full run.
+- Coba discovery Chrome DevTools MCP dahulu. Jika tidak tersedia, catat BLOCKED
+  beserta fallback browser; jangan menyebutnya DevTools PASS. Bukti aktual ada
+  pada [checklist](modules/Sales/POS/work-items/held-carts/tasks.md).
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

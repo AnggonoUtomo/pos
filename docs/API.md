@@ -354,6 +354,43 @@ Finance. UI multi-payment/recovery/receipt memakai endpoint ini sejak Increment 
 Retry pending mempertahankan key/payload; recovery browser bukan offline queue. Detail
 [specification POS](modules/Sales/POS/specification.md).
 
+## Keranjang Tertahan POS
+
+Semua endpoint session web/auth/CSRF, permission `sales.pos.invoices.create`.
+Ownership selalu actor session sendiri, termasuk super-system; tidak menerima
+actor/user filter. Draft tidak mereservasi stok, menambah ledger atau invoice.
+
+| Method | URL | Nama |
+| --- | --- | --- |
+| GET | /pos/held-carts?page=1 | pos.held-carts.index |
+| GET | /pos/held-carts/{id} | pos.held-carts.show |
+| POST | /pos/held-carts/{id} | pos.held-carts.store |
+| POST | /pos/held-carts/{id}/cancel | pos.held-carts.cancel |
+
+Index paginasi25 berisi id/version/label, snapshot nama gudang/pelanggan, jumlah
+baris dan updated_at; hanya draft belum dibayar/batal. ID ULID dipilih client
+sekali untuk save attempt. Store menerima version0 untuk baru atau versi terbaru
+untuk update, label opsional max80, warehouse_id/customer_id, lines1..100 unik
+item_id+unit_id dengan quantity string canonical positif scale6, serta pricing
+diskon/pajak existing. Tidak menerima harga, stok, total atau actor bebas.
+Respons `{id,version,label}`. Retry payload canonical sama idempotent; stale
+payload berbeda422. ID kasir lain tidak dapat dipakai untuk overwrite.
+
+Show mengembalikan source, cart, quote nullable dan errors. Harga, status dan
+stok dibaca ulang; baris invalid tidak dibuang diam-diam. Tidak melakukan audit
+mutation saat GET. Cancel menerima version; soft delete audited tanpa restore
+UI. Sumber selesai/batal tidak dapat ditimpa, dipanggil atau dibayar lagi.
+
+Checkout existing menerima optional `held_cart: {id,version}`; create+post tetap
+wajib. Payload lama tanpa field ini tetap kompatibel dengan hash/recovery lama.
+Urutan warehouse lock -> invoice replay -> held row lock -> posting existing.
+Replay key sama tetap mengembalikan invoice asal walau held sudah selesai;
+key berbeda terhadap source tertutup/stale422 field held_cart. Invoice, FIFO,
+payment, audit dan status held selesai dalam satu transaction/rollback.
+Keranjang aktif boleh diedit sesudah dipanggil; versi sumber tetap wajib valid.
+Audit mutation memakai log `sales.pos.held_carts`, event held/updated/cancelled/
+completed, tanpa payload keranjang atau credential.
+
 ## Riwayat Internal POS
 
 GET /sales/invoices (sales.invoices.index) merender Inertia

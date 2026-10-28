@@ -1,6 +1,7 @@
 # Keranjang Tertahan
 
-Status: implementasi. User menyetujui ownership kasir sendiri, persisten di
+Status: implementasi, verifikasi dan aktivasi lokal selesai 28 Oktober 2026;
+delivery Git dicatat pada tasks.md. User menyetujui ownership kasir sendiri, persisten di
 database, tanpa pengalihan/reservasi stok dan tanpa pembayaran ganda dari dua tab.
 
 ## Scope Dan Contract

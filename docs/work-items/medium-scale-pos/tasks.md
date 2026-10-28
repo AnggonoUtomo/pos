@@ -43,7 +43,7 @@
 
 - [x] Tetapkan perilaku ownership/pemanggilan dan dokumentasikan work item.
   - Own-only, tanpa reservasi/pengalihan; [detail](../../modules/Sales/POS/work-items/held-carts/README.md).
-- [ ] Selesaikan alur tahan/panggil/batalkan, validasi ulang harga/stok, UI,
+- [x] Selesaikan alur tahan/panggil/batalkan, validasi ulang harga/stok, UI,
   permission, audit, test terfokus dan panduan.
 
 ## Increment 4: Buku Kas Dan Shift
@@ -95,4 +95,6 @@
   file LSP user. Belum push karena work item pengembangan masih berjalan.
 - Increment gambar/barcode selesai: detail gate dan aktivasi pada work item
   gambar. Commit/push capability mengikuti checklist-nya, bukan klaim tiga
-  tahap skala menengah sudah selesai. Berikutnya: keranjang tertahan.
+  tahap skala menengah sudah selesai.
+- Keranjang tertahan selesai; bukti verifikasi/aktivasi/delivery di work item
+  Sales/POS terkait. Berikutnya buku kas/shift setelah aturan bisnis disepakati.

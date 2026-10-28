@@ -16,6 +16,15 @@ toko melalui CompanyProfile. Retur/refund memakai snapshot nilai bersih. Tidak
 ada reservasi, piutang, pajak inklusif/multi-tarif, barang gratis atau closing shift.
 Theme existing dipertahankan; desktop/tablet, bukan mobile.
 
+Keranjang tertahan tersedia melalui Tahan/F6 dan Tertahan/F7. Draft disimpan
+di database, hanya kasir pembuat yang boleh mengaksesnya (termasuk invariant
+ownership bagi super-system). Tidak mereservasi stok atau mencatat uang.
+Pemanggilan memeriksa harga/master/stok terkini; sumber ID/version disertakan
+pada checkout dan diselesaikan atomik bersama invoice/FIFO/pembayaran agar dua
+tab tidak membayar sumber yang sama. Tidak ada pengalihan, TTL, atau restore
+draft yang dibatalkan. Detail: [work item](work-items/held-carts/README.md) dan
+[panduan kasir](../../../user-guide/KERANJANG-TERTAHAN.md).
+
 Published SalesReportReader dikonsumsi Reporting/OperationalReports untuk
 ringkasan readonly. Detail MVP/QA pada [checklist](../../../work-items/mvp-ready/tasks.md)
 dan ADR-019; identitas struk lama tidak ditulis ulang.
