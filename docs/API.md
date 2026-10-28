@@ -354,6 +354,31 @@ Finance. UI multi-payment/recovery/receipt memakai endpoint ini sejak Increment 
 Retry pending mempertahankan key/payload; recovery browser bukan offline queue. Detail
 [specification POS](modules/Sales/POS/specification.md).
 
+## Barcode Scanner
+
+GET `/pos/scan` (`pos.scan`) memakai auth web dan permission
+`sales.pos.invoices.create`. Input warehouse_id/customer_id ULID dan code string
+ASCII printable maksimal64, termasuk leading zero. Context/header harus aktif.
+Respons `{item: PosItem, unit_id}` berisi unit jual aktif yang cocok, harga level,
+stok gudang dan metadata gambar melalui contract publik, tanpa HPP/credential.
+Tidak menambah invoice, payment, stok atau audit mutation.
+
+Lookup exact case-insensitive, tidak memakai LIKE/pagination/debounce. Barcode
+prioritas atas SKU; tombstone/non-sale/nonaktif tidak dialihkan diam-diam ke SKU
+barang lain. SKU exact menjadi fallback hanya jika kode bukan barcode terdaftar.
+Tidak ditemukan/tidak tersedia422. Checkout/quote tetap revalidasi authority.
+
+Items `SaleItemCatalog.scan(string): ?SaleScanData` memiliki consumer SaleCatalog.
+SaleScanData memuat SaleItemData+unitId. PurchaseWorkspace menambah barcode nullable
+di options.items[].units[] dari ItemStockLookup existing, hanya satuan beli aktif.
+Tidak ada concrete dependency lintas module baru.
+
+Generate barcode internal adalah isian client eksplisit pada field kosong,
+disimpan melalui CRUD Items existing: unique constraint, permission dan audit
+tidak dilewati. Tidak ada endpoint bulk generate/overwrite/grant. Print label
+readonly dari data tersimpan untuk inventory.view; encoding JsBarcode3.12.3,
+Code128, bukan identitas GS1/EAN. Kode invalid/tidak muat tidak dicetak.
+
 ## Keranjang Tertahan POS
 
 Semua endpoint session web/auth/CSRF, permission `sales.pos.invoices.create`.

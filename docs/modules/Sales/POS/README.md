@@ -60,3 +60,9 @@ Sales/Returns untuk draft retur: cari nomor maksimal25 dan snapshot invoice/line
 minimal tanpa HPP, payment, actor, atau request hash. Source merupakan posted
 immutable, tidak bergantung master aktif. Draft dimiliki Returns, tidak menambah
 endpoint koreksi invoice atau mutation Stock/Finance pada POS.
+
+Exact scan `/pos/scan` memakai create, contract SaleItemCatalog.scan dan DTO
+SaleScanData. Input scanner + Enter diproses antrean terbatas tanpa debounce;
+scan sama menambah qty satuan, aggregate stock lintas satuan diperiksa, dan
+checkout/hold menunggu scan. Barang/rasio/harga/stok tetap current saat quote/post.
+Detail [barcode scanner](../../../work-items/barcode-scanner/README.md).

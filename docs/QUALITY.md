@@ -993,6 +993,25 @@ Bukti aktual pada [checklist refund](work-items/sale-return-refund/tasks.md).
   beserta fallback browser; jangan menyebutnya DevTools PASS. Bukti aktual ada
   pada [checklist](modules/Sales/POS/work-items/held-carts/tasks.md).
 
+## QA Barcode Scanner
+
+`node scripts/qa/barcode-unit.mjs` menguji encoding JsBarcode/quiet zone, kode
+internal string20 digit, leading zero dan decimal BigInt, unit/cost pembelian,
+agregasi stok POS. Node24 registerHooks hanya pada harness agar import TS lokal
+resolved; bukan loader runtime aplikasi atau dependency baru.
+
+`node scripts/qa/barcode-browser.mjs` dengan QA_PLAYWRIGHT_MODULE existing:
+Chrome terpasang, SQLite/session/storage/server loopback disposable. Fixture
+barcode_demo hanya untuk testing terpisah, tidak mengubah DB toko. Covers generate/
+save/OEM, pixel batang hitam/putih, print terisolasi, scan burst/unknown/qty/stok,
+dan draft pembelian/harga/satuan/no-ledger. `QA_BARCODE_FOCUS=purchase` mengulang
+hanya pembelian setelah koreksi lokal, bukan klaim full rerun.
+
+Artifact label-visual.html hanya berisi label barang fiktif + CSS, tanpa auth/CSRF/
+session; dapat diperiksa memakai Chrome DevTools MCP pada isolated context.
+QA interaksi penuh tetap di harness Chrome. Screenshot/sizes/console diverifikasi;
+uji optik scanner dan printer fisik tetap UAT, tidak diklaim dari screenshot saja.
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

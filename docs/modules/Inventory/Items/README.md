@@ -77,3 +77,9 @@ SaleItemCatalog menyediakan katalog penjualan untuk Sales/POS: metadata barang
 dan unit jual aktif, search/barcode paginated serta batch lookup. Adapter Items
 memakai UnitLookup batch, bukan model privat Units; tanpa stok/HPP/pricing di
 DTO ini. Contract lengkap pada docs/API.md.
+
+Barcode scanner/label: [work item](../../../work-items/barcode-scanner/README.md).
+SaleItemCatalog.scan menerbitkan SaleScanData (SaleItemData + unitId), exact
+barcode prioritas atas SKU, termasuk reservasi tombstone dan status/flag aktif.
+Generate hanya mengisi field kosong; save memakai validasi/audit existing.
+Label Code128 dari data tersimpan memakai JsBarcode, tanpa bulk overwrite.

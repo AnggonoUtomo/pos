@@ -58,5 +58,8 @@ Keranjang tertahan juga selesai: tahan/panggil/update/batal milik kasir sendiri,
 tanpa reservasi, reprice/recheck current dan checkout sumber atomik anti-double-pay.
 Migration lokal additive batch30 dan QA desktop/tablet serta MySQL concurrency
 terverifikasi; [bukti](../../modules/Sales/POS/work-items/held-carts/tasks.md).
+Tambahan barcode scanner/label ditangani pada [work item](../barcode-scanner/README.md):
+barcode pabrikan/internal, label Code128 dan scan pembelian/POS, tanpa mengubah
+aturan posting stok. UAT printer/scanner fisik tetap pending.
 Berikutnya buku kas/shift, menunggu keputusan saldo/laci/modal/selisih. Tahap2/3
 belum diimplementasikan; seluruh roadmap belum dianggap selesai.

@@ -31,7 +31,7 @@ barcode, satuan atau nomor serial perangkat.
 ## Kasir: Mengenali Dan Memindai Barang
 
 1. Pilih gudang serta pelanggan pada POS.
-2. Cari nama/SKU atau pindai barcode melalui kolom **Cari barang**.
+2. Cari nama/SKU melalui **Cari barang**, atau fokus **Scan barcode** (Alt+B).
 3. Periksa foto, nama, satuan dan harga. Scanner keyboard yang mengirim Enter
    memakai alur barcode existing; scanner kamera belum ditambahkan.
 4. Periksa keranjang dan lanjutkan pembayaran seperti biasa.
@@ -50,3 +50,5 @@ Untuk pemulihan lengkap, salin juga direktori gambar privat beserta backup
 database yang sesuai. Jangan meletakkan gambar privat di folder unduhan publik.
 
 Panduan tambahan ini belum digabungkan ke PDF global versi sebelumnya.
+Generate internal, cetak label dan scanner pembelian/POS dijelaskan pada
+[Barcode scanner](BARCODE-SCANNER.md).

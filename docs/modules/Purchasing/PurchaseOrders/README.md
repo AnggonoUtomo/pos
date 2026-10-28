@@ -42,3 +42,9 @@ bukan mutation source PO. QA: [Quality](../../../QUALITY.md#qa-pembayaran-pembel
 
 PurchaseReportReader menerbitkan ringkasan posted readonly untuk Reporting.
 Checklist MVP: [empat paket](../../../work-items/mvp-ready/tasks.md).
+
+Draft mendukung [barcode scanner](../../../work-items/barcode-scanner/README.md):
+metadata dari ItemStockLookup, Alt+B/Enter, pilih barang/satuan beli dan qty1,
+scan ulang satuan sama menambah1 tanpa mengubah harga. Beda satuan pada barang
+yang sudah ada ditolak (invariant satu barang satu baris tetap). Enter scanner
+tidak submit; biaya harus diisi dan stok hanya bertambah setelah posting.

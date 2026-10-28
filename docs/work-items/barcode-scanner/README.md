@@ -1,6 +1,7 @@
 # Barcode Scanner Dan Label Barang
 
-Status: implementasi. User menyetujui barcode pabrikan + buat/cetak label internal,
+Status: implementasi/QA dan aktivasi route selesai 28 Oktober 2026; delivery Git
+mengikuti tasks.md. User menyetujui barcode pabrikan + buat/cetak label internal,
 scanner USB/Bluetooth mode keyboard, serta instalasi JsBarcode untuk Code128.
 
 ## Scope
