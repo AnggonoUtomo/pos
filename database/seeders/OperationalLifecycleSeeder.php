@@ -43,7 +43,7 @@ class OperationalLifecycleSeeder extends Seeder
     public const BUSINESS_TABLES = [
         'customer_levels', 'customers', 'fifo_consumptions', 'fifo_layers', 'item_prices', 'item_units', 'items',
         'payment_accounts', 'payment_disbursement_lines', 'payment_disbursements', 'payment_methods',
-        'payment_receipts', 'payment_records', 'payment_refund_lines', 'payment_refunds',
+        'payment_receipts', 'payment_records', 'payment_refund_lines', 'payment_refunds', 'pos_held_carts',
         'purchase_order_lines', 'purchase_orders', 'purchase_refund_receipt_lines', 'purchase_refund_receipts',
         'purchase_return_lines', 'purchase_return_refund_allocations', 'purchase_return_refund_scopes',
         'purchase_return_settlements', 'purchase_returns', 'sales_invoice_lines', 'sales_invoices',
