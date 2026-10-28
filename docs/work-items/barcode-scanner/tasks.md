@@ -38,7 +38,7 @@
 - [x] DevTools discovery atau BLOCKED+fallback Chrome; screenshot diperiksa.
 - [x] Route cache/status; data toko tidak diubah; tanpa migration baru.
 - [x] Panduan operator/API/module/roadmap dan hasil command diperbarui.
-- [ ] Commit/push scope eksplisit, verify remote dan divergence.
+- [x] Commit/push scope eksplisit, verify remote dan divergence.
 
 ## Bukti
 
@@ -86,3 +86,8 @@
   reserved barcode, print isolation dan cleanup disposable tidak memiliki blocker.
 - Save point backend/package `6c1a7b1`; label `e3f1c0e`; scanner+QA `82042c9`.
   Seluruh commit memakai path eksplisit/--only; file LSP user tidak disertakan.
+- Dokumen/aktivasi `986fa2b` dipush ke origin/main. ls-remote cocok dan divergence
+  HEAD...origin/main `0 0`; worktree tersisa hanya file LSP user. Checklist
+  penutupan ini disimpan sebagai commit terpisah tanpa perubahan runtime.
+- Sesudah aktivasi: items6/invoices3/orders2/payment_receipts3/roles8/users2,
+  sama dengan baseline. Server/browser QA ditutup, tidak ada runner OS dipasang.
