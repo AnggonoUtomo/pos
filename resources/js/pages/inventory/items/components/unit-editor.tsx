@@ -4,7 +4,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, ScanBarcode, Trash2 } from 'lucide-react';
+import { internalBarcode } from '../lib/barcode';
 import { baseRow, type ItemUnitInput, type UnitOption } from '../types';
 
 export function UnitEditor({
@@ -104,14 +105,34 @@ export function UnitEditor({
                                         <InputError message={errors[`units.${index}.conversion_ratio`]} />
                                     </td>
                                     <td className="min-w-40 px-3 py-3 align-top">
-                                        <Input
-                                            aria-label={`Barcode baris ${index + 1}`}
-                                            value={unit.barcode ?? ''}
-                                            disabled={disabled}
-                                            maxLength={64}
-                                            onChange={(event) => update(index, { barcode: event.target.value })}
-                                            aria-invalid={Boolean(errors[`units.${index}.barcode`])}
-                                        />
+                                        <div className="flex items-center gap-1">
+                                            <Input
+                                                aria-label={`Barcode baris ${index + 1}`}
+                                                value={unit.barcode ?? ''}
+                                                disabled={disabled}
+                                                maxLength={64}
+                                                onChange={(event) => update(index, { barcode: event.target.value })}
+                                                aria-invalid={Boolean(errors[`units.${index}.barcode`])}
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey) event.preventDefault();
+                                                }}
+                                            />
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="icon"
+                                                        aria-label={`Buat barcode baris ${index + 1}`}
+                                                        disabled={disabled || Boolean(unit.barcode)}
+                                                        onClick={() => update(index, { barcode: internalBarcode() })}
+                                                    >
+                                                        <ScanBarcode className="text-sky-600 dark:text-sky-300" />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Buat barcode internal</TooltipContent>
+                                            </Tooltip>
+                                        </div>
                                         <InputError message={errors[`units.${index}.barcode`]} />
                                     </td>
                                     <td className="px-3 py-5 text-center align-top">

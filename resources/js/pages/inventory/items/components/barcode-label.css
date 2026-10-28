@@ -1,0 +1,65 @@
+.barcode-print {
+    display: none;
+}
+.barcode-label {
+    box-sizing: border-box;
+    padding: 3mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1mm;
+    color: #000;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    line-height: 1.2;
+}
+.barcode-label-name {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 11px;
+}
+.barcode-label-unit {
+    font-size: 10px;
+}
+.barcode-label-code {
+    font-family: monospace;
+    font-size: 9px;
+    white-space: nowrap;
+}
+.barcode-label svg {
+    flex-shrink: 0;
+    max-width: none;
+}
+@media print {
+    html body:has(> .barcode-print) {
+        overflow: visible !important;
+        height: auto !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+    body:has(> .barcode-print) > :not(.barcode-print) {
+        display: none !important;
+    }
+    body > .barcode-print {
+        display: grid !important;
+        gap: 2mm;
+    }
+    body > .barcode-print-single {
+        display: block !important;
+    }
+    .barcode-print-cell {
+        break-inside: avoid;
+    }
+    .barcode-print-single .barcode-print-cell {
+        break-after: page;
+    }
+    .barcode-print-single .barcode-print-cell:last-child {
+        break-after: auto;
+    }
+    .barcode-label {
+        print-color-adjust: exact;
+    }
+}
