@@ -39,7 +39,7 @@
 - [x] DevTools discovery atau BLOCKED+fallback; screenshot diperiksa.
 - [x] Migration MySQL disposable, concurrency dan aktivasi additive lokal.
 - [x] Panduan/API, checklist dan status roadmap berdasarkan hasil nyata.
-- [ ] Commit/push scope tanpa LSP; local/remote diverifikasi.
+- [x] Commit/push scope tanpa LSP; local/remote diverifikasi.
 
 ## Bukti
 
@@ -90,3 +90,6 @@
 - Commit save point: backend `1d41eab`, kompatibilitas daftar data operasional
   `48f25aa`, UI/recovery + QA harness `4b06e91`. Scope commit diperiksa dan
   file LSP staged milik user tetap di luar commit.
+- Delivery: dokumentasi `0a4fae0` dipush ke origin/main; ls-remote cocok dan
+  divergence HEAD...origin/main `0 0`. Worktree tersisa hanya file LSP existing
+  staged/untracked. Commit checklist penutupan menyusul tanpa perubahan runtime.
