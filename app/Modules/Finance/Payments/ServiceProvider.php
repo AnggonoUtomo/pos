@@ -6,6 +6,8 @@ use App\Modules\Finance\Payments\Application\Actions\RecordPurchasePayment;
 use App\Modules\Finance\Payments\Application\Actions\RecordPurchaseRefundReceipt;
 use App\Modules\Finance\Payments\Application\Actions\RecordSalePayment;
 use App\Modules\Finance\Payments\Application\Actions\RecordSaleRefundPayment;
+use App\Modules\Finance\Payments\Application\Contracts\CashbookReader;
+use App\Modules\Finance\Payments\Application\Contracts\CashbookRepository;
 use App\Modules\Finance\Payments\Application\Contracts\DisbursementRepository;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentHistoryReader;
 use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
@@ -20,6 +22,8 @@ use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
 use App\Modules\Finance\Payments\Application\Contracts\SaleRefundPaymentMethods;
 use App\Modules\Finance\Payments\Application\Contracts\SaleRefundPaymentWriter;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseCashbookReader;
+use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseCashbookRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabasePaymentHistoryReader;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabasePurchasePaymentProofLookup;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories\DatabaseSalePaymentMethods;
@@ -33,6 +37,8 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(CashbookRepository::class, DatabaseCashbookRepository::class);
+        $this->app->bind(CashbookReader::class, DatabaseCashbookReader::class);
         $this->app->bind(PurchaseRefundReceiptWriter::class, RecordPurchaseRefundReceipt::class);
         $this->app->bind(PurchaseRefundReceiptRepository::class, EloquentPurchaseRefundReceiptRepository::class);
         $this->app->bind(PurchaseRefundReceiptMethods::class, DatabaseSalePaymentMethods::class);

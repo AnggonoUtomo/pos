@@ -33,6 +33,7 @@ class EloquentPaymentsRepository implements PaymentsRepository
     public function isAccountReferenced(string $id): bool
     {
         return PaymentMethod::withTrashed()->where('payment_account_id', $id)->lockForUpdate()->first(['id']) !== null
+            || (Schema::hasTable('cashbook_openings') && DB::table('cashbook_openings')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null)
             || DB::table('payment_records')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null
             || DB::table('payment_disbursement_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null
             || (Schema::hasTable('payment_refund_lines') && DB::table('payment_refund_lines')->where('account_id', $id)->lockForUpdate()->first(['id']) !== null)

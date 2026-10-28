@@ -1,11 +1,20 @@
 <?php
 
+use App\Modules\Finance\Payments\Presentation\Controllers\CashbookController;
 use App\Modules\Finance\Payments\Presentation\Controllers\PaymentAccountController;
 use App\Modules\Finance\Payments\Presentation\Controllers\PaymentHistoryController;
 use App\Modules\Finance\Payments\Presentation\Controllers\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web'])->group(function () {
+    Route::middleware(['auth', 'verified'])->prefix('finance/cashbook')->name('finance.cashbook.')->group(function (): void {
+        $controller = CashbookController::class;
+        Route::get('/', [$controller, 'index'])->name('index');
+        Route::get('data', [$controller, 'data'])->name('data');
+        Route::post('openings', [$controller, 'open'])->name('open');
+        Route::post('entries', [$controller, 'store'])->name('store');
+        Route::post('entries/{id}/reverse', [$controller, 'reverse'])->whereUlid('id')->name('reverse');
+    });
     Route::middleware(['auth', 'verified'])->prefix('finance/payments/history')->name('finance.payments.history.')->group(function (): void {
         $controller = PaymentHistoryController::class;
         Route::get('data', [$controller, 'data'])->name('data');
