@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { BarcodeInput } from '@/components/shared/barcode-input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -7,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatDecimalInput as format, parseDecimalInput as parse } from '@/lib/decimal-input';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
-import type { FormEvent } from 'react';
+import { useRef, type FormEvent } from 'react';
 import { toast } from 'sonner';
+import { scanPurchase } from '../lib/barcode';
 import { previewPurchaseLine, sumPurchaseValues } from '../lib/purchase-preview';
 import type { PurchaseOptions, PurchaseRow } from '../types';
 
@@ -38,6 +40,19 @@ export function PurchaseFormDialog({
     });
     const errors = form.errors as Record<string, string>;
     const disabled = readOnly || form.processing;
+    const lineState = useRef(form.data.lines);
+    lineState.current = form.data.lines;
+    const scan = (code: string) => {
+        if (disabled) return;
+        try {
+            const next = scanPurchase(lineState.current, options.items, code);
+            lineState.current = next;
+            form.setData('lines', next);
+            toast.success('Barang masuk ke draft pembelian.');
+        } catch (failure) {
+            toast.error(failure instanceof Error ? failure.message : 'Scan belum berhasil.');
+        }
+    };
     const change = (index: number, patch: Partial<ReturnType<typeof empty>>) =>
         form.setData((data) => ({ ...data, lines: data.lines.map((line, i) => (i === index ? { ...line, ...patch } : line)) }));
     const previews = form.data.lines.map((line) => {
@@ -130,12 +145,17 @@ export function PurchaseFormDialog({
                     onSubmit={submit}
                     className="min-w-0 space-y-4"
                     onKeyDown={(e) => {
+                        if (e.altKey && e.key.toLowerCase() === 'b' && !readOnly) {
+                            e.preventDefault();
+                            document.getElementById('purchase-barcode')?.focus();
+                        }
                         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !readOnly) {
                             e.preventDefault();
                             e.currentTarget.requestSubmit();
                         }
                     }}
                 >
+                    {!readOnly && <BarcodeInput id="purchase-barcode" disabled={disabled} onScan={scan} />}
                     <div className="grid gap-4 sm:grid-cols-2">
                         {(['supplier', 'warehouse'] as const).map((kind) => {
                             const label = kind === 'supplier' ? 'Supplier' : 'Gudang';
@@ -229,6 +249,7 @@ export function PurchaseFormDialog({
                                                     value={line.item_id}
                                                     disabled={disabled}
                                                     onValueChange={(id) => {
+                                                        if (!id) return;
                                                         const next = options.items.find((row) => row.id === id);
                                                         change(index, { item_id: id, unit_id: next?.units[0]?.unit_id ?? '' });
                                                     }}
@@ -262,7 +283,9 @@ export function PurchaseFormDialog({
                                                 <Select
                                                     value={line.unit_id}
                                                     disabled={disabled || !item}
-                                                    onValueChange={(unit_id) => change(index, { unit_id })}
+                                                    onValueChange={(unit_id) => {
+                                                        if (unit_id) change(index, { unit_id });
+                                                    }}
                                                 >
                                                     <SelectTrigger id={`purchase-unit-${index}`} className="w-full">
                                                         <SelectValue placeholder="Pilih satuan" />

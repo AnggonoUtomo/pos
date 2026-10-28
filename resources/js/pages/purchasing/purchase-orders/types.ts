@@ -56,7 +56,13 @@ export interface PurchaseOptions {
     suppliers: Choice[];
     warehouses: Choice[];
     units: Choice[];
-    items: { id: string; sku: string; name: string; base_unit_id: string; units: { unit_id: string; conversion_ratio: string }[] }[];
+    items: {
+        id: string;
+        sku: string;
+        name: string;
+        base_unit_id: string;
+        units: { unit_id: string; conversion_ratio: string; barcode: string | null }[];
+    }[];
     paymentMethods: (Choice & { type: string })[];
 }
 export interface PurchasePageProps {

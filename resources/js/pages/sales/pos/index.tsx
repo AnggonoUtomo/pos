@@ -1,5 +1,6 @@
 import AppLogoIcon from '@/components/app-logo-icon';
 import { CommandPalette } from '@/components/command-palette';
+import { BarcodeInput } from '@/components/shared/barcode-input';
 import { ThemeMenu } from '@/components/theme-menu';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -19,6 +20,8 @@ import { SaleContextBar } from './components/sale-context-bar';
 import { useCatalog } from './hooks/use-catalog';
 import { useHeldCarts } from './hooks/use-held-carts';
 import { usePaidCheckout } from './hooks/use-paid-checkout';
+import { usePosScanner } from './hooks/use-pos-scanner';
+import { scanCart } from './lib/barcode';
 import { checkoutKey } from './lib/checkout-key';
 import { localDecimal, parsePricingAmount, parseQuantity } from './lib/decimal';
 import { parsePaymentAmount } from './lib/payment';
@@ -43,6 +46,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [page, setPage] = useState(1);
     const [catalogVersion, setCatalogVersion] = useState(0);
     const [lines, setLines] = useState<CartLine[]>([]);
+    const lineState = useRef(lines);
+    lineState.current = lines;
     const [heldSource, setHeldSource] = useState<HeldCartRef | null>(null);
     const [quote, setQuote] = useState<CartQuote | null>(null);
     const [pricing, setPricing] = useState<InvoicePricing>({ discount_type: 'fixed', discount_value: '0', tax_rate: '0' });
@@ -97,6 +102,12 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     );
     const checkout = usePaidCheckout(user?.id, canPost, recovered, posted, rejected);
     const checkoutLocked = Boolean(checkout.pending) || checkout.submitting || checkout.blocked || !checkout.ready;
+    const scanner = usePosScanner(warehouseId, customerId, !checkoutLocked && !busy && !paymentOpen, (item, unitId) => {
+        const next = scanCart(lineState.current, item, unitId);
+        lineState.current = next;
+        invalidate();
+        setLines(next);
+    });
     const applyHeld = (data: RecalledCart) => {
         invalidate();
         setWarehouseId(data.cart.warehouse_id);
@@ -116,7 +127,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         setCatalogVersion((value) => value + 1);
     };
     const held = useHeldCarts({
-        enabled: !checkoutLocked && !busy && !paymentOpen,
+        enabled: !checkoutLocked && !busy && !paymentOpen && !scanner.busy,
         hasLines: lines.length > 0,
         source: heldSource,
         draft: () => {
@@ -140,7 +151,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
             if (heldSource?.id === id) posted();
         },
     });
-    const locked = checkoutLocked || held.busy || held.uncertain;
+    const locked = checkoutLocked || held.busy || held.uncertain || scanner.busy;
     const clearPaymentError = checkout.clearError;
     const openPayment = useCallback(() => {
         if (canPost && quote && !busy && !locked) {
@@ -233,6 +244,10 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                 event.preventDefault();
                 document.getElementById('pos-search')?.focus();
             }
+            if (event.altKey && event.key.toLowerCase() === 'b') {
+                event.preventDefault();
+                document.getElementById('pos-barcode')?.focus();
+            }
             if ((event.ctrlKey || event.metaKey) && event.key === 'Enter' && !busy) {
                 event.preventDefault();
                 void check();
@@ -272,19 +287,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         setLines([...lines, { item, unitId, quantity: '1' }]);
     };
     const barcode = () => {
-        if (loading) return;
-        const text = query.trim().toLowerCase();
-        if (!text) return;
-        for (const item of result?.items ?? []) {
-            const unit =
-                item.units.find((unit) => unit.barcode?.toLowerCase() === text) ??
-                (item.sku.toLowerCase() === text ? (item.units.find((unit) => unit.id === item.base_unit_id) ?? item.units[0]) : undefined);
-            if (unit?.price && /[1-9]/.test(item.stock)) {
-                add(item, unit.id);
-                return;
-            }
-        }
-        toast.error('Barcode atau SKU belum tersedia untuk penjualan.');
+        scanner.enqueue(query);
     };
     const changeUnit = (index: number, unitId: string) => {
         if (locked) return;
@@ -366,6 +369,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     description={checkout.pending ? 'Pembayaran belum terkonfirmasi' : 'Belum diposting'}
                     shortcuts={[
                         { label: 'Cari barang', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
+                        { label: 'Scan barcode', description: 'Fokus scanner', keys: ['Alt', 'B'] },
+                        { label: 'Masukkan scan', description: 'Pada field barcode', keys: ['Enter'] },
                         { label: 'Tahan keranjang', description: 'Simpan keranjang kasir', keys: ['F6'] },
                         { label: 'Keranjang tertahan', description: 'Panggil keranjang kasir', keys: ['F7'] },
                         { label: 'Periksa keranjang', description: 'Validasi stok dan harga', keys: ['Ctrl', 'Enter'] },
@@ -385,6 +390,16 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                         {checkout.error}
                     </p>
                 )}
+                <div className="shrink-0 border-b border-[var(--app-border)] px-5 py-2">
+                    <div className="max-w-md">
+                        <BarcodeInput
+                            id="pos-barcode"
+                            disabled={!ready || checkoutLocked || busy || paymentOpen || held.busy || held.uncertain}
+                            busy={scanner.busy}
+                            onScan={scanner.enqueue}
+                        />
+                    </div>
+                </div>
                 <fieldset disabled={locked} className="contents">
                     <SaleContextBar
                         warehouses={warehouses}

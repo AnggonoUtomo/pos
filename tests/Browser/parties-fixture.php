@@ -8,6 +8,7 @@ use App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder;
 use App\Modules\Inventory\Stock\Database\Seeders\StockDemoSeeder;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
 use App\Modules\Inventory\Warehouses\Database\Seeders\WarehousesDemoSeeder;
+use App\Modules\Purchasing\Suppliers\Database\Seeders\SuppliersDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesAccessSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
@@ -35,6 +36,9 @@ foreach ([PartiesAccessSeeder::class, PartiesDemoSeeder::class, ItemsAccessSeede
     app($seeder)->run();
 }
 if (($input['inventory_demo'] ?? false) === true) {
+    if (($input['barcode_demo'] ?? false) === true) {
+        app(SuppliersDemoSeeder::class)->run();
+    }
     foreach ([WarehousesDemoSeeder::class, ItemsDemoSeeder::class, StockAccessSeeder::class, StockDemoSeeder::class] as $seeder) {
         app($seeder)->run();
     }

@@ -70,6 +70,8 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                 description={`${records.meta.total} dokumen ${filters.trashed ? 'terhapus' : 'tersedia'}`}
                 shortcuts={[
                     { label: 'Cari', description: 'Fokus pencarian', keys: ['Alt', 'F'] },
+                    { label: 'Scan barcode', description: 'Pada form draft', keys: ['Alt', 'B'], disabled: !canManage },
+                    { label: 'Masukkan scan', description: 'Pada field barcode', keys: ['Enter'], disabled: !canManage },
                     {
                         label: 'Tambah',
                         description: 'Tambah draft pembelian',
