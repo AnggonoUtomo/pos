@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import ts from 'typescript';
+const source = readFileSync('resources/js/pages/finance/payments/cashbook/lib/money.ts', 'utf8');
+const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText;
+const { money, parseMoney } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+assert.equal(money('-0.123456'), 'Rp -0,123456');
+assert.equal(money('9007199254740993.123456'), 'Rp 9.007.199.254.740.993,123456');
+assert.equal(money('1000.000000'), 'Rp 1.000');
+assert.equal(parseMoney('-1.000,123456'), '-1000.123456');
+for (const value of ['1,1234567', '1.23', '1e6', 'NaN', '1.00.000']) assert.equal(parseMoney(value), null);
+console.log('PASS: format Indonesia, negative fraction and exact large amounts.');

@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Modules\Finance\Payments\Application\Actions\ManageCashbook;
+use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use Database\Seeders\OperationalLifecycleSeeder;
 use Database\Seeders\Support\ReplaceOperationalTrainingOnce;
 use Illuminate\Database\Schema\Blueprint;
@@ -134,6 +136,24 @@ class OperationalLifecycleTest extends TestCase
         try {
             app(ReplaceOperationalTrainingOnce::class)->run(str_repeat('0', 64), $actor->id);
         } finally {
+            $this->assertSame($hash, ReplaceOperationalTrainingOnce::fingerprint());
+        }
+    }
+
+    public function test_cashbook_data_blocks_legacy_replacement_without_being_deleted(): void
+    {
+        $actor = $this->actor();
+        app(PaymentsDemoSeeder::class)->run();
+        $account = DB::table('payment_accounts')->value('id');
+        app(ManageCashbook::class)->open([
+            'account_id' => $account, 'starts_on' => now('Asia/Jakarta')->toDateString(), 'amount' => '100',
+        ], $actor->id);
+        $hash = ReplaceOperationalTrainingOnce::fingerprint();
+        $this->expectException(LogicException::class);
+        try {
+            app(ReplaceOperationalTrainingOnce::class)->run($hash, $actor->id);
+        } finally {
+            $this->assertDatabaseCount('cashbook_openings', 1);
             $this->assertSame($hash, ReplaceOperationalTrainingOnce::fingerprint());
         }
     }

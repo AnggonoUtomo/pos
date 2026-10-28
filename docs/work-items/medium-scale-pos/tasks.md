@@ -48,8 +48,12 @@
 
 ## Increment 4: Buku Kas Dan Shift
 
-- [ ] Sepakati awal saldo, kas/bank, laci, modal dan selisih shift.
-- [ ] Buat work item buku kas dan selesaikan ledger/saldo operasional.
+- [x] Sepakati awal saldo dan kas/bank untuk Buku Kas.
+  - Saldo/tanggal awal per akun; minus hanya peringatan. Laci/modal/selisih
+    shift belum ditetapkan dan bukan scope Buku Kas.
+- [x] Buat work item buku kas dan selesaikan ledger/saldo operasional.
+  - Detail: [Buku Kas](../../modules/Finance/Payments/work-items/cashbook/tasks.md).
+- [ ] Sepakati laci, modal, kepemilikan kas dan selisih shift.
 - [ ] Buat work item shift dan selesaikan buka/tutup/hitung/review.
 - [ ] Verifikasi transaksi/refund/setoran tidak dihitung ganda.
 
@@ -97,4 +101,4 @@
   gambar. Commit/push capability mengikuti checklist-nya, bukan klaim tiga
   tahap skala menengah sudah selesai.
 - Keranjang tertahan selesai; bukti verifikasi/aktivasi/delivery di work item
-  Sales/POS terkait. Berikutnya buku kas/shift setelah aturan bisnis disepakati.
+  Sales/POS terkait. Buku Kas ditangani Payments; shift menunggu aturan bisnis.

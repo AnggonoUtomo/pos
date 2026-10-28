@@ -166,6 +166,14 @@ const commandItems = [
         tone: 'text-fuchsia-600 dark:text-fuchsia-300',
     },
     {
+        title: 'Buku Kas',
+        description: 'Saldo dan mutasi kas/bank',
+        url: '/finance/cashbook',
+        permission: 'finance.cashbook.view',
+        icon: Landmark,
+        tone: 'text-emerald-600 dark:text-emerald-300',
+    },
+    {
         title: 'Kas dan bank',
         description: 'Master akun kas dan bank',
         url: '/finance/payment-accounts',

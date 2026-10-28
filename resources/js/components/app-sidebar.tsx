@@ -159,6 +159,7 @@ const mainNavGroups: NavGroup[] = [
     {
         title: 'Keuangan',
         items: [
+            { title: 'Buku Kas', url: '/finance/cashbook', icon: Landmark, badgeTone: 'emerald', permission: 'finance.cashbook.view' },
             {
                 title: 'Kas dan bank',
                 url: '/finance/payment-accounts',

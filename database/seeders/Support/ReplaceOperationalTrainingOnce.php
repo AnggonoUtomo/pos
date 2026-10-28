@@ -65,6 +65,11 @@ final class ReplaceOperationalTrainingOnce
                 }
                 foreach ($foreignKeys[$table] as $key) {
                     if (! in_array($table, $business, true) && in_array($key['foreign_table'], $business, true)) {
+                        // Preserve the new ledger; only an empty schema may coexist with the legacy training reset.
+                        if (in_array($table, ['cashbook_openings', 'cashbook_entries'], true)
+                            && DB::table($table)->lockForUpdate()->first() === null) {
+                            continue;
+                        }
                         throw new LogicException('Data dilindungi merujuk data bisnis: '.$table);
                     }
                 }

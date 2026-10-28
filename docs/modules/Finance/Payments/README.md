@@ -3,8 +3,26 @@
 Status: Active. Fondasi master selesai/diverifikasi 15 Oktober 2026.
 Memiliki master kas/bank dan metode pembayaran relasional sebagai prasyarat
 pembayaran POS berikutnya. Penerimaan internal penjualan tersedia sejak
-Increment 3 checkout (16 Oktober 2026); belum memiliki running balance.
+Increment 3 checkout (16 Oktober 2026). Saldo berjalan kini tersedia pada Buku Kas.
 UI checkout milik Sales/POS tersedia sejak Increment 5.
+
+## Buku Kas
+
+`/finance/cashbook` menyediakan saldo awal/tanggal mulai satu kali per akun,
+pemasukan/pengeluaran operasional, transfer atomic, pembalik manual satu kali,
+mutasi per akun dan saldo berjalan exact6. Saldo minus hanya peringatan; tidak
+memblokir writer pembayaran/checkout existing. Empat ledger sumber dibaca
+langsung per baris akun, tanpa copy/backfill atau penghitungan ganda.
+Permission `finance.cashbook.view/open/manage/reverse` terpisah; catalog
+additive tanpa auto-grant. Akun beropening dilindungi guard master. Pending
+pengiriman UI disimpan per user/per attempt dan retry idempotent.
+
+Detail [work item](work-items/cashbook/README.md) dan
+[panduan operator](../../../user-guide/BUKU-KAS.md). Tidak ada seeder saldo
+produksi: posisi awal merupakan keputusan administrator. Fixture demo browser
+dan known-balance tests menyediakan latihan disposable tanpa reset data toko.
+Pernyataan scope historis ledger di bawah tidak mengubah bahwa mutasi manual
+dan saldo kini tersedia terpisah melalui Buku Kas.
 
 Satu metode menunjuk satu akun aktif; beberapa metode boleh memakai akun sama.
 Tunai memakai akun cash; Debit/Transfer memakai bank. Akun terpakai, termasuk

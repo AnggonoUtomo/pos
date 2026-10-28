@@ -23,7 +23,11 @@ class CashbookController extends Controller implements HasMiddleware
 
     public function index(CashbookRequest $request, CashbookReader $reader): Response
     {
-        return Inertia::render('finance/payments/cashbook/index', ['records' => $this->records($request, $reader), 'accounts' => $reader->accounts(), 'filters' => $request->validated(), 'today' => now('Asia/Jakarta')->toDateString()]);
+        $accounts = $reader->accounts();
+        $filters = $request->validated();
+        $filters['account_id'] ??= $accounts[0]['id'] ?? null;
+
+        return Inertia::render('finance/payments/cashbook/index', ['records' => $reader->statement($filters['account_id'], $filters['date_from'] ?? null, $filters['date_to'] ?? null, (int) ($filters['page'] ?? 1)), 'accounts' => $accounts, 'filters' => $filters, 'today' => now('Asia/Jakarta')->toDateString()]);
     }
 
     private function records(CashbookRequest $request, CashbookReader $reader): array

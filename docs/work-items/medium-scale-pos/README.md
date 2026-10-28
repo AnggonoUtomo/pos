@@ -61,5 +61,8 @@ terverifikasi; [bukti](../../modules/Sales/POS/work-items/held-carts/tasks.md).
 Tambahan barcode scanner/label ditangani pada [work item](../barcode-scanner/README.md):
 barcode pabrikan/internal, label Code128 dan scan pembelian/POS, tanpa mengubah
 aturan posting stok. UAT printer/scanner fisik tetap pending.
-Berikutnya buku kas/shift, menunggu keputusan saldo/laci/modal/selisih. Tahap2/3
-belum diimplementasikan; seluruh roadmap belum dianggap selesai.
+Buku Kas diselesaikan pada [work item Payments](../../modules/Finance/Payments/work-items/cashbook/README.md):
+saldo awal/cutover per akun, mutasi/transfer/pembalik dan saldo berjalan dari
+ledger existing. Saldo minus hanya peringatan, tidak memblokir pembayaran.
+Berikutnya shift, menunggu keputusan laci/modal/selisih. Tahap2/3 belum
+diimplementasikan; seluruh roadmap belum dianggap selesai.
