@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Sales\POS\Presentation\Controllers\CashierShiftController;
 use App\Modules\Sales\POS\Presentation\Controllers\HeldCartController;
 use App\Modules\Sales\POS\Presentation\Controllers\InvoiceController;
 use App\Modules\Sales\POS\Presentation\Controllers\InvoiceHistoryController;
@@ -8,6 +9,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web'])->group(function () {
     Route::middleware(['web', 'auth'])->group(function (): void {
+        Route::get('/sales/cashier-shifts', [CashierShiftController::class, 'index'])->name('sales.cashier-shifts.index');
+        Route::get('/pos/shifts/current', [CashierShiftController::class, 'current'])->name('pos.shifts.current');
+        Route::get('/pos/shifts/drawers/{id}', [CashierShiftController::class, 'drawer'])->whereUlid('id')->name('pos.shifts.drawer');
+        Route::get('/pos/shifts', [CashierShiftController::class, 'data'])->name('pos.shifts.data');
+        Route::get('/pos/shifts/{id}', [CashierShiftController::class, 'show'])->whereUlid('id')->name('pos.shifts.show');
+        Route::post('/pos/shifts/{id}/open', [CashierShiftController::class, 'open'])->whereUlid('id')->name('pos.shifts.open');
+        Route::post('/pos/shifts/{id}/close', [CashierShiftController::class, 'close'])->whereUlid('id')->name('pos.shifts.close');
+        Route::post('/pos/shifts/{id}/review', [CashierShiftController::class, 'review'])->whereUlid('id')->name('pos.shifts.review');
         Route::get('/sales/invoices', [InvoiceHistoryController::class, 'index'])->name('sales.invoices.index');
         Route::get('/sales/invoices/data', [InvoiceHistoryController::class, 'data'])->name('sales.invoices.data');
         Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
