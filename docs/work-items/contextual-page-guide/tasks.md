@@ -30,9 +30,12 @@ memeriksa mapping Inertia, lazy load, fallback dan propagasi kegagalan loader.
 - [x] Verifikasi form/keranjang tetap utuh, tidak reload/mutasi atau menutupi
   kontrol pembayaran; tidak muncul pada login.
 - [x] Update aturan panduan page baru/dokumentasi, checklist dan commit.
-- [ ] Push paket selesai dan verifikasi remote tanpa membawa file LSP.
+- [x] Push paket selesai dan verifikasi remote tanpa membawa file LSP.
 
 Hasil: typecheck, ESLint, build, coverage/resolver dan checkpoint browser
 desktop/tablet lulus. Detail command, bukti dan fallback MCP pada README.
 Review correctness, keterbacaan, boundary, keamanan dan lazy loading selesai;
 tidak ditemukan blocker tersisa. Panduan tidak menyimpan/mengirim data bisnis.
+Commit konten `8a6096f` dan UI/QA `f1f1c14` sudah dipush ke origin/main;
+remote diperiksa dan divergence 0/0. File LSP user tetap di working tree/index,
+tidak masuk commit pekerjaan.
