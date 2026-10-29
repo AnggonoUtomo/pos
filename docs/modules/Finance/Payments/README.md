@@ -8,6 +8,13 @@ UI checkout milik Sales/POS tersedia sejak Increment 5.
 
 ## Buku Kas
 
+Published `CashDrawerPosition` dan `CashDrawerData` menyediakan pilihan akun
+kas beropening serta posisi exact6 bagi Shift Kasir Sales/POS. Pembacaan locked
+mensyaratkan transaction caller dan mengunci akun sebelum snapshot ledger.
+`SalePaymentRequest.cashAccountId` opsional memvalidasi akun tunai aktual dalam
+transaction checkout; detail akun tidak ditambahkan ke snapshot struk.
+`SalePaymentMethods.forDrawer` membatasi pilihan tunai tanpa membatasi bank.
+
 `/finance/cashbook` menyediakan saldo awal/tanggal mulai satu kali per akun,
 pemasukan/pengeluaran operasional, transfer atomic, pembalik manual satu kali,
 mutasi per akun dan saldo berjalan exact6. Saldo minus hanya peringatan; tidak

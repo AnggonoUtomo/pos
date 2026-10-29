@@ -29,6 +29,8 @@ import { localDecimal, parsePricingAmount, parseQuantity } from './lib/decimal';
 import { parsePaymentAmount } from './lib/payment';
 import { PosRequestError, posRequest } from './lib/request';
 import { initialPosContext, workspaceView, workspaceViewKey, type WorkspaceView } from './lib/workspace';
+import { ShiftControl } from './shifts/components/shift-control';
+import { useShiftContext } from './shifts/hooks/use-shift-context';
 import type {
     CartLine,
     CartQuote,
@@ -79,6 +81,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const [paymentOpen, setPaymentOpen] = useState(false);
     const { user, can, canAny } = usePermission();
     const canPost = can('sales.pos.invoices.post');
+    const shift = useShiftContext(canPost);
+    const refreshShift = shift.refresh;
     const request = useRef<AbortController | null>(null);
     const { result, loading, error: catalogError } = useCatalog(warehouseId, customerId, query, page, catalogVersion);
     const ready = Boolean(warehouseId && customerId);
@@ -112,7 +116,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
         setPage(1);
         setPaymentOpen(false);
         setCatalogVersion((value) => value + 1);
-    }, [invalidate]);
+        void refreshShift();
+    }, [invalidate, refreshShift]);
     const rejected = useCallback(
         (message: string) => {
             invalidate();
@@ -175,17 +180,17 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const locked = checkoutLocked || held.busy || held.uncertain || scanner.busy;
     const clearPaymentError = checkout.clearError;
     const openPayment = useCallback(() => {
-        if (canPost && quote && !busy && !locked) {
+        if (canPost && shift.active && !shift.loading && quote && !busy && !locked) {
             clearPaymentError();
             setPaymentOpen(true);
         }
-    }, [canPost, quote, busy, locked, clearPaymentError]);
+    }, [canPost, shift.active, shift.loading, quote, busy, locked, clearPaymentError]);
     const pay = (rows: PaymentDraft[], methods: PaymentMethod[]) => {
         if (checkout.pending) {
             void checkout.submit(checkout.pending);
             return;
         }
-        if (!quote || locked || !canPost) return;
+        if (!quote || locked || !canPost || !shift.active || shift.loading) return;
         try {
             void checkout.submit({
                 version: 1,
@@ -193,6 +198,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                 cart: lines,
                 methods: methods.filter((method) => rows.some((row) => row.methodId === method.id)),
                 payload: {
+                    shift_id: shift.active.id,
                     ...(heldSource ? { held_cart: { id: heldSource.id, version: heldSource.version } } : {}),
                     idempotency_key: checkoutKey(),
                     warehouse_id: warehouseId,
@@ -352,6 +358,14 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     <div className="flex flex-wrap items-center justify-end gap-2">
                         <CommandPalette />
                         <ThemeMenu />
+                        {canPost && user && (
+                            <ShiftControl
+                                state={shift}
+                                actorId={user.id}
+                                disabled={locked || busy || paymentOpen}
+                                canOpenCashbook={can('finance.cashbook.view')}
+                            />
+                        )}
                         <Button
                             variant="outline"
                             size="sm"
@@ -430,6 +444,14 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                         </Button>
                     </div>
                 </header>
+                {canPost && (!shift.active || shift.error) && (
+                    <p
+                        role="status"
+                        className="shrink-0 border-b bg-amber-50 px-4 py-1 text-sm text-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+                    >
+                        {shift.error || (shift.loading ? 'Memuat status shift...' : 'Buka shift sebelum menerima pembayaran.')}
+                    </p>
+                )}
                 <WorkspaceShortcutDropdown
                     className="shrink-0 py-1.5"
                     title="Operasi POS"
@@ -539,7 +561,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                             error={error}
                             onCheck={() => void check()}
                             onPay={openPayment}
-                            canPay={canPost}
+                            canPay={canPost && Boolean(shift.active) && !shift.loading}
                             locked={locked}
                         />
                     }

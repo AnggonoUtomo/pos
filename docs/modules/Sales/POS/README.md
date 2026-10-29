@@ -13,8 +13,24 @@ pengeluaran FIFO dan penerimaan pembayaran atomic. Increment 5 mengaktifkan UI
 multi-payment, retry/recovery dan receipt cetak browser. Paket MVP menambah input
 diskon nota persen/nominal, pajak tambahan, alokasi exact2, serta snapshot identitas
 toko melalui CompanyProfile. Retur/refund memakai snapshot nilai bersih. Tidak
-ada reservasi, piutang, pajak inklusif/multi-tarif, barang gratis atau closing shift.
+ada reservasi, piutang, pajak inklusif/multi-tarif atau barang gratis.
 Theme existing dipertahankan; desktop/tablet, bukan mobile.
+
+## Shift Kasir
+
+Sales/POS memiliki lifecycle shift pada `/sales/cashier-shifts` dan dialog POS.
+Satu kasir/laci satu shift aktif; semua checkout baru wajib shift termasuk
+super-system dan non-tunai. Tunai harus masuk laci shift. Replay committed
+berjalan sebelum pengaman shift; invoice lama nullable tanpa backfill.
+Modal dan saldo tutup memakai published CashDrawerPosition/CashDrawerData dari
+Finance/Payments. Tidak membuat pemasukan modal; saldo tutup meliputi seluruh
+mutasi laci. Selisih perlu alasan, tetap closed dan pending review; tidak
+menulis uang otomatis. Snapshot final immutable. Invariant own-only buka/tutup
+tetap berlaku bagi super-system. Published ActiveShiftLookup dipakai Identity
+untuk melindungi penghapusan/nonaktif akun yang masih mempunyai shift.
+Permission `.shifts.view/review` catalog-only; operasi shift sendiri memakai
+`.invoices.post`. Panduan [Shift Kasir](../../../user-guide/SHIFT-KASIR.md),
+scope/QA [work item](../../../work-items/cashier-shifts/README.md).
 
 Keranjang tertahan tersedia melalui Tahan/F6 dan Tertahan/F7. Draft disimpan
 di database, hanya kasir pembuat yang boleh mengaksesnya (termasuk invariant

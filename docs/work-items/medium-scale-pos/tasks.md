@@ -53,9 +53,12 @@
     shift belum ditetapkan dan bukan scope Buku Kas.
 - [x] Buat work item buku kas dan selesaikan ledger/saldo operasional.
   - Detail: [Buku Kas](../../modules/Finance/Payments/work-items/cashbook/tasks.md).
-- [ ] Sepakati laci, modal, kepemilikan kas dan selisih shift.
-- [ ] Buat work item shift dan selesaikan buka/tutup/hitung/review.
-- [ ] Verifikasi transaksi/refund/setoran tidak dihitung ganda.
+- [x] Sepakati laci, modal, kepemilikan kas dan selisih shift.
+- [x] Buat work item shift dan selesaikan buka/tutup/hitung/review.
+  - Detail: [Shift Kasir](../cashier-shifts/tasks.md).
+- [x] Verifikasi transaksi/refund/setoran tidak dihitung ganda.
+  - Saldo dari public Finance, tanpa ledger modal/koreksi otomatis; snapshot
+    closing seluruh mutasi, ringkasan penjualan terpisah. Native/browser PASS.
 
 ## Increment 5: Stok Dan Purnajual
 

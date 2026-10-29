@@ -122,6 +122,13 @@ const mainNavGroups: NavGroup[] = [
                 permission: ['sales.pos.invoices.post', 'sales.pos.invoices.view'],
             },
             {
+                title: 'Shift Kasir',
+                url: '/sales/cashier-shifts',
+                icon: ReceiptText,
+                badgeTone: 'amber',
+                permission: ['sales.pos.invoices.post', 'sales.pos.shifts.view'],
+            },
+            {
                 title: 'Retur Penjualan',
                 url: '/sales/returns',
                 icon: RotateCcw,

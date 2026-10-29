@@ -13,6 +13,11 @@ akun pribadi dari profil starter kit.
 
 ## Boundary
 
+Penghapusan/nonaktif akun memanggil published `ActiveShiftLookup` Sales/POS
+di bawah lock user yang sama dengan buka/checkout shift. Akun dengan shift
+aktif wajib menutup shift dahulu. Riwayat shift tetap menyimpan snapshot nama
+setelah akun closed kemudian dihapus; tidak memakai model privat POS.
+
 - Memiliki: CRUD role biasa, katalog permission terdaftar, assignment role user,
   tambah/edit nama/email dan status aktif akun, authorization helper backend,
   shared auth permission, seeder akses.

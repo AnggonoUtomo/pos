@@ -44,6 +44,7 @@ export type PosPageProps = { warehouses: WarehouseOption[]; customers: CustomerO
 export type PaymentMethod = { id: string; code: string; name: string; type: 'cash' | 'debit' | 'transfer' };
 export type PaymentDraft = { methodId: string; amount: string };
 export type CheckoutPayload = {
+    shift_id?: string;
     held_cart?: { id: string; version: number };
     pricing?: InvoicePricing;
     idempotency_key: string;

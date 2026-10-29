@@ -14,6 +14,7 @@ export function readAttempt(raw: string | null): CheckoutAttempt | null {
     const payload = data.payload;
     const lines = payload.lines;
     const payments = payload.payments;
+    if (payload.shift_id !== undefined && !id(payload.shift_id)) throw new Error('Shift pemulihan tidak valid.');
     if (
         payload.held_cart !== undefined &&
         (!record(payload.held_cart) ||

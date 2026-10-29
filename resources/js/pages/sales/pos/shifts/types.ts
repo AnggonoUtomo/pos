@@ -1,0 +1,24 @@
+export type CashierShift = {
+    id: string;
+    actor_id: number | null;
+    actor_name: string;
+    account_id: string;
+    account_code: string;
+    account_name: string;
+    status: 'open' | 'closed';
+    review_status: 'not_required' | 'pending' | 'reviewed';
+    opening_balance: string;
+    expected_cash: string | null;
+    counted_cash: string | null;
+    difference: string | null;
+    close_reason: string | null;
+    opened_at: string;
+    closed_at: string | null;
+    review_note: string | null;
+    reviewed_at: string | null;
+    summary: ShiftSummary | null;
+};
+export type ShiftSummary = { invoice_count: number; sales_total: string; cash_sales: string; noncash_sales: string; other_cash_net?: string };
+export type Drawer = { id: string; code: string; name: string; balance?: string };
+export type ShiftContext = { active: CashierShift | null; drawers: Drawer[] };
+export type ShiftDetail = { shift: CashierShift; position: (Drawer & { balance: string }) | null; summary: ShiftSummary };

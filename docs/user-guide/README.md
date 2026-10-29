@@ -19,6 +19,8 @@ Pilihan workspace: [Klasik dan Visual](TAMPILAN-POS.md), termasuk default
 gudang/pelanggan dan panel tablet; belum digabungkan ke PDF tersebut.
 Keuangan: [Buku Kas](BUKU-KAS.md), saldo awal, mutasi, transfer dan pembalik;
 belum digabungkan ke PDF global/per-role tersebut.
+Kasir: [Shift Kasir](SHIFT-KASIR.md), persiapan laci, buka/tutup, hitung fisik
+dan review selisih; belum digabungkan ke PDF global/per-role tersebut.
 
 [Unduh buku global PDF](../../output/pdf/user-guide/panduan-global-pos.pdf).
 PDF global berisi alur global, panduan modul, serta role/akses. Gunakan daftar

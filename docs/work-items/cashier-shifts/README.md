@@ -1,6 +1,7 @@
 # Shift Kasir
 
-Status: implementasi. Ownership Sales/POS, public boundary ke Finance/Payments.
+Status: implementasi dan aktivasi lokal selesai; delivery Git diperiksa pada
+checklist. Ownership Sales/POS, public boundary ke Finance/Payments.
 
 ## Keputusan User
 

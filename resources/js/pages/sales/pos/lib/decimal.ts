@@ -3,7 +3,7 @@ const formatter = new Intl.NumberFormat('id-ID');
 export function localDecimal(canonical: string): string {
     const [whole, fraction = ''] = canonical.split('.');
     const tail = fraction.replace(/0+$/, '');
-    return formatter.format(BigInt(whole)) + (tail ? `,${tail}` : '');
+    return (canonical.startsWith('-') ? '-' : '') + formatter.format(BigInt(whole.replace('-', ''))) + (tail ? `,${tail}` : '');
 }
 
 export function money(canonical: string): string {

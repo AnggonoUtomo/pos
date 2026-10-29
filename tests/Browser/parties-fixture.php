@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Finance\Payments\Application\Actions\ManageCashbook;
 use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsAccessSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
@@ -50,6 +51,10 @@ if (($input['inventory_demo'] ?? false) === true) {
         app(PaymentsDemoSeeder::class)->run();
         $operator = User::create(['name' => 'QA checkout', 'email' => 'qa-checkout@example.test', 'password' => $input['password']]);
         $operator->givePermissionTo(['sales.pos.invoices.create', 'sales.pos.invoices.post']);
+        if (($input['shift_demo'] ?? false) === true) {
+            $account = DB::table('payment_methods')->where('code', 'TUNAI')->value('payment_account_id');
+            app(ManageCashbook::class)->open(['account_id' => $account, 'amount' => '500000', 'starts_on' => now('Asia/Jakarta')->toDateString()], $operator->id);
+        }
         $itemId = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->value('id');
         DB::table('item_prices')->where('item_id', $itemId)->update(['amount' => '50000']);
     }

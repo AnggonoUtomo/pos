@@ -1169,3 +1169,28 @@ kasir dengan `sales.pos.invoices.view`, hanya actor sendiri dengan
 Tidak ada mutation, polling atau permission baru. Link nomor invoice membuka
 riwayat terfilter untuk melihat bukti melalui alur existing. Refresh Inertia
 parsial meminta ulang props di atas; bukan endpoint API baru.
+
+## Shift Kasir
+
+GET `/sales/cashier-shifts` merender `sales/pos/shifts/index`.
+GET `/pos/shifts` menghasilkan `{data,meta}`, page integer positif, 25 baris.
+Kasir dengan invoices.post hanya melihat miliknya; shifts.view melihat semua.
+GET `/pos/shifts/{id}` menghasilkan `{shift,position,summary}`; position hanya
+untuk shift aktif, bukan snapshot final. GET `/pos/shifts/current` menghasilkan
+`{active,drawers}` milik actor; GET `/pos/shifts/drawers/{id}` preview saldo.
+Current/drawer/open/close memerlukan sales.pos.invoices.post, semua web/auth.
+
+POST `/pos/shifts/{id}/open`: `{account_id}` ULID, id route ULID client sebagai
+kunci retry. POST `/{id}/close`: `{counted,reason?}`, counted decimal string
+nonnegatif maksimal 32 integer/6 pecahan, reason maksimal200 wajib untuk selisih.
+POST `/{id}/review`: `{note}` wajib maksimal200, sales.pos.shifts.review.
+Payload tambahan ditolak422. Buka/tutup milik kasir sendiri bahkan super-system;
+konflik retry berbeda409. Review idempotent untuk catatan sama.
+
+Checkout `/pos/invoices` menerima `shift_id` opsional ULID untuk kompatibilitas
+payload lama; semua posting baru tetap mengunci/menautkan shift aktif actor.
+Dengan shift_id, harus cocok dengan shift aktif. Replay committed dengan hash
+sama berhasil sebelum pemeriksaan shift. Metode tunai dipastikan ke akun shift
+di Finance setelah locking aktual; mismatch membatalkan invoice/stok/payment.
+GET `/pos/payment-methods` tanpa shift menghasilkan methods kosong; saat aktif
+hanya tunai laci tersebut plus non-tunai aktif. Tidak mengekspos akun rekening.

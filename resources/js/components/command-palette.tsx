@@ -174,6 +174,14 @@ const commandItems = [
         tone: 'text-emerald-600 dark:text-emerald-300',
     },
     {
+        title: 'Shift Kasir',
+        description: 'Buka, tutup dan review selisih laci kasir',
+        url: '/sales/cashier-shifts',
+        permission: ['sales.pos.invoices.post', 'sales.pos.shifts.view'],
+        icon: ReceiptText,
+        tone: 'text-amber-600 dark:text-amber-300',
+    },
+    {
         title: 'Kas dan bank',
         description: 'Master akun kas dan bank',
         url: '/finance/payment-accounts',

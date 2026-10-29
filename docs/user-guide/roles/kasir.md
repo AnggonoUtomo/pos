@@ -13,7 +13,9 @@ tidak mengubah akses akun.
 4. Jika harga/stok tidak benar, hubungi admin master/gudang; jangan mengubah
    konversi atau membuat stok awal agar transaksi lolos.
 
-Tidak ada proses buka shift pada versi ini. Gunakan dropdown Shortcut sesuai
+Sebelum checkout, klik **Buka shift**, pilih laci dan periksa modal dari Buku
+Kas. Rincian persiapan/pemulihan: [Shift Kasir](../SHIFT-KASIR.md).
+Gunakan dropdown Shortcut sesuai
 halaman bila perlu; `Ctrl+K`/`Cmd+K` pada top nav admin untuk mencari menu.
 
 ## Tahap 2: Isi Dan Periksa Keranjang
@@ -64,8 +66,9 @@ Jangan memakai akun petugas lain untuk mencari transaksi mereka.
 - Harga salah setelah posted: catat nomor, jangan mengedit transaksi lama.
 - Stok kurang: pastikan gudang benar; minta perpindahan resmi bila ada di lokasi
   lain. Stok tidak boleh minus.
-- Akhir hari: cocokkan transaksi sendiri dan bukti uang dengan keuangan,
-  catat masalah lalu logout. Belum ada tombol Tutup shift.
+- Akhir hari: pastikan pembayaran terkonfirmasi, klik **Shift aktif**, hitung
+  uang fisik dan tutup shift. Jika selisih, isi alasan; tunggu review supervisor
+  tanpa mengubah Buku Kas sendiri. Setelah selesai, logout.
 
 ## Checklist Setiap Penjualan
 

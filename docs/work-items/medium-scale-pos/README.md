@@ -64,5 +64,7 @@ aturan posting stok. UAT printer/scanner fisik tetap pending.
 Buku Kas diselesaikan pada [work item Payments](../../modules/Finance/Payments/work-items/cashbook/README.md):
 saldo awal/cutover per akun, mutasi/transfer/pembalik dan saldo berjalan dari
 ledger existing. Saldo minus hanya peringatan, tidak memblokir pembayaran.
-Berikutnya shift, menunggu keputusan laci/modal/selisih. Tahap2/3 belum
+Shift Kasir selesai melalui [work item](../cashier-shifts/README.md): laci
+eksklusif, modal dari Buku Kas, checkout wajib shift, tutup/hitung serta review
+selisih tanpa mutasi uang otomatis. Tahap2/3 belum
 diimplementasikan; seluruh roadmap belum dianggap selesai.
