@@ -53,6 +53,11 @@
   permission/schema/ledger. Fixture/browser memverifikasi fingerprint readonly.
 - Setelah cleanup duplikasi ringkasan pembayaran pada laporan, hanya gate
   frontend terdampak dan QA laporan/reduced-motion/refresh yang diulang.
+  PASS: `storage/framework/testing/mvp-browser-7fe8a151cee6d9cd`, periode
+  Indonesia, saldo/angka widget utuh, refresh selesai, transisi reduced-motion
+  0 detik. Browser/server ditutup pada finally.
 - Empty row dan overflow container tabel existing dipertahankan, bukan
   mengganti komponen operasi/CRUD. Opt-in tidak menyentuh struk, print preview
   maupun tabel editor. Tidak mengubah theme sidebar/topnav.
+- Save point tabel: `431b490`. `.env.testing` sementara dihapus sesudah QA;
+  .env produksi, database toko, dependency, Old-docs dan file LSP tidak diubah.

@@ -36,3 +36,16 @@ akses daftar invoice. Backend tidak mengirim ringkasan atau invoice yang tidak
 diizinkan. Super-system mengikuti Gate::before. Tidak ada indikator contoh,
 persentase kapasitas gudang, tren, shift atau batas stok menipis buatan.
 Refresh manual; tidak ada polling, migration, mutation atau demo seeder baru.
+
+## Widget Visual
+
+Dashboard dan laporan menampilkan perbandingan nilai penjualan/pembelian/
+refund selesai dan donut arus pembayaran dari props ringkasan existing.
+Tidak membuat data tren atau indikator pertumbuhan buatan. Filter gudang
+berlaku pada komposisi transaksi; donut tetap pembayaran seluruh gudang,
+bukan saldo rekening/laba. Angka Indonesia exact, rasio visual dihitung lewat
+integer decimal; Number hanya untuk persentase geometri.
+Animasi finite saat data/widget masuk, tooltip keyboard, empty/zero serta
+prefers-reduced-motion tersedia. Ringkasan pembayaran laporan kini disajikan
+oleh widget, tidak diulang pada panel teks terpisah. Detail scope dan QA:
+[Tabel dan chart](../../../work-items/workspace-tables-charts/README.md).

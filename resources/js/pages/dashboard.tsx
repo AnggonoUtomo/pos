@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { WorkspaceShortcutDropdown, type WorkspaceShortcut } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
+import { OperationalCharts } from '@/pages/reporting/operational-reports/components/operational-charts';
 import { money } from '@/pages/reporting/operational-reports/lib/format';
 import { type OperationalReport } from '@/pages/reporting/operational-reports/types';
 import { Head, Link, router } from '@inertiajs/react';
@@ -165,6 +166,11 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                                 </Card>
                             ))}
                         </section>
+                        <OperationalCharts
+                            key={`${summary.date}:${generated_at}`}
+                            summary={summary}
+                            period="Hari ini · semua gudang · nilai rupiah"
+                        />
                         <section
                             className="grid gap-6 border-y border-[var(--app-border)] bg-[var(--app-panel)] px-5 py-6 md:grid-cols-2 xl:grid-cols-4"
                             aria-label="Stok terkini dan retur hari ini"
@@ -214,7 +220,7 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                             </Button>
                         </div>
                         <div className="overflow-x-auto rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] shadow-[var(--app-shadow)]">
-                            <table className="w-full min-w-[680px] text-sm">
+                            <table className="workspace-table w-full min-w-[680px] text-sm">
                                 <thead className="text-muted-foreground bg-[var(--app-panel-strong)]">
                                     <tr>
                                         {['Nomor / Waktu WIB', 'Pelanggan', 'Gudang', 'Total', 'Status'].map((label) => (

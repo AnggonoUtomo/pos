@@ -9,10 +9,13 @@ import { Head, useForm } from '@inertiajs/react';
 import { BarChart3, Filter, LoaderCircle } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { OperationalCharts } from './components/operational-charts';
 import { decimal, money } from './lib/format';
 import type { OperationalReport } from './types';
 
 export default function OperationalReports(report: OperationalReport) {
+    const dateLabel = (date: string) =>
+        new Date(`${date}T00:00:00+07:00`).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Jakarta' });
     const form = useForm(report.filters);
     const formRef = useRef<HTMLFormElement>(null);
     const dateRef = useRef<HTMLInputElement>(null);
@@ -110,28 +113,18 @@ export default function OperationalReports(report: OperationalReport) {
                         </div>
                     ))}
                 </dl>
-                <section className="space-y-3">
-                    <h2 className="text-base font-semibold">Arus pembayaran seluruh gudang</h2>
-                    <dl className="grid gap-4 sm:grid-cols-3">
-                        {[
-                            ['Masuk', report.payments.incoming],
-                            ['Keluar', report.payments.outgoing],
-                            ['Selisih mutasi (bukan saldo)', report.payments.net_movement],
-                        ].map(([label, value]) => (
-                            <div key={label} className="min-w-0">
-                                <dt className="text-muted-foreground text-sm">{label}</dt>
-                                <dd className="font-semibold break-all">{money(value)}</dd>
-                            </div>
-                        ))}
-                    </dl>
-                </section>
+                <OperationalCharts
+                    key={`${report.filters.from}:${report.filters.to}:${report.filters.warehouse_id}:${report.generated_at}`}
+                    summary={report}
+                    period={`${dateLabel(report.filters.from)} s.d. ${dateLabel(report.filters.to)} · ${report.filters.warehouse_id ? 'gudang terpilih' : 'semua gudang'} · nilai rupiah`}
+                />
                 <section className="min-w-0 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <h2 className="text-base font-semibold">Stok terkini</h2>
                         <span className="text-sm">Nilai persediaan {money(report.stock.total_value)}</span>
                     </div>
                     <div className="overflow-x-auto border">
-                        <table className="w-full min-w-[720px] text-sm">
+                        <table className="workspace-table w-full min-w-[720px] text-sm">
                             <thead className="bg-muted/40">
                                 <tr>
                                     {['SKU / Barang', 'Gudang', 'Saldo dasar', 'Nilai persediaan'].map((label) => (
