@@ -1,7 +1,8 @@
 # Shift Kasir
 
-Status: implementasi dan aktivasi lokal selesai; delivery Git diperiksa pada
-checklist. Ownership Sales/POS, public boundary ke Finance/Payments.
+Status: selesai, diverifikasi desktop/tablet dan MySQL, aktif lokal serta
+implementasi dipush ke origin/main. Ownership Sales/POS, public boundary ke
+Finance/Payments. Bukti dan batas penerimaan operasional pada checklist.
 
 ## Keputusan User
 

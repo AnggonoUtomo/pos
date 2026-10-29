@@ -50,7 +50,7 @@ tidak dijalankan pada database toko. Simulasi legacy hanya pada test disposable.
     shift; pending checkout tetap dipulihkan tanpa mengganti shift source.
   - Verification: lint/type/build dan desktop/tablet disposable.
 - [x] MySQL schema/locking/replay dan gate akhir, review patch.
-- [ ] Panduan, backup verified, migration/catalog additive tanpa modal/shift
+- [x] Panduan, backup verified, migration/catalog additive tanpa modal/shift
   produksi otomatis, update checklist, commit/push dan remote verification.
 
 ## Verifikasi Akhir, 29 Oktober 2026
@@ -81,3 +81,9 @@ tidak dijalankan pada database toko. Simulasi legacy hanya pada test disposable.
   diperbarui. PDF global/per-role lama belum memuat tambahan Shift Kasir,
   dicatat eksplisit. UAT/printer/tablet LAN/backup terpisah lama tidak dibuka
   atau dinyatakan selesai. Old-docs, .env produksi dan file LSP tidak disentuh.
+- Formatter nominal diuji terpisah: exact Indonesia untuk `-0,5`, pecahan enam
+  digit, jutaan dan angka di atas batas presisi Number JavaScript: PASS.
+- Save point `6556103`, `d0c3ff3`, `aeadbc2` dipush ke origin/main;
+  `git ls-remote` cocok dan divergence `0 0` sebelum commit penutup dokumentasi.
+  Hanya LSP user yang tersisa staged/untracked, tidak masuk commit. File
+  `.env.testing` sementara dihapus. Server/browser/worker QA ditutup.
