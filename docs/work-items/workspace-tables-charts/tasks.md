@@ -29,7 +29,7 @@
 - [x] QA perubahan tabel/chart, tooltip keyboard, perubahan filter dan refresh.
   - Acceptance: tidak blank/overflow, fungsi existing tetap ada, console bersih.
   - Verification: DevTools MCP bila tersedia atau fallback Chrome/Playwright.
-- [ ] Update dokumentasi/checklist, commit/push dan verifikasi remote.
+- [x] Update dokumentasi/checklist, commit/push dan verifikasi remote.
 
 ## Hasil Verifikasi
 
@@ -61,3 +61,6 @@
   maupun tabel editor. Tidak mengubah theme sidebar/topnav.
 - Save point tabel: `431b490`. `.env.testing` sementara dihapus sesudah QA;
   .env produksi, database toko, dependency, Old-docs dan file LSP tidak diubah.
+- Implementasi chart `b4c8793` dipush ke origin/main; remote hash cocok dan
+  divergence `0 0` terverifikasi sebelum commit penutup dokumentasi. File LSP
+  user tetap staged/untracked di luar commit pekerjaan ini.

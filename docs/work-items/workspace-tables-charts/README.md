@@ -1,6 +1,7 @@
 # Tabel Workspace Dan Chart Operasional
 
-Status: implementasi. Koreksi visual lintas module sesuai instruksi user.
+Status: selesai; QA desktop/tablet lulus, build lokal aktif dan implementasi
+dipush ke origin/main. Koreksi visual lintas module sesuai instruksi user.
 Patokan tabel: `/inventory/units`. Referensi widget:
 https://react.tailwind-admin.com/.
 
