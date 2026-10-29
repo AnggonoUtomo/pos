@@ -31,6 +31,15 @@ class OperationalLifecycleTest extends TestCase
         return $user;
     }
 
+    private function legacyScenario(): void
+    {
+        MvpOperationalScenario::run();
+        // Simulate invoices predating the additive book/shift schema, only in disposable tests.
+        DB::table('sales_invoices')->update(['cashier_shift_id' => null]);
+        DB::table('cashier_shifts')->delete();
+        DB::table('cashbook_openings')->delete();
+    }
+
     public function test_complete_lifecycle_has_expected_stock_prices_drafts_and_is_idempotent(): void
     {
         $actor = $this->actor();
@@ -108,7 +117,7 @@ class OperationalLifecycleTest extends TestCase
     public function test_one_time_replacement_preserves_protected_rows_and_refuses_second_reset(): void
     {
         $actor = $this->actor();
-        MvpOperationalScenario::run();
+        $this->legacyScenario();
         DB::table('units')->insert(['id' => strtolower((string) Str::ulid()), 'code' => 'OLD', 'name' => 'Existing', 'symbol' => 'old', 'is_active' => true]);
         activity('testing')->event('old.audit')->log('Old audit must survive');
         $oldAudit = Activity::where('event', 'old.audit')->sole()->getAttributes();
@@ -161,7 +170,7 @@ class OperationalLifecycleTest extends TestCase
     public function test_failed_replacement_audit_restores_old_posted_transactions_and_settings(): void
     {
         $actor = $this->actor();
-        MvpOperationalScenario::run();
+        $this->legacyScenario();
         $hash = ReplaceOperationalTrainingOnce::fingerprint();
         $audits = Activity::count();
         Activity::saving(function (Activity $activity): void {

@@ -5,6 +5,7 @@ namespace App\Modules\Sales\POS\Presentation\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentMethods;
 use App\Modules\Sales\POS\Application\Actions\PostInvoice;
+use App\Modules\Sales\POS\Application\Contracts\CashierShiftRepository;
 use App\Modules\Sales\POS\Application\Queries\GetInvoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,8 +36,10 @@ class InvoiceController extends Controller implements HasMiddleware
         return response()->json($query->handle($id, (int) $request->user()->id, $viewAll));
     }
 
-    public function methods(SalePaymentMethods $methods): JsonResponse
+    public function methods(Request $request, SalePaymentMethods $methods, CashierShiftRepository $shifts): JsonResponse
     {
-        return response()->json(['methods' => $methods->choices()]);
+        $active = $shifts->active((int) $request->user()->id);
+
+        return response()->json(['methods' => $active === null ? [] : $methods->forDrawer($active['account_id'])]);
     }
 }

@@ -5,10 +5,13 @@ namespace Tests\Feature\Modules\Sales\POS;
 use App\Models\User;
 use App\Modules\Finance\Payments\Application\Actions\ManageCashbook;
 use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
+use App\Modules\Platform\Identity\Application\Actions\DeleteOwnAccount;
+use App\Modules\Platform\Identity\Application\Actions\ManageUsers;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -108,5 +111,27 @@ class CashierShiftTest extends TestCase
         } finally {
             Activity::flushEventListeners();
         }
+    }
+
+    public function test_active_shift_prevents_account_deletion_and_deactivation(): void
+    {
+        $id = $this->open();
+        try {
+            app(DeleteOwnAccount::class)->handle($this->cashier->id);
+            $this->fail('Active cashier deleted');
+        } catch (ValidationException $error) {
+            $this->assertArrayHasKey('account', $error->errors());
+        }
+        $admin = User::factory()->create()->assignRole(Role::findOrCreate('super-system', 'web'));
+        try {
+            app(ManageUsers::class)->status($admin->id, $this->cashier->id, false);
+            $this->fail('Active cashier deactivated');
+        } catch (ValidationException $error) {
+            $this->assertArrayHasKey('account', $error->errors());
+        }
+        $this->assertDatabaseHas('users', ['id' => $this->cashier->id, 'is_active' => true]);
+        $this->postJson('/pos/shifts/'.$id.'/close', ['counted' => '100'])->assertOk();
+        app(DeleteOwnAccount::class)->handle($this->cashier->id);
+        $this->assertDatabaseHas('cashier_shifts', ['id' => $id, 'actor_id' => null, 'actor_name' => $this->cashier->name]);
     }
 }

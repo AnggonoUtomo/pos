@@ -26,6 +26,11 @@ class RecordSalePayment implements SalePaymentWriter
         }
         $result = $this->handle(['source_id' => $request->sourceId, 'source_number' => $request->sourceNumber,
             'total' => $request->total, 'payments' => $request->payments], $request->actorId);
+        foreach ($result['payments'] as $row) {
+            if ($request->cashAccountId !== null && $row['method_type'] === 'cash' && $row['account_id'] !== $request->cashAccountId) {
+                throw new InvalidArgumentException('Metode tunai harus terhubung ke laci shift aktif.');
+            }
+        }
         $rows = array_map(fn ($row) => array_intersect_key($row, array_flip(['method_id', 'method_name', 'method_type',
             'tendered_amount', 'applied_amount', 'change_amount'])), $result['payments']);
 

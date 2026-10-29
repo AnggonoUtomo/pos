@@ -31,6 +31,7 @@ final class MvpOperationalScenario
         User::factory()->create();
         app(UpdateCompanySettings::class)->handle(['name' => 'Toko CCTV QA', 'version' => 0], $actor->id);
         $purchase = PurchaseReturnRefundFixture::purchase('10', '120000');
+        CashierShiftFixture::open($actor->id);
         app(PartiesDemoSeeder::class)->run();
         app(ItemPricesDemoSeeder::class)->run();
         $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->sole();

@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Role;
+use Tests\Fixtures\CashierShiftFixture;
 use Tests\TestCase;
 
 class InvoiceHistoryTest extends TestCase
@@ -52,6 +53,7 @@ class InvoiceHistoryTest extends TestCase
 
     private function sale(User $actor, string $customerCode, string $postedAt): array
     {
+        CashierShiftFixture::open($actor->id);
         $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->first();
         $warehouse = DB::table('warehouses')->where('code', 'WH-MAIN')->value('id');
         $customer = DB::table('customers')->where('code', $customerCode)->value('id');

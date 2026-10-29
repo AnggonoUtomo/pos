@@ -15,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Tests\Fixtures\CashierShiftFixture;
 use Tests\Fixtures\SalesReturnFixture;
 use Tests\TestCase;
 
@@ -47,10 +48,12 @@ class RefundInvoiceBasisTest extends TestCase
         $line = $first['lines'][0];
         $quote = app(CheckCart::class)->handle($first['warehouse_id'], $first['customer_id'], [new CartLineData($line['item_id'], $line['unit_id'], '1')]);
         $tendered = (string) BigDecimal::of($quote['subtotal'])->plus('100000.00');
+        $actor = User::factory()->create();
+        CashierShiftFixture::open($actor->id);
         $invoice = app(PostInvoice::class)->handle(['idempotency_key' => strtolower((string) Str::ulid()),
             'warehouse_id' => $first['warehouse_id'], 'customer_id' => $first['customer_id'], 'quote_fingerprint' => $quote['fingerprint'],
             'lines' => [['item_id' => $line['item_id'], 'unit_id' => $line['unit_id'], 'quantity' => '1']],
-            'payments' => [['method_id' => $first['payments']['payments'][0]['method_id'], 'amount' => $tendered]]], User::factory()->create()->id);
+            'payments' => [['method_id' => $first['payments']['payments'][0]['method_id'], 'amount' => $tendered]]], $actor->id);
 
         $this->assertSame('100000.00', $invoice['payments']['change']);
         $basis = RefundInvoiceBasis::fromSnapshot($this->header($invoice), $invoice['lines']);

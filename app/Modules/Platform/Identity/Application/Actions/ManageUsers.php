@@ -3,6 +3,7 @@
 namespace App\Modules\Platform\Identity\Application\Actions;
 
 use App\Modules\Platform\Identity\Application\Contracts\AccessRepository;
+use App\Modules\Sales\POS\Application\Contracts\ActiveShiftLookup;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class ManageUsers
 {
-    public function __construct(private AccessRepository $access, private ManageAccess $roles) {}
+    public function __construct(private AccessRepository $access, private ManageAccess $roles, private ActiveShiftLookup $shifts) {}
 
     private function authorize(int $actorId, string $operation, ?int $targetId = null): array
     {
@@ -98,6 +99,9 @@ class ManageUsers
             $target = $this->access->userProfile($id);
             if ($target['is_active'] === $active) {
                 return;
+            }
+            if (! $active && $this->shifts->hasActiveShift($id)) {
+                throw ValidationException::withMessages(['account' => 'Tutup shift kasir sebelum menonaktifkan akun.']);
             }
             if (! $active && $actorId === $id) {
                 throw ValidationException::withMessages(['account' => 'Akun sendiri tidak dapat dinonaktifkan.']);

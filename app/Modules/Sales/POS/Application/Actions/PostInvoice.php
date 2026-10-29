@@ -24,7 +24,7 @@ use InvalidArgumentException;
 class PostInvoice
 {
     public function __construct(private InvoiceRepository $invoices, private CheckCart $cart, private WarehouseLookup $warehouses,
-        private SaleStockWriter $stock, private SalePaymentWriter $payments, private CompanyProfile $company, private ManageHeldCart $heldCarts) {}
+        private SaleStockWriter $stock, private SalePaymentWriter $payments, private CompanyProfile $company, private ManageHeldCart $heldCarts, private ManageCashierShift $shifts) {}
 
     public function handle(array $input, int $actorId): array
     {
@@ -42,6 +42,7 @@ class PostInvoice
                 if ($existing !== null) {
                     return $this->replay($existing, $hash);
                 }
+                $shift = $this->shifts->checkout($actorId, $input['shift_id'] ?? null);
                 if (isset($input['held_cart'])) {
                     $this->heldCarts->checkoutSource($input['held_cart'], $actorId);
                 }
@@ -68,7 +69,7 @@ class PostInvoice
                 if ($cost->isGreaterThan('999999999999999999999999.999999')) {
                     throw ValidationException::withMessages(['cart' => 'Total HPP melebihi batas.']);
                 }
-                $payment = $this->payments->receive(new SalePaymentRequest($id, $number, $quote['total'], $input['payments'], $actorId));
+                $payment = $this->payments->receive(new SalePaymentRequest($id, $number, $quote['total'], $input['payments'], $actorId, $shift['account_id']));
                 $warehouse = $quote['warehouse'];
                 $customer = $quote['customer'];
                 $this->invoices->createPosted(['id' => $id, 'number' => $number, 'actor_id' => $actorId, 'idempotency_key' => $input['idempotency_key'],
@@ -79,7 +80,7 @@ class PostInvoice
                     'pricing' => json_encode($quote['pricing'], JSON_THROW_ON_ERROR),
                     'company_snapshot' => json_encode($this->company->read(), JSON_THROW_ON_ERROR),
                     'total_cost' => (string) $cost, 'stock_issue_id' => $stock->id, 'payment_receipt_id' => $payment->id,
-                    'payments' => $payment->snapshot, 'posted_at' => now()], $rows);
+                    'payments' => $payment->snapshot, 'cashier_shift_id' => $shift['id'], 'posted_at' => now()], $rows);
                 $this->invoices->audit($id, $actorId);
                 if (isset($input['held_cart'])) {
                     $this->heldCarts->complete($input['held_cart'], $actorId, $id);
@@ -113,12 +114,13 @@ class PostInvoice
 
     private function normalize(array $input): array
     {
-        $allowed = ['idempotency_key', 'warehouse_id', 'customer_id', 'quote_fingerprint', 'lines', 'payments', 'pricing', 'held_cart'];
+        $allowed = ['idempotency_key', 'warehouse_id', 'customer_id', 'quote_fingerprint', 'lines', 'payments', 'pricing', 'held_cart', 'shift_id'];
         if (array_diff(array_keys($input), $allowed) !== []) {
             throw ValidationException::withMessages(['cart' => 'Payload checkout mengandung field yang tidak diizinkan.']);
         }
         $rules = ['required', 'ulid'];
         $data = Validator::make($input, ['idempotency_key' => $rules, 'warehouse_id' => $rules, 'customer_id' => $rules,
+            'shift_id' => ['sometimes', 'required', 'ulid'],
             'pricing' => ['sometimes', 'array:discount_type,discount_value,tax_rate'],
             'held_cart' => ['sometimes', 'required', 'array:id,version'], 'held_cart.id' => ['required_with:held_cart', 'ulid'],
             'held_cart.version' => ['required_with:held_cart', 'integer', 'min:1', 'max:2147483646'],
@@ -129,6 +131,9 @@ class PostInvoice
             'payments.*.method_id' => $rules, 'payments.*.amount' => ['required', 'string', 'regex:/^\d{1,28}(?:\.\d{1,2})?$/D']])->validate();
         foreach (['idempotency_key', 'warehouse_id', 'customer_id'] as $key) {
             $data[$key] = strtolower($data[$key]);
+        }
+        if (isset($data['shift_id'])) {
+            $data['shift_id'] = strtolower($data['shift_id']);
         }
         if (isset($data['held_cart'])) {
             $data['held_cart'] = ['id' => strtolower($data['held_cart']['id']), 'version' => (int) $data['held_cart']['version']];

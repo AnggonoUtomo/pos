@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
+use Tests\Fixtures\CashierShiftFixture;
 use Tests\TestCase;
 
 class HeldCartTest extends TestCase
@@ -35,6 +36,7 @@ class HeldCartTest extends TestCase
             ItemsDemoSeeder::class, PartiesDemoSeeder::class, ItemPricesDemoSeeder::class, StockDemoSeeder::class, PaymentsDemoSeeder::class]);
         $this->cashier = User::factory()->create()->givePermissionTo(['sales.pos.invoices.create', 'sales.pos.invoices.post']);
         $this->actingAs($this->cashier);
+        CashierShiftFixture::open($this->cashier->id);
         $this->id = strtolower((string) Str::ulid());
         $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->first();
         $this->input = ['version' => 0, 'label' => 'Kamera meja A',
@@ -57,6 +59,7 @@ class HeldCartTest extends TestCase
 
     private function checkout(array $cart): array
     {
+        CashierShiftFixture::open((int) auth()->id());
         $quote = $this->postJson('/pos/quote', collect($this->input)->except(['version', 'label'])->all())->assertOk()->json();
 
         return ['idempotency_key' => strtolower((string) Str::ulid()), 'warehouse_id' => $this->input['warehouse_id'],
@@ -90,6 +93,7 @@ class HeldCartTest extends TestCase
             $this->getJson("/pos/held-carts/{$this->id}")->assertNotFound();
             $this->postJson("/pos/held-carts/{$this->id}", [...$this->input, 'version' => 1])->assertNotFound();
             $this->postJson("/pos/held-carts/{$this->id}/cancel", ['version' => 1])->assertNotFound();
+            CashierShiftFixture::open($other->id);
             $this->postJson('/pos/invoices', $checkout)->assertUnprocessable()->assertJsonValidationErrors('held_cart');
         }
         $this->assertDatabaseCount('sales_invoices', 0);

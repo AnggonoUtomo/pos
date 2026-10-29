@@ -25,6 +25,7 @@ final class SalesReturnFixture
             app($seeder)->run();
         }
         $actor = User::factory()->create();
+        CashierShiftFixture::open($actor->id);
         $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->sole();
         $unit = DB::table('units')->where('code', $unitCode)->value('id');
         $warehouse = DB::table('warehouses')->where('code', 'WH-MAIN')->value('id');

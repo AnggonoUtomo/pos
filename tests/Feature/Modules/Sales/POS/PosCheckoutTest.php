@@ -3,6 +3,7 @@
 namespace Tests\Feature\Modules\Sales\POS;
 
 use App\Models\User;
+use App\Modules\Finance\Payments\Application\Contracts\CashDrawerPosition;
 use App\Modules\Finance\Payments\Application\Contracts\SalePaymentWriter;
 use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
@@ -14,6 +15,7 @@ use App\Modules\Platform\CompanySettings\Application\Actions\UpdateCompanySettin
 use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use App\Modules\Sales\POS\Application\Actions\PostInvoice;
+use App\Modules\Sales\POS\Application\Contracts\CashierShiftRepository;
 use App\Modules\Sales\POS\Application\Contracts\InvoiceRepository;
 use App\Modules\Sales\POS\Application\Contracts\ReturnInvoiceLookup;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
@@ -25,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
+use Tests\Fixtures\CashierShiftFixture;
 use Tests\TestCase;
 
 class PosCheckoutTest extends TestCase
@@ -42,6 +45,7 @@ class PosCheckoutTest extends TestCase
             PartiesDemoSeeder::class, ItemPricesDemoSeeder::class, StockDemoSeeder::class, PaymentsDemoSeeder::class]);
         $this->cashier = User::factory()->create()->givePermissionTo(['sales.pos.invoices.create', 'sales.pos.invoices.post']);
         $this->actingAs($this->cashier);
+        CashierShiftFixture::open($this->cashier->id);
         $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->first();
         DB::table('item_prices')->where('item_id', $item->id)->update(['amount' => '50000.00']);
         $this->input = ['idempotency_key' => strtolower((string) Str::ulid()),
@@ -58,6 +62,37 @@ class PosCheckoutTest extends TestCase
         $this->input['quote_fingerprint'] = $this->postJson('/pos/quote', array_intersect_key($this->input, array_flip(['warehouse_id', 'customer_id', 'lines'])))
             ->assertOk()->json('fingerprint');
         $this->assertIsString($this->input['quote_fingerprint']);
+    }
+
+    public function test_shift_is_mandatory_for_super_system_too_and_replay_survives_closing(): void
+    {
+        $shifts = app(CashierShiftRepository::class);
+        $shift = $shifts->active($this->cashier->id);
+        $this->input['shift_id'] = $shift['id'];
+        $invoice = $this->postJson('/pos/invoices', $this->input)->assertCreated()->json();
+        $this->assertDatabaseHas('sales_invoices', ['id' => $invoice['id'], 'cashier_shift_id' => $shift['id']]);
+        $balance = app(CashDrawerPosition::class)->read($shift['account_id'])->balance;
+        $this->postJson('/pos/shifts/'.$shift['id'].'/close', ['counted' => $balance])->assertOk()->assertJsonPath('shift.summary.cash_sales', '40000.000000')->assertJsonPath('shift.summary.noncash_sales', '60000.000000');
+        $this->assertSame($invoice, $this->postJson('/pos/invoices', $this->input)->assertCreated()->json());
+        $this->cashier->assignRole(Role::findOrCreate('super-system', 'web'));
+        $this->input['idempotency_key'] = strtolower((string) Str::ulid());
+        $before = $this->fingerprint();
+        $this->postJson('/pos/invoices', $this->input)->assertUnprocessable()->assertJsonValidationErrors('shift_id');
+        $this->assertSame($before, $this->fingerprint());
+    }
+
+    public function test_cash_method_from_another_drawer_rolls_back_stock_and_finance(): void
+    {
+        $method = DB::table('payment_methods')->where('code', 'TUNAI')->first();
+        $account = (array) DB::table('payment_accounts')->where('id', $method->payment_account_id)->first();
+        $account['id'] = strtolower((string) Str::ulid());
+        $account['code'] = 'OTHER-CASH';
+        DB::table('payment_accounts')->insert($account);
+        DB::table('payment_methods')->where('id', $method->id)->update(['payment_account_id' => $account['id']]);
+        $this->getJson('/pos/payment-methods')->assertOk()->assertJsonMissing(['id' => $method->id]);
+        $before = $this->fingerprint();
+        $this->postJson('/pos/invoices', $this->input)->assertUnprocessable();
+        $this->assertSame($before, $this->fingerprint());
     }
 
     private function fingerprint(): array
@@ -288,6 +323,7 @@ class PosCheckoutTest extends TestCase
         $this->actingAs($postOnly)->postJson('/pos/invoices', $this->input)->assertForbidden();
         $other = User::factory()->create()->givePermissionTo(['sales.pos.invoices.create', 'sales.pos.invoices.post']);
         $this->actingAs($other)->getJson('/pos/invoices/'.$first)->assertForbidden();
+        CashierShiftFixture::open($other->id);
         $this->postJson('/pos/invoices', $this->input)->assertCreated();
         $this->assertDatabaseCount('sales_invoices', 2);
         $viewer = User::factory()->create()->givePermissionTo('sales.pos.invoices.view');

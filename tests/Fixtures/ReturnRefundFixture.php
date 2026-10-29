@@ -28,9 +28,12 @@ final class ReturnRefundFixture
         $quote = app(CheckCart::class)->handle($source['warehouse_id'], $source['customer_id'],
             array_map(fn ($row) => new CartLineData($row['item_id'], $row['unit_id'], $row['quantity']), $lines));
 
+        $actor = User::factory()->create();
+        CashierShiftFixture::open($actor->id);
+
         return app(PostInvoice::class)->handle(['idempotency_key' => strtolower((string) Str::ulid()),
             'warehouse_id' => $source['warehouse_id'], 'customer_id' => $source['customer_id'], 'quote_fingerprint' => $quote['fingerprint'],
-            'lines' => $lines, 'payments' => [['method_id' => DB::table('payment_methods')->where('code', 'TUNAI')->value('id'), 'amount' => $quote['subtotal']]]], User::factory()->create()->id);
+            'lines' => $lines, 'payments' => [['method_id' => DB::table('payment_methods')->where('code', 'TUNAI')->value('id'), 'amount' => $quote['subtotal']]]], $actor->id);
     }
 
     public static function posted(array $invoice, string $quantity = '1', int $line = 0): string

@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Modules\Finance\Payments\Application\Actions\ManageCashbook;
+use App\Modules\Finance\Payments\Application\Contracts\CashDrawerPosition;
 use App\Modules\Finance\Payments\Database\Seeders\LifecyclePaymentsSeeder;
 use App\Modules\Inventory\Items\Database\Seeders\LifecycleItemsSeeder;
 use App\Modules\Inventory\Stock\Application\Actions\ManageOpening;
@@ -21,6 +23,7 @@ use App\Modules\Purchasing\Returns\Application\Queries\QuoteReturnRefund as Quot
 use App\Modules\Purchasing\Suppliers\Database\Seeders\LifecycleSuppliersSeeder;
 use App\Modules\Reporting\OperationalReports\Application\Queries\OperationalReport;
 use App\Modules\Sales\Parties\Database\Seeders\LifecyclePartiesSeeder;
+use App\Modules\Sales\POS\Application\Actions\ManageCashierShift;
 use App\Modules\Sales\POS\Application\Actions\PostInvoice;
 use App\Modules\Sales\POS\Application\DTOs\CartLineData;
 use App\Modules\Sales\POS\Application\Queries\CheckCart;
@@ -79,6 +82,11 @@ class OperationalLifecycleSeeder extends Seeder
                         throw new LogicException('Seeder tidak mereset/menimpa data existing: '.$table);
                     }
                 }
+                foreach (['cashbook_openings', 'cashbook_entries', 'cashier_shifts'] as $table) {
+                    if (DB::table($table)->exists()) {
+                        throw new LogicException('Seeder tidak menimpa buku kas atau shift existing: '.$table);
+                    }
+                }
                 $context = ['actor_id' => $actor->id];
                 foreach ([LifecycleUnitsSeeder::class, LifecycleWarehousesSeeder::class, LifecyclePartiesSeeder::class,
                     LifecycleItemsSeeder::class, LifecycleSuppliersSeeder::class, LifecyclePaymentsSeeder::class] as $seeder) {
@@ -113,6 +121,10 @@ class OperationalLifecycleSeeder extends Seeder
             'notes' => 'LATIHAN 02: 2 dus kamera, terima penuh dan bayar lunas',
             'lines' => [['item_id' => $c['items']['KAMERA'], 'unit_id' => $c['units']['BOX'], 'quantity' => '2', 'unit_cost' => '1200000']]]);
         app(ReceiveAndPayPurchase::class)->handle($purchase, 1, [['method_id' => $transfer, 'amount' => '2400000']], $actor);
+        $drawer = DB::table('payment_methods')->where('id', $cash)->value('payment_account_id');
+        app(ManageCashbook::class)->open(['account_id' => $drawer, 'amount' => '500000', 'starts_on' => now('Asia/Jakarta')->toDateString()], $actor);
+        $shift = strtolower((string) Str::ulid());
+        app(ManageCashierShift::class)->open($shift, $drawer, $actor);
         $invoices = [];
         foreach ([
             ['INSTALLER', 'KAMERA', 'UNIT', '2', [], [['method_id' => $transfer, 'amount' => '600000'], ['method_id' => $cash, 'amount' => '350000']]],
@@ -132,6 +144,8 @@ class OperationalLifecycleSeeder extends Seeder
         $quote = app(QuoteReturnRefund::class)->handle($salesReturn);
         app(SettleReturnRefund::class)->handle($salesReturn, ['version' => $quote['version'], 'quote_fingerprint' => $quote['quote_fingerprint'],
             'payments' => [['method_id' => $cash, 'amount' => $quote['total']]]], $actor);
+        $balance = app(CashDrawerPosition::class)->read($drawer)->balance;
+        app(ManageCashierShift::class)->close($shift, $balance, '', $actor);
         $purchaseReturnInput = ['purchase_order_id' => $purchase, 'notes' => 'LATIHAN 04: kembali ke supplier 0,25 dus = 1 unit',
             'lines' => [['purchase_order_line_id' => DB::table('purchase_order_lines')->where('purchase_order_id', $purchase)->value('id'), 'quantity' => '0.25']]];
         $purchaseReturn = app(ManagePurchaseReturnDraft::class)->save($purchaseReturnInput);

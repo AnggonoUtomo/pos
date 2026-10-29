@@ -57,16 +57,24 @@ final class ReplaceOperationalTrainingOnce
             $business = OperationalLifecycleSeeder::BUSINESS_TABLES;
             $foreignKeys = [];
             $protected = [];
+            // Only empty additive schemas can receive the new training lifecycle.
+            // They are never reset: any existing cashbook/shift data blocks replacement.
+            $newTrainingTables = ['cashbook_openings', 'cashbook_entries', 'cashier_shifts'];
+            foreach ($newTrainingTables as $table) {
+                if (DB::table($table)->lockForUpdate()->first() !== null) {
+                    throw new LogicException('Data dilindungi merujuk data bisnis: '.$table);
+                }
+            }
             $auditIds = DB::table('activity_log')->pluck('id')->all();
             foreach ($tables as $table) {
                 $foreignKeys[$table] = Schema::getForeignKeys($table);
-                if (! in_array($table, $business, true) && ! in_array($table, ['cache', 'cache_locks'], true)) {
+                if (! in_array($table, $business, true) && ! in_array($table, [...$newTrainingTables, 'cache', 'cache_locks'], true)) {
                     $protected[$table] = self::tableHash($table, $table === 'activity_log' ? $auditIds : null);
                 }
                 foreach ($foreignKeys[$table] as $key) {
                     if (! in_array($table, $business, true) && in_array($key['foreign_table'], $business, true)) {
                         // Preserve the new ledger; only an empty schema may coexist with the legacy training reset.
-                        if (in_array($table, ['cashbook_openings', 'cashbook_entries'], true)
+                        if (in_array($table, $newTrainingTables, true)
                             && DB::table($table)->lockForUpdate()->first() === null) {
                             continue;
                         }
