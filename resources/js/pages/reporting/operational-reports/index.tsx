@@ -1,12 +1,13 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
-import { BarChart3, Filter, LoaderCircle } from 'lucide-react';
+import { BarChart3, Filter, LoaderCircle, PackageCheck, ReceiptText, RotateCcw, Truck } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { OperationalCharts } from './components/operational-charts';
@@ -34,10 +35,28 @@ export default function OperationalReports(report: OperationalReport) {
         return () => window.removeEventListener('keydown', handler);
     }, []);
     const metrics = [
-        ['Penjualan lunas', money(report.sales.total), `${report.sales.count} nota`],
-        ['Pembelian diterima', money(report.purchases.total_value), `${report.purchases.count} dokumen`],
-        ['Retur penjualan diterima', `${report.sales_returns.count} dokumen`, `Refund selesai ${money(report.sales_returns.settled_total)}`],
-        ['Retur supplier dikirim', `${report.purchase_returns.count} dokumen`, `Uang kembali ${money(report.purchase_returns.settled_total)}`],
+        { label: 'Penjualan lunas', value: money(report.sales.total), detail: `${report.sales.count} nota`, icon: ReceiptText, tone: 'sky' },
+        {
+            label: 'Pembelian diterima',
+            value: money(report.purchases.total_value),
+            detail: `${report.purchases.count} dokumen`,
+            icon: PackageCheck,
+            tone: 'emerald',
+        },
+        {
+            label: 'Retur penjualan diterima',
+            value: `${report.sales_returns.count} dokumen`,
+            detail: `Refund selesai ${money(report.sales_returns.settled_total)}`,
+            icon: RotateCcw,
+            tone: 'rose',
+        },
+        {
+            label: 'Retur supplier dikirim',
+            value: `${report.purchase_returns.count} dokumen`,
+            detail: `Uang kembali ${money(report.purchase_returns.settled_total)}`,
+            icon: Truck,
+            tone: 'amber',
+        },
     ];
     return (
         <AppLayout breadcrumbs={[{ title: 'Laporan operasional', href: route('reports.operations.index') }]}>
@@ -104,13 +123,24 @@ export default function OperationalReports(report: OperationalReport) {
                         {form.processing ? <LoaderCircle className="size-4 animate-spin" /> : <Filter className="size-4" />}Terapkan
                     </Button>
                 </form>
-                <dl className="grid gap-x-6 gap-y-4 border-y py-5 sm:grid-cols-2 xl:grid-cols-4">
-                    {metrics.map(([label, value, detail]) => (
-                        <div key={label} className="min-w-0 space-y-1">
-                            <dt className="text-muted-foreground text-sm">{label}</dt>
-                            <dd className="text-lg font-semibold break-all">{value}</dd>
-                            <dd className="text-muted-foreground text-xs break-words">{detail}</dd>
-                        </div>
+                <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Ringkasan periode">
+                    {metrics.map((metric) => (
+                        <Card
+                            key={metric.label}
+                            data-tone={metric.tone}
+                            className="dashboard-metric min-w-0 border-transparent bg-[var(--metric-surface)] shadow-none"
+                        >
+                            <CardContent className="space-y-3 p-5">
+                                <div className="flex items-start justify-between gap-2">
+                                    <dt className="min-h-10 text-sm font-medium">{metric.label}</dt>
+                                    <span className="dashboard-metric-icon grid size-10 shrink-0 place-items-center rounded-lg">
+                                        <metric.icon className="size-5" aria-hidden="true" />
+                                    </span>
+                                </div>
+                                <dd className="text-2xl font-semibold [overflow-wrap:anywhere] break-words">{metric.value}</dd>
+                                <dd className="text-muted-foreground text-xs break-words">{metric.detail}</dd>
+                            </CardContent>
+                        </Card>
                     ))}
                 </dl>
                 <OperationalCharts

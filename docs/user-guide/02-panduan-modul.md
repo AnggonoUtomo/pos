@@ -23,6 +23,13 @@ super-system aktif terakhir. Pengelolaan akun ini belum mencakup reset password
 oleh admin atau hapus akun oleh admin. Jangan menganggap role baru langsung
 memiliki semua izin tanpa memilihnya.
 
+Pada pengaturan **Profile**, pengguna dapat memperbarui **Nama** dan **Alamat
+email**, lalu **Simpan perubahan**. Validasi email tetap berlaku; ikuti
+verifikasi bila diminta. Password pribadi diubah melalui menu Password.
+Halaman profil tidak menyediakan tombol hapus akun pribadi. Untuk perubahan
+role atau penonaktifan, hubungi administrator. Pembaruan ini belum digabungkan
+ke PDF global/per-role.
+
 ## 2. Pengaturan Toko
 
 **Prasyarat:** data identitas/kontak toko sudah disahkan pemilik.

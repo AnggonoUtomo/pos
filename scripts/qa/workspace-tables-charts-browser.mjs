@@ -5,6 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:net';
 import path from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -43,6 +44,10 @@ try {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}: body overflow`);
         await page.screenshot({ path: path.join(artifacts, `${name}.png`), fullPage: true, animations: 'disabled' });
     };
+    if (process.env.QA_REPORT_PROFILE === '1') {
+        const { checkReportProfile } = await import('./report-profile-checks.mjs');
+        await checkReportProfile({ page, url, setup, shot, checks });
+    } else {
     for (const [route, name] of (reportOnly ? [['/reports/operations', 'reports']] : [['/inventory/units', 'units'], ['/sales/invoices', 'invoices'], ['/reports/operations', 'reports'], ['/dashboard', 'dashboard']])) {
         await page.goto(`${url}${route}`); await page.locator('h1').waitFor();
         if (!baseline) {
@@ -98,6 +103,7 @@ try {
         await page.getByRole('button', { name: 'Terapkan', exact: true }).click(); await page.getByText('Belum ada nilai transaksi pada periode ini.', { exact: true }).waitFor();
         assert.equal(await page.locator('[data-chart-arc]').count(), 0); await shot('reports-zero-tablet');
         checks.push('Desktop/tablet light/dark, hover, reduced motion and zero-period filter PASS');
+    }
     }
     assert.deepEqual(errors, []); assert.equal(fixture({ verify_dashboard: true, fingerprint: setup.fingerprint }).status, 'PASS');
     const report = { status: 'PASS', baseline, checks, errors, artifacts }; await writeFile(path.join(artifacts, 'visual-report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));

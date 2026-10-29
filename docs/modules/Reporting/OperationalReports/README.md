@@ -49,3 +49,5 @@ Animasi finite saat data/widget masuk, tooltip keyboard, empty/zero serta
 prefers-reduced-motion tersedia. Ringkasan pembayaran laporan kini disajikan
 oleh widget, tidak diulang pada panel teks terpisah. Detail scope dan QA:
 [Tabel dan chart](../../../work-items/workspace-tables-charts/README.md).
+Empat ringkasan periode memakai card bertone dashboard tanpa mengubah sumber
+angka/filter: [Card laporan](../../../work-items/report-profile-polish/README.md).

@@ -159,10 +159,10 @@ try {
         checks.push('Inertia navigation selects correct guide; long guide scrolls independently PASS');
 
         await page.goto(`${url}/settings/profile`);
-        await page.getByLabel('Name', { exact: true }).fill('Isian belum disimpan QA');
+        await page.getByLabel('Nama', { exact: true }).fill('Isian belum disimpan QA');
         await openGuide('Panduan Profil Akun');
         await closeGuide();
-        assert.equal(await page.getByLabel('Name', { exact: true }).inputValue(), 'Isian belum disimpan QA');
+        assert.equal(await page.getByLabel('Nama', { exact: true }).inputValue(), 'Isian belum disimpan QA');
         checks.push('Unsaved profile form retained without save PASS');
     }
 

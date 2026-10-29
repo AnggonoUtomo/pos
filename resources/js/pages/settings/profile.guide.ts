@@ -12,15 +12,15 @@ export default {
             ],
         },
         {
-            title: 'Sebelum menghapus akun',
+            title: 'Pengaturan akses dan keamanan',
             steps: [
-                'Pastikan pekerjaan serta shift kasir sudah ditutup dan koordinasikan dengan administrator.',
-                'Gunakan konfirmasi password hanya bila penghapusan benar-benar dimaksudkan.',
+                'Untuk mengubah password pribadi, buka menu Password pada pengaturan akun.',
+                'Hubungi administrator untuk perubahan role atau penonaktifan akun. Halaman profil tidak menyediakan penghapusan akun pribadi.',
             ],
         },
     ],
     notes: [
-        'Super-system aktif terakhir dan akun dengan shift aktif tidak boleh dihapus.',
-        'Penghapusan akun bukan cara menghapus riwayat transaksi atau meminta penggantian role.',
+        'Mengubah nama atau email tidak mengubah role, hak akses atau riwayat transaksi.',
+        'Jangan membagikan password atau memakai akun kasir lain untuk bekerja.',
     ],
 } satisfies PageGuideContent;
