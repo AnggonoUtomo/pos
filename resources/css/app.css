@@ -534,7 +534,87 @@
     --sidebar-ring: hsl(292, 76%, 66%);
 }
 
+@layer utilities {
+    .workspace-table {
+        background: var(--app-panel);
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .workspace-table > thead {
+        color: var(--foreground);
+        background: color-mix(in oklab, var(--app-panel) 92%, var(--primary) 8%);
+    }
+
+    .workspace-table > thead > tr > th {
+        border-bottom: 1px solid color-mix(in oklab, var(--app-border) 78%, var(--primary) 22%);
+    }
+
+    .workspace-table > tbody > tr {
+        background: var(--app-panel);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .workspace-table > tbody > tr {
+            transition: background-color 150ms ease;
+        }
+    }
+
+    .workspace-table > tbody > tr:nth-child(even) {
+        background: color-mix(in oklab, var(--app-panel) 97%, var(--primary) 3%);
+    }
+
+    .workspace-table > tbody > tr:hover,
+    .workspace-table > tbody > tr:focus-within {
+        background: color-mix(in oklab, var(--app-panel) 92%, var(--primary) 8%);
+    }
+
+    .workspace-table > tbody > tr + tr > td {
+        border-top: 1px solid var(--app-border);
+    }
+}
+
 @layer components {
+    .chart-track,
+    .chart-ring-track {
+        background: color-mix(in oklab, var(--app-panel) 88%, var(--primary) 12%);
+        stroke: color-mix(in oklab, var(--app-panel) 88%, var(--primary) 12%);
+    }
+
+    .chart-bar {
+        animation: chart-bar-enter 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .chart-arc {
+        animation: chart-ring-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes chart-bar-enter {
+        from {
+            transform: scaleX(0);
+        }
+        to {
+            transform: scaleX(1);
+        }
+    }
+
+    @keyframes chart-ring-enter {
+        from {
+            stroke-dashoffset: var(--chart-circumference);
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .chart-bar,
+        .chart-arc {
+            animation: none;
+        }
+    }
+
     .dashboard-metric {
         --metric-surface: color-mix(in oklab, var(--app-panel) 87%, var(--metric-color) 13%);
     }

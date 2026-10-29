@@ -40,7 +40,7 @@ export function DataTable({
               ? ['Barang', 'Gudang', 'Saldo dasar', 'Nilai stok']
               : ['Waktu', 'Dokumen', 'Barang', 'Gudang', 'Masuk / keluar', 'Nilai'];
     return (
-        <table className="w-full min-w-[650px] text-sm">
+        <table className="workspace-table w-full min-w-[650px] text-sm">
             <thead className="bg-muted/40">
                 <tr>
                     {headings.map((label) => (

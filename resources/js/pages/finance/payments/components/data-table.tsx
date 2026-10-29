@@ -18,7 +18,7 @@ export function DataTable<T extends AccountRow | MethodRow>({
     onLifecycle: (row: T) => void;
 }) {
     return (
-        <table className="w-full min-w-[720px] text-sm">
+        <table className="workspace-table w-full min-w-[720px] text-sm">
             <thead className="bg-muted/40 text-muted-foreground border-b">
                 <tr>
                     {['Kode', 'Nama', 'Jenis', methods ? 'Akun tujuan' : 'Bank / rekening', 'Status', ...(canManage ? ['Operasi'] : [])].map(

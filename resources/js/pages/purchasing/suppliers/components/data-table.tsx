@@ -15,7 +15,7 @@ export function DataTable({
     onLifecycle: (row: SupplierRow) => void;
 }) {
     return (
-        <table className="w-full min-w-[760px] text-sm">
+        <table className="workspace-table w-full min-w-[760px] text-sm">
             <thead className="bg-muted/40 text-muted-foreground border-b">
                 <tr>
                     {['Kode', 'Nama', 'Kontak', 'Alamat', 'Status'].map((label) => (

@@ -26,7 +26,7 @@ export function DataTable({
 }) {
     return (
         <div className="min-w-0 overflow-x-auto rounded-md border">
-            <table className="w-full min-w-[800px] text-sm">
+            <table className="workspace-table w-full min-w-[800px] text-sm">
                 <thead className="text-muted-foreground bg-muted/40 border-b">
                     <tr>
                         {['Nomor / Invoice', 'Pelanggan', 'Gudang', 'Baris', 'Status', 'Operasi'].map((title) => (

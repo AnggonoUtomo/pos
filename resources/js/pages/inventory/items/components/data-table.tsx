@@ -23,7 +23,7 @@ export function DataTable({
 }) {
     const labels = new Map(unitOptions.map((unit) => [unit.id, unit]));
     return (
-        <table className="w-full text-sm">
+        <table className="workspace-table w-full text-sm">
             <thead className="bg-muted/40 text-muted-foreground border-b">
                 <tr>
                     <th scope="col" className="px-4 py-3 text-left font-medium">

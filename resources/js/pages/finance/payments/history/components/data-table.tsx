@@ -8,7 +8,7 @@ import { dateLabel, directionLabel, sourceLabel, type PaymentRow } from '../type
 export function DataTable({ rows, onOpen, disabled }: { rows: PaymentRow[]; onOpen: (row: PaymentRow) => void; disabled: boolean }) {
     return (
         <div className="overflow-x-auto rounded-md border">
-            <table className="w-full min-w-[860px] text-sm">
+            <table className="workspace-table w-full min-w-[860px] text-sm">
                 <thead className="bg-muted/40 text-muted-foreground border-b">
                     <tr>
                         {['Waktu (WIB)', 'Nomor transaksi', 'Arah', 'Total dokumen', 'Detail'].map((label) => (

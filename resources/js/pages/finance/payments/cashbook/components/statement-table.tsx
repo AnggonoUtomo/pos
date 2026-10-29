@@ -16,7 +16,7 @@ export function StatementTable({
 }) {
     return (
         <div className="min-w-0 overflow-x-auto rounded-md border">
-            <table className="w-full min-w-[860px] text-sm">
+            <table className="workspace-table w-full min-w-[860px] text-sm">
                 <thead className="bg-muted/40 text-muted-foreground border-b">
                     <tr>
                         {['Waktu (WIB)', 'Referensi / keterangan', 'Masuk', 'Keluar', 'Saldo', 'Operasi'].map((label, index) => (

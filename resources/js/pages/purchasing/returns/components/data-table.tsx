@@ -35,7 +35,7 @@ export function ReturnDataTable({
         );
     return (
         <div className="min-w-0 overflow-x-auto rounded-md border">
-            <table className="w-full min-w-[900px] text-sm">
+            <table className="workspace-table w-full min-w-[900px] text-sm">
                 <thead className="bg-muted/40 text-left">
                     <tr>
                         {['Nomor retur', 'Pembelian asal', 'Supplier', 'Barang', 'Revisi', 'Status', 'Aksi'].map((title) => (

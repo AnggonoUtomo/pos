@@ -9,7 +9,7 @@ const date = new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 
 export function DataTable({ rows, onOpen, loading }: { rows: InvoiceRow[]; onOpen: (id: string) => void; loading: boolean }) {
     return (
         <div className="min-w-0 overflow-x-auto rounded-md border bg-[var(--app-panel)]">
-            <table className="w-full min-w-[850px] text-sm" aria-label="Daftar penjualan">
+            <table className="workspace-table w-full min-w-[850px] text-sm" aria-label="Daftar penjualan">
                 <thead className="bg-muted/40 text-left">
                     <tr>
                         {['Invoice / Waktu (WIB)', 'Pelanggan', 'Gudang', 'Status', 'Total', ''].map((label, index) => (
@@ -32,7 +32,7 @@ export function DataTable({ rows, onOpen, loading }: { rows: InvoiceRow[]; onOpe
                             </td>
                             <td className="max-w-48 px-4 py-3 break-words">{row.warehouse_name}</td>
                             <td className="px-4 py-3">
-                                <Badge variant="outline" className="text-emerald-700 dark:text-emerald-300">
+                                <Badge variant="outline" className="border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
                                     Lunas
                                 </Badge>
                             </td>

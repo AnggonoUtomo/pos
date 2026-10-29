@@ -27,7 +27,7 @@ export function TransferDataTable({
         );
     return (
         <div className="min-w-0 overflow-x-auto rounded-md border">
-            <table className="w-full min-w-[900px] text-sm">
+            <table className="workspace-table w-full min-w-[900px] text-sm">
                 <thead className="bg-muted/40">
                     <tr>
                         {['Nomor transfer', 'Gudang asal', 'Gudang tujuan', 'Barang', 'Revisi', 'Status', 'Aksi'].map((label) => (

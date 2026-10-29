@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -149,7 +150,10 @@ export default function CashierShifts() {
                     </p>
                 )}
                 <div className="overflow-x-auto rounded-md border bg-[var(--app-panel)]" aria-busy={loading}>
-                    <table className="w-full min-w-[1000px] text-sm [&_td]:px-4 [&_td]:py-3 [&_th]:px-4 [&_th]:py-3" aria-label="Riwayat shift kasir">
+                    <table
+                        className="workspace-table w-full min-w-[1000px] text-sm [&_td]:px-4 [&_td]:py-3 [&_th]:px-4 [&_th]:py-3"
+                        aria-label="Riwayat shift kasir"
+                    >
                         <thead className="bg-muted/40 text-left">
                             <tr>
                                 {['Dibuka (WIB)', 'Kasir', 'Laci', 'Modal', 'Uang fisik', 'Selisih', 'Status', ''].map((title, i) => (
@@ -167,17 +171,18 @@ export default function CashierShifts() {
                                     <td className="whitespace-nowrap tabular-nums">{item.counted_cash === null ? '-' : money(item.counted_cash)}</td>
                                     <td className="whitespace-nowrap tabular-nums">{item.difference === null ? '-' : money(item.difference)}</td>
                                     <td>
-                                        <span
+                                        <Badge
+                                            variant="outline"
                                             className={
                                                 item.status === 'open'
-                                                    ? 'text-emerald-700 dark:text-emerald-300'
+                                                    ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                                                     : item.review_status === 'pending'
-                                                      ? 'text-amber-700 dark:text-amber-300'
-                                                      : 'text-muted-foreground'
+                                                      ? 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                                                      : 'border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300'
                                             }
                                         >
                                             {status(item)}
-                                        </span>
+                                        </Badge>
                                     </td>
                                     <td>
                                         <Button
