@@ -1,0 +1,33 @@
+# Tasks: Panduan Kontekstual
+
+## Sebelum Mulai
+
+- [x] Baca AGENTS, README, arsitektur/struktur dan panduan operator relevan.
+- [x] Periksa Git, layout admin/POS, page Inertia dan komponen Sheet.
+- [x] Batasi scope UI/read-only, metadata lokal, tanpa dependency/migration.
+
+## Increment 1: Konten Dan Resolver
+
+- [x] Tulis test coverage page dan validasi konten sebelum implementasi.
+  - Acceptance: seluruh page authenticated terpetakan, tidak mengambil auth
+    publik, isi tiap page memiliki judul/tujuan/langkah/peringatan yang valid.
+  - Verification: Node/TypeScript existing, RED lalu GREEN.
+- [x] Tambah guide lokal untuk master, transaksi, laporan, kas/shift dan akun.
+  - Acceptance: sesuai workflow existing, bukan fitur belum tersedia.
+  - Verification: review terhadap Markdown/source dan coverage test.
+- [x] Resolver lazy dan fallback aman; commit setelah gate terfokus lulus.
+
+Hasil: test awal RED karena `dashboard.guide.ts` belum ada; setelah konten
+ditambahkan, `node scripts/qa/page-guides.mjs` PASS untuk 26 page. Test juga
+memeriksa mapping Inertia, lazy load, fallback dan propagasi kegagalan loader.
+
+## Increment 2: Sheet Dan Delivery
+
+- [ ] Tambahkan tombol di layout admin dan toolbar POS serta F1.
+  - Acceptance: sheet kanan, tooltip, loading/error/retry, fokus/Escape,
+    pergantian halaman, scrollbar tipis, reduced motion.
+  - Verification: lint/type/build dan browser desktop/tablet.
+- [ ] Verifikasi form/keranjang tetap utuh, tidak reload/mutasi atau menutupi
+  kontrol pembayaran; tidak muncul pada login.
+- [ ] Update aturan panduan page baru/dokumentasi, checklist dan commit.
+- [ ] Push paket selesai dan verifikasi remote tanpa membawa file LSP.
