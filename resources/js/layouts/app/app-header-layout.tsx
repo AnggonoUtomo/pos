@@ -1,6 +1,7 @@
 import { AppContent } from '@/components/app-content';
 import { AppHeader } from '@/components/app-header';
 import { AppShell } from '@/components/app-shell';
+import { PageGuide } from '@/components/shared/page-guide/page-guide';
 import { type BreadcrumbItem } from '@/types';
 
 interface AppHeaderLayoutProps {
@@ -12,7 +13,11 @@ export default function AppHeaderLayout({ children, breadcrumbs }: AppHeaderLayo
     return (
         <AppShell>
             <AppHeader breadcrumbs={breadcrumbs} />
-            <AppContent>{children}</AppContent>
+            <AppContent>
+                {children}
+                <div aria-hidden="true" className="h-16 shrink-0 print:hidden" />
+                <PageGuide />
+            </AppContent>
         </AppShell>
     );
 }

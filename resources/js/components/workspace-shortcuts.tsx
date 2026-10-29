@@ -62,7 +62,7 @@ export function WorkspaceShortcutDropdown({
                 <DropdownMenuContent align="end" className="w-80">
                     <DropdownMenuLabel>Shortcut Halaman</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {shortcuts.map((shortcut) => (
+                    {[...shortcuts, { label: 'Panduan halaman', description: 'Buka atau tutup panduan penggunaan', keys: ['F1'] }].map((shortcut) => (
                         <DropdownMenuItem
                             key={`${shortcut.label}-${shortcut.keys.join('-')}`}
                             disabled={shortcut.disabled}

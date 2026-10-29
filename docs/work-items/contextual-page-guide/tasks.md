@@ -23,11 +23,16 @@ memeriksa mapping Inertia, lazy load, fallback dan propagasi kegagalan loader.
 
 ## Increment 2: Sheet Dan Delivery
 
-- [ ] Tambahkan tombol di layout admin dan toolbar POS serta F1.
+- [x] Tambahkan tombol di layout admin dan toolbar POS serta F1.
   - Acceptance: sheet kanan, tooltip, loading/error/retry, fokus/Escape,
     pergantian halaman, scrollbar tipis, reduced motion.
   - Verification: lint/type/build dan browser desktop/tablet.
-- [ ] Verifikasi form/keranjang tetap utuh, tidak reload/mutasi atau menutupi
+- [x] Verifikasi form/keranjang tetap utuh, tidak reload/mutasi atau menutupi
   kontrol pembayaran; tidak muncul pada login.
-- [ ] Update aturan panduan page baru/dokumentasi, checklist dan commit.
+- [x] Update aturan panduan page baru/dokumentasi, checklist dan commit.
 - [ ] Push paket selesai dan verifikasi remote tanpa membawa file LSP.
+
+Hasil: typecheck, ESLint, build, coverage/resolver dan checkpoint browser
+desktop/tablet lulus. Detail command, bukti dan fallback MCP pada README.
+Review correctness, keterbacaan, boundary, keamanan dan lazy loading selesai;
+tidak ditemukan blocker tersisa. Panduan tidak menyimpan/mengirim data bisnis.

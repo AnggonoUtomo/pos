@@ -17,6 +17,22 @@ ulang semua tema/viewport. Ulang gate hanya untuk perubahan yang memengaruhinya.
 
 ## Matriks Verifikasi
 
+### Panduan Kontekstual Halaman
+
+`node scripts/qa/page-guides.mjs` memeriksa cakupan seluruh page authenticated
+(tidak termasuk auth publik), struktur konten Bahasa Indonesia, judul spesifik,
+mapping Inertia, lazy loader, fallback dan kegagalan loader. Tidak perlu runner
+frontend/dependency baru.
+
+`node scripts/qa/page-guide-browser.mjs` memakai QA_PLAYWRIGHT_MODULE existing,
+Chrome terpasang, fixture MVP SQLite disposable dan cache/view testing terpisah.
+Memeriksa lazy chunk, F1/Escape/fokus, pergantian halaman, tidak reload/mutasi,
+form belum disimpan, keranjang Klasik/Visual, scroll sheet, desktop/tablet,
+dark/reduced motion dan error/retry. `QA_GUIDE_CONTINUE=pos` atau `finance` hanya
+mengulang bagian tersebut dan sesudahnya bila pemeriksaan sebelumnya sudah lulus.
+Screenshot/report berada di folder ignored storage/framework/testing. Browser
+dan server ditutup pada finally; database toko tidak dipakai.
+
 ### Gambar Barang
 
 `php artisan test --filter=ItemImageTest --compact` memakai database disposable

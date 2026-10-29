@@ -123,6 +123,11 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Untuk feedback operasi CRUD UI, gunakan Sonner toast dari shadcn/ui.
 - Setiap halaman module wajib menyediakan daftar shortcut operasi halaman dalam
   bentuk dropdown di atas panel workspace.
+- Setiap halaman authenticated memiliki panduan lokal `{page}.guide.ts` dalam
+  Bahasa Indonesia. Gunakan shared PageGuide: tombol mengambang di admin,
+  toolbar di POS, Sheet kanan dan F1. Perubahan alur wajib memperbarui panduan
+  in-app dan Markdown operator bersama; jangan menambahkan operasi/data sensitif
+  ke panduan. Cek cakupan dengan `node scripts/qa/page-guides.mjs`.
 - Top nav admin wajib menyediakan command palette global untuk navigasi dan
   operasi lintas module. Shortcut pembuka default: `Ctrl+K` atau `Cmd+K`.
 - Theme UI memakai mode Light/Dark/System dan accent theme operasional,

@@ -1,6 +1,7 @@
 import AppLogoIcon from '@/components/app-logo-icon';
 import { CommandPalette } from '@/components/command-palette';
 import { BarcodeInput } from '@/components/shared/barcode-input';
+import { PageGuide } from '@/components/shared/page-guide/page-guide';
 import { ThemeMenu } from '@/components/theme-menu';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -358,6 +359,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     <div className="flex flex-wrap items-center justify-end gap-2">
                         <CommandPalette />
                         <ThemeMenu />
+                        <PageGuide variant="toolbar" />
                         {canPost && user && (
                             <ShiftControl
                                 state={shift}

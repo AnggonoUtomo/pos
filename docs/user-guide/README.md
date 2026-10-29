@@ -44,6 +44,11 @@ Penyusunan panduan ini tidak mengubah role/akun/permission database.
 
 ## Cara Memakai Panduan
 
+- Di aplikasi, klik ikon buku mengambang di kanan bawah untuk panduan halaman
+  saat ini. Di POS, ikon buku berada di toolbar agar tidak menutupi pembayaran.
+  F1 membuka/menutup panduan; Esc menutupnya. Panduan bergulir terpisah dan
+  tidak menghapus isian atau keranjang. Tutup dialog lain terlebih dahulu
+  sebelum membuka panduan. Langkah/tombol tetap mengikuti izin akun Anda.
 - Latihan hanya pada lingkungan pelatihan yang disiapkan administrator, bukan
   dengan membuat transaksi coba-coba pada data toko produksi.
 - Nama tombol mengikuti aplikasi. Ikon tanpa teks dapat dikenali dari tooltip
@@ -59,3 +64,6 @@ Penyusunan panduan ini tidak mengubah role/akun/permission database.
 Jika label/alur berubah, ubah Markdown dan bangun ulang PDF, lalu periksa hasil
 render. Command dan bukti verifikasi ada pada
 [work item panduan](../work-items/user-guide/README.md).
+Ringkasan in-app berada dekat page di `resources/js/pages/**/*.guide.ts` dan
+harus diperbarui bersama alur/Markdown. Penambahan sheet ini tidak membangun
+ulang PDF global/per-role; batas versi PDF yang tercantum di atas tetap berlaku.

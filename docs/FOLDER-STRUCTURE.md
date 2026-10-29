@@ -73,6 +73,7 @@ resources/js/pages/{domain}/{module}/
 |-- hooks/                    # opsional, khusus fitur
 |-- lib/                      # opsional, helper lokal fitur
 |-- index.tsx
+|-- index.guide.ts            # panduan ringkas halaman, wajib untuk authenticated page
 `-- types.ts                  # opsional
 ```
 
@@ -85,6 +86,13 @@ Aturan frontend:
 - `resources/js/hooks/use-permission.ts` adalah hook permission global untuk UX.
 - shadcn/ui dan `lucide-react` menjadi default.
 - Sonner toast digunakan untuk feedback CRUD.
+- Panduan pengguna mengikuti nama page: `index.guide.ts`, `accounts.guide.ts`
+  dan seterusnya. Default export memenuhi `PageGuideContent` (judul, tujuan,
+  bagian langkah, catatan); tanpa HTML mentah, data akun atau operasi bisnis.
+  `components/shared/page-guide` hanya memuat resolver/presentasi lintas page,
+  konten tetap dimiliki page. Vite lazy-load saat dibuka; tidak ada endpoint baru.
+  Tambah/update panduan bersama page dan Markdown operator, lalu jalankan
+  `node scripts/qa/page-guides.mjs` untuk memastikan seluruh page terpetakan.
 
 ## Test Executable
 
