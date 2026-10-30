@@ -14,6 +14,19 @@
 - Format error JSON: mengikuti response Laravel, lalu distandardkan ketika API
   publik pertama ditetapkan.
 
+## Pagination Daftar Global
+
+Daftar master/riwayat/stok memakai default toko `table_per_page` (awal 10),
+diatur melalui Operasional > Umum. Query `per_page` menerima 10/25/50/100 dan
+ditolak 422 jika tidak valid; query tidak mengubah setting toko. Meta selalu
+current_page/last_page/per_page/total. Filter dan urutan existing tetap.
+Parameter ini tidak berlaku pada editor, lookup pilihan/barcode, katalog/
+keranjang POS, struk atau ringkasan dashboard. Tabel posisi stok laporan
+menggunakan stock.meta; seluruh total laporan/saldo Buku Kas tetap utuh.
+Public contract Platform/OperationalSettings: TablePreferences (default) dan
+TablePagination (ukuran request read yang tervalidasi). Schema setting tambahan
+bersifat additive; update memakai manage/version/audit existing.
+
 ## Endpoint Internal Pelanggan
 
 Module Sales/Parties memakai session web/auth/verified/CSRF. Bukan API token.
@@ -24,7 +37,7 @@ POST store, PUT `{id}`, DELETE `{id}`, POST `{id}/restore` memerlukan
 
 Index Inertia `sales/parties/index` dan `sales/parties/customer-levels`;
 props records/filters, customer menambah levelOptions aktif (maksimal 1000).
-JSON data `{data,meta}` dengan current_page/last_page/per_page/total, 25 baris,
+JSON data `{data,meta}` dengan current_page/last_page/per_page/total, ukuran global,
 urut code/id. Search code/nama maksimal 150, status all/active/inactive,
 trashed 0/1, page positif; customer_level_id ULID opsional pada daftar customer.
 
@@ -58,7 +71,7 @@ Prefix `/purchasing/suppliers`, nama `purchasing.suppliers.*`:
 
 Index Inertia `purchasing/suppliers/index`, props records/filters. JSON data
 `{data,meta}` berisi id/code/name/phone/email/address/is_active/deleted_at,
-meta current_page/last_page/per_page/total. Pagination 25 urut code/id.
+meta current_page/last_page/per_page/total. Ukuran global, urut code/id.
 Search literal code/name maksimal 150, status all/active/inactive, trashed0/1,
 page integer positif. Read tidak mengaudit atau mengubah data.
 
@@ -429,7 +442,7 @@ Filter opsional search substring nomor literal (max150, tanpa wildcard bebas),
 date_from/date_to YYYY-MM-DD inklusif WIB, warehouse_id/customer_id ULID,
 page positif; field lain atau rentang invalid422. Null/kosong berarti semua.
 Response records {data,meta}, filters canonical, viewAll, warehouseOptions dan
-customerOptions. Pagination25 order posted_at desc/id desc. List/total/options
+customerOptions. Ukuran global, order posted_at desc/id desc. List/total/options
 semua ter-scope; opsi dari snapshot authorized bounded1000 per jenis termasuk
 master tidak aktif/terhapus. Tidak membuka HPP/key/hash/actor/kontak/rekening.
 Read dan reprint tidak menulis ledger/audit. Detail
@@ -475,7 +488,7 @@ menghasilkan 201 `{id}`, POST web redirect kembali dengan flash success.
 | POST | /inventory/items | inventory.items.store | inventory.manage |
 
 Response daftar: `{data, meta}`; meta current_page/last_page/per_page/total,
-25 record per page, page integer 1..2147483647, order code lalu id. Master
+Ukuran global per page, page integer 1..2147483647, order code lalu id. Master
 nonaktif terlihat untuk admin, soft-deleted tidak dikembalikan. Field gudang:
 id/code/name/is_active; satuan menambah symbol. Field mutation: code/name,
 symbol untuk satuan, optional is_active boolean default true. Input text di-trim;
@@ -1054,7 +1067,7 @@ Inertia finance/payments/history/index, /data JSON {data,meta},
 /{direction}/{id} JSON detail. Nama finance.payments.history.index/data/show;
 direction route incoming/outgoing, id ULID. Tidak ada endpoint mutation.
 
-Index props records/filters/options {accounts,methods}. Pagination25 urut waktu
+Index props records/filters/options {accounts,methods}. Ukuran global, urut waktu
 descending/direction/id. Filter search literal max150, direction all/incoming/
 outgoing, account_id/method_id nullable ULID, date_from/date_to Y-m-d, page positif.
 Unknown/invalid filters422, detail tidak ditemukan404, forbidden403/guest login.

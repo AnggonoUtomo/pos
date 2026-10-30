@@ -38,3 +38,15 @@ Status terakhir adalah hasil runner, bukan klaim restore/off-device sudah aman.
 Demo seeder dipertimbangkan: default aman saja, tidak membuat dump/jadwal aktif,
 tidak mengubah grant dan tidak menimpa setting existing. Routes, migration dan
 seeder tetap di module. Rencana: [work item](work-items/initial-settings/tasks.md).
+
+## Preferensi Tabel Global
+
+Tab vertikal Umum/Cetak/Backup menjaga opsi existing. Umum menambahkan
+`table_per_page` default 10 dengan pilihan 10/25/50/100. Manage/view, audit dan
+optimistic version tetap. Override query `per_page` hanya berlaku pada daftar,
+tidak disimpan. `TablePreferences` membagikan default aman ke Inertia;
+`TablePagination` memvalidasi ukuran request melalui adapter Infrastructure.
+Repository daftar Inventory, Sales, Purchasing, Finance dan Identity memakai
+contract publik tersebut. Operasional/laporan menjaga summary seluruh data,
+bukan nilai halaman. Tidak berlaku pada editor/struk/katalog atau dashboard.
+Scope/bukti: [pagination global](../../../work-items/global-table-pagination/README.md).

@@ -1,12 +1,20 @@
 import type { PageGuideContent } from '@/components/shared/page-guide/types';
 export default {
     title: 'Panduan Pengaturan Operasional',
-    description: 'Atur format struk, jalankan backup manual dan pilih jadwal backup opsional.',
+    description: 'Atur tampilan tabel, format struk dan backup melalui tab vertikal.',
     sections: [
+        {
+            title: 'Umum: jumlah baris tabel',
+            steps: [
+                'Pada tab Umum, pilih Jumlah baris default: 10, 25, 50 atau 100, lalu Simpan pengaturan.',
+                'Default berlaku untuk daftar modul. Pilihan Baris per halaman pada tabel hanya sementara dan tidak mengubah default toko.',
+                'Gunakan nomor halaman atau tombol pertama, sebelumnya, berikutnya dan terakhir. Mengganti ukuran kembali ke halaman 1; filter tetap.',
+            ],
+        },
         {
             title: 'Cetak',
             steps: [
-                'Pilih A4, 58 mm atau 80 mm sesuai kertas, lalu simpan pengaturan.',
+                'Buka tab Cetak. Pilih A4, 58 mm atau 80 mm sesuai kertas, lalu simpan pengaturan.',
                 'Gunakan Uji cetak dan pilih printer atau Simpan sebagai PDF melalui dialog browser.',
                 'Cocokkan ukuran kertas, skala, margin dan hasil fisik dengan administrator.',
             ],
@@ -14,7 +22,7 @@ export default {
         {
             title: 'Backup manual dan jadwal',
             steps: [
-                'Klik Backup sekarang dan konfirmasi Buat backup; tunggu status berhasil.',
+                'Buka tab Backup. Klik Backup sekarang dan konfirmasi Buat backup; tunggu status berhasil.',
                 'Administrator memeriksa file pada folder backups project. File backup bukan unduhan publik.',
                 'Aktifkan opsi harian jika dibutuhkan, tentukan jam WIB dan simpan. Periksa hasil terakhir serta status pemicu jadwal.',
             ],

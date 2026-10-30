@@ -43,7 +43,7 @@ mencakup create dengan password awal, edit nama/email dan aktivasi/deaktivasi.
 ## Contract
 
 - GET `/platform/identity`: tab roles/permissions/users, search maksimum 150
-  karakter dan page integer positif maksimum 2147483647; 25 record/page.
+  karakter dan page integer positif maksimum 2147483647; ukuran halaman global.
 - Mutation: create/rename/delete role, sync permission role, sync role user.
   Response JSON `{id}` (201 create, 200 lainnya) atau redirect web.
 - Role name di-trim/lowercase, maksimum 64, pola `[a-z][a-z0-9_-]*` dan unik

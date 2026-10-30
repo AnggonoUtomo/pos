@@ -123,6 +123,11 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Untuk feedback operasi CRUD UI, gunakan Sonner toast dari shadcn/ui.
 - Setiap halaman module wajib menyediakan daftar shortcut operasi halaman dalam
   bentuk dropdown di atas panel workspace.
+- Daftar master/riwayat/stok memakai shared TablePagination dan contract publik
+  TablePagination/TablePreferences milik OperationalSettings. Default global 10,
+  pilihan 10/25/50/100, override sementara via per_page, reset halaman 1 saat
+  ukuran berubah dan filter dipertahankan. Jangan hardcode 25 atau menerapkan
+  limit halaman pada summary/saldo, editor, lookup, struk atau dashboard.
 - Setiap halaman authenticated memiliki panduan lokal `{page}.guide.ts` dalam
   Bahasa Indonesia. Gunakan shared PageGuide: tombol mengambang di admin,
   toolbar di POS, Sheet kanan dan F1. Perubahan alur wajib memperbarui panduan

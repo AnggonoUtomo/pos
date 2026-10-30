@@ -186,7 +186,7 @@ tanpa join model privat POS/Purchasing atau master live. GET index/data/show
 memakai permission finance.payments.history.view (semua histori single company),
 terpisah dari master view/manage dan permission transaksi. GET tidak mengaudit.
 
-Satu row per header payment_receipts/disbursements/refunds, UNION ALL pagination25 urut
+Satu row per header payment_receipts/disbursements/refunds, UNION ALL ukuran halaman global, urut
 occurred_at descending, direction ascending, id descending. CAST total AS CHAR
 sebelum union mempertahankan sale/refund28digit scale2 dan purchase24digit scale6.
 Filter nomor literal max150, direction all/incoming/outgoing, account_id/method_id

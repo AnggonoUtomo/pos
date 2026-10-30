@@ -1,3 +1,5 @@
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -5,7 +7,7 @@ import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, ClipboardCheck, LoaderCircle, Plus, Search } from 'lucide-react';
+import { ClipboardCheck, LoaderCircle, Plus, Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { AdjustmentDialog } from './components/adjustment-dialog';
@@ -64,7 +66,14 @@ export default function StockIndex({ filters, records, options, adjustmentKey }:
         const next = { ...filters, ...patch };
         router.get(
             route('inventory.stock.index'),
-            { ...next, warehouse_id: next.warehouse_id || undefined, item_id: next.item_id || undefined, trashed: next.trashed ? 1 : 0, page },
+            {
+                ...tablePageParams(),
+                ...next,
+                warehouse_id: next.warehouse_id || undefined,
+                item_id: next.item_id || undefined,
+                trashed: next.trashed ? 1 : 0,
+                page,
+            },
             { preserveState: true, preserveScroll: true, onError: () => toast.error('Filter stok tidak valid.') },
         );
     };
@@ -231,33 +240,7 @@ export default function StockIndex({ filters, records, options, adjustmentKey }:
                         onAction={(record, next) => setAction({ record, action: next })}
                     />
                 </div>
-                <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="text-muted-foreground">
-                        {records.meta.total} data - Halaman {records.meta.current_page} dari {records.meta.last_page}
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Halaman sebelumnya"
-                            title="Halaman sebelumnya"
-                            disabled={loading || records.meta.current_page <= 1}
-                            onClick={() => visit({}, records.meta.current_page - 1)}
-                        >
-                            <ChevronLeft className="size-4" />
-                        </Button>
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Halaman berikutnya"
-                            title="Halaman berikutnya"
-                            disabled={loading || records.meta.current_page >= records.meta.last_page}
-                            onClick={() => visit({}, records.meta.current_page + 1)}
-                        >
-                            <ChevronRight className="size-4" />
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination meta={records.meta} disabled={loading} />
             </section>
             {dialog && (dialog.readOnly || canManage) && (
                 <OpeningDialog record={dialog.record} options={options} readOnly={dialog.readOnly} onClose={() => setDialog(null)} />

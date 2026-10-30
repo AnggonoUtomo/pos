@@ -1,4 +1,6 @@
 import InputError from '@/components/input-error';
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -78,12 +80,14 @@ export default function OperationalReports(report: OperationalReport) {
                     className="flex flex-wrap items-end gap-3"
                     onSubmit={(e) => {
                         e.preventDefault();
-                        if (!form.processing)
+                        if (!form.processing) {
+                            form.transform((data) => ({ ...data, ...tablePageParams(), page: 1 }));
                             form.get(route('reports.operations.index'), {
                                 preserveState: true,
                                 preserveScroll: true,
                                 onError: () => toast.error('Filter laporan tidak valid.'),
                             });
+                        }
                     }}
                 >
                     <div className="space-y-2">
@@ -189,9 +193,9 @@ export default function OperationalReports(report: OperationalReport) {
                         </table>
                     </div>
                     <p className="text-muted-foreground text-xs">
-                        {report.stock.count} posisi barang/gudang{report.stock.truncated ? ' (100 baris pertama)' : ''} /{' '}
-                        {new Date(report.generated_at).toLocaleString('id-ID')}
+                        {report.stock.count} posisi barang/gudang / {new Date(report.generated_at).toLocaleString('id-ID')}
                     </p>
+                    <TablePagination meta={report.stock.meta} disabled={form.processing} />
                 </section>
             </section>
         </AppLayout>

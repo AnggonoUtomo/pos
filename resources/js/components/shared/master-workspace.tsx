@@ -1,10 +1,12 @@
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WorkspaceShortcutDropdown, type WorkspaceShortcut } from '@/components/workspace-shortcuts';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, LoaderCircle, Plus, Search } from 'lucide-react';
+import { LoaderCircle, Plus, Search } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 
@@ -83,12 +85,7 @@ export function MasterWorkspace({
     const visit = (patch: Partial<MasterFilters>, page = 1) =>
         router.get(
             route(`${routePrefix}.index`),
-            {
-                ...filters,
-                ...patch,
-                trashed: (patch.trashed ?? filters.trashed) ? 1 : 0,
-                page,
-            },
+            { ...tablePageParams(), ...filters, ...patch, trashed: (patch.trashed ?? filters.trashed) ? 1 : 0, page },
             { preserveState: true, preserveScroll: true, onError: () => toast.error('Filter tidak valid. Silakan periksa kembali.') },
         );
 
@@ -186,33 +183,7 @@ export function MasterWorkspace({
                     )}
                     {children}
                 </div>
-                <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="text-muted-foreground">
-                        {meta.total} data - Halaman {meta.current_page} dari {meta.last_page}
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label="Halaman sebelumnya"
-                            title="Halaman sebelumnya"
-                            disabled={loading || meta.current_page <= 1}
-                            onClick={() => visit({}, meta.current_page - 1)}
-                        >
-                            <ChevronLeft className="size-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label="Halaman berikutnya"
-                            title="Halaman berikutnya"
-                            disabled={loading || meta.current_page >= meta.last_page}
-                            onClick={() => visit({}, meta.current_page + 1)}
-                        >
-                            <ChevronRight className="size-4" />
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination meta={meta} disabled={loading} />
             </section>
         </AppLayout>
     );

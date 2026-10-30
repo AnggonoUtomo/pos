@@ -1,9 +1,11 @@
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, LoaderCircle, ShoppingCart } from 'lucide-react';
+import { LoaderCircle, ShoppingCart } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { ReceiptDialog } from '../components/receipt-dialog';
@@ -34,7 +36,7 @@ export default function InvoiceHistory({ records, filters, viewAll, warehouseOpt
         setErrors({});
         router.get(
             route('sales.invoices.index'),
-            { ...values, page },
+            { ...tablePageParams(), ...values, page },
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -121,33 +123,7 @@ export default function InvoiceHistory({ records, filters, viewAll, warehouseOpt
                     </p>
                 )}
                 <DataTable rows={records.data} onOpen={(id) => void receipt.load(id)} loading={loading} />
-                <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-                    <span className="text-muted-foreground">
-                        {meta.total} penjualan - Halaman {meta.current_page} dari {meta.last_page}
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            title="Halaman sebelumnya"
-                            aria-label="Halaman sebelumnya"
-                            disabled={loading || meta.current_page <= 1}
-                            onClick={() => visit(filters, meta.current_page - 1)}
-                        >
-                            <ChevronLeft className="text-sky-600 dark:text-sky-300" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            title="Halaman berikutnya"
-                            aria-label="Halaman berikutnya"
-                            disabled={loading || meta.current_page >= meta.last_page}
-                            onClick={() => visit(filters, meta.current_page + 1)}
-                        >
-                            <ChevronRight className="text-sky-600 dark:text-sky-300" />
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination meta={meta} disabled={loading} />
                 <ReceiptDialog
                     open={receipt.id !== null}
                     onOpenChange={receipt.close}

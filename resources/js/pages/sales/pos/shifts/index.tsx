@@ -1,3 +1,4 @@
+import { TablePagination } from '@/components/shared/table-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -6,8 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
-import { CheckCheck, ChevronLeft, ChevronRight, Eye, LoaderCircle, RefreshCw, ShoppingCart } from 'lucide-react';
+import type { SharedData } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { CheckCheck, Eye, LoaderCircle, RefreshCw, ShoppingCart } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { money } from '../lib/decimal';
@@ -16,7 +18,7 @@ import { ShiftControl } from './components/shift-control';
 import { useShiftContext } from './hooks/use-shift-context';
 import type { CashierShift, ShiftDetail } from './types';
 
-type Records = { data: CashierShift[]; meta: { current_page: number; last_page: number; total: number } };
+type Records = { data: CashierShift[]; meta: { current_page: number; last_page: number; total: number; per_page: number } };
 const date = (value: string | null) =>
     value ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jakarta' }).format(new Date(value)) : '-';
 const status = (row: CashierShift) =>
@@ -33,6 +35,8 @@ export default function CashierShifts() {
     const own = can('sales.pos.invoices.post');
     const shift = useShiftContext(own);
     const [page, setPage] = useState(1);
+    const { tables } = usePage<SharedData>().props;
+    const [perPage, setPerPage] = useState(tables?.default_per_page ?? 10);
     const [version, setVersion] = useState(0);
     const [records, setRecords] = useState<Records | null>(null);
     const [detail, setDetail] = useState<ShiftDetail | null>(null);
@@ -46,7 +50,7 @@ export default function CashierShifts() {
         const controller = new AbortController();
         setLoading(true);
         setError('');
-        void posRequest<Records>(route('pos.shifts.data', { page }), controller.signal)
+        void posRequest<Records>(route('pos.shifts.data', { page, per_page: perPage }), controller.signal)
             .then((data) => {
                 if (!controller.signal.aborted) setRecords(data);
             })
@@ -60,7 +64,7 @@ export default function CashierShifts() {
                 if (!controller.signal.aborted) setLoading(false);
             });
         return () => controller.abort();
-    }, [page, version, shift.active?.id]);
+    }, [page, perPage, version, shift.active?.id]);
     useEffect(() => {
         const key = (event: KeyboardEvent) => {
             if (event.altKey && event.key.toLowerCase() === 'r' && !document.querySelector('[role="dialog"]')) {
@@ -208,33 +212,14 @@ export default function CashierShifts() {
                         </tbody>
                     </table>
                 </div>
-                <div className="flex items-center justify-between gap-3 text-sm">
-                    <span>
-                        {records?.meta.total ?? 0} shift · Halaman {page} / {records?.meta.last_page ?? 1}
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            title="Sebelumnya"
-                            aria-label="Halaman sebelumnya"
-                            disabled={loading || page <= 1}
-                            onClick={() => setPage(page - 1)}
-                        >
-                            <ChevronLeft />
-                        </Button>
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            title="Berikutnya"
-                            aria-label="Halaman berikutnya"
-                            disabled={loading || !records || page >= records.meta.last_page}
-                            onClick={() => setPage(page + 1)}
-                        >
-                            <ChevronRight />
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination
+                    meta={records?.meta ?? { current_page: page, last_page: 1, per_page: perPage, total: 0 }}
+                    disabled={loading || !records}
+                    onChange={({ page, perPage }) => {
+                        setPage(page);
+                        setPerPage(perPage);
+                    }}
+                />
             </section>
             <Dialog
                 open={Boolean(detail)}

@@ -1,9 +1,10 @@
-import { Button } from '@/components/ui/button';
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DataTable } from './components/data-table';
@@ -33,7 +34,7 @@ export default function PaymentHistory({ records, filters, options }: HistoryPro
         setErrors({});
         router.get(
             route('finance.payments.history.index'),
-            { ...values, page },
+            { ...tablePageParams(), ...values, page },
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -101,33 +102,7 @@ export default function PaymentHistory({ records, filters, options }: HistoryPro
                     </div>
                 )}
                 <DataTable rows={records.data} onOpen={(row) => void detail.load(row)} disabled={loading || !can('finance.payments.history.view')} />
-                <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-3 text-sm">
-                    <span>
-                        {records.meta.total} dokumen / Halaman {records.meta.current_page} dari {records.meta.last_page}
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Halaman sebelumnya"
-                            title="Halaman sebelumnya"
-                            disabled={loading || records.meta.current_page <= 1}
-                            onClick={() => visit(filters, records.meta.current_page - 1)}
-                        >
-                            <ChevronLeft className="size-4 text-sky-600 dark:text-sky-300" />
-                        </Button>
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Halaman berikutnya"
-                            title="Halaman berikutnya"
-                            disabled={loading || records.meta.current_page >= records.meta.last_page}
-                            onClick={() => visit(filters, records.meta.current_page + 1)}
-                        >
-                            <ChevronRight className="size-4 text-sky-600 dark:text-sky-300" />
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination meta={records.meta} disabled={loading} />
             </section>
             <DetailDialog state={detail} />
         </AppLayout>

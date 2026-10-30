@@ -162,7 +162,7 @@ warehouse_id/customer_id ULID opsional dan page integer positif. Field query
 lain ditolak422; tanggal akhir sebelum awal ditolak. Kosong berarti semua.
 Tanggal memakai Asia/Jakarta; batas awal inklusif dan akhir eksklusif awal hari
 berikutnya dikonversi ke timezone penyimpanan aplikasi, tanpa fungsi date SQL.
-Tanggal UI daftar selalu WIB. Pagination25, urut posted_at desc/id desc.
+Tanggal UI daftar selalu WIB. Ukuran halaman global, urut posted_at desc/id desc.
 
 Output records.data hanya id/number/posted_at, nama snapshot gudang/pelanggan/
 level dan total decimal string scale2; meta current_page/last_page/per_page/total.

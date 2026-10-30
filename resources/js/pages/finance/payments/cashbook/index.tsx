@@ -1,4 +1,6 @@
 import InputError from '@/components/input-error';
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,7 +9,7 @@ import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { AlertTriangle, ChevronLeft, ChevronRight, CirclePlus, Landmark, RotateCcw, Search } from 'lucide-react';
+import { AlertTriangle, CirclePlus, Landmark, RotateCcw, Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { OperationDialog } from './components/operation-dialog';
@@ -41,7 +43,7 @@ export default function Cashbook({ records, accounts, filters, today }: Cashbook
     const visit = useCallback((values: CashFilters, page = 1) => {
         router.get(
             route('finance.cashbook.index'),
-            { ...values, page },
+            { ...tablePageParams(), ...values, page },
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -221,33 +223,7 @@ export default function Cashbook({ records, accounts, filters, today }: Cashbook
                             disabled={locked}
                             onReverse={(row) => openDialog({ action: 'reverse', sourceId: row.reversible_id!, reference: row.number })}
                         />
-                        <div className="flex items-center justify-between gap-3 text-sm">
-                            <span>
-                                {records.meta.total} mutasi / Halaman {records.meta.current_page} dari {records.meta.last_page}
-                            </span>
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    title="Halaman sebelumnya"
-                                    aria-label="Halaman sebelumnya"
-                                    disabled={filterBusy || records.meta.current_page <= 1}
-                                    onClick={() => visit(filters, records.meta.current_page - 1)}
-                                >
-                                    <ChevronLeft className="text-sky-600" />
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    title="Halaman berikutnya"
-                                    aria-label="Halaman berikutnya"
-                                    disabled={filterBusy || records.meta.current_page >= records.meta.last_page}
-                                    onClick={() => visit(filters, records.meta.current_page + 1)}
-                                >
-                                    <ChevronRight className="text-sky-600" />
-                                </Button>
-                            </div>
-                        </div>
+                        <TablePagination meta={records.meta} disabled={filterBusy} />
                     </>
                 )}
             </section>

@@ -17,14 +17,19 @@
 
 ## Increment 2: UI Operasional Dan Seluruh Daftar
 
-- [ ] Tab vertikal Umum/Cetak/Backup; form/shortcut/cetak/manual backup tetap.
-- [ ] Pagination shared pada seluruh tabel daftar, termasuk stok laporan.
+- [x] Tab vertikal Umum/Cetak/Backup; form/shortcut/cetak/manual backup tetap.
+- [x] Pagination shared pada seluruh tabel daftar, termasuk stok laporan.
   - Acceptance: ukuran, rentang/total, first/prev/nomor/next/last, filter tetap,
     loading/empty/boundary dan navigasi keyboard; override bukan setting global.
-- [ ] Update panduan dan test UI; desktop/tablet representatif light/dark.
-- [ ] Gate regresi backend/frontend sekali; perbaiki hanya kegagalan terkait.
+- [x] Update panduan dan test UI; desktop/tablet representatif light/dark.
+- [x] Gate regresi backend/frontend sekali; perbaiki hanya kegagalan terkait.
+
+Regresi penuh tetap FAIL karena gap existing, bukan dinyatakan lulus.
+User menyetujui gap terpisah; detail reproduksi dan focused PASS ada pada README.
+QA browser PASS; koreksi akhir lebar tombol nomor panjang diikuti build/lint
+frontend yang terdampak tanpa mengulang seluruh suite.
 
 ## Increment 3: Aktivasi Dan Delivery
 
-- [ ] Backup terverifikasi dan migrate hanya schema pekerjaan ini.
+- [x] Backup terverifikasi dan migrate hanya schema pekerjaan ini.
 - [ ] Catat bukti, audit final scope, commit dan push; LSP dikecualikan.

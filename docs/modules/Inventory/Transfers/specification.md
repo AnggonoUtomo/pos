@@ -58,7 +58,7 @@ barang/satuan input tetap disembunyikan tanpa permission manage.
 POST / menerima source_warehouse_id, destination_warehouse_id, notes opsional500,
 lines[{item_id,unit_id,quantity}]. PUT /{id} menambah version; DELETE /{id} dan
 POST /{id}/restore hanya version. Key tambahan ditolak, termasuk baris.
-GET data: {data,meta}, pagination25, search literal150 atas nomor dan nama/kode
+GET data: {data,meta}, ukuran halaman global, search literal150 atas nomor dan nama/kode
 gudang, filter source_warehouse_id/destination_warehouse_id serta trashed0/1.
 Output memakai decimal string exact6; UI format Indonesia tanpa nol trailing.
 401/403/404/419/422 sesuai auth/permission/CSRF/validation. Audit gagal rollback.

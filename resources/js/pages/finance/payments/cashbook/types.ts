@@ -22,7 +22,7 @@ export interface Statement {
     opening: { starts_on: string; amount: string } | null;
     summary: { opening: string; incoming: string; outgoing: string; closing: string; negative: boolean } | null;
     rows: CashRow[];
-    meta: { current_page: number; last_page: number; total: number };
+    meta: { current_page: number; last_page: number; total: number; per_page: number };
 }
 export interface CashFilters {
     account_id?: string;

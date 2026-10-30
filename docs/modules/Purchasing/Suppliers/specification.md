@@ -25,7 +25,7 @@ ID invalid/tidak tersedia404. Create JSON201, update/delete/restore200;
 Inertia mutation redirect back dengan Sonner. Duplicate/invalid422.
 
 Index/data: search code/name literal max150, status all/active/inactive,
-trashed boolean, page positif. Pagination25, order code/id. Daftar kontak hanya
+trashed boolean, page positif. Ukuran halaman global, order code/id. Daftar kontak hanya
 untuk role view; manage tidak otomatis memberi view. Hanya field payload yang
 diizinkan dipersist; ID/deleted_at/actor dari server, tidak dari request.
 

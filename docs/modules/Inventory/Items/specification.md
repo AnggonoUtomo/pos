@@ -62,7 +62,7 @@ item/unit, dan barcode tetap direservasi pada soft-deleted row.
 - StoreItemRequest hanya menerima field master yang diizinkan; ratio harus
   decimal string, unit_id distinct dan dinormalisasi lowercase sesuai HasUlids,
   maksimal 100 relasi; barcode kosong menjadi null, barcode '0' tetap valid.
-- ListItems mengembalikan pagination 25 record dengan eager load relasi milik
+- ListItems memakai ukuran halaman global dengan eager load relasi milik
   Items, tanpa mengambil model privat Units. Data terhapus disaring, barang
   nonaktif tetap tampil untuk admin. Response mengikuti API.md.
 

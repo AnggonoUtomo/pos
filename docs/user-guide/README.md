@@ -44,6 +44,13 @@ Penyusunan panduan ini tidak mengubah role/akun/permission database.
 
 ## Cara Memakai Panduan
 
+- Pada daftar modul, pilih **Baris per halaman** (10/25/50/100). Informasi rentang
+  dan total mengikuti filter; gunakan nomor halaman atau tombol pertama,
+  sebelumnya, berikutnya dan terakhir. Mengganti ukuran kembali ke halaman 1
+  tanpa menghapus filter. Pilihan ini sementara, bukan perubahan default toko.
+  Administrator menetapkan default di **Operasional > Umum > Jumlah baris
+  default**. Isi transaksi, struk dan ringkasan dashboard tidak dibatasi oleh opsi
+  tersebut. Tambahan ini belum digabungkan ke PDF global/per-role.
 - Di aplikasi, klik ikon buku mengambang di kanan bawah untuk panduan halaman
   saat ini. Di POS, ikon buku berada di toolbar agar tidak menutupi pembayaran.
   F1 membuka/menutup panduan; Esc menutupnya. Panduan bergulir terpisah dan

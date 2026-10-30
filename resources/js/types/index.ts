@@ -36,6 +36,7 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     printing?: { paper: ReceiptPaper } | null;
+    tables?: { default_per_page: number } | null;
     [key: string]: unknown;
 }
 

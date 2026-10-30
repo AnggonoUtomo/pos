@@ -91,7 +91,7 @@ store/update/destroy/restore purchasing.purchase-orders.manage; post memakai
 purchasing.purchase-orders.post, pay memakai purchasing.purchase-orders.pay.
 Keempatnya terpisah; tidak auto-grant.
 GET index Inertia purchasing/purchase-orders/index, props records/filters/options;
-GET data JSON {data,meta}. Pagination25 descending id, eager lines bounded100.
+GET data JSON {data,meta}. Ukuran halaman global, descending id, eager lines bounded100.
 Filter search literal max150 pada number/supplier_name/warehouse_name,
 supplier_id/warehouse_id opsional ULID, status all/draft/posted default all,
 trashed0/1, page positif.

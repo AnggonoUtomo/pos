@@ -147,7 +147,7 @@ kontak supplier, credential, payment payload atau salinan snapshot penuh.
 Prefix `/purchasing/returns`, name `purchasing.returns.*`; web/auth/verified dan
 CSRF. `GET /data` memerlukan view; `GET /purchases`, `GET /purchases/{id}`,
 `POST /`, `PUT /{id}`, `DELETE /{id}` dan `POST /{id}/restore` memerlukan manage.
-Data JSON `{data,meta}`, pagination25,
+Data JSON `{data,meta}`, ukuran halaman global,
 search literal max150 atas nomor retur/pembelian/supplier, status all/draft,
 trashed0/1 dan page. Purchase search mengembalikan maksimal25 snapshot aman.
 Input create/update dan response JSON didokumentasikan di [API](../../../API.md).

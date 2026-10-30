@@ -1,10 +1,12 @@
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, KeyRound, LoaderCircle, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
+import { KeyRound, LoaderCircle, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { AccessEditorDialog } from './components/access-editor-dialog';
@@ -63,7 +65,7 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
     const visit = (tab: AccessTab, query = filters.search, page = 1) =>
         router.get(
             route('platform.identity.index'),
-            { tab, search: query, page },
+            { ...tablePageParams(), tab, search: query, page },
             { preserveState: true, preserveScroll: true, onError: () => toast.error('Filter akses tidak valid.') },
         );
     return (
@@ -188,33 +190,7 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                             onStatusEdit={setStatusEditor}
                         />
                     </div>
-                    <div className="flex items-center justify-between gap-3 text-sm">
-                        <span className="text-muted-foreground">
-                            {meta.total} data - Halaman {meta.current_page} dari {meta.last_page}
-                        </span>
-                        <div className="flex gap-2">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                aria-label="Halaman sebelumnya"
-                                title="Halaman sebelumnya"
-                                disabled={loading || meta.current_page <= 1}
-                                onClick={() => visit(filters.tab, filters.search, meta.current_page - 1)}
-                            >
-                                <ChevronLeft className="size-4 text-sky-600 dark:text-sky-300" />
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                aria-label="Halaman berikutnya"
-                                title="Halaman berikutnya"
-                                disabled={loading || meta.current_page >= meta.last_page}
-                                onClick={() => visit(filters.tab, filters.search, meta.current_page + 1)}
-                            >
-                                <ChevronRight className="size-4 text-sky-600 dark:text-sky-300" />
-                            </Button>
-                        </div>
-                    </div>
+                    <TablePagination meta={meta} disabled={loading} />
                 </div>
                 {canManage && editor?.kind === 'role' && (
                     <RoleFormDialog key={editor.record?.id ?? 'new'} record={editor.record} onClose={() => setEditor(null)} />

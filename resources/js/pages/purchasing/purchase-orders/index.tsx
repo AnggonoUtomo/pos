@@ -1,3 +1,5 @@
+import { TablePagination } from '@/components/shared/table-pagination';
+import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -5,7 +7,7 @@ import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, LoaderCircle, Plus, Search } from 'lucide-react';
+import { LoaderCircle, Plus, Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DataTable } from './components/data-table';
@@ -54,7 +56,7 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
     const visit = (patch: Partial<PurchaseFilters>, page = 1) =>
         router.get(
             route('purchasing.purchase-orders.index'),
-            { ...filters, ...patch, trashed: (patch.trashed ?? filters.trashed) ? 1 : 0, page },
+            { ...tablePageParams(), ...filters, ...patch, trashed: (patch.trashed ?? filters.trashed) ? 1 : 0, page },
             { preserveState: true, preserveScroll: true, onError: () => toast.error('Filter belum valid.') },
         );
     return (
@@ -198,33 +200,7 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                     onOpen={(record, readOnly) => setDialog({ record, readOnly })}
                     onLifecycle={setLifecycle}
                 />
-                <div className="text-muted-foreground flex items-center justify-between gap-3 text-sm">
-                    <span>
-                        {records.meta.total} dokumen / Halaman {records.meta.current_page} dari {records.meta.last_page}
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label="Halaman sebelumnya"
-                            title="Halaman sebelumnya"
-                            disabled={loading || records.meta.current_page <= 1}
-                            onClick={() => visit({}, records.meta.current_page - 1)}
-                        >
-                            <ChevronLeft className="size-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label="Halaman berikutnya"
-                            title="Halaman berikutnya"
-                            disabled={loading || records.meta.current_page >= records.meta.last_page}
-                            onClick={() => visit({}, records.meta.current_page + 1)}
-                        >
-                            <ChevronRight className="size-4" />
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination meta={records.meta} disabled={loading} />
             </section>
             {dialog && (dialog.readOnly || canManage) && (
                 <PurchaseFormDialog
