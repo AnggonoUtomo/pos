@@ -7,6 +7,7 @@ use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\PurchaseOrderRep
 use App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Models\PurchaseOrder;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LogicException;
@@ -99,7 +100,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
         }
         $model = PurchaseOrder::query()->lockForUpdate()->findOrFail($id);
         $model->fill($header + ['status' => 'posted', 'version' => $version + 1, 'stock_receipt_id' => $receiptId,
-            'posted_from_version' => $version, 'posted_at' => $postedAt, 'posted_by' => $actorId]);
+            'posted_from_version' => $version, 'posted_at' => Carbon::parse($postedAt)->setTimezone(config('app.timezone')), 'posted_by' => $actorId]);
         if (! $model->save()) {
             throw new RuntimeException('Status penerimaan tidak tersimpan.');
         }
@@ -110,7 +111,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
     {
         $this->requireTransaction();
         $model = PurchaseOrder::query()->lockForUpdate()->findOrFail($id);
-        $model->fill(['payment_disbursement_id' => $disbursementId, 'paid_at' => $paidAt, 'payment_snapshot' => $snapshot,
+        $model->fill(['payment_disbursement_id' => $disbursementId, 'paid_at' => Carbon::parse($paidAt)->setTimezone(config('app.timezone')), 'payment_snapshot' => $snapshot,
             'paid_from_version' => $version, 'paid_by' => $actorId, 'version' => $version + 1]);
         if (! $model->save()) {
             throw new RuntimeException('Status pembayaran tidak tersimpan.');

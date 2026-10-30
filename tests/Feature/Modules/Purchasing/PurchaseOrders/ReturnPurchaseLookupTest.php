@@ -2,12 +2,16 @@
 
 namespace Tests\Feature\Modules\Purchasing\PurchaseOrders;
 
+use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
+use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PayPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PostPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\ReturnPurchaseLookup;
 use App\Modules\Purchasing\Suppliers\Infrastructure\Persistence\Models\Supplier;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Feature\Modules\Inventory\Stock\StockTestCase;
 
 class ReturnPurchaseLookupTest extends StockTestCase
@@ -52,6 +56,82 @@ class ReturnPurchaseLookupTest extends StockTestCase
         $this->assertSame([$id], array_map(fn ($row) => $row->header['id'], $lookup->searchEligible('%_!')));
         $this->expectException(InvalidArgumentException::class);
         $lookup->searchEligible(str_repeat('x', 151));
+    }
+
+    public static function timezones(): array
+    {
+        return ['WIB' => ['Asia/Jakarta'], 'UTC' => ['UTC']];
+    }
+
+    private function useTimezone(string $timezone): void
+    {
+        $original = date_default_timezone_get();
+        $this->beforeApplicationDestroyed(fn () => date_default_timezone_set($original));
+        date_default_timezone_set($timezone);
+        config(['app.timezone' => $timezone]);
+        $this->travelTo(Carbon::parse('2026-10-30 02:15:16', $timezone));
+    }
+
+    #[DataProvider('timezones')]
+    public function test_receipt_and_order_preserve_the_same_posting_time(string $timezone): void
+    {
+        $this->useTimezone($timezone);
+        $id = $this->received();
+        $order = DB::table('purchase_orders')->where('id', $id)->first();
+        $receipt = DB::table('stock_receipts')->where('id', $order->stock_receipt_id)->first();
+
+        $this->assertSame($receipt->posted_at, $order->posted_at);
+        $this->assertNotNull(app(ReturnPurchaseLookup::class)->findEligible($id));
+    }
+
+    #[DataProvider('timezones')]
+    public function test_paid_source_preserves_finance_time_and_is_eligible_for_refund(string $timezone): void
+    {
+        $this->useTimezone($timezone);
+        $this->seed(PaymentsDemoSeeder::class);
+        $id = $this->received();
+        $method = DB::table('payment_methods')->where('code', 'TUNAI')->value('id');
+        app(PayPurchaseOrder::class)->handle($id, 2, [['method_id' => $method, 'amount' => '240000']], $this->manager->id);
+        $order = DB::table('purchase_orders')->where('id', $id)->first();
+        $payment = DB::table('payment_disbursements')->where('id', $order->payment_disbursement_id)->first();
+
+        $this->assertSame($payment->paid_at, $order->paid_at);
+        $this->assertNotNull(app(ReturnPurchaseLookup::class)->refundBasis($id));
+
+        DB::table('purchase_orders')->where('id', $id)->update(['paid_at' => Carbon::parse($order->paid_at)->addSecond()]);
+        $this->assertNull(app(ReturnPurchaseLookup::class)->refundBasis($id));
+    }
+
+    public function test_mismatched_receipt_time_is_not_accepted(): void
+    {
+        $id = $this->received();
+        $order = DB::table('purchase_orders')->where('id', $id)->first();
+        DB::table('stock_receipts')->where('id', $order->stock_receipt_id)
+            ->update(['posted_at' => Carbon::parse($order->posted_at)->addSecond()]);
+
+        $this->assertNull(app(ReturnPurchaseLookup::class)->findEligible($id));
+        $this->assertSame([], app(ReturnPurchaseLookup::class)->searchEligible(''));
+    }
+
+    public static function mismatchedReceiptFields(): array
+    {
+        return [
+            'number' => ['stock_receipts', 'source_number', 'OTHER-PO'],
+            'source' => ['stock_receipts', 'source_id', '00000000000000000000000000'],
+            'line reference' => ['stock_receipt_lines', 'source_line_id', '00000000000000000000000000'],
+            'value' => ['stock_receipt_lines', 'total_value', '239999.999999'],
+        ];
+    }
+
+    #[DataProvider('mismatchedReceiptFields')]
+    public function test_receipt_integrity_checks_remain_strict(string $table, string $field, string $value): void
+    {
+        $id = $this->received();
+        $receiptId = DB::table('purchase_orders')->where('id', $id)->value('stock_receipt_id');
+        DB::table($table)->where($table === 'stock_receipts' ? 'id' : 'receipt_id', $receiptId)->update([$field => $value]);
+
+        $this->assertNull(app(ReturnPurchaseLookup::class)->findEligible($id));
+        $this->assertSame([], app(ReturnPurchaseLookup::class)->searchEligible(''));
     }
 
     public function test_only_posted_orders_with_matching_receipt_metadata_are_eligible(): void
