@@ -39,7 +39,11 @@ baseline. Bukan alasan mengubah aturan transaksi atau menghapus test.
 
 User secara eksplisit mengizinkan gap retur dicatat terpisah dan pagination
 dituntaskan terlebih dahulu. Tidak ada perbaikan alur retur/tanggal dalam
-pekerjaan ini. Kegagalan baseline tetap risiko terbuka untuk audit terpisah.
+pekerjaan ini. Gap retur kemudian ditangani atas instruksi user pada
+[perbaikan sumber retur pembelian](../purchase-return-source-fix/README.md):
+penyebab konversi timezone posted_at/paid_at sudah diperbaiki dan seluruh
+regresi retur/refund/lifecycle lulus. Gap filter tanggal InvoiceHistoryTest
+tetap terbuka; angka gate awal di atas dipertahankan sebagai bukti saat itu.
 
 ## Verifikasi Fitur
 

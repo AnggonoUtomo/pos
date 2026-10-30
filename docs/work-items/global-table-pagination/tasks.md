@@ -36,4 +36,5 @@ frontend yang terdampak tanpa mengulang seluruh suite.
 
 Backend `cffa82c` dan UI/QA/dokumentasi `dcd60f9` sudah dipush ke origin/main;
 remote diperiksa dan divergence 0/0. Tidak ada file LSP atau backup dalam commit.
-Scope pagination ditutup; gap regresi existing pada README tetap terbuka.
+Scope pagination ditutup; gap retur pada README ditangani kemudian melalui
+work item purchase-return-source-fix. Gap filter tanggal invoice tetap terbuka.

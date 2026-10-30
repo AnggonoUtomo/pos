@@ -1,6 +1,7 @@
 # Perbaikan Sumber Retur Pembelian
 
-Status: perbaikan dan regresi backend selesai; verifikasi native penutupan berjalan.
+Status: selesai. Perbaikan, regresi backend dan QA MySQL lulus untuk scope retur.
+Gate seluruh project masih memiliki satu FAIL existing di luar scope.
 
 ## Scope
 
@@ -43,4 +44,23 @@ Tidak ada perubahan contract, schema, timestamp transaksi lama atau ledger.
   receipt dan pembayaran. Tidak perlu dan tidak dilakukan koreksi data lama.
 - Frontend build/typecheck tidak diulang: tidak ada perubahan frontend.
 
-Hasil native dan penutupan dicatat pada increment berikutnya.
+## Penutupan
+
+- `php scripts/qa/purchase-return-refund-mysql.php` PASS dengan APP_ENV=local,
+  APP_TIMEZONE=Asia/Jakarta, serta path cache konfigurasi/route testing terpisah.
+  Database random disposable: migration, quote readonly, race scope/refund,
+  retry bersamaan, snapshot replay, residual mikro, nominal besar exact6,
+  audit veto rollback, FK dan cleanup lulus. Database toko tidak dimutasi.
+- Browser visual SKIPPED karena tidak ada perubahan UI/UX. Gate backend
+  mencakup endpoint pencarian sumber, CRUD draft, posting dan settlement;
+  QA native memverifikasi lifecycle nyata. Tidak mengulang kombinasi tema/viewport.
+- Pint scoped PASS dan `git diff --check` PASS. Review dependency, integritas
+  receipt, atomicity dan scope selesai; tidak ada query yang dilonggarkan.
+- Increment perbaikan tersimpan pada commit `19c1a93`; penutupan dokumentasi
+  dibuat sebagai commit terpisah. File LSP user tetap di luar commit.
+- Tidak ada migration/seed/reset produksi, perubahan permission, dependency,
+  runner OS, frontend atau Old-docs. Panduan operator tidak berubah karena alur
+  dan langkah penggunaan tetap sama; yang diperbaiki hanya adapter penyimpanan.
+
+Risiko terbuka di luar scope: InvoiceHistoryTest filter tanggal WIB masih FAIL.
+Tidak ada perbaikan maupun klaim lulus untuk bug tersebut dalam pekerjaan ini.

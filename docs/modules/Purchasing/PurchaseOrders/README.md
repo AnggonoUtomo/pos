@@ -16,6 +16,10 @@ order/baris dan mencocokkan metadata receipt, tanpa payment/actor/notes.
 khusus nominal retur, sesudah pointer/nomor/total/waktu/snapshot pembayaran asal
 cocok dengan published PurchasePaymentProofLookup Finance. Source unpaid atau
 proof tidak cocok ditolak; tidak mengekspor akun/bank/actor/notes atau mengubah PO.
+Timestamp ISO UTC dari contract Stock/Finance dikonversi ke timezone aplikasi
+oleh adapter persistence sebelum menyimpan posted_at/paid_at, agar sama dengan
+bukti SQL asal. Regresi WIB/UTC dan receipt tidak cocok ada pada
+[perbaikan sumber retur](../../../work-items/purchase-return-source-fix/README.md).
 
 Lihat [spesifikasi](specification.md), [rencana](plan.md), [checklist](tasks.md)
 dan [fondasi draft](work-items/draft-foundation/README.md), serta

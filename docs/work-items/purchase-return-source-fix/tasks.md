@@ -17,10 +17,10 @@
 
 ## Increment 2: Verifikasi Dan Handoff
 
-- [ ] Jalankan gate backend serta pemeriksaan native/browser yang relevan.
+- [x] Jalankan gate backend serta pemeriksaan native/browser yang relevan.
   - Acceptance: hasil dan gap di luar scope dilaporkan apa adanya.
   - Verification: command dan hasil dicatat pada README.
-- [ ] Review diff dan perbarui gap dokumentasi terdahulu.
+- [x] Review diff dan perbarui gap dokumentasi terdahulu.
   - Acceptance: tidak ada perubahan data produksi atau berkas user.
   - Verification: git diff --check dan review scope.
-- [ ] Commit terfokus, push dan verifikasi sinkronisasi remote.
+- [x] Commit terfokus, push dan verifikasi sinkronisasi remote.
