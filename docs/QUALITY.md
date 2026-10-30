@@ -17,6 +17,20 @@ ulang semua tema/viewport. Ulang gate hanya untuk perubahan yang memengaruhinya.
 
 ## Matriks Verifikasi
 
+### Area Pencarian Dan Filter
+
+Mode `QA_SEARCH_SURFACES=1` pada
+`node scripts/qa/workspace-tables-charts-browser.mjs` memakai
+`QA_PLAYWRIGHT_MODULE` existing, Chrome terpasang dan fixture SQLite/cache/view
+terisolasi. Periksa DevTools MCP dahulu; gunakan fallback ini bila discovery
+atau executable MCP existing tidak merespons.
+
+Memeriksa 19 workspace dengan band filter bertema, batas kontrol dan overflow,
+Alt+F/focus, Enter, hasil kosong/reset, pagination serta apply/reset riwayat.
+Desktop Light dan tablet Light/Dark representatif, console bersih dan
+fingerprint ledger tidak berubah. Tidak melakukan checkout/mutasi toko.
+Bukti dan batas scope: [work item](work-items/search-filter-surfaces/README.md).
+
 ### Panduan Kontekstual Halaman
 
 `node scripts/qa/page-guides.mjs` memeriksa cakupan seluruh page authenticated

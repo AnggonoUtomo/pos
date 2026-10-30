@@ -26,7 +26,7 @@ const fixture = (input) => {
     assert.equal(result.status, 0, result.stderr); return JSON.parse(result.stdout);
 };
 const password = randomBytes(32).toString('hex');
-const setup = fixture({ password, dashboard_only: true, pagination_demo: process.env.QA_GLOBAL_PAGINATION === '1' });
+const setup = fixture({ password, dashboard_only: true, pagination_demo: process.env.QA_GLOBAL_PAGINATION === '1' || process.env.QA_SEARCH_SURFACES === '1' });
 const server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], { cwd: path.join(root, 'public'), env, stdio: 'ignore', windowsHide: true });
 const checks = []; const errors = []; let browser; let page;
 const baseline = process.env.QA_VISUAL_BASELINE === '1';
@@ -44,7 +44,10 @@ try {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}: body overflow`);
         await page.screenshot({ path: path.join(artifacts, `${name}.png`), fullPage: true, animations: 'disabled' });
     };
-    if (process.env.QA_GLOBAL_PAGINATION === '1') {
+    if (process.env.QA_SEARCH_SURFACES === '1') {
+        const { checkSearchSurfaces } = await import('./search-filter-checks.mjs');
+        await checkSearchSurfaces({ page, url, shot, checks });
+    } else if (process.env.QA_GLOBAL_PAGINATION === '1') {
         const { checkGlobalPagination } = await import('./global-pagination-checks.mjs');
         await checkGlobalPagination({ page, url, shot, checks });
     } else if (process.env.QA_REPORT_PROFILE === '1') {

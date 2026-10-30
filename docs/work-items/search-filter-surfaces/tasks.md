@@ -17,11 +17,11 @@
 
 ## Increment 2: QA Dan Penutupan
 
-- [ ] QA browser terfokus.
+- [x] QA browser terfokus.
   - Acceptance: pencarian/filter/pagination tetap bekerja, tidak overflow atau
     console error pada desktop/tablet representatif Light/Dark.
   - Verification: DevTools MCP existing atau fallback dengan alasan tercatat.
-- [ ] Lengkapi bukti, diff check dan commit terfokus.
+- [x] Lengkapi bukti, diff check dan commit terfokus.
   - Acceptance: file user, Old-docs, data toko dan .env tidak tersentuh.
   - Verification: scope commit dan status git.
-- [ ] Push setelah selesai dan verifikasi sinkronisasi remote.
+- [x] Push setelah selesai dan verifikasi sinkronisasi remote.
