@@ -27,6 +27,19 @@ Public contract Platform/OperationalSettings: TablePreferences (default) dan
 TablePagination (ukuran request read yang tervalidasi). Schema setting tambahan
 bersifat additive; update memakai manage/version/audit existing.
 
+## Endpoint Internal Audit Log
+
+Session web/auth/verified dengan `platform.audit-log.view` untuk seluruh GET
+`/platform/audit-log` (Inertia), `/platform/audit-log/data` dan
+`/platform/audit-log/{id}` (ID numerik existing Spatie). Tidak ada endpoint mutation.
+Query: search maksimal150, module/event technical key, actor_id numerik atau
+system, date_from/date_to YYYY-MM-DD WIB, page positif dan per_page global.
+Urut created_at/id menurun; tanggal akhir eksklusif awal hari berikutnya.
+Detail hanya projection before/after/field_labels aman, tanpa properties,
+attribute_changes, description mentah, subject_type atau email/credential.
+Field yang tidak dicatat tidak dibuat ulang; angka dipertahankan sebagai string.
+Rincian pada [spesifikasi](modules/Platform/AuditLog/specification.md).
+
 ## Endpoint Internal Pelanggan
 
 Module Sales/Parties memakai session web/auth/verified/CSRF. Bukan API token.

@@ -17,6 +17,27 @@ ulang semua tema/viewport. Ulang gate hanya untuk perubahan yang memengaruhinya.
 
 ## Matriks Verifikasi
 
+### Viewer Audit Log
+
+`php artisan test --compact tests/Feature/Modules/Platform/AuditLog
+tests/Unit/Modules/Platform/AuditLog` memeriksa authorization seluruh GET,
+tidak ada mutation route, whitelist v5 attribute_changes/properties manual,
+angka besar, redaksi, search literal/snapshot dihapus, WIB/UTC, pagination,
+filter invalid, causer hilang dan catalog tanpa grant.
+
+Mode QA_AUDIT_LOG=1 pada workspace-tables-charts-browser.mjs memakai fixture
+disposable; QA_PLAYWRIGHT_MODULE menunjuk instalasi existing. QA_DEVTOOLS_ENTRY
+opsional menjalankan smoke MCP actual sebelum alur Chrome/Playwright.
+Saat namespace tool tidak tersedia, baca package.json pada instalasi MCP:
+gunakan executable di `bin.chrome-devtools-mcp`, bukan entry `main/index.js`
+yang bukan launcher server. Baca schema tool dan kirim pageId bila diwajibkan.
+Tidak perlu memasang ulang package atau mengubah konfigurasi editor/OS.
+
+Aktivasi `php scripts/qa/activate-audit-log-local.php`: catalog idempotent dua
+kali tanpa auto-grant, query JSON/detail MySQL baca-saja dan route cache.
+Fingerprint seluruh tabel existing (kecuali cache/session; permissions hanya
+baris existing) wajib identik. Tanpa migration, demo, reset atau perubahan .env.
+
 ### Area Pencarian Dan Filter
 
 Mode `QA_SEARCH_SURFACES=1` pada

@@ -29,6 +29,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
     {
+        title: 'Log Aktivitas',
+        description: 'Telusuri aktivitas dan perubahan data',
+        url: '/platform/audit-log',
+        permission: 'platform.audit-log.view',
+        icon: History,
+        tone: 'text-cyan-600 dark:text-cyan-300',
+    },
+    {
         title: 'Pengaturan operasional',
         description: 'Format struk dan jadwal backup',
         url: '/platform/operational-settings',

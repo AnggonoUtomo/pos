@@ -55,6 +55,13 @@ const mainNavGroups: NavGroup[] = [
                 badgeTone: 'amber',
                 permission: 'platform.operational-settings.view',
             },
+            {
+                title: 'Log Aktivitas',
+                url: '/platform/audit-log',
+                icon: History,
+                badgeTone: 'blue',
+                permission: 'platform.audit-log.view',
+            },
         ],
     },
     {

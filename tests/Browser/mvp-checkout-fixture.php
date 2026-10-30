@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Tests\Fixtures\AuditLogFixture;
 use Tests\Fixtures\PurchaseReturnRefundFixture;
 use Tests\Fixtures\ReturnRefundFixture;
 
@@ -44,6 +45,9 @@ if (($input['verify_manual_backup'] ?? false) === true) {
 if (($input['verify_dashboard'] ?? false) === true) {
     if (! hash_equals(PurchaseReturnRefundFixture::fingerprint(), $input['fingerprint'] ?? '')) {
         throw new RuntimeException('Dashboard tidak boleh memutasi ledger.');
+    }
+    if (isset($input['audit_fingerprint']) && ! hash_equals(AuditLogFixture::fingerprint(), $input['audit_fingerprint'])) {
+        throw new RuntimeException('Viewer tidak boleh memutasi audit.');
     }
     echo json_encode(['status' => 'PASS', 'readonly' => true]);
     exit;
@@ -108,7 +112,8 @@ if (($input['dashboard_only'] ?? false) === true) {
     $cashier = User::findOrFail(DB::table('sales_invoices')->where('id', $invoice['id'])->value('actor_id'));
     $cashier->forceFill(['email' => 'qa-cashier@example.test', 'password' => $input['password']])->save();
     $cashier->givePermissionTo('sales.pos.invoices.post');
-    echo json_encode(['status' => 'READY', 'invoice_number' => $invoice['number'],
+    $audit = ($input['audit_demo'] ?? false) ? AuditLogFixture::create($input['password']) : [];
+    echo json_encode($audit + ['status' => 'READY', 'invoice_number' => $invoice['number'],
         'report' => app(OperationalReport::class)->handle([]), 'fingerprint' => PurchaseReturnRefundFixture::fingerprint()]);
     exit;
 }

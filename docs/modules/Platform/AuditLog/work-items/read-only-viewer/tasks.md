@@ -17,10 +17,10 @@
 
 ## Increment 2: UI Dan Panduan
 
-- [ ] Buat daftar/filter/detail lokal, state loading/empty/error dan shortcut.
+- [x] Buat daftar/filter/detail lokal, state loading/empty/error dan shortcut.
   - Acceptance: tema existing, keyboard, readonly, tanpa raw JSON/secret.
   - Verification: typecheck/lint/build dan browser.
-- [ ] Tambahkan sidebar/palette, guide F1 serta Markdown operator.
+- [x] Tambahkan sidebar/palette, guide F1 serta Markdown operator.
   - Acceptance: guard permission konsisten, seluruh page memiliki guide.
   - Verification: page-guides, backend dan QA browser.
 

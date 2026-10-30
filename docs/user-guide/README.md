@@ -21,6 +21,8 @@ Keuangan: [Buku Kas](BUKU-KAS.md), saldo awal, mutasi, transfer dan pembalik;
 belum digabungkan ke PDF global/per-role tersebut.
 Kasir: [Shift Kasir](SHIFT-KASIR.md), persiapan laci, buka/tutup, hitung fisik
 dan review selisih; belum digabungkan ke PDF global/per-role tersebut.
+Penelusuran: [Log Aktivitas](LOG-AKTIVITAS.md), filter dan detail perubahan
+baca-saja dengan permission khusus; belum digabungkan ke PDF global/per-role.
 
 [Unduh buku global PDF](../../output/pdf/user-guide/panduan-global-pos.pdf).
 PDF global berisi alur global, panduan modul, serta role/akses. Gunakan daftar
