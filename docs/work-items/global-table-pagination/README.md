@@ -1,6 +1,7 @@
 # Pengaturan Global Dan Pagination Tabel
 
-Status: implementasi. Disetujui user: default global 10 baris; pilihan
+Status: selesai untuk scope pengaturan/pagination, dengan gap regresi existing
+terbuka pada bagian di bawah. Disetujui user: default global 10 baris; pilihan
 10/25/50/100. Override sementara per tabel tidak mengubah default toko.
 Perubahan jumlah baris kembali ke halaman 1 dengan filter tetap.
 
