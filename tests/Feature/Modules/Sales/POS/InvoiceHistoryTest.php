@@ -14,6 +14,7 @@ use App\Modules\Sales\POS\Application\Actions\PostInvoice;
 use App\Modules\Sales\POS\Application\DTOs\CartLineData;
 use App\Modules\Sales\POS\Application\Queries\CheckCart;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -62,7 +63,10 @@ class InvoiceHistoryTest extends TestCase
             'customer_id' => $customer, 'quote_fingerprint' => $quote['fingerprint'],
             'lines' => [['item_id' => $item->id, 'unit_id' => $item->base_unit_id, 'quantity' => '0.1']],
             'payments' => [['method_id' => DB::table('payment_methods')->where('code', 'TUNAI')->value('id'), 'amount' => $quote['subtotal']]]], $actor->id);
-        DB::table('sales_invoices')->where('id', $invoice['id'])->update(['posted_at' => $postedAt]);
+        // Fixture instants are UTC; invoice timestamps are stored in the app timezone.
+        DB::table('sales_invoices')->where('id', $invoice['id'])->update([
+            'posted_at' => CarbonImmutable::parse($postedAt, 'UTC')->setTimezone(config('app.timezone'))->format('Y-m-d H:i:s'),
+        ]);
 
         return $invoice;
     }
@@ -106,6 +110,35 @@ class InvoiceHistoryTest extends TestCase
             ->assertJsonPath('records.data.0.customer_name', 'Installer CCTV Demo')
             ->assertJsonPath('warehouseOptions.0.name', 'Gudang Utama')->assertJsonPath('customerOptions.0.name', 'Installer CCTV Demo');
         $this->getJson('/sales/invoices/data?warehouse_id='.(string) Str::ulid())->assertOk()->assertJsonPath('records.meta.total', 0);
+    }
+
+    #[DataProvider('storageTimezones')]
+    public function test_wib_boundaries_and_iso_responses_match_storage_timezone(string $timezone): void
+    {
+        config(['app.timezone' => $timezone]);
+        $instants = ['2026-10-15T17:00:00Z', '2026-10-16T16:59:59Z', '2026-10-16T17:00:00Z'];
+        foreach ($this->invoices as $index => $invoice) {
+            DB::table('sales_invoices')->where('id', $invoice['id'])->update([
+                'posted_at' => CarbonImmutable::parse($instants[$index])->setTimezone($timezone)->format('Y-m-d H:i:s'),
+            ]);
+        }
+        $before = DB::table('sales_invoices')->orderBy('id')->get()->toJson();
+        $this->actingAs($this->viewer)->getJson('/sales/invoices/data?date_from=2026-10-16&date_to=2026-10-16')
+            ->assertOk()->assertJsonPath('records.meta.total', 2)
+            ->assertJsonPath('records.data.0.id', $this->invoices[1]['id'])
+            ->assertJsonPath('records.data.0.posted_at', '2026-10-16T16:59:59.000000Z')
+            ->assertJsonPath('records.data.1.id', $this->invoices[0]['id'])
+            ->assertJsonPath('records.data.1.posted_at', '2026-10-15T17:00:00.000000Z');
+        $this->getJson('/sales/invoices/data?date_from=2026-10-17')->assertOk()
+            ->assertJsonPath('records.meta.total', 1)->assertJsonPath('records.data.0.id', $this->invoices[2]['id']);
+        $this->getJson('/sales/invoices/data?date_to=2026-10-15')->assertOk()->assertJsonPath('records.meta.total', 0);
+        $this->getJson('/sales/invoices/data?date_to=2026-10-16')->assertOk()->assertJsonPath('records.meta.total', 2);
+        $this->assertSame($before, DB::table('sales_invoices')->orderBy('id')->get()->toJson());
+    }
+
+    public static function storageTimezones(): array
+    {
+        return ['UTC' => ['UTC'], 'WIB' => ['Asia/Jakarta']];
     }
 
     public function test_read_is_private_exact_and_does_not_write_ledger_or_audit(): void
