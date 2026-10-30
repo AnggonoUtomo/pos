@@ -88,12 +88,12 @@ class SuppliersHttpTest extends TestCase
         }
         $id = $action->save(new SupplierData('SPECIAL', 'CCTV 100%_!', isActive: false));
         $logs = DB::table('activity_log')->count();
-        $this->getJson(self::URL.'/data')->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 28);
-        $this->getJson(self::URL.'/data?page=2')->assertJsonCount(3, 'data');
+        $this->getJson(self::URL.'/data?per_page=25')->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 28);
+        $this->getJson(self::URL.'/data?page=2&per_page=25')->assertJsonCount(3, 'data');
         $this->getJson(self::URL.'/data?search='.urlencode('%_!'))->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.id', $id);
         $this->getJson(self::URL.'/data?status=inactive')->assertJsonPath('meta.total', 1);
         $this->getJson(self::URL.'/data?status=active')->assertJsonPath('meta.total', 27);
-        $this->get(self::URL)->assertInertia(fn (Assert $page) => $page->component('purchasing/suppliers/index')->has('records.data', 25)->where('filters.status', 'all'));
+        $this->get(self::URL)->assertInertia(fn (Assert $page) => $page->component('purchasing/suppliers/index')->has('records.data', 10)->where('filters.status', 'all'));
         $this->assertSame($logs, DB::table('activity_log')->count());
         $action->delete($id);
         $this->getJson(self::URL.'/data?trashed=1')->assertJsonPath('meta.total', 1);

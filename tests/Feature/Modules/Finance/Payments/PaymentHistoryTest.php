@@ -95,9 +95,9 @@ class PaymentHistoryTest extends TestCase
             DB::table('payment_receipts')->insert($copy);
         }
         $this->actingAs($this->viewer);
-        $one = $this->getJson(self::URL.'/data')->assertJsonPath('meta.total', 28)->assertJsonCount(25, 'data')->json('data');
-        $two = $this->getJson(self::URL.'/data?page=2')->assertJsonCount(3, 'data')->json('data');
+        $one = $this->getJson(self::URL.'/data?per_page=25')->assertJsonPath('meta.total', 28)->assertJsonCount(25, 'data')->json('data');
+        $two = $this->getJson(self::URL.'/data?page=2&per_page=25')->assertJsonCount(3, 'data')->json('data');
         $this->assertSame([], array_intersect(array_column($one, 'id'), array_column($two, 'id')));
-        $this->assertSame($one, $this->getJson(self::URL.'/data')->json('data'));
+        $this->assertSame($one, $this->getJson(self::URL.'/data?per_page=25')->json('data'));
     }
 }

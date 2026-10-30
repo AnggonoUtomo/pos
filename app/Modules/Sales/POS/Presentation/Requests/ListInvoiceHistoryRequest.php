@@ -23,7 +23,7 @@ class ListInvoiceHistoryRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
-            if (array_diff(array_keys($this->query()), ['page', 'search', 'warehouse_id', 'customer_id', 'date_from', 'date_to']) !== []) {
+            if (array_diff(array_keys($this->query()), ['page', 'per_page', 'search', 'warehouse_id', 'customer_id', 'date_from', 'date_to']) !== []) {
                 $validator->errors()->add('filters', 'Filter mengandung field yang tidak diizinkan.');
             }
             if (! $validator->errors()->has('date_from') && ! $validator->errors()->has('date_to')

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Purchasing\PurchaseOrders\Application\Contracts\PurchaseOrderRepository;
 use App\Modules\Purchasing\PurchaseOrders\Infrastructure\Persistence\Models\PurchaseOrder;
 use Brick\Math\BigDecimal;
@@ -13,6 +14,8 @@ use RuntimeException;
 
 class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private function requireTransaction(): void
     {
         if (DB::transactionLevel() === 0) {
@@ -153,11 +156,11 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepository
             $query->where(fn ($q) => $q->whereRaw("number LIKE ? ESCAPE '!'", [$like])
                 ->orWhereRaw("supplier_name LIKE ? ESCAPE '!'", [$like])->orWhereRaw("warehouse_name LIKE ? ESCAPE '!'", [$like]));
         }
-        $result = $query->orderByDesc('id')->paginate(25, page: $page);
+        $result = $query->orderByDesc('id')->paginate($this->pagination->perPage(), page: $page);
         $lines = DB::table('purchase_order_lines')->whereIn('purchase_order_id', $result->getCollection()->pluck('id'))->orderBy('item_id')->get()->groupBy('purchase_order_id');
         $data = $result->getCollection()->map(fn ($model) => $model->toArray() + ['lines' => ($lines[$model->id] ?? collect())->map(fn ($row) => $this->normalizeLine((array) $row))->all()])->all();
 
-        return ['data' => $data, 'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
+        return ['data' => $data, 'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => $result->perPage(), 'total' => $result->total()]];
     }
 
     private function normalizeLine(array $row): array

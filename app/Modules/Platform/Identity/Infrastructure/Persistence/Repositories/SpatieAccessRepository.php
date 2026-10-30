@@ -4,6 +4,7 @@ namespace App\Modules\Platform\Identity\Infrastructure\Persistence\Repositories;
 
 use App\Models\User;
 use App\Modules\Platform\Identity\Application\Contracts\AccessRepository;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -13,6 +14,8 @@ use Spatie\Permission\PermissionRegistrar;
 
 class SpatieAccessRepository implements AccessRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private function roleData(Role $role): array
     {
         return ['id' => $role->id, 'name' => $role->name, 'users_count' => (int) $role->users_count,
@@ -31,7 +34,7 @@ class SpatieAccessRepository implements AccessRepository
             $query->where(fn ($q) => $q->where('name', 'like', '%'.$search.'%')
                 ->when($tab === 'users', fn ($q) => $q->orWhere('email', 'like', '%'.$search.'%')));
         }
-        $paginator = $query->orderBy('name')->orderBy('id')->paginate(25, page: $page);
+        $paginator = $query->orderBy('name')->orderBy('id')->paginate($this->pagination->perPage(), page: $page);
         $data = $paginator->getCollection()->map(fn ($row) => match ($tab) {
             'users' => ['id' => $row->id, 'name' => $row->name, 'email' => $row->email,
                 'roles' => $row->roles->where('guard_name', 'web')->pluck('name')->sort()->values()->all(), 'direct_permissions_count' => $row->permissions_count,

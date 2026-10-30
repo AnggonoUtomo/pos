@@ -3,6 +3,7 @@
 namespace App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Finance\Payments\Application\Contracts\CashbookReader;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use Brick\Math\BigDecimal;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
@@ -11,6 +12,8 @@ use Illuminate\Validation\ValidationException;
 
 class DatabaseCashbookReader implements CashbookReader
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function accounts(): array
     {
         return DB::table('payment_accounts as a')->leftJoin('cashbook_openings as o', 'o.account_id', '=', 'a.id')
@@ -52,13 +55,15 @@ class DatabaseCashbookReader implements CashbookReader
 
     public function statement(?string $accountId, ?string $from, ?string $to, int $page): array
     {
+        $perPage = $this->pagination->perPage();
+
         // One read snapshot, decimal strings and a cursor avoid float sums and loading all history into memory.
-        return DB::transaction(function () use ($accountId, $from, $to, $page): array {
+        return DB::transaction(function () use ($accountId, $from, $to, $page, $perPage): array {
             $account = $accountId ? DB::table('payment_accounts')->where('id', $accountId)->whereNull('deleted_at')->first(['id', 'code', 'name', 'type', 'is_active']) : null;
             abort_if($accountId !== null && $account === null, 404);
             $opening = $account ? DB::table('cashbook_openings')->where('account_id', $accountId)->first(['starts_on', 'amount']) : null;
             $result = ['account' => $account ? (array) $account : null, 'opening' => $opening ? ['starts_on' => $opening->starts_on, 'amount' => (string) BigDecimal::of($opening->amount)->toScale(6)] : null,
-                'summary' => null, 'rows' => [], 'meta' => ['current_page' => $page, 'last_page' => 1, 'total' => 0]];
+                'summary' => null, 'rows' => [], 'meta' => ['current_page' => $page, 'last_page' => 1, 'per_page' => $perPage, 'total' => 0]];
             if ($opening === null) {
                 return $result;
             }
@@ -72,7 +77,7 @@ class DatabaseCashbookReader implements CashbookReader
             $balance = BigDecimal::of($opening->amount)->toScale(6);
             $periodOpening = $balance;
             $incoming = $outgoing = BigDecimal::zero()->toScale(6);
-            $offset = ($page - 1) * 25;
+            $offset = ($page - 1) * $perPage;
             $count = 0;
             foreach ($query->cursor() as $row) {
                 $amount = BigDecimal::of((string) $row->amount)->toScale(6);
@@ -87,7 +92,7 @@ class DatabaseCashbookReader implements CashbookReader
                 } else {
                     $outgoing = $outgoing->plus($amount);
                 }
-                if ($count >= $offset && $count < $offset + 25) {
+                if ($count >= $offset && $count < $offset + $perPage) {
                     $record = (array) $row;
                     $record['amount'] = (string) $amount;
                     $record['balance'] = (string) $balance;
@@ -101,7 +106,7 @@ class DatabaseCashbookReader implements CashbookReader
             }
             $result['summary'] = ['opening' => (string) $periodOpening, 'incoming' => (string) $incoming, 'outgoing' => (string) $outgoing, 'closing' => (string) $balance, 'negative' => $balance->isNegative()];
             $result['meta']['total'] = $count;
-            $result['meta']['last_page'] = max(1, (int) ceil($count / 25));
+            $result['meta']['last_page'] = max(1, (int) ceil($count / $perPage));
 
             return $result;
         });

@@ -7,6 +7,7 @@ use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
 use App\Modules\Inventory\Stock\Domain\ValueObjects\FifoAllocation;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockIssue;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockOpening;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,8 @@ use Illuminate\Support\Str;
 
 class EloquentStockRepository implements StockRepository, StockUsage
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function createDraft(array $header, array $lines): string
     {
         $id = (string) Str::ulid();
@@ -112,7 +115,7 @@ class EloquentStockRepository implements StockRepository, StockUsage
                 ->when(($filters['status'] ?? 'all') !== 'all', fn ($q) => $q->where('status', $filters['status']))
                 ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->where('number', 'like', '%'.$search.'%')
                     ->orWhere('warehouse_name', 'like', '%'.$search.'%')));
-            $paginator = $query->orderByDesc('id')->paginate(25, page: $page);
+            $paginator = $query->orderByDesc('id')->paginate($this->pagination->perPage(), page: $page);
             $ids = $paginator->getCollection()->pluck('id')->all();
             $lines = DB::table('stock_opening_lines')->whereIn('opening_id', $ids)->orderBy('item_id')->get()->groupBy('opening_id');
             $rows = $paginator->getCollection()->map(fn ($record) => $record->toArray() + [
@@ -134,7 +137,7 @@ class EloquentStockRepository implements StockRepository, StockUsage
                 ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row
                     ->whereRaw($expressions['sku'].' like ?', ['%'.$search.'%'])->orWhereRaw($expressions['item_name'].' like ?', ['%'.$search.'%'])
                     ->orWhereRaw($expressions['number'].' like ?', ['%'.$search.'%'])));
-            $paginator = $query->orderBy('ledger.posted_at')->orderBy('ledger.id')->paginate(25, page: $page);
+            $paginator = $query->orderBy('ledger.posted_at')->orderBy('ledger.id')->paginate($this->pagination->perPage(), page: $page);
             $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
         } else {
             $query = DB::table('stock_balances as ledger')->leftJoin('stock_opening_lines as line', 'line.id', '=', 'ledger.opening_line_id')
@@ -150,7 +153,7 @@ class EloquentStockRepository implements StockRepository, StockUsage
                 ->when($filters['search'] ?? '', fn ($q, $search) => $q->where(fn ($row) => $row->whereRaw('COALESCE(ledger.sku, line.sku) like ?', ['%'.$search.'%'])
                     ->orWhereRaw('COALESCE(ledger.item_name, line.item_name) like ?', ['%'.$search.'%'])->orWhere('opening.number', 'like', '%'.$search.'%')));
             $query->orderByRaw('COALESCE(ledger.sku, line.sku)')->orderBy('ledger.id');
-            $paginator = $query->paginate(25, page: $page);
+            $paginator = $query->paginate($this->pagination->perPage(), page: $page);
             $rows = $paginator->getCollection()->map(fn ($row) => $this->normalizeLine((array) $row))->all();
         }
 

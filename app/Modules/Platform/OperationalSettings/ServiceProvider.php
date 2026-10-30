@@ -5,8 +5,11 @@ namespace App\Modules\Platform\OperationalSettings;
 use App\Modules\Platform\OperationalSettings\Application\Contracts\BackupExecutor;
 use App\Modules\Platform\OperationalSettings\Application\Contracts\OperationalSettingsRepository;
 use App\Modules\Platform\OperationalSettings\Application\Contracts\PrintingPreferences;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePreferences;
 use App\Modules\Platform\OperationalSettings\Infrastructure\Persistence\Repositories\DatabaseOperationalSettings;
 use App\Modules\Platform\OperationalSettings\Infrastructure\Support\ArtisanBackupExecutor;
+use App\Modules\Platform\OperationalSettings\Infrastructure\Support\RequestTablePagination;
 use App\Modules\Platform\OperationalSettings\Presentation\Console\Commands\RunDueBackup;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -16,6 +19,8 @@ class ServiceProvider extends BaseServiceProvider
     public function register(): void
     {
         $this->app->bind(PrintingPreferences::class, DatabaseOperationalSettings::class);
+        $this->app->bind(TablePreferences::class, DatabaseOperationalSettings::class);
+        $this->app->bind(TablePagination::class, RequestTablePagination::class);
         $this->app->bind(OperationalSettingsRepository::class, DatabaseOperationalSettings::class);
         $this->app->bind(BackupExecutor::class, ArtisanBackupExecutor::class);
     }

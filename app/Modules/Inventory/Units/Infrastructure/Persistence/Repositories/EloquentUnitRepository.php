@@ -5,9 +5,12 @@ namespace App\Modules\Inventory\Units\Infrastructure\Persistence\Repositories;
 use App\Modules\Inventory\Units\Application\Contracts\UnitRepository;
 use App\Modules\Inventory\Units\Application\DTOs\CreateUnitData;
 use App\Modules\Inventory\Units\Infrastructure\Persistence\Models\Unit;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 
 class EloquentUnitRepository implements UnitRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function lock(string $id, bool $deleted = false): array
     {
         return ($deleted ? Unit::onlyTrashed() : Unit::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
@@ -53,7 +56,7 @@ class EloquentUnitRepository implements UnitRepository
         if ($filters !== []) {
             $columns[] = 'deleted_at';
         }
-        $paginator = $query->orderBy('code')->orderBy('id')->paginate(25, $columns, page: $page);
+        $paginator = $query->orderBy('code')->orderBy('id')->paginate($this->pagination->perPage(), $columns, page: $page);
 
         return [
             'data' => $paginator->getCollection()->toArray(),

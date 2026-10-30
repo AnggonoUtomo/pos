@@ -22,7 +22,8 @@ class CashbookRequest extends FormRequest
             'store' => ['account_id' => ['required', 'ulid'], 'counter_account_id' => ['nullable', 'ulid'], 'kind' => ['required', Rule::in(['incoming', 'outgoing', 'transfer'])],
                 'amount' => ['required', 'string', 'max:32'], 'occurred_on' => ['required', ...$date], 'description' => ['required', 'string', 'max:200'], 'idempotency_key' => ['required', 'uuid']],
             'reverse' => ['reason' => ['required', 'string', 'max:200']],
-            default => ['account_id' => ['nullable', 'ulid'], 'date_from' => ['nullable', ...$date], 'date_to' => ['nullable', ...$date], 'page' => ['sometimes', 'integer', 'min:1', 'max:1000000']],
+            default => ['account_id' => ['nullable', 'ulid'], 'date_from' => ['nullable', ...$date], 'date_to' => ['nullable', ...$date], 'page' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
+                'per_page' => ['sometimes', 'integer', 'in:10,25,50,100']],
         };
     }
 

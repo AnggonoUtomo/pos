@@ -7,9 +7,12 @@ use App\Modules\Inventory\Items\Application\Contracts\ItemUnitUsage;
 use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\Item;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemUnit;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 
 class EloquentItemRepository implements ItemRepository, ItemUnitUsage
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function lock(string $id, bool $deleted = false): array
     {
         return ($deleted ? Item::onlyTrashed() : Item::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
@@ -74,7 +77,7 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
         }
         $paginator = $query->with(['media', 'units' => fn ($query) => $query
             ->select(['id', 'item_id', 'unit_id', 'conversion_ratio', 'barcode', 'is_sale_unit', 'is_purchase_unit'])->orderBy('id')])
-            ->orderBy('sku')->orderBy('id')->paginate(25, $columns, page: $page);
+            ->orderBy('sku')->orderBy('id')->paginate($this->pagination->perPage(), $columns, page: $page);
 
         return [
             'data' => $paginator->getCollection()->map(fn (Item $item) => [...$item->toArray(), 'image_url' => $item->imageUrl()])->all(),

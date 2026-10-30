@@ -135,9 +135,9 @@ class InvoiceHistoryTest extends TestCase
         for ($i = 0; $i < 25; $i++) {
             $this->sale($this->cashier, 'DEMO-INSTALLER', '2026-10-18 00:00:00');
         }
-        $one = $this->actingAs($this->cashier)->getJson('/sales/invoices/data')->assertOk()->assertJsonPath('records.meta.total', 27)
+        $one = $this->actingAs($this->cashier)->getJson('/sales/invoices/data?per_page=25')->assertOk()->assertJsonPath('records.meta.total', 27)
             ->assertJsonPath('records.meta.last_page', 2)->assertJsonCount(25, 'records.data')->json('records.data');
-        $two = $this->getJson('/sales/invoices/data?page=2')->assertOk()->assertJsonCount(2, 'records.data')->json('records.data');
+        $two = $this->getJson('/sales/invoices/data?page=2&per_page=25')->assertOk()->assertJsonCount(2, 'records.data')->json('records.data');
         $ids = array_merge(array_column($one, 'id'), array_column($two, 'id'));
         $this->assertCount(27, array_unique($ids));
         $this->assertSame(DB::table('sales_invoices')->where('actor_id', $this->cashier->id)->orderByDesc('posted_at')->orderByDesc('id')->pluck('id')->all(), $ids);

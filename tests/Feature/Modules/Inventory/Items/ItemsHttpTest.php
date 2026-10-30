@@ -141,7 +141,7 @@ class ItemsHttpTest extends TestCase
         $user = User::factory()->create();
         $user->givePermissionTo('inventory.view');
         $response = $this->actingAs($user)->getJson('/inventory/items/data')->assertOk()->assertJsonCount(8, 'data')
-            ->assertJsonPath('meta.total', 8)->assertJsonPath('meta.per_page', 25)
+            ->assertJsonPath('meta.total', 8)->assertJsonPath('meta.per_page', 10)
             ->assertJsonMissing(['sku' => 'DEMO-CCTV-IP-2MP'])->assertJsonFragment(['conversion_ratio' => '1.000000']);
         $this->assertCount(2, collect($response->json('data'))->firstWhere('sku', 'DEMO-CCTV-RJ45')['units']);
         $this->getJson('/inventory/items/data?page=0')->assertUnprocessable()->assertJsonValidationErrors('page');

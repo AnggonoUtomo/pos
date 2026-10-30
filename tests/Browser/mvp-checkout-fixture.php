@@ -93,6 +93,11 @@ DB::statement('PRAGMA synchronous=OFF');
 Artisan::call('migrate', ['--force' => true]);
 $manager = User::create(['name' => 'QA manager', 'email' => 'qa-manager@example.test', 'password' => $input['password'], 'email_verified_at' => now()]);
 if (($input['dashboard_only'] ?? false) === true) {
+    if (($input['pagination_demo'] ?? false) === true) {
+        for ($i = 1; $i <= 110; $i++) {
+            DB::table('units')->insert(['id' => (string) str()->ulid(), 'code' => sprintf('PAGE-%03d', $i), 'name' => 'Satuan latihan '.$i, 'symbol' => 'p'.$i, 'is_active' => true]);
+        }
+    }
     $invoice = ReturnRefundFixture::invoice();
     ReturnRefundFixture::posted($invoice, '0.5');
     PurchaseReturnRefundFixture::purchase();

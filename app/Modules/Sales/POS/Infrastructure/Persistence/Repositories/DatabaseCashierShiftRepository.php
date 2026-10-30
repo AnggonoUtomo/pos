@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sales\POS\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Sales\POS\Application\Contracts\CashierShiftRepository;
 use App\Modules\Sales\POS\Infrastructure\Persistence\Models\CashierShift;
 use Brick\Math\BigDecimal;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseCashierShiftRepository implements CashierShiftRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function lockActor(int $id): array
     {
         return (array) DB::table('users')->where('id', $id)->lockForUpdate()->firstOrFail(['id', 'name', 'is_active']);
@@ -68,7 +71,7 @@ class DatabaseCashierShiftRepository implements CashierShiftRepository
             throw new \RuntimeException('Shift tidak tersimpan.');
         }
 
-return $row->id;
+        return $row->id;
     }
 
     public function summary(string $id): array
@@ -92,9 +95,9 @@ return $row->id;
 
     public function paginate(?int $actorId, int $page): array
     {
-        $result = CashierShift::when($actorId !== null, fn ($q) => $q->where('actor_id', $actorId))->orderByDesc('opened_at')->orderByDesc('id')->paginate(25, page: $page);
+        $result = CashierShift::when($actorId !== null, fn ($q) => $q->where('actor_id', $actorId))->orderByDesc('opened_at')->orderByDesc('id')->paginate($this->pagination->perPage(), page: $page);
 
-        return ['data' => $result->getCollection()->map(fn ($row) => $this->row($row))->all(), 'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'total' => $result->total()]];
+        return ['data' => $result->getCollection()->map(fn ($row) => $this->row($row))->all(), 'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => $result->perPage(), 'total' => $result->total()]];
     }
 
     public function audit(string $id, string $event, int $actor): void

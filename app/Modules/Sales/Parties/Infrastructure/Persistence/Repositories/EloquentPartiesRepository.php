@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sales\Parties\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Sales\Parties\Application\Contracts\PartiesRepository;
 use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\Customer;
 use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\CustomerLevel;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EloquentPartiesRepository implements PartiesRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function lockLevel(string $id, bool $deleted = false): array
     {
         return ($deleted ? CustomerLevel::onlyTrashed() : CustomerLevel::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
@@ -98,7 +101,7 @@ class EloquentPartiesRepository implements PartiesRepository
         if (in_array($filters['status'] ?? 'all', ['active', 'inactive'], true)) {
             $query->where('is_active', $filters['status'] === 'active');
         }
-        $paginator = $query->orderBy('code')->orderBy('id')->paginate(25, $columns, page: $page);
+        $paginator = $query->orderBy('code')->orderBy('id')->paginate($this->pagination->perPage(), $columns, page: $page);
 
         return ['data' => $paginator->getCollection()->toArray(), 'meta' => [
             'current_page' => $paginator->currentPage(), 'last_page' => $paginator->lastPage(),

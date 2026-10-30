@@ -5,9 +5,12 @@ namespace App\Modules\Inventory\Warehouses\Infrastructure\Persistence\Repositori
 use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseRepository;
 use App\Modules\Inventory\Warehouses\Application\DTOs\CreateWarehouseData;
 use App\Modules\Inventory\Warehouses\Infrastructure\Persistence\Models\Warehouse;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 
 class EloquentWarehouseRepository implements WarehouseRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function lock(string $id, bool $deleted = false): array
     {
         return ($deleted ? Warehouse::onlyTrashed() : Warehouse::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
@@ -51,7 +54,7 @@ class EloquentWarehouseRepository implements WarehouseRepository
         if ($filters !== []) {
             $columns[] = 'deleted_at';
         }
-        $paginator = $query->orderBy('code')->orderBy('id')->paginate(25, $columns, page: $page);
+        $paginator = $query->orderBy('code')->orderBy('id')->paginate($this->pagination->perPage(), $columns, page: $page);
 
         return [
             'data' => $paginator->getCollection()->toArray(),

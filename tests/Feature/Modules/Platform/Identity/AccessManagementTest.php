@@ -151,7 +151,7 @@ class AccessManagementTest extends TestCase
         }
         Role::findOrCreate('api-only', 'api');
         $this->actingAs($actor)->get('/platform/identity')->assertInertia(fn (Assert $page) => $page
-            ->component('platform/identity/index')->where('records.meta.total', 28)->has('records.data', 25));
+            ->component('platform/identity/index')->where('records.meta.total', 28)->has('records.data', 10));
         $this->get('/platform/identity?tab=roles&search=staff-27')->assertInertia(fn (Assert $page) => $page
             ->where('records.meta.total', 1)->where('records.data.0.name', 'staff-27'));
         $this->get('/platform/identity?tab=users')->assertInertia(fn (Assert $page) => $page

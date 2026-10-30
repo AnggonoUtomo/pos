@@ -169,8 +169,8 @@ class PurchaseReturnsHttpTest extends StockTestCase
             app(ManagePurchaseReturnDraft::class)->save($input);
         }
 
-        $this->getJson(self::URL.'/data')->assertOk()->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 26);
-        $this->getJson(self::URL.'/data?page=2')->assertJsonCount(1, 'data');
+        $this->getJson(self::URL.'/data?per_page=25')->assertOk()->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 26);
+        $this->getJson(self::URL.'/data?page=2&per_page=25')->assertJsonCount(1, 'data');
         $this->getJson(self::URL.'/data?search='.urlencode('%_!'))->assertJsonPath('meta.total', 26);
         $this->getJson(self::URL.'/data?page=0')->assertUnprocessable();
         $this->getJson(self::URL.'/purchases?search='.str_repeat('x', 151))->assertUnprocessable();

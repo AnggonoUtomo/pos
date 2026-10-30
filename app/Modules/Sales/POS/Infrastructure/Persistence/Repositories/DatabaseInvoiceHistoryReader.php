@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sales\POS\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Sales\POS\Application\Contracts\InvoiceHistoryReader;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseInvoiceHistoryReader implements InvoiceHistoryReader
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private function scoped(?int $actorId): Builder
     {
         return DB::table('sales_invoices')->when($actorId !== null, fn ($q) => $q->where('actor_id', $actorId));
@@ -33,7 +36,7 @@ class DatabaseInvoiceHistoryReader implements InvoiceHistoryReader
         if ($filters['until'] !== null) {
             $query->where('posted_at', '<', $filters['until']);
         }
-        $page = $query->orderByDesc('posted_at')->orderByDesc('id')->paginate(25,
+        $page = $query->orderByDesc('posted_at')->orderByDesc('id')->paginate($this->pagination->perPage(),
             ['id', 'number', 'warehouse_name', 'customer_name', 'customer_level_name', 'total', 'posted_at'], 'page', $page);
 
         return ['data' => $page->getCollection()->map(function ($row): array {

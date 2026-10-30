@@ -82,11 +82,11 @@ class InventoryMasterHttpTest extends TestCase
             $this->postJson("/inventory/{$module}", array_merge($extra, ['code' => sprintf('QA-%02d', $i), 'name' => 'Master', 'is_active' => $i !== 0]))->assertCreated();
         }
         DB::table($module)->where('code', 'QA-26')->update(['deleted_at' => now()]);
-        $this->getJson("/inventory/{$module}/data")->assertOk()
+        $this->getJson("/inventory/{$module}/data?per_page=25")->assertOk()
             ->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 26)
             ->assertJsonPath('meta.per_page', 25)->assertJsonPath('meta.last_page', 2)
             ->assertJsonPath('data.0.code', 'QA-00')->assertJsonPath('data.0.is_active', false);
-        $this->getJson("/inventory/{$module}/data?page=2")->assertOk()
+        $this->getJson("/inventory/{$module}/data?page=2&per_page=25")->assertOk()
             ->assertJsonCount(1, 'data')->assertJsonPath('data.0.code', 'QA-25');
         foreach (['0', '-1', 'abc', '1.5'] as $page) {
             $this->getJson("/inventory/{$module}/data?page={$page}")->assertUnprocessable()->assertJsonValidationErrors('page');

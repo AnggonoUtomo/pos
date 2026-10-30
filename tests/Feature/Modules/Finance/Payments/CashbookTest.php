@@ -166,11 +166,14 @@ class CashbookTest extends TestCase
         for ($i = 0; $i < 27; $i++) {
             $this->postJson(self::URL.'/entries', $this->payload('incoming', '1.000001'))->assertOk();
         }
-        $page = $this->statement($this->fixture['cash_account'], ['page' => 2]);
+        $page = $this->statement($this->fixture['cash_account'], ['page' => 2, 'per_page' => 25]);
         $this->assertCount(3, $page['rows']);
         $this->assertSame(28, $page['meta']['total']);
         $this->assertSame('9007199254741020.123483', $page['summary']['closing']);
         $this->assertSame($page['summary']['closing'], $page['rows'][2]['balance']);
         $this->assertSame('9007199254741018.123481', $page['rows'][0]['balance']);
+        $smaller = $this->statement($this->fixture['cash_account'], ['page' => 3, 'per_page' => 10]);
+        $this->assertSame($page['summary'], $smaller['summary']);
+        $this->assertCount(8, $smaller['rows']);
     }
 }

@@ -118,8 +118,8 @@ class PurchaseOrdersHttpTest extends StockTestCase
         for ($i = 0; $i < 26; $i++) {
             app(ManagePurchaseOrder::class)->save($this->payload());
         }
-        $this->getJson(self::URL.'/data')->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 26);
-        $this->getJson(self::URL.'/data?page=2')->assertJsonCount(1, 'data');
+        $this->getJson(self::URL.'/data?per_page=25')->assertJsonCount(25, 'data')->assertJsonPath('meta.total', 26);
+        $this->getJson(self::URL.'/data?page=2&per_page=25')->assertJsonCount(1, 'data');
         $this->getJson(self::URL.'/data?search='.urlencode('%_!'))->assertJsonPath('meta.total', 26);
         $this->getJson(self::URL.'/data?supplier_id='.$this->supplier.'&warehouse_id='.$this->warehouse)->assertJsonPath('meta.total', 26);
         $this->getJson(self::URL.'/data?supplier_id='.(string) Str::ulid())->assertJsonPath('meta.total', 0);

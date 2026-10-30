@@ -4,6 +4,7 @@ namespace App\Modules\Inventory\Transfers\Infrastructure\Persistence\Repositorie
 
 use App\Modules\Inventory\Transfers\Application\Contracts\TransferDraftRepository;
 use App\Modules\Inventory\Transfers\Infrastructure\Persistence\Models\StockTransfer;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,8 @@ use RuntimeException;
 
 class EloquentTransferDraftRepository implements TransferDraftRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private function requireTransaction(): void
     {
         if (DB::transactionLevel() === 0) {
@@ -122,11 +125,11 @@ class EloquentTransferDraftRepository implements TransferDraftRepository
                 ->orWhereRaw("source_warehouse_name LIKE ? ESCAPE '!'", [$like])->orWhereRaw("destination_warehouse_name LIKE ? ESCAPE '!'", [$like])
                 ->orWhereRaw("source_warehouse_code LIKE ? ESCAPE '!'", [$like])->orWhereRaw("destination_warehouse_code LIKE ? ESCAPE '!'", [$like]));
         }
-        $result = $query->orderByDesc('id')->paginate(25, page: $page);
+        $result = $query->orderByDesc('id')->paginate($this->pagination->perPage(), page: $page);
         $lines = DB::table('stock_transfer_lines')->whereIn('transfer_id', $result->getCollection()->pluck('id'))->orderBy('item_id')->get()->groupBy('transfer_id');
         $data = $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key']) + ['lines' => ($lines[$model->id] ?? collect())->map(fn ($row) => $this->normalizeLine((array) $row))->all()])->all();
 
-        return ['data' => $data, 'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
+        return ['data' => $data, 'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => $result->perPage(), 'total' => $result->total()]];
     }
 
     private function normalizeLine(array $row): array

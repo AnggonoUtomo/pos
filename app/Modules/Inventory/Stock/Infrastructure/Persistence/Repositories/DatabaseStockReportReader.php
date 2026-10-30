@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseStockReportReader implements StockReportReader
 {
-    public function summary(?string $warehouseId): array
+    public function summary(?string $warehouseId, int $page = 1, ?int $perPage = null): array
     {
         $query = DB::table('stock_balances as b')->leftJoin('stock_opening_lines as l', 'l.id', '=', 'b.opening_line_id')
             ->leftJoin('stock_openings as o', 'o.id', '=', 'l.opening_id')->when($warehouseId, fn ($q, $id) => $q->where('b.warehouse_id', $id))
@@ -16,16 +16,19 @@ class DatabaseStockReportReader implements StockReportReader
         $count = 0;
         $rows = [];
         $total = BigDecimal::zero()->toScale(6);
+        $limit = $perPage ?? 100;
+        $offset = ($page - 1) * $limit;
         foreach ($query->orderBy('b.item_id')->orderBy('b.warehouse_id')->cursor() as $row) {
             $count++;
             $total = $total->plus((string) $row->total_value);
-            if (count($rows) < 100) {
+            if ($count > $offset && count($rows) < $limit) {
                 $rows[] = ['sku' => $row->sku, 'name' => $row->item_name, 'unit' => $row->unit, 'warehouse' => $row->warehouse,
                     'quantity' => (string) BigDecimal::of((string) $row->quantity)->toScale(6),
                     'total_value' => (string) BigDecimal::of((string) $row->total_value)->toScale(6)];
             }
         }
 
-        return ['count' => $count, 'total_value' => (string) $total, 'rows' => $rows, 'truncated' => $count > count($rows)];
+        return ['count' => $count, 'total_value' => (string) $total, 'rows' => $rows, 'truncated' => $count > count($rows),
+            'meta' => ['current_page' => $page, 'last_page' => max(1, (int) ceil($count / $limit)), 'per_page' => $limit, 'total' => $count]];
     }
 }

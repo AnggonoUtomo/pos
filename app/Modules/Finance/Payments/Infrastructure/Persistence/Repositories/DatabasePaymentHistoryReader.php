@@ -3,6 +3,7 @@
 namespace App\Modules\Finance\Payments\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Finance\Payments\Application\Contracts\PaymentHistoryReader;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use Brick\Math\BigDecimal;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Schema;
 
 class DatabasePaymentHistoryReader implements PaymentHistoryReader
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private const LEDGERS = [
         'incoming' => ['header' => 'payment_receipts', 'lines' => 'payment_records', 'foreign' => 'receipt_id', 'time' => 'posted_at', 'scale' => 2, 'direction' => 'incoming', 'source' => 'sale'],
         'outgoing' => ['header' => 'payment_disbursements', 'lines' => 'payment_disbursement_lines', 'foreign' => 'disbursement_id', 'time' => 'paid_at', 'scale' => 6, 'direction' => 'outgoing', 'source' => 'purchase'],
@@ -84,10 +87,10 @@ class DatabasePaymentHistoryReader implements PaymentHistoryReader
         if ($this->supplierReceiptsAvailable()) {
             $union->unionAll($this->query('supplier-refund', $filters));
         }
-        $result = DB::query()->fromSub($union, 'history')->orderByDesc('occurred_at')->orderBy('direction')->orderByDesc('id')->orderBy('source_type')->paginate(25, page: $page);
+        $result = DB::query()->fromSub($union, 'history')->orderByDesc('occurred_at')->orderBy('direction')->orderByDesc('id')->orderBy('source_type')->paginate($this->pagination->perPage(), page: $page);
 
         return ['data' => $result->getCollection()->map(fn ($row) => $this->header((array) $row))->all(),
-            'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
+            'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => $result->perPage(), 'total' => $result->total()]];
     }
 
     public function detail(string $direction, string $id): array

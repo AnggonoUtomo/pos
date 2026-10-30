@@ -149,8 +149,8 @@ class ReturnDraftTest extends TestCase
         for ($i = 0; $i < 26; $i++) {
             app(ManageReturnDraft::class)->save($this->input);
         }
-        $page = $this->getJson('/sales/returns/data')->assertOk()->assertJsonPath('meta.total', 26)->assertJsonCount(25, 'data')->json();
-        $this->getJson('/sales/returns/data?page=2')->assertOk()->assertJsonCount(1, 'data')->assertJsonCount(1, 'data.0.lines');
+        $page = $this->getJson('/sales/returns/data?per_page=25')->assertOk()->assertJsonPath('meta.total', 26)->assertJsonCount(25, 'data')->json();
+        $this->getJson('/sales/returns/data?page=2&per_page=25')->assertOk()->assertJsonCount(1, 'data')->assertJsonCount(1, 'data.0.lines');
         $id = $page['data'][0]['id'];
         $this->deleteJson('/sales/returns/'.$id, ['version' => 1])->assertOk();
         $this->getJson('/sales/returns/data?trashed=1')->assertOk()->assertJsonPath('meta.total', 1)->assertJsonCount(1, 'data.0.lines');

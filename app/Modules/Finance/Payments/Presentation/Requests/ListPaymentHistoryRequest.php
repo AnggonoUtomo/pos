@@ -24,7 +24,7 @@ class ListPaymentHistoryRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
-            if (array_diff(array_keys($this->query()), ['page', 'search', 'direction', 'account_id', 'method_id', 'date_from', 'date_to']) !== []) {
+            if (array_diff(array_keys($this->query()), ['page', 'per_page', 'search', 'direction', 'account_id', 'method_id', 'date_from', 'date_to']) !== []) {
                 $validator->errors()->add('filters', 'Filter tidak diizinkan.');
             }
             if (! $validator->errors()->has('date_from') && ! $validator->errors()->has('date_to') && $this->input('date_from') && $this->input('date_to') && $this->input('date_to') < $this->input('date_from')) {

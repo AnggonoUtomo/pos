@@ -6,6 +6,7 @@ use App\Modules\Finance\Payments\Application\Contracts\PaymentsRepository;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentAccount;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentMethod;
 use App\Modules\Finance\Payments\Infrastructure\Persistence\Models\PaymentReceipt;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,8 @@ use Illuminate\Support\Str;
 
 class EloquentPaymentsRepository implements PaymentsRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function lockAccount(string $id, bool $deleted = false): array
     {
         return ($deleted ? PaymentAccount::onlyTrashed() : PaymentAccount::query())->whereKey($id)->lockForUpdate()->firstOrFail()->attributesToArray();
@@ -178,7 +181,7 @@ class EloquentPaymentsRepository implements PaymentsRepository
         if (in_array($filters['status'] ?? 'all', ['active', 'inactive'], true)) {
             $query->where('is_active', $filters['status'] === 'active');
         }
-        $rows = $query->orderBy('code')->orderBy('id')->paginate(25, ['*'], page: $page);
+        $rows = $query->orderBy('code')->orderBy('id')->paginate($this->pagination->perPage(), ['*'], page: $page);
 
         return ['data' => $rows->getCollection()->toArray(), 'meta' => ['current_page' => $rows->currentPage(),
             'last_page' => $rows->lastPage(), 'per_page' => $rows->perPage(), 'total' => $rows->total()]];

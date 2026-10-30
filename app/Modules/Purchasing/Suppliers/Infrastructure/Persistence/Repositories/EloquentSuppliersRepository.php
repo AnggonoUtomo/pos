@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchasing\Suppliers\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Purchasing\Suppliers\Application\Contracts\SuppliersRepository;
 use App\Modules\Purchasing\Suppliers\Infrastructure\Persistence\Models\Supplier;
 use Illuminate\Support\Arr;
@@ -11,6 +12,8 @@ use RuntimeException;
 
 class EloquentSuppliersRepository implements SuppliersRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     public function save(array $data, ?string $id = null): string
     {
         $this->requireTransaction();
@@ -81,7 +84,7 @@ class EloquentSuppliersRepository implements SuppliersRepository
         if (in_array($filters['status'] ?? 'all', ['active', 'inactive'], true)) {
             $query->where('is_active', $filters['status'] === 'active');
         }
-        $result = $query->orderBy('code')->orderBy('id')->paginate(25,
+        $result = $query->orderBy('code')->orderBy('id')->paginate($this->pagination->perPage(),
             ['id', 'code', 'name', 'phone', 'email', 'address', 'is_active', 'deleted_at'], page: $page);
 
         return ['data' => $result->items(), 'meta' => ['current_page' => $result->currentPage(),

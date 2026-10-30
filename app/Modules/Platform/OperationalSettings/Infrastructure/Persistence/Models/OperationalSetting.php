@@ -10,10 +10,10 @@ class OperationalSetting extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = ['receipt_paper', 'backup_enabled', 'backup_time'];
+    protected $fillable = ['receipt_paper', 'backup_enabled', 'backup_time', 'table_per_page'];
 
     protected function casts(): array
     {
-        return ['backup_enabled' => 'boolean', 'version' => 'integer'];
+        return ['backup_enabled' => 'boolean', 'version' => 'integer', 'table_per_page' => 'integer'];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchasing\Returns\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Purchasing\Returns\Application\Contracts\ReturnDraftRepository;
 use App\Modules\Purchasing\Returns\Infrastructure\Persistence\Models\PurchaseReturn;
 use Brick\Math\BigDecimal;
@@ -15,6 +16,8 @@ use RuntimeException;
 
 final class EloquentReturnDraftRepository implements ReturnDraftRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private function requireTransaction(): void
     {
         if (DB::transactionLevel() === 0) {
@@ -131,7 +134,7 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
             $like = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
             $query->whereRaw("(number LIKE ? ESCAPE '!' OR purchase_order_number LIKE ? ESCAPE '!' OR supplier_name LIKE ? ESCAPE '!')", [$like, $like, $like]);
         }
-        $result = $query->orderByDesc('id')->paginate(25, page: $page);
+        $result = $query->orderByDesc('id')->paginate($this->pagination->perPage(), page: $page);
         $lines = $this->lines($result->getCollection()->pluck('id')->all());
         $available = Schema::hasTable('purchase_return_settlements') && Schema::hasTable('purchase_return_refund_scopes') && Schema::hasTable('purchase_return_refund_allocations');
         $settlements = $available ? DB::table('purchase_return_settlements')->whereIn('purchase_return_id', $result->getCollection()->pluck('id'))->pluck('snapshot', 'purchase_return_id') : collect();
@@ -139,7 +142,7 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
         return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key', 'posted_by', 'posted_from_version'])
             + ['lines' => ($lines[$model->id] ?? collect())->all(), 'refund_available' => $available,
                 'settlement' => isset($settlements[$model->id]) ? json_decode($settlements[$model->id], true, flags: JSON_THROW_ON_ERROR)['settlement'] : null])->all(),
-            'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
+            'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => $result->perPage(), 'total' => $result->total()]];
     }
 
     private function lines(array $ids, bool $lock = false): Collection

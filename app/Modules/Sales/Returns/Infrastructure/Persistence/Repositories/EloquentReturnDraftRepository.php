@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sales\Returns\Infrastructure\Persistence\Repositories;
 
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePagination;
 use App\Modules\Sales\Returns\Application\Contracts\ReturnDraftRepository;
 use App\Modules\Sales\Returns\Infrastructure\Persistence\Models\SalesReturn;
 use Brick\Math\BigDecimal;
@@ -15,6 +16,8 @@ use RuntimeException;
 
 final class EloquentReturnDraftRepository implements ReturnDraftRepository
 {
+    public function __construct(private TablePagination $pagination) {}
+
     private function requireTransaction(): void
     {
         if (DB::transactionLevel() === 0) {
@@ -111,7 +114,7 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
             $query->where(fn ($q) => $q->whereRaw("number LIKE ? ESCAPE '!'", [$like])
                 ->orWhereRaw("invoice_number LIKE ? ESCAPE '!'", [$like])->orWhereRaw("customer_name LIKE ? ESCAPE '!'", [$like]));
         }
-        $result = $query->orderByDesc('id')->paginate(25, page: $page);
+        $result = $query->orderByDesc('id')->paginate($this->pagination->perPage(), page: $page);
         $lines = $this->lines($result->getCollection()->pluck('id')->all());
         $available = Schema::hasTable('sales_return_settlements') && Schema::hasTable('sales_return_refund_scopes')
             && Schema::hasTable('sales_return_refund_allocations');
@@ -126,7 +129,7 @@ final class EloquentReturnDraftRepository implements ReturnDraftRepository
 
         return ['data' => $result->getCollection()->map(fn ($model) => Arr::except($model->toArray(), ['demo_key', 'posted_by', 'posted_from_version'])
             + ['lines' => ($lines[$model->id] ?? collect())->all(), 'refund_available' => $available, 'settlement' => $settlements[$model->id] ?? null])->all(),
-            'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => 25, 'total' => $result->total()]];
+            'meta' => ['current_page' => $result->currentPage(), 'last_page' => $result->lastPage(), 'per_page' => $result->perPage(), 'total' => $result->total()]];
     }
 
     private function lines(array $ids, bool $lock = false): Collection

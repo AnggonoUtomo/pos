@@ -93,7 +93,7 @@ class PaymentsHttpTest extends TestCase
 
     public function test_filters_pagination_and_invalid_query_validation(): void
     {
-        $this->getJson('/finance/payment-accounts/data?type=bank&search=BANK')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('meta.per_page', 25);
+        $this->getJson('/finance/payment-accounts/data?type=bank&search=BANK')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('meta.per_page', 10);
         $cash = DB::table('payment_accounts')->where('type', 'cash')->value('id');
         $this->getJson('/finance/payment-methods/data?payment_account_id='.$cash)->assertOk()->assertJsonCount(1, 'data');
         $this->getJson('/finance/payment-methods/data?type=debit')->assertOk()->assertJsonCount(1, 'data');

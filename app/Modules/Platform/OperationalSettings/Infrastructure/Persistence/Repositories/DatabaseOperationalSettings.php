@@ -4,6 +4,7 @@ namespace App\Modules\Platform\OperationalSettings\Infrastructure\Persistence\Re
 
 use App\Modules\Platform\OperationalSettings\Application\Contracts\OperationalSettingsRepository;
 use App\Modules\Platform\OperationalSettings\Application\Contracts\PrintingPreferences;
+use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePreferences;
 use App\Modules\Platform\OperationalSettings\Domain\Services\BackupWindow;
 use App\Modules\Platform\OperationalSettings\Infrastructure\Persistence\Models\OperationalSetting;
 use Illuminate\Support\Arr;
@@ -13,13 +14,18 @@ use Illuminate\Validation\ValidationException;
 use RuntimeException;
 use Spatie\Activitylog\Models\Activity;
 
-class DatabaseOperationalSettings implements OperationalSettingsRepository, PrintingPreferences
+class DatabaseOperationalSettings implements OperationalSettingsRepository, PrintingPreferences, TablePreferences
 {
     private const ID = '00000000000000000000000002';
 
     public function read(): array
     {
-        return Arr::only(OperationalSetting::findOrFail(self::ID)->toArray(), ['receipt_paper', 'backup_enabled', 'backup_time', 'version']);
+        return Arr::only(OperationalSetting::findOrFail(self::ID)->toArray(), ['receipt_paper', 'backup_enabled', 'backup_time', 'version', 'table_per_page']);
+    }
+
+    public function defaultPerPage(): int
+    {
+        return (int) (OperationalSetting::findOrFail(self::ID)->table_per_page ?? 10);
     }
 
     public function printing(): array
