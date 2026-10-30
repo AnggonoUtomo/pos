@@ -23,7 +23,7 @@ dan [advisory Symfony](https://symfony.com/cve-2026-45070).
 
 ## Status
 
-Implementasi dan verifikasi selesai; delivery ditutup setelah commit/push.
+Selesai: implementasi, verifikasi dan delivery origin/main sudah dilakukan.
 Urutan dan bukti ada pada [plan](plan.md) dan [checklist](tasks.md).
 Data dan cache produksi tidak dipakai untuk QA.
 
