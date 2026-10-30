@@ -16,7 +16,7 @@ Status yang digunakan:
 | --- | --- | --- | --- | --- |
 | Platform | ModuleRuntime | Discovery, bootstrap, dan scaffolding module; source saat ini masih tersebar pada command/framework app | Laravel application container | Pending Validation |
 | Platform | Identity | Authorization, role/katalog permission, tambah/edit/status akun internal, session guard, sync audited dan seeder akses | Laravel auth, Spatie Permission, Spatie Activitylog | Active |
-| Platform | AuditLog | Viewer audit baca-saja, filter WIB/pengguna/modul/tindakan, projection perubahan aman dan pagination | Spatie Activitylog existing, OperationalSettings (TablePagination), users read projection | Pending Validation |
+| Platform | AuditLog | Viewer audit baca-saja, filter WIB/pengguna/modul/tindakan, projection perubahan aman dan pagination | Spatie Activitylog existing, OperationalSettings (TablePagination), users read projection | Active |
 | Platform | CompanySettings | Identitas toko singleton/version/audit, snapshot struk melalui CompanyProfile | Identity, Laravel/Spatie | Active |
 | Platform | OperationalSettings | Tab vertikal Umum/Cetak/Backup, default baris tabel global, format struk A4/58/80, backup opsional/jam WIB/manual audited dan status terpisah | Identity, pos:backup existing dan Laravel Scheduler; TablePreferences/TablePagination dikonsumsi daftar Inventory/Sales/Purchasing/Finance/Identity/Reporting | Active |
 | Inventory | Units | Master satuan dan UI CRUD; base unit/konversi dimiliki Items; guard satuan terpakai | Items (ItemUnitUsage read contract), Laravel Eloquent, Spatie Permission, Spatie Activitylog | Active |

@@ -26,10 +26,10 @@
 
 ## Increment 3: Penutupan
 
-- [ ] Jalankan gate akhir dan tinjau screenshot desktop/tablet Light/Dark.
+- [x] Jalankan gate akhir dan tinjau screenshot desktop/tablet Light/Dark.
   - Acceptance: hasil/gap dicatat jujur, tidak mengulang QA yang tidak berubah.
   - Verification: command dan report.
-- [ ] Aktifkan route dan catalog permission secara additive.
+- [x] Aktifkan route dan catalog permission secara additive.
   - Acceptance: data/role/grant existing identik, tidak ada demo/reset.
   - Verification: route cache, migration status dan fingerprint.
-- [ ] Review scope, commit terfokus, push dan cek remote.
+- [x] Review scope, commit terfokus, push dan cek remote.

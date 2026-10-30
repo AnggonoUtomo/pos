@@ -10,9 +10,11 @@ class AuditLogProjectionTest extends TestCase
     public function test_numeric_values_keep_precision_as_strings_and_nested_secrets_are_not_projected(): void
     {
         $result = (new AuditLogProjection)->changes(null,
-            '{"after":{"total":9007199254740993,"unit_cost":"123456789012345678901234.123456","name":{"token":"hidden"},"password":"hidden"}}');
+            '{"after":{"total":9007199254740993,"unit_cost":"123456789012345678901234.123456","amount":"125000.50","conversion_ratio":"12.000000","name":{"token":"hidden"},"password":"hidden"}}');
         $this->assertSame('9007199254740993', $result['after']['total']);
         $this->assertSame('123456789012345678901234.123456', $result['after']['unit_cost']);
+        $this->assertSame('125000.50', $result['after']['amount']);
+        $this->assertSame('12.000000', $result['after']['conversion_ratio']);
         $this->assertArrayNotHasKey('name', $result['after']);
         $this->assertArrayNotHasKey('password', $result['after']);
     }

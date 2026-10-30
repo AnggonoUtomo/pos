@@ -11,7 +11,7 @@ function valueLabel(field: string, value: AuditValue | undefined): string {
     if (typeof value === 'boolean') return value ? 'Ya' : 'Tidak';
     if (Array.isArray(value)) return value.join(', ') || 'Kosong';
     if (
-        ['quantity', 'base_quantity', 'unit_cost', 'total_value', 'total', 'version', 'table_per_page'].includes(field) &&
+        ['quantity', 'base_quantity', 'unit_cost', 'total_value', 'total', 'version', 'table_per_page', 'amount', 'conversion_ratio'].includes(field) &&
         /^-?\d+(?:\.\d+)?$/.test(value)
     ) {
         return (value.startsWith('-') ? '-' : '') + formatDecimalInput(value.replace(/^-/, ''));

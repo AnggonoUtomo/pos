@@ -1,6 +1,7 @@
 # Viewer Audit Baca-Saja
 
-Status: implementasi.
+Status: selesai untuk scope AuditLog. Gate project tidak diklaim seluruhnya
+hijau karena satu kegagalan existing dan advisory dependency di luar scope.
 
 Scope mengikuti spesifikasi module: daftar, filter, detail aman, permission dan
 navigasi. Tidak mengubah ledger/log existing, .env, role akun atau Old-docs.
@@ -45,3 +46,35 @@ idempotent tanpa grant; demo skip dan tidak menambah histori buatan.
   Fingerprint seluruh audit dan ledger identik, browser/server ditutup.
 - Panduan operator baru LOG-AKTIVITAS.md dan guide lokal tersedia; PDF lama
   tidak dibangun ulang, batas cakupannya dicatat pada indeks panduan.
+
+## Penutupan Dan Aktivasi
+
+- Gate penuh sekali: `php artisan test --compact`, 897 PASS, 1 FAIL,
+  7361 assertion. FAIL existing InvoiceHistoryTest:95 pada filter tanggal WIB;
+  tetap di luar scope dan tidak diubah. Tidak ada kegagalan AuditLog.
+- Review akhir melengkapi label module Harga jual/Satuan barang dan field aman
+  amount/conversion_ratio serta ID relasi/barcode. Setelah perubahan ini hanya
+  pemeriksaan terdampak diulang: 12 focused PASS/99 assertion, typecheck,
+  ESLint detail, build 2930 module PASS. Layout/alur browser tidak berubah;
+  bukti browser sebelumnya dipakai kembali.
+- `php scripts/qa/activate-audit-log-local.php` PASS dua eksekusi: catalog
+  idempotent tanpa grant, search JSON/opsi/detail MySQL baca-saja, route cache,
+  fingerprint seluruh tabel/baris existing identik (cache/session dikecualikan).
+  Tidak ada migration baru atau koreksi audit historis.
+- Cached route:list memperlihatkan tiga GET/HEAD. migrate:status exit0, tidak
+  ada Pending. HTTPS tanpa melewati validasi sertifikat: index anonymous302,
+  data anonymous401, sesuai auth. E2E akun berizin diverifikasi di disposable.
+- Pint scoped dan git diff --check PASS. Tidak ada dependency, .env, role/grant,
+  log/transaksi lama, Old-docs, LSP user, scheduler atau service OS yang diubah.
+- Commit backend `6fb860d`, UI/QA `325551c`; penutupan disimpan terpisah,
+  kemudian seluruh work item dipush. File LSP user tidak masuk commit.
+
+## Risiko Di Luar Scope
+
+- Bug filter tanggal InvoiceHistoryTest existing masih FAIL.
+- npm audit: satu advisory moderate pada dependency transitif qs.
+- composer audit: advisory medium CVE-2026-45070 pada symfony/mime existing.
+  Lockfile tidak berubah; tidak melakukan upgrade package tanpa instruksi.
+- Nilai sebelum/sesudah hanya ditampilkan bila memang pernah dicatat. Nama
+  actor berasal dari akun saat ini; causer/subject yang hilang tidak dihidupkan
+  kembali. Log tanpa field aman dapat memiliki detail kosong.

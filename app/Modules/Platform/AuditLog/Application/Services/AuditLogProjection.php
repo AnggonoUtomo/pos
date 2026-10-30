@@ -8,9 +8,9 @@ final class AuditLogProjection
 {
     public const MODULES = [
         'identity' => 'Identitas & Akses', 'inventory.units' => 'Satuan', 'inventory.items' => 'Barang',
-        'inventory.warehouses' => 'Gudang', 'inventory.stock' => 'Stok', 'inventory.transfers' => 'Transfer gudang',
+        'inventory.warehouses' => 'Gudang', 'inventory.stock' => 'Stok', 'inventory.transfers' => 'Transfer gudang', 'inventory.item_units' => 'Satuan barang',
         'sales.customers' => 'Pelanggan', 'sales.customer_levels' => 'Level pelanggan', 'sales.pos' => 'Penjualan POS',
-        'sales.pos.held_carts' => 'Keranjang tertahan', 'sales.pos.shifts' => 'Shift kasir', 'sales.returns' => 'Retur penjualan',
+        'sales.pos.held_carts' => 'Keranjang tertahan', 'sales.pos.shifts' => 'Shift kasir', 'sales.returns' => 'Retur penjualan', 'sales.item_prices' => 'Harga jual',
         'purchasing.suppliers' => 'Supplier', 'purchasing.purchase-orders' => 'Pembelian', 'purchasing.returns' => 'Retur pembelian',
         'finance.payments' => 'Pembayaran', 'finance.payment_accounts' => 'Kas dan bank', 'finance.payment_methods' => 'Metode pembayaran',
         'finance.cashbook' => 'Buku Kas', 'platform.company-settings' => 'Pengaturan toko', 'platform.operational-settings' => 'Operasional',
@@ -29,6 +29,9 @@ final class AuditLogProjection
         'account_id' => 'ID akun kas', 'source_id' => 'ID sumber', 'source_type' => 'Jenis sumber',
         'receipt_paper' => 'Format struk', 'backup_enabled' => 'Backup terjadwal', 'backup_time' => 'Jam backup',
         'table_per_page' => 'Baris per halaman',
+        'item_id' => 'ID barang', 'unit_id' => 'ID satuan', 'customer_level_id' => 'ID level pelanggan',
+        'amount' => 'Nominal', 'conversion_ratio' => 'Konversi satuan', 'barcode' => 'Barcode',
+        'is_sale_unit' => 'Satuan jual', 'is_purchase_unit' => 'Satuan beli',
     ];
 
     public static function key(mixed $value): ?string
