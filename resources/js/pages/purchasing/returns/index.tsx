@@ -99,9 +99,9 @@ export default function PurchaseReturns({ records, filters }: ReturnPageProps) {
                         </Button>
                     )}
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="workspace-filters flex flex-wrap gap-3">
                     <form
-                        className="flex min-w-0 flex-1 gap-2 sm:min-w-64"
+                        className="workspace-search flex min-w-0 flex-1 gap-2 sm:min-w-64"
                         onSubmit={(event) => {
                             event.preventDefault();
                             visit({ search });

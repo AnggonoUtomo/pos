@@ -575,6 +575,58 @@
 }
 
 @layer components {
+    .workspace-filters {
+        min-width: 0;
+        border-block: 1px solid color-mix(in oklab, var(--app-border) 82%, var(--primary) 18%);
+        border-inline-start: 3px solid color-mix(in oklab, var(--primary) 65%, var(--app-border) 35%);
+        background: linear-gradient(
+            110deg,
+            color-mix(in oklab, var(--app-panel) 93%, var(--primary) 7%),
+            color-mix(in oklab, var(--app-panel) 98%, var(--primary) 2%) 65%,
+            var(--app-panel)
+        );
+        padding: 1rem;
+        box-shadow: inset 0 1px 0 color-mix(in oklab, var(--foreground) 3%, transparent);
+    }
+
+    .workspace-filters:focus-within {
+        border-inline-start-color: var(--primary);
+    }
+
+    .workspace-filters-compact {
+        padding: 0.75rem;
+        border-inline-start-width: 2px;
+    }
+
+    .workspace-filters input,
+    .workspace-filters button[role='combobox'],
+    .workspace-search-field {
+        min-width: 0;
+        border-color: color-mix(in oklab, var(--app-border) 75%, var(--primary) 25%);
+        background-color: var(--app-panel);
+    }
+
+    .workspace-filters input:focus-visible,
+    .workspace-filters button[role='combobox']:focus-visible,
+    .workspace-search-field:focus-visible {
+        border-color: var(--primary);
+    }
+
+    .workspace-search > input {
+        min-width: 0;
+        flex: 1 1 12rem;
+    }
+
+    .workspace-search > button {
+        flex-shrink: 0;
+        border-color: color-mix(in oklab, var(--app-border) 60%, var(--primary) 40%);
+        background-color: color-mix(in oklab, var(--app-panel) 86%, var(--primary) 14%);
+    }
+
+    .workspace-search > button:hover:not(:disabled) {
+        background-color: color-mix(in oklab, var(--app-panel) 76%, var(--primary) 24%);
+    }
+
     .chart-track,
     .chart-ring-track {
         background: color-mix(in oklab, var(--app-panel) 88%, var(--primary) 12%);

@@ -33,7 +33,7 @@ export function CustomerAutocomplete({
                 <ComboboxInput
                     as={Input}
                     id="pos-customer"
-                    className="pr-10"
+                    className="workspace-search-field pr-10"
                     autoComplete="off"
                     maxLength={150}
                     placeholder="Cari nama atau kode pelanggan"

@@ -150,7 +150,7 @@ export default function IdentityIndex({ records, filters, options }: AccessPageP
                 </div>
                 <div id="access-panel" role="tabpanel" aria-labelledby={`access-tab-${filters.tab}`} className="space-y-4">
                     <form
-                        className="flex max-w-xl gap-2"
+                        className="workspace-filters workspace-search flex gap-2"
                         onSubmit={(event) => {
                             event.preventDefault();
                             visit(filters.tab, search);

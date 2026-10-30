@@ -89,7 +89,7 @@ export function AccessEditorDialog({
                         }
                     }}
                 >
-                    <div className="flex items-center gap-3">
+                    <div className="workspace-filters workspace-filters-compact flex items-center gap-3">
                         <Input
                             autoFocus
                             aria-label="Cari pilihan akses"

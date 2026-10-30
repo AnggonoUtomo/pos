@@ -121,7 +121,7 @@ export default function Cashbook({ records, accounts, filters, today }: Cashbook
                         event.preventDefault();
                         visit(draft);
                     }}
-                    className="grid items-end gap-3 md:grid-cols-2 xl:grid-cols-[minmax(12rem,2fr)_1fr_1fr_auto]"
+                    className="workspace-filters grid items-end gap-3 md:grid-cols-2 xl:grid-cols-[minmax(12rem,2fr)_1fr_1fr_auto]"
                 >
                     <div className="min-w-0 space-y-2">
                         <Label htmlFor="cashbook-account">Akun kas/bank</Label>

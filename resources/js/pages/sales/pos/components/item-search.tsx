@@ -89,12 +89,12 @@ export function ItemSearch({
 }) {
     return (
         <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="Katalog barang" aria-busy={loading}>
-            <div className={cn('shrink-0 space-y-2 border-b border-[var(--app-border)]', visual ? 'p-3' : 'p-4')}>
+            <div className={cn('workspace-filters workspace-filters-compact shrink-0 space-y-2', visual ? 'p-3' : 'p-4')}>
                 <Label htmlFor="pos-search" className={visual ? 'sr-only' : ''}>
                     Cari barang
                 </Label>
                 <div className="relative">
-                    <Search className="text-muted-foreground pointer-events-none absolute top-3 left-3 size-4" />
+                    <Search className="pointer-events-none absolute top-3 left-3 size-4 text-sky-600 dark:text-sky-300" />
                     <Input
                         id="pos-search"
                         className="pl-9"

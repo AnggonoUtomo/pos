@@ -27,7 +27,7 @@ export function FilterBar({
 }) {
     return (
         <form
-            className="grid min-w-0 grid-cols-2 items-end gap-3 xl:grid-cols-6"
+            className="workspace-filters grid min-w-0 grid-cols-2 items-end gap-3 xl:grid-cols-6"
             onSubmit={(event) => {
                 event.preventDefault();
                 onApply();

@@ -28,7 +28,7 @@ export function FilterBar({
 }) {
     return (
         <form
-            className="space-y-3"
+            className="workspace-filters space-y-3"
             onSubmit={(e) => {
                 e.preventDefault();
                 onApply();

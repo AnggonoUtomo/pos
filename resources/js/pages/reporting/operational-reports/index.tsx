@@ -77,7 +77,7 @@ export default function OperationalReports(report: OperationalReport) {
                 </h1>
                 <form
                     ref={formRef}
-                    className="flex flex-wrap items-end gap-3"
+                    className="workspace-filters flex flex-wrap items-end gap-3"
                     onSubmit={(e) => {
                         e.preventDefault();
                         if (!form.processing) {
