@@ -41,5 +41,5 @@ Composer locked bersih. composer validate --strict dan check-platform-reqs PASS.
 
 - [x] Satu regresi backend lengkap dan gate frontend terdampak.
 - [x] QA browser filter desktop/tablet atau catat blocker dan fallback.
-- [ ] Review final, git diff --check, perbarui catatan gap terkait.
+- [x] Review final, git diff --check, perbarui catatan gap terkait.
 - [ ] Commit penutupan, push dan verifikasi divergence remote.

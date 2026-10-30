@@ -43,7 +43,10 @@ pekerjaan ini. Gap retur kemudian ditangani atas instruksi user pada
 [perbaikan sumber retur pembelian](../purchase-return-source-fix/README.md):
 penyebab konversi timezone posted_at/paid_at sudah diperbaiki dan seluruh
 regresi retur/refund/lifecycle lulus. Gap filter tanggal InvoiceHistoryTest
-tetap terbuka; angka gate awal di atas dipertahankan sebagai bukti saat itu.
+kemudian ditutup melalui
+[perbaikan tanggal dan dependency](../invoice-date-and-dependency-fix/README.md):
+fixture UTC eksplisit dikonversi ke timezone aplikasi, coverage UTC/WIB dan
+regresi penuh 933 PASS. Angka gate awal di atas tetap menjadi bukti saat itu.
 
 ## Verifikasi Fitur
 

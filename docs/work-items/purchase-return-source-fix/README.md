@@ -62,5 +62,7 @@ Tidak ada perubahan contract, schema, timestamp transaksi lama atau ledger.
   runner OS, frontend atau Old-docs. Panduan operator tidak berubah karena alur
   dan langkah penggunaan tetap sama; yang diperbaiki hanya adapter penyimpanan.
 
-Risiko terbuka di luar scope: InvoiceHistoryTest filter tanggal WIB masih FAIL.
-Tidak ada perbaikan maupun klaim lulus untuk bug tersebut dalam pekerjaan ini.
+Gap InvoiceHistoryTest tanggal WIB yang saat itu di luar scope kemudian
+ditutup melalui [perbaikan tanggal dan dependency](../invoice-date-and-dependency-fix/README.md).
+Penyebabnya fixture UTC mentah, bukan query runtime; regresi penuh terbaru
+933 PASS. Hasil gate lama tetap dipertahankan sebagai bukti saat pekerjaan ini.

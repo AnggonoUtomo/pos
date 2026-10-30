@@ -71,10 +71,11 @@ idempotent tanpa grant; demo skip dan tidak menambah histori buatan.
 
 ## Risiko Di Luar Scope
 
-- Bug filter tanggal InvoiceHistoryTest existing masih FAIL.
-- npm audit: satu advisory moderate pada dependency transitif qs.
-- composer audit: advisory medium CVE-2026-45070 pada symfony/mime existing.
-  Lockfile tidak berubah; tidak melakukan upgrade package tanpa instruksi.
+- Gap test tanggal dan advisory qs/symfony/mime yang ditemukan saat pekerjaan
+  ini kemudian ditutup atas instruksi user pada
+  [perbaikan tanggal dan dependency](../../../../../work-items/invoice-date-and-dependency-fix/README.md).
+  Regresi penuh terbaru 933 PASS; audit npm/Composer bersih. Hasil gate awal
+  di atas dipertahankan sebagai bukti pada saat pekerjaan AuditLog.
 - Nilai sebelum/sesudah hanya ditampilkan bila memang pernah dicatat. Nama
   actor berasal dari akun saat ini; causer/subject yang hilang tidak dihidupkan
   kembali. Log tanpa field aman dapat memiliki detail kosong.

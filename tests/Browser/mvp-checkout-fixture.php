@@ -10,6 +10,7 @@ use App\Modules\Reporting\OperationalReports\Database\Seeders\OperationalReports
 use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ use Spatie\Permission\Models\Role;
 use Tests\Fixtures\AuditLogFixture;
 use Tests\Fixtures\PurchaseReturnRefundFixture;
 use Tests\Fixtures\ReturnRefundFixture;
+use Tests\Fixtures\SalesReturnFixture;
 
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
@@ -32,7 +34,19 @@ if (! app()->environment('testing') || config('database.default') !== 'sqlite'
     || ! preg_match('/^mvp-browser-[a-f0-9]{16}\.sqlite$/D', basename($database))) {
     throw new LogicException('Fixture hanya SQLite disposable.');
 }
+if (DB::connection()->getDriverName() !== 'sqlite'
+    || realpath(DB::connection()->getDatabaseName()) !== realpath($database)) {
+    throw new LogicException('Koneksi efektif harus database QA disposable.');
+}
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+if (($input['verify_invoice_dates'] ?? false) === true) {
+    $fingerprint = hash('sha256', SalesReturnFixture::fingerprint().DB::table('activity_log')->orderBy('id')->get()->toJson());
+    if (! hash_equals($fingerprint, $input['fingerprint'] ?? '')) {
+        throw new RuntimeException('Filter tanggal tidak boleh memutasi invoice, stok, pembayaran atau audit.');
+    }
+    echo json_encode(['status' => 'PASS', 'readonly' => true]);
+    exit;
+}
 if (($input['verify_manual_backup'] ?? false) === true) {
     if (DB::table('stock_movements')->exists() || DB::table('sales_invoices')->exists()
         || DB::table('operational_backup_runs')->exists()
@@ -96,6 +110,18 @@ DB::statement('PRAGMA journal_mode=MEMORY');
 DB::statement('PRAGMA synchronous=OFF');
 Artisan::call('migrate', ['--force' => true]);
 $manager = User::create(['name' => 'QA manager', 'email' => 'qa-manager@example.test', 'password' => $input['password'], 'email_verified_at' => now()]);
+if (($input['invoice_date_demo'] ?? false) === true) {
+    foreach (['2026-10-15T17:00:00Z', '2026-10-16T16:59:59Z', '2026-10-16T17:00:00Z'] as $instant) {
+        $invoice = SalesReturnFixture::seed(quantity: '0.1');
+        DB::table('sales_invoices')->where('id', $invoice['id'])->update([
+            'posted_at' => CarbonImmutable::parse($instant)->setTimezone(config('app.timezone'))->format('Y-m-d H:i:s'),
+        ]);
+    }
+    $manager->assignRole(Role::findOrCreate('super-system', 'web'));
+    echo json_encode(['status' => 'READY',
+        'fingerprint' => hash('sha256', SalesReturnFixture::fingerprint().DB::table('activity_log')->orderBy('id')->get()->toJson())]);
+    exit;
+}
 if (($input['dashboard_only'] ?? false) === true) {
     if (($input['pagination_demo'] ?? false) === true) {
         for ($i = 1; $i <= 110; $i++) {
