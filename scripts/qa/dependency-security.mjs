@@ -13,6 +13,19 @@ const worker = new Worker(String.raw`
     const { SourceMapConsumer } = require(${JSON.stringify(require.resolve('source-map-js'))});
     const { ExpandArguments } = require(${JSON.stringify(path.join(path.dirname(require.resolve('concurrently')), 'dist/src/command-parser/expand-arguments.js'))});
     const postcss = require(${JSON.stringify(require.resolve('postcss'))});
+    const qs = require(${JSON.stringify(require.resolve('qs'))});
+    for (const payload of [
+        JSON.parse('{"a":[{"toString":"x"}]}'),
+        qs.parse('a[0][toString]=x', { allowPrototypes: true }),
+        qs.parse('a[][b]=c', { plainObjects: true }),
+    ]) {
+        for (const encodeValuesOnly of [false, true]) {
+            assert.doesNotThrow(() => qs.stringify(payload, { arrayFormat: 'comma', encodeValuesOnly }));
+        }
+    }
+    assert.equal(qs.stringify({ a: ['unit', 'dus'] }, { arrayFormat: 'comma' }), 'a=unit%2Cdus');
+    const filters = { date_from: '2026-10-16', date_to: '2026-10-16', per_page: '10', search: 'kamera & kabel' };
+    assert.deepEqual(qs.parse(qs.stringify(filters, { arrayFormat: 'brackets' })), filters);
     for (const separator of ['\n', '\r', '\u2028', '\u2029']) {
         assert.throws(() => quote.quote(['echo', 'ok', { comment: 'note' }, 'a' + separator + 'unexpected;#']), TypeError);
         assert.throws(() => quote.quote(quote.parse('echo http://example.test/#fragment').concat('a' + separator + 'unexpected;#')), TypeError);
@@ -44,7 +57,7 @@ const worker = new Worker(String.raw`
         assert(result.css.includes('color: red'));
         assert(result.map.toJSON().sources.some((source) => source.endsWith('input.css')));
     }
-    parentPort.postMessage('PASS: shell-quote line terminators/parse-chain, source-map invalid/nested offsets, and normal controls');
+    parentPort.postMessage('PASS: qs hostile comma arrays/normal query filters, shell-quote line terminators/parse-chain, source-map invalid/nested offsets, and normal controls');
 `, { eval: true });
 
 await new Promise((resolve, reject) => {

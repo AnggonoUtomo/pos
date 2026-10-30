@@ -23,17 +23,23 @@ PASS. Tidak perlu mengubah query runtime atau timezone produksi.
 
 ## Increment 2: Patch Security
 
-- [ ] Tambah reproduksi advisory dan kontrol normal tanpa jaringan/delivery.
+- [x] Tambah reproduksi advisory dan kontrol normal tanpa jaringan/delivery.
   - Acceptance: input berbahaya gagal pada versi lama dan aman pada patch.
   - Verification: probe qs dan test MIME, sebelum/sesudah update.
-- [ ] Update dependency terarah tanpa major/stack/dependency baru.
+- [x] Update dependency terarah tanpa major/stack/dependency baru.
   - Acceptance: lockfile hanya package yang dibutuhkan; audit bersih.
   - Verification: diff, npm audit, composer audit --locked/validate.
-- [ ] Commit save point setelah verifikasi increment lulus.
+- [x] Commit save point setelah verifikasi increment lulus.
+
+Bukti: qs 6.16.0 mereproduksi TypeError; MIME 7.4.18 gagal 32 input
+invalid dengan 1 kontrol normal lulus. Setelah update qs 6.17.1/MIME 7.4.22:
+probe parser PASS dan 33 test MIME/36 assertion PASS. Hanya dua package lock
+berubah; constraint manifest dan stack tetap. Audit npm penuh/production serta
+Composer locked bersih. composer validate --strict dan check-platform-reqs PASS.
 
 ## Sesudah Coding
 
-- [ ] Satu regresi backend lengkap dan gate frontend terdampak.
-- [ ] QA browser filter desktop/tablet atau catat blocker dan fallback.
+- [x] Satu regresi backend lengkap dan gate frontend terdampak.
+- [x] QA browser filter desktop/tablet atau catat blocker dan fallback.
 - [ ] Review final, git diff --check, perbarui catatan gap terkait.
 - [ ] Commit penutupan, push dan verifikasi divergence remote.
