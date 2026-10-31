@@ -18,6 +18,8 @@ Untuk operator dan pelatihan, mulai dari [Panduan pengguna](user-guide/README.md
 alur global, penggunaan per modul, serta panduan Markdown/PDF per role.
 Skenario relasional baru: [Dataset latihan operasional](user-guide/LIFECYCLE-LATIHAN.md)
 (lihat status aktivasi pada dokumen tersebut).
+Persediaan: [Stock opname](user-guide/STOCK-OPNAME.md) sudah tersedia untuk
+hitung fisik per gudang dengan review supervisor dan penahanan mutasi sementara.
 
 1. Baca [Project](PROJECT.md) untuk tujuan, scope, dan batas produk.
 2. Baca [Arsitektur](ARCHITECTURE.md) untuk boundary module dan dependency.

@@ -12,6 +12,20 @@ diimplementasikan dan QA/delivery Increment 6 selesai;
 [perbaikan dependency terpisah](../../../work-items/dependency-security-patch/README.md)
 juga telah lulus gate.
 
+Stock opname per gudang tersedia pada `/inventory/stock/counts`: snapshot,
+hitung fisik satuan dasar, review supervisor, posting selisih FIFO dan batal
+audited. Semua mutasi gudang ditahan selama sesi aktif, termasuk super-system;
+gudang lain normal. Selisih tambah wajib harga pokok positif; selisih nol tidak
+membuat ledger. [Scope dan bukti](../../../work-items/stock-counts/README.md),
+[panduan operator](../../../user-guide/STOCK-OPNAME.md).
+
+Port internal StockCountRepository memiliki sesi/baris dan WarehouseStockAccess
+menjaga create receipt/issue/post opening. Context posting opname internal
+tidak diterima dari request koreksi biasa. Permission baru:
+inventory.stock.counts.view/manage/post (tiga key terpisah). Aktivasi hanya
+catalog, bukan grant akun atau sesi demo. Demo opname memakai fixture
+disposable agar deployment tidak membekukan gudang toko.
+
 ## Tujuan Dan Boundary
 
 Memiliki dokumen stok awal draft/posted, saldo dalam satuan dasar, movement,

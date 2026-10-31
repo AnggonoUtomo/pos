@@ -1063,6 +1063,29 @@ session; dapat diperiksa memakai Chrome DevTools MCP pada isolated context.
 QA interaksi penuh tetap di harness Chrome. Screenshot/sizes/console diverifikasi;
 uji optik scanner dan printer fisik tetap UAT, tidak diklaim dari screenshot saja.
 
+## QA Stock Opname
+
+`php artisan test --compact --filter=StockCountTest`: freeze tiga pintu ledger,
+context palsu, snapshot, kosong/nol, tambah barang, gudang lain, review/reopen,
+permission, selisih tambah/kurang/nol/habis, replay dan audit rollback.
+
+`php scripts/qa/stock-counts-mysql.php`: database generated pos_count_qa_ +16hex,
+bukan database toko. Tiga worker nyata LOCK WAIT memverifikasi kedua urutan
+start-versus-writer dan posting-versus-retry, exact decimal serta cleanup.
+
+Browser: QA_STOCK_COUNTS=1 dan QA_PLAYWRIGHT_MODULE existing pada
+`node scripts/qa/workspace-tables-charts-browser.mjs`. SQLite/session/cache
+disposable, DB_URL dinetralkan, koneksi efektif diperiksa sebelum mutation.
+Menguji mulai/hitung/review/post out-in/cancel, Indonesia, F1, filter, readonly
+posted dan izin desktop/tablet. Transaksi sumber/Finance harus identik, hanya
+dua koreksi opname expected. QA_DEVTOOLS_ENTRY opsional memakai executable
+MCP cached untuk smoke terpisah; catat blocker bila login MCP tidak selesai.
+
+`php scripts/qa/activate-stock-counts-local.php` hanya sesudah backup terverifikasi:
+satu migration, catalog additive tanpa grant/demo/freeze, fingerprint seluruh
+data/kolom/metadata existing (kecuali cache/session) dan route cache. DDL MySQL
+tidak rollback otomatis. Jangan rollback schema berisi sesi.
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

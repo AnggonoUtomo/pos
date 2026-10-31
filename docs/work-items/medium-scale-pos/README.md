@@ -66,5 +66,7 @@ saldo awal/cutover per akun, mutasi/transfer/pembalik dan saldo berjalan dari
 ledger existing. Saldo minus hanya peringatan, tidak memblokir pembayaran.
 Shift Kasir selesai melalui [work item](../cashier-shifts/README.md): laci
 eksklusif, modal dari Buku Kas, checkout wajib shift, tutup/hitung serta review
-selisih tanpa mutasi uang otomatis. Tahap2/3 belum
+selisih tanpa mutasi uang otomatis. Stock opname pada Tahap2 selesai melalui
+[work item](../stock-counts/README.md): freeze gudang, hitung/review, FIFO dan
+harga pokok selisih tambah. Stok minimum, serial/garansi dan Tahap3 belum
 diimplementasikan; seluruh roadmap belum dianggap selesai.

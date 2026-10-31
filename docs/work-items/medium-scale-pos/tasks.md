@@ -62,8 +62,10 @@
 
 ## Increment 5: Stok Dan Purnajual
 
-- [ ] Tetapkan workflow opname dan perubahan stok selama sesi hitung.
-- [ ] Selesaikan opname serta stok minimum per gudang.
+- [x] Tetapkan workflow opname dan perubahan stok selama sesi hitung.
+  - User memilih freeze gudang dan HPP wajib untuk selisih tambah.
+- [x] Selesaikan opname per gudang; bukti pada [work item](../stock-counts/README.md).
+- [ ] Selesaikan stok minimum per gudang sebagai pekerjaan berikutnya.
 - [ ] Tetapkan serial/garansi/klaim lalu selesaikan alur lintas module-nya.
 
 ## Increment 6: Grosir Dan Proyek
