@@ -53,7 +53,7 @@ mengirim asset version, bukan mengabaikan respons 409.
 - [x] Browser alur berubah via MCP/fallback, fingerprint readonly/ledger.
 - [x] Satu regresi backend, typecheck/lint/build dan page-guides.
 - [x] Aktivasi migration/catalog additive tanpa grant atau sesi demo toko.
-- [ ] Isi bukti nyata, commit akhir, push dan verifikasi remote.
+- [x] Isi bukti nyata, commit akhir, push dan verifikasi remote.
 
 Penutupan implementasi: UI/QA `a6a7f72`, patch laporan `28086eb` terpisah.
 Browser final PASS pada mvp-browser-02479e0ae585c002, console kosong dan
@@ -62,3 +62,8 @@ page-guides29, Pint scoped dan diff check PASS. Nama barang tidak dipersempit
 pada tablet; tabel scroll; sidebar hanya menyorot menu paling spesifik.
 Backup restore verified dan aktivasi native PASS; migration batch34, 9 route,
 HTTPS anonymous302, data/grant lama identik dan tidak ada sesi toko otomatis.
+
+Delivery: backend b1e1f7a, patch laporan 28086eb, UI/QA a6a7f72 dan
+penutupan a75d1bd sudah dipush ke origin/main; hash remote cocok dan
+divergence 0/0. Pencatatan delivery disimpan dan dipush sebagai commit docs
+terakhir. File LSP user tetap di luar seluruh commit.

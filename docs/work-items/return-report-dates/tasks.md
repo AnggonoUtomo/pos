@@ -5,7 +5,7 @@
 - [x] Regresi RED/GREEN pada dua timezone dan batas eksklusif hari berikutnya.
 - [x] Patch dua reader count; settlement dan filter gudang tetap.
 - [x] Regresi dashboard/laporan/retur, review dan commit terpisah.
-- [ ] Push bersama penutupan paket opname.
+- [x] Push bersama penutupan paket opname.
 
 Reproduksi: 2 FAIL/6 PASS dari 8 kasus posting nyata, UTC/WIB dan pergantian
 hari/bulan. Sesudah patch, paket terdampak dashboard, laporan, retur kedua
