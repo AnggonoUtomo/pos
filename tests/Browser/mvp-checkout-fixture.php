@@ -39,6 +39,21 @@ if (DB::connection()->getDriverName() !== 'sqlite'
     throw new LogicException('Koneksi efektif harus database QA disposable.');
 }
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+$countSourceFingerprint = static fn () => hash('sha256', json_encode(array_map(
+    fn ($table) => DB::table($table)->orderBy('id')->get()->all(),
+    ['sales_invoices', 'sales_invoice_lines', 'purchase_orders', 'purchase_order_lines', 'payment_receipts', 'payment_records', 'payment_disbursements', 'payment_disbursement_lines', 'payment_refunds', 'payment_refund_lines']
+), JSON_THROW_ON_ERROR));
+if (($input['verify_stock_counts'] ?? false) === true) {
+    if (! hash_equals($countSourceFingerprint(), $input['source_fingerprint'] ?? '')
+        || DB::table('stock_counts')->where('status', 'posted')->count() !== 2
+        || DB::table('stock_counts')->where('status', 'cancelled')->count() !== 1
+        || DB::table('stock_counts')->whereNotNull('active_warehouse_id')->exists()
+        || DB::table('stock_adjustments')->count() !== 2) {
+        throw new RuntimeException('Lifecycle opname atau data sumber tidak sesuai.');
+    }
+    echo json_encode(['status' => 'PASS', 'source_unchanged' => true]);
+    exit;
+}
 if (($input['verify_invoice_dates'] ?? false) === true) {
     $fingerprint = hash('sha256', SalesReturnFixture::fingerprint().DB::table('activity_log')->orderBy('id')->get()->toJson());
     if (! hash_equals($fingerprint, $input['fingerprint'] ?? '')) {
@@ -139,7 +154,7 @@ if (($input['dashboard_only'] ?? false) === true) {
     $cashier->forceFill(['email' => 'qa-cashier@example.test', 'password' => $input['password']])->save();
     $cashier->givePermissionTo('sales.pos.invoices.post');
     $audit = ($input['audit_demo'] ?? false) ? AuditLogFixture::create($input['password']) : [];
-    echo json_encode($audit + ['status' => 'READY', 'invoice_number' => $invoice['number'],
+    echo json_encode($audit + ['status' => 'READY', 'source_fingerprint' => $countSourceFingerprint(), 'invoice_number' => $invoice['number'],
         'report' => app(OperationalReport::class)->handle([]), 'fingerprint' => PurchaseReturnRefundFixture::fingerprint()]);
     exit;
 }

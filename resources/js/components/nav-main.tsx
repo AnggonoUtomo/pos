@@ -44,12 +44,13 @@ function NavBadge({ item }: { item: NavItem }) {
     );
 }
 
-function NavMainItem({ item }: { item: NavItem }) {
+function NavMainItem({ item, peers }: { item: NavItem; peers: NavItem[] }) {
     const page = usePage();
     const { can, canAny } = usePermission();
     const isPermissionBlocked = item.permission ? !(typeof item.permission === 'string' ? can(item.permission) : canAny(item.permission)) : false;
     const isDisabled = item.disabled === true || item.comingSoon === true || isPermissionBlocked || item.url.length === 0;
-    const isActive = item.isActive ?? (!isDisabled && isCurrentUrl(page.url, item.url));
+    const childActive = peers.some((peer) => peer.url !== item.url && peer.url.startsWith(`${item.url}/`) && isCurrentUrl(page.url, peer.url));
+    const isActive = item.isActive ?? (!isDisabled && !childActive && isCurrentUrl(page.url, item.url));
     const tooltip = item.comingSoon ? `${item.title} segera hadir` : item.title;
 
     if (isDisabled) {
@@ -100,7 +101,7 @@ export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
                     <SidebarGroupLabel className="h-9 text-[11px] font-semibold uppercase">{group.title}</SidebarGroupLabel>
                     <SidebarMenu>
                         {group.items.map((item) => (
-                            <NavMainItem key={`${group.title}-${item.title}`} item={item} />
+                            <NavMainItem key={`${group.title}-${item.title}`} item={item} peers={group.items} />
                         ))}
                     </SidebarMenu>
                 </SidebarGroup>

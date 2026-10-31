@@ -11,6 +11,7 @@ use App\Modules\Inventory\Stock\Application\Contracts\StockReceiptRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\WarehouseStockAccess;
 use App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder;
+use App\Modules\Inventory\Warehouses\Infrastructure\Persistence\Models\Warehouse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -153,5 +154,23 @@ class StockCountTest extends StockTestCase
         }
         $this->assertSame($before, DB::table('activity_log')->count());
         $this->actingAs(User::factory()->create())->get('/inventory/stock/counts')->assertForbidden();
+    }
+
+    public function test_other_warehouse_stays_writable_and_extra_zero_balance_item_can_be_counted(): void
+    {
+        $count = app(ManageStockCount::class)->start($this->warehouse, 'QA kosong', $this->manager->id);
+        app(ManageStockCount::class)->add($count, 0, $this->item, $this->manager->id);
+        $record = app(StockCountRepository::class)->find($count);
+        $this->assertSame('0.000000', $record['lines'][0]['system_quantity']);
+        $this->assertNull($record['lines'][0]['counted_quantity']);
+        $other = Warehouse::create([
+            'code' => 'OTHER', 'name' => 'Gudang lain', 'is_active' => true,
+        ]);
+        app(PostAdjustment::class)->handle(['idempotency_key' => (string) Str::ulid(), 'warehouse_id' => $other->id,
+            'item_id' => $this->item, 'direction' => 'in', 'quantity' => '1', 'unit_cost' => '100', 'reason' => 'Gudang lain'], $this->manager->id);
+        $this->assertDatabaseCount('stock_adjustments', 1);
+        $this->assertDatabaseHas('stock_counts', ['id' => $count, 'status' => 'counting']);
+        $this->postJson('/inventory/stock/counts/'.$count.'/submit', ['version' => 1])->assertUnprocessable();
+        $this->postJson('/inventory/stock/counts/'.$count.'/save', ['version' => 1, 'lines' => [['id' => (string) Str::ulid(), 'quantity' => '0']]])->assertUnprocessable();
     }
 }

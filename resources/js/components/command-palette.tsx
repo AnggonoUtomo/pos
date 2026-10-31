@@ -118,6 +118,14 @@ const commandItems = [
         tone: 'text-amber-600 dark:text-amber-300',
     },
     {
+        title: 'Stock opname',
+        description: 'Hitung fisik dan review selisih per gudang',
+        url: '/inventory/stock/counts',
+        permission: 'inventory.stock.counts.view',
+        icon: Boxes,
+        tone: 'text-emerald-600 dark:text-emerald-300',
+    },
+    {
         title: 'Pelanggan',
         description: 'Master pelanggan',
         url: '/sales/customers',

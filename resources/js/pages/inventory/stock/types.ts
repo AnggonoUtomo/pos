@@ -40,7 +40,7 @@ export interface StockRow {
 export interface StockOptions {
     warehouses: { id: string; code: string; name: string }[];
     units: { id: string; code: string; name: string }[];
-    items: { id: string; sku: string; name: string; base_unit_id: string; units: { unit_id: string; conversion_ratio: string }[] }[];
+    items: { id: string; sku: string; name: string; base_unit_id: string; units: { unit_id: string; conversion_ratio: string; barcode?: string | null }[] }[];
 }
 export interface StockPageProps {
     adjustmentKey: string;

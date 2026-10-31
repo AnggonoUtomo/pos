@@ -96,6 +96,13 @@ const mainNavGroups: NavGroup[] = [
                 permission: 'inventory.stock.view',
             },
             {
+                title: 'Stock opname',
+                url: '/inventory/stock/counts',
+                icon: Boxes,
+                badgeTone: 'emerald',
+                permission: 'inventory.stock.counts.view',
+            },
+            {
                 title: 'Transfer antar-gudang',
                 url: '/inventory/transfers',
                 icon: ArrowRightLeft,

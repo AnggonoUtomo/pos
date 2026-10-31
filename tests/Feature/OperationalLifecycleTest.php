@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Modules\Finance\Payments\Application\Actions\ManageCashbook;
 use App\Modules\Finance\Payments\Database\Seeders\PaymentsDemoSeeder;
+use App\Modules\Inventory\Stock\Application\Actions\ManageStockCount;
 use Database\Seeders\OperationalLifecycleSeeder;
 use Database\Seeders\Support\ReplaceOperationalTrainingOnce;
 use Illuminate\Database\Schema\Blueprint;
@@ -205,6 +206,22 @@ class OperationalLifecycleTest extends TestCase
         } finally {
             $this->assertSame($hash, ReplaceOperationalTrainingOnce::fingerprint());
             Schema::drop('protected_reference');
+        }
+    }
+
+    public function test_existing_stock_count_blocks_legacy_replacement_without_deleting_session(): void
+    {
+        $actor = $this->actor();
+        $this->legacyScenario();
+        $warehouse = DB::table('warehouses')->where('is_active', true)->value('id');
+        $id = app(ManageStockCount::class)->start($warehouse, 'QA opname', $actor->id);
+        $hash = ReplaceOperationalTrainingOnce::fingerprint();
+        $this->expectException(LogicException::class);
+        try {
+            app(ReplaceOperationalTrainingOnce::class)->run($hash, $actor->id);
+        } finally {
+            $this->assertSame($hash, ReplaceOperationalTrainingOnce::fingerprint());
+            $this->assertDatabaseHas('stock_counts', ['id' => $id, 'status' => 'counting']);
         }
     }
 

@@ -19,7 +19,7 @@ const port = await new Promise((resolve, reject) => { const server = createServe
 const url = `http://127.0.0.1:${port}`;
 const env = { ...process.env, APP_ENV: 'testing', APP_DEBUG: 'false', APP_URL: url, APP_KEY: `base64:${randomBytes(32).toString('base64')}`,
     APP_CONFIG_CACHE: path.join(artifacts, 'config.php'), APP_ROUTES_CACHE: path.join(artifacts, 'routes.php'), VIEW_COMPILED_PATH: path.join(artifacts, 'views'),
-    DB_CONNECTION: 'sqlite', DB_DATABASE: database, CACHE_STORE: 'array', SESSION_DRIVER: 'database', SESSION_COOKIE: `visual_qa_${id}`,
+    DB_CONNECTION: 'sqlite', DB_DATABASE: database, DB_URL: 'null', CACHE_STORE: 'array', SESSION_DRIVER: 'database', SESSION_COOKIE: `visual_qa_${id}`,
     SESSION_DOMAIN: 'null', SESSION_SECURE_COOKIE: 'false', MAIL_MAILER: 'array', BCRYPT_ROUNDS: '4' };
 const fixture = (input) => {
     const result = spawnSync('php', ['tests/Browser/mvp-checkout-fixture.php'], { cwd: root, env, input: JSON.stringify(input), encoding: 'utf8', windowsHide: true });
@@ -44,7 +44,15 @@ try {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}: body overflow`);
         await page.screenshot({ path: path.join(artifacts, `${name}.png`), fullPage: true, animations: 'disabled' });
     };
-    if (process.env.QA_AUDIT_LOG === '1') {
+    if (process.env.QA_STOCK_COUNTS === '1') {
+        if (process.env.QA_DEVTOOLS_ENTRY) {
+            const { auditDevtoolsSmoke } = await import('./audit-log-devtools-smoke.mjs');
+            checks.push(await auditDevtoolsSmoke({ url, password, artifacts, entry: process.env.QA_DEVTOOLS_ENTRY,
+                pagePath: '/inventory/stock/counts', heading: 'Stock opname', screenshot: 'stock-counts-mcp.png' }));
+        }
+        const { checkStockCounts } = await import('./stock-counts-checks.mjs');
+        await checkStockCounts({ page, browser, password, url, shot, checks });
+    } else if (process.env.QA_AUDIT_LOG === '1') {
         if (process.env.QA_DEVTOOLS_ENTRY) {
             const { auditDevtoolsSmoke } = await import('./audit-log-devtools-smoke.mjs');
             checks.push(await auditDevtoolsSmoke({ url, password, artifacts, entry: process.env.QA_DEVTOOLS_ENTRY }));
@@ -118,7 +126,9 @@ try {
         checks.push('Desktop/tablet light/dark, hover, reduced motion and zero-period filter PASS');
     }
     }
-    assert.deepEqual(errors, []); assert.equal(fixture({ verify_dashboard: true, fingerprint: setup.fingerprint, audit_fingerprint: setup.audit_fingerprint }).status, 'PASS');
+    assert.deepEqual(errors, []);
+    assert.equal(fixture(process.env.QA_STOCK_COUNTS === '1' ? { verify_stock_counts: true, source_fingerprint: setup.source_fingerprint }
+        : { verify_dashboard: true, fingerprint: setup.fingerprint, audit_fingerprint: setup.audit_fingerprint }).status, 'PASS');
     const report = { status: 'PASS', baseline, checks, errors, artifacts }; await writeFile(path.join(artifacts, 'visual-report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));
 } catch (error) {
     if (page) await page.screenshot({ path: path.join(artifacts, 'failure.png'), fullPage: true }).catch(() => {});

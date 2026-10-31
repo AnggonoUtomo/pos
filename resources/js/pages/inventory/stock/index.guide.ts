@@ -27,6 +27,7 @@ export default {
         },
     ],
     notes: [
+        'Untuk sesi hitung dan review supervisor gunakan menu Stock opname. Mutasi gudang termasuk koreksi biasa ditahan selama sesi aktif.',
         'Stok awal hanya sekali per barang dan gudang. Pembelian berikutnya tidak dicatat ulang sebagai stok awal.',
         'Contoh saldo 10 Meter, fisik 8,5 Meter: kurangi 1,5, bukan 8,5. Stok tidak boleh minus; koreksi bukan sesi opname formal.',
     ],
