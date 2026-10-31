@@ -21,6 +21,6 @@ class StockWorkspace
         return ['warehouses' => $this->warehouses->choices(), 'units' => $this->units->listActive(),
             'items' => array_map(fn ($item) => ['id' => $item->id, 'sku' => $item->sku, 'name' => $item->name,
                 'base_unit_id' => $item->baseUnitId,
-                'units' => array_map(fn ($unit) => ['unit_id' => $unit->unitId, 'conversion_ratio' => $unit->conversionRatio], $item->units)], $this->items->choices())];
+                'units' => array_map(fn ($unit) => ['unit_id' => $unit->unitId, 'conversion_ratio' => $unit->conversionRatio, 'barcode' => $unit->barcode], $item->units)], $this->items->choices())];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
+use App\Modules\Inventory\Stock\Application\Contracts\WarehouseStockAccess;
 use App\Modules\Inventory\Stock\Domain\ValueObjects\FifoAllocation;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockIssue;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockOpening;
@@ -15,7 +16,7 @@ use Illuminate\Support\Str;
 
 class EloquentStockRepository implements StockRepository, StockUsage
 {
-    public function __construct(private TablePagination $pagination) {}
+    public function __construct(private TablePagination $pagination, private WarehouseStockAccess $access) {}
 
     public function createDraft(array $header, array $lines): string
     {
@@ -81,11 +82,13 @@ class EloquentStockRepository implements StockRepository, StockUsage
 
     public function hasWarehouseHistory(string $warehouseId): bool
     {
-        return DB::table('stock_movements')->where('warehouse_id', $warehouseId)->lockForUpdate()->first(['id']) !== null;
+        return DB::table('stock_movements')->where('warehouse_id', $warehouseId)->lockForUpdate()->first(['id']) !== null
+            || DB::table('stock_counts')->where('warehouse_id', $warehouseId)->lockForUpdate()->first(['id']) !== null;
     }
 
     public function postOpening(string $id, array $header, array $lines, ?int $actorId): void
     {
+        $this->access->assertWritable($header['warehouse_id']);
         $now = now();
         foreach ($lines as $line) {
             $lineId = $line['id'];
@@ -208,6 +211,8 @@ class EloquentStockRepository implements StockRepository, StockUsage
     public function createIssue(array $header): string
     {
         $this->assertTransaction();
+        $this->access->assertWritable($header['warehouse_id'], $header['stock_count_id'] ?? null);
+        unset($header['stock_count_id']);
         $issue = StockIssue::create($header);
         if (! $issue->exists) {
             throw new \RuntimeException('Dokumen pengeluaran tidak tersimpan.');

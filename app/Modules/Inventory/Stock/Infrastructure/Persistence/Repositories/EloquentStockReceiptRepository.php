@@ -3,6 +3,7 @@
 namespace App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Inventory\Stock\Application\Contracts\StockReceiptRepository;
+use App\Modules\Inventory\Stock\Application\Contracts\WarehouseStockAccess;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Models\StockReceipt;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,8 @@ use RuntimeException;
 
 class EloquentStockReceiptRepository implements StockReceiptRepository
 {
+    public function __construct(private WarehouseStockAccess $access) {}
+
     private function transaction(): void
     {
         if (DB::transactionLevel() === 0) {
@@ -32,6 +35,8 @@ class EloquentStockReceiptRepository implements StockReceiptRepository
     public function create(array $header): string
     {
         $this->transaction();
+        $this->access->assertWritable($header['warehouse_id'], $header['stock_count_id'] ?? null);
+        unset($header['stock_count_id']);
         $receipt = StockReceipt::create($header);
         if (! $receipt->exists) {
             throw new RuntimeException('Receipt tidak tersimpan.');

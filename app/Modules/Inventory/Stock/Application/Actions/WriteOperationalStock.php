@@ -62,10 +62,13 @@ final class WriteOperationalStock implements TransferStockWriter
     }
 
     public function adjustment(string $id, string $warehouseId, string $itemId, string $direction,
-        string $quantity, ?string $unitCost, ?int $actorId): string
+        string $quantity, ?string $unitCost, ?int $actorId, ?string $stockCountId = null): string
     {
         $this->requireTransaction();
         $header = $this->header($warehouseId, $id, 'AD-'.strtoupper($id), 'adjustment', $actorId);
+        if ($stockCountId !== null) {
+            $header['stock_count_id'] = $stockCountId;
+        }
         $row = $this->snapshots([$itemId])[$itemId] + ['source_line_id' => $id, 'line_number' => 1];
         if ($direction === 'out') {
             $issueId = $this->issues->createIssue($header);
