@@ -14,7 +14,8 @@ class StockAccessSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
         DB::transaction(function (): void {
             foreach (['inventory.stock.view', 'inventory.stock.manage', 'inventory.stock.post', 'inventory.stock.adjust',
-                'inventory.stock.counts.view', 'inventory.stock.counts.manage', 'inventory.stock.counts.post'] as $name) {
+                'inventory.stock.counts.view', 'inventory.stock.counts.manage', 'inventory.stock.counts.post',
+                'inventory.stock.minimums.view', 'inventory.stock.minimums.manage'] as $name) {
                 Permission::findOrCreate($name, 'web');
             }
         });

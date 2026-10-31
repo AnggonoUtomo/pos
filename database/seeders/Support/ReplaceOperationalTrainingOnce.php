@@ -59,7 +59,7 @@ final class ReplaceOperationalTrainingOnce
             $protected = [];
             // Only empty additive schemas can receive the new training lifecycle.
             // They are never reset: any existing cashbook/shift data blocks replacement.
-            $newTrainingTables = ['cashbook_openings', 'cashbook_entries', 'cashier_shifts', 'stock_counts', 'stock_count_lines'];
+            $newTrainingTables = ['cashbook_openings', 'cashbook_entries', 'cashier_shifts', 'stock_counts', 'stock_count_lines', 'stock_minimums'];
             foreach ($newTrainingTables as $table) {
                 if (DB::table($table)->lockForUpdate()->first() !== null) {
                     throw new LogicException('Data dilindungi merujuk data bisnis: '.$table);

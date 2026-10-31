@@ -9,6 +9,8 @@ use App\Modules\Inventory\Stock\Application\Actions\ReceivePurchaseStock;
 use App\Modules\Inventory\Stock\Application\Actions\ReceiveSaleReturnStock;
 use App\Modules\Inventory\Stock\Application\Actions\WriteOperationalStock;
 use App\Modules\Inventory\Stock\Application\Contracts\AdjustmentRepository;
+use App\Modules\Inventory\Stock\Application\Contracts\MinimumStockAlerts;
+use App\Modules\Inventory\Stock\Application\Contracts\MinimumStockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\PurchaseReturnStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\PurchaseStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\SaleReturnStockWriter;
@@ -21,6 +23,7 @@ use App\Modules\Inventory\Stock\Application\Contracts\StockRepository;
 use App\Modules\Inventory\Stock\Application\Contracts\StockUsage;
 use App\Modules\Inventory\Stock\Application\Contracts\TransferStockWriter;
 use App\Modules\Inventory\Stock\Application\Contracts\WarehouseStockAccess;
+use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseMinimumStockRepository;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseStockAvailability;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseStockCountRepository;
 use App\Modules\Inventory\Stock\Infrastructure\Persistence\Repositories\DatabaseStockReportReader;
@@ -33,6 +36,8 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(MinimumStockRepository::class, DatabaseMinimumStockRepository::class);
+        $this->app->bind(MinimumStockAlerts::class, DatabaseMinimumStockRepository::class);
         $this->app->bind(StockCountRepository::class,
             DatabaseStockCountRepository::class);
         $this->app->bind(WarehouseStockAccess::class,

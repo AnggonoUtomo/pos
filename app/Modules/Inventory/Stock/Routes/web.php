@@ -1,11 +1,17 @@
 <?php
 
 use App\Modules\Inventory\Stock\Presentation\Controllers\AdjustmentController;
+use App\Modules\Inventory\Stock\Presentation\Controllers\MinimumStockController;
 use App\Modules\Inventory\Stock\Presentation\Controllers\StockCountController;
 use App\Modules\Inventory\Stock\Presentation\Controllers\StockOpeningController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified'])->prefix('inventory/stock')->name('inventory.stock.')->group(function (): void {
+    Route::get('minimums', [MinimumStockController::class, 'index'])->name('minimums.index');
+    Route::post('minimums', [MinimumStockController::class, 'store'])->name('minimums.store');
+    Route::put('minimums/{id}', [MinimumStockController::class, 'update'])->whereUlid('id')->name('minimums.update');
+    Route::delete('minimums/{id}', [MinimumStockController::class, 'destroy'])->whereUlid('id')->name('minimums.destroy');
+    Route::post('minimums/{id}/restore', [MinimumStockController::class, 'restore'])->whereUlid('id')->name('minimums.restore');
     Route::get('counts', [StockCountController::class, 'index'])->name('counts.index');
     Route::post('counts', [StockCountController::class, 'store'])->name('counts.store');
     Route::get('counts/{id}', [StockCountController::class, 'show'])->whereUlid('id')->name('counts.show');

@@ -29,6 +29,7 @@ final class AuditLogProjection
         'account_id' => 'ID akun kas', 'source_id' => 'ID sumber', 'source_type' => 'Jenis sumber',
         'receipt_paper' => 'Format struk', 'backup_enabled' => 'Backup terjadwal', 'backup_time' => 'Jam backup',
         'table_per_page' => 'Baris per halaman',
+        'minimum_quantity' => 'Stok minimum',
         'item_id' => 'ID barang', 'unit_id' => 'ID satuan', 'customer_level_id' => 'ID level pelanggan',
         'amount' => 'Nominal', 'conversion_ratio' => 'Konversi satuan', 'barcode' => 'Barcode',
         'is_sale_unit' => 'Satuan jual', 'is_purchase_unit' => 'Satuan beli',
