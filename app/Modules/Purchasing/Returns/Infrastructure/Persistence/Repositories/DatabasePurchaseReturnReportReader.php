@@ -4,13 +4,17 @@ namespace App\Modules\Purchasing\Returns\Infrastructure\Persistence\Repositories
 
 use App\Modules\Purchasing\Returns\Application\Contracts\PurchaseReturnReportReader;
 use Brick\Math\BigDecimal;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 class DatabasePurchaseReturnReportReader implements PurchaseReturnReportReader
 {
     public function summary(string $from, string $until, ?string $warehouseId): array
     {
-        $count = DB::table('purchase_returns')->where('status', 'posted')->where('posted_at', '>=', $from)->where('posted_at', '<', $until)
+        // Return headers persist the UTC instant supplied by the Stock writer.
+        $postedFrom = CarbonImmutable::parse($from, config('app.timezone'))->utc()->toDateTimeString();
+        $postedUntil = CarbonImmutable::parse($until, config('app.timezone'))->utc()->toDateTimeString();
+        $count = DB::table('purchase_returns')->where('status', 'posted')->where('posted_at', '>=', $postedFrom)->where('posted_at', '<', $postedUntil)
             ->when($warehouseId, fn ($q, $id) => $q->where('snapshot->warehouse_id', $id))->count();
         $query = DB::table('purchase_return_settlements as s')->join('purchase_returns as r', 'r.id', '=', 's.purchase_return_id')
             ->where('s.settled_at', '>=', $from)->where('s.settled_at', '<', $until)

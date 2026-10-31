@@ -4,13 +4,17 @@ namespace App\Modules\Sales\Returns\Infrastructure\Persistence\Repositories;
 
 use App\Modules\Sales\Returns\Application\Contracts\SalesReturnReportReader;
 use Brick\Math\BigDecimal;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseSalesReturnReportReader implements SalesReturnReportReader
 {
     public function summary(string $from, string $until, ?string $warehouseId): array
     {
-        $count = DB::table('sales_returns')->where('status', 'posted')->where('posted_at', '>=', $from)->where('posted_at', '<', $until)
+        // Return headers persist the UTC instant supplied by the Stock writer.
+        $postedFrom = CarbonImmutable::parse($from, config('app.timezone'))->utc()->toDateTimeString();
+        $postedUntil = CarbonImmutable::parse($until, config('app.timezone'))->utc()->toDateTimeString();
+        $count = DB::table('sales_returns')->where('status', 'posted')->where('posted_at', '>=', $postedFrom)->where('posted_at', '<', $postedUntil)
             ->when($warehouseId, fn ($q, $id) => $q->where('snapshot->warehouse_id', $id))->count();
         $query = DB::table('sales_return_settlements as s')->join('sales_returns as r', 'r.id', '=', 's.sales_return_id')
             ->where('s.settled_at', '>=', $from)->where('s.settled_at', '<', $until)
