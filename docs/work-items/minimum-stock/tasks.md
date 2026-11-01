@@ -56,4 +56,8 @@
   - activate-minimum-stock-local.php PASS; tabel baru kosong, permission catalog
     additive/idempotent tanpa grant, seluruh row/schema existing identik.
     Migration batch35 Ran, lima route aktif/cache, HTTPS login 200 tanpa bypass TLS.
-- [ ] Dokumentasi bukti, commit, push dan verifikasi remote.
+- [x] Dokumentasi bukti, commit, push dan verifikasi remote.
+  - Save point backend a1ea5d8, workspace 5079191, QA/aktivasi 1ec8983.
+    Push main -> origin/main berhasil; ls-remote cocok 1ec8983 dan divergence
+    0/0 saat verifikasi. Commit penutupan checklist menyusul push yang sama.
+    Sisa perubahan Git hanya file LSP user, tidak masuk commit.

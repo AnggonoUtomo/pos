@@ -21,8 +21,8 @@ transaksi. Freeze opname dan aturan no-negative/FIFO existing tidak diubah.
 
 ## Status
 
-Implementasi, QA dan aktivasi lokal selesai. [Rencana](plan.md) dan
-[checklist beserta bukti](tasks.md); penutupan Git dicatat pada checklist.
+Selesai: implementasi, QA, aktivasi lokal dan delivery ke origin/main.
+[Rencana](plan.md) dan [checklist beserta bukti](tasks.md).
 Demo relevan CCTV/kelistrikan dibuat hanya pada database latihan/disposable;
 aktivasi toko tidak mengatur batas atau role akun tanpa input user.
 
