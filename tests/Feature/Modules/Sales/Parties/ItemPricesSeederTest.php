@@ -42,16 +42,17 @@ class ItemPricesSeederTest extends TestCase
         }
     }
 
-    public function test_unknown_level_refuses_before_any_prices_are_written(): void
+    public function test_custom_level_uses_demo_base_price_without_requiring_three_named_levels(): void
     {
         $this->prerequisites();
         CustomerLevel::create(['code' => 'CUSTOM', 'name' => 'Custom']);
-        try {
-            $this->seed(ItemPricesDemoSeeder::class);
-            $this->fail('Unknown demo factor must not be invented.');
-        } catch (LogicException) {
-            $this->assertDatabaseCount('item_prices', 0);
-        }
+        CustomerLevel::whereIn('code', ['ECERAN', 'GROSIR', 'INSTALLER'])->update(['is_active' => false]);
+        $this->seed(ItemPricesDemoSeeder::class);
+        $this->assertDatabaseCount('item_prices', 18);
+        $this->assertDatabaseHas('item_prices', ['amount' => '650000.00']);
+        $before = DB::table('item_prices')->orderBy('id')->get()->toJson();
+        $this->seed(ItemPricesDemoSeeder::class);
+        $this->assertSame($before, DB::table('item_prices')->orderBy('id')->get()->toJson());
     }
 
     public function test_late_missing_item_rolls_back_earlier_demo_prices_and_audit(): void

@@ -45,6 +45,11 @@ Retur barang/penerimaan uang dimiliki [Purchasing/Returns](../Returns/README.md)
 bukan mutation source PO. QA: [Quality](../../../QUALITY.md#qa-pembayaran-pembelian-lunas).
 
 PurchaseReportReader menerbitkan ringkasan posted readonly untuk Reporting.
+PurchaseCostLookup/PurchaseCostData menerbitkan biaya snapshot terbaru untuk
+preview harga Inventory/Items: posted_at/ID menurun lintas gudang, hanya posted
+dengan receipt header/baris cocok. DTO berisi nomor/waktu, base unit, nama satuan,
+biaya dan rasio asli; tanpa supplier/akun/payment. Tidak memakai rata-rata/FIFO
+atau mengubah pembelian/harga jual. [Work item](../../../work-items/price-markup/README.md).
 Checklist MVP: [empat paket](../../../work-items/mvp-ready/tasks.md).
 
 Draft mendukung [barcode scanner](../../../work-items/barcode-scanner/README.md):

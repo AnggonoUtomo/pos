@@ -24,8 +24,8 @@ class ItemPricesDemoSeeder extends Seeder
             $items = app(ItemPricingLookup::class);
             $levels = $catalog->activeLevels(lock: true);
             $factors = ['ECERAN' => '1', 'GROSIR' => '0.9', 'INSTALLER' => '0.95'];
-            if (count($levels) !== 3 || array_diff(array_column($levels, 'code'), array_keys($factors)) !== []) {
-                throw new LogicException('Demo harga memerlukan tepat level aktif ECERAN, GROSIR, INSTALLER.');
+            if ($levels === []) {
+                throw new LogicException('Demo harga memerlukan sedikitnya satu level aktif.');
             }
             foreach ([
                 'DEMO-CCTV-IP-2MP' => '650000', 'DEMO-CCTV-NVR-8CH' => '1250000',
@@ -47,7 +47,7 @@ class ItemPricesDemoSeeder extends Seeder
                 foreach ($item->saleUnits as $unit) {
                     foreach ($levels as $level) {
                         $amount = BigDecimal::of($baseAmount)->multipliedBy($unit->conversionRatio)
-                            ->multipliedBy($factors[$level->code])->toScale(2, RoundingMode::HALF_UP);
+                            ->multipliedBy($factors[$level->code] ?? '1')->toScale(2, RoundingMode::HALF_UP);
                         $prices[] = new ItemPriceData($unit->unitId, $level->id, (string) $amount);
                     }
                 }

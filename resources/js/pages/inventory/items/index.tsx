@@ -23,7 +23,11 @@ export default function ItemIndex({ records, filters, unitOptions, priceLevels }
             canManage={canManage}
             onCreate={create}
             searchPlaceholder="Cari SKU, nama, atau barcode..."
-            extraShortcuts={[{ label: 'Cetak label', description: 'Pada dialog label barcode', keys: ['Ctrl/Cmd', 'Enter'] }]}
+            extraShortcuts={[
+                { label: 'Cetak label', description: 'Pada dialog label barcode', keys: ['Ctrl/Cmd', 'Enter'] },
+                { label: 'Hitung harga', description: 'Pada editor harga barang', keys: ['Alt', 'G'], disabled: !canManage },
+                { label: 'Terapkan usulan', description: 'Ke form, belum menyimpan', keys: ['Alt', 'A'], disabled: !canManage },
+            ]}
         >
             <DataTable
                 rows={records.data}

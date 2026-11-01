@@ -27,6 +27,28 @@ Public contract Platform/OperationalSettings: TablePreferences (default) dan
 TablePagination (ukuran request read yang tervalidasi). Schema setting tambahan
 bersifat additive; update memakai manage/version/audit existing.
 
+## Preview Markup Harga Barang
+
+POST `/inventory/items/{id}/price-preview`, route inventory.items.price-preview,
+session/auth/verified/CSRF dan inventory.manage. Header respons private/no-store.
+Body: units list1..100 berisi unit_id ULID unik dan conversion_ratio canonical
+positif (enam desimal, minimal1, base unit wajib1); markups list1..1000 berisi
+customer_level_id aktif unik dan percent canonical nonnegatif maksimal enam
+digit integer dan dua pecahan. Maksimal5.000 kombinasi. Semua nama level berasal
+dari master, tidak dibatasi Eceran/Grosir/Installer.
+
+Respons: reference null/prices[] bila belum ada pembelian diterima; selain itu
+reference(number/received_at ISO UTC/unit_name/unit_cost/conversion_ratio) dan
+prices(unit_id/customer_level_id/amount dua desimal). Biaya snapshot pembelian
+terakhir diterima lintas gudang, receipt harus cocok; bukan harga draft/stok awal.
+Formula biaya x rasio jual x (100+persen) / (rasio beli x100), HALF_UP hanya pada
+hasil akhir. Hasil nol/tidak representable ditolak422, bukan dipaksakan Rp0,01.
+
+Endpoint baca-saja meskipun POST: tidak menyimpan harga, persen, audit atau
+transaksi. Terapkan ke form hanya state lokal; save Barang memakai validasi
+matriks/audit existing. Public boundary: PurchaseCostLookup/PurchaseCostData
+dari Purchasing, ItemPriceCatalog.markup dari Parties. Tidak ada perubahan schema.
+
 ## Stok Minimum Internal
 
 GET `/inventory/stock/minimums` memerlukan inventory.stock.minimums.view.

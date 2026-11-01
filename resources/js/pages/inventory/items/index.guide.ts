@@ -1,7 +1,7 @@
 import type { PageGuideContent } from '@/components/shared/page-guide/types';
 export default {
     title: 'Panduan Barang',
-    description: 'Atur identitas barang CCTV/kelistrikan, gambar, satuan, barcode dan harga jual.',
+    description: 'Atur identitas barang, gambar, satuan, barcode dan harga jual sesuai usaha toko.',
     sections: [
         {
             title: 'Persiapan',
@@ -17,6 +17,15 @@ export default {
                 'Tambahkan kemasan dan Isi satuan dasar. Contoh 1 Dus isi 4 berarti setiap Dus sama dengan 4 Unit, bukan saldo stok.',
                 'Atur satuan boleh Jual/Beli dan barcode berbeda per satuan. Gunakan barcode pabrikan atau buat/cetak label internal yang tersedia.',
                 'Lengkapi harga jual positif untuk seluruh satuan jual dan level aktif. Tambahkan satu gambar utama jika diperlukan, lalu simpan.',
+            ],
+        },
+        {
+            title: 'Menghitung usulan harga',
+            steps: [
+                'Pada Edit barang, isi markup persen untuk level yang ingin dihitung. Persen kosong tidak mengubah level itu, sedangkan 0 berarti tanpa markup.',
+                'Pilih Hitung usulan atau Alt+G. Acuan berasal dari pembelian terakhir yang sudah diterima di seluruh gudang, dikonversi ke satuan jual pada form.',
+                'Periksa sumber biaya dan harga usulan. Pilih Terapkan ke form atau Alt+A, sesuaikan lagi bila perlu, lalu Simpan barang.',
+                'Jika belum ada pembelian diterima, isi harga manual. Markup bukan margin laba bersih; diskon dan biaya operasional belum diperhitungkan.',
             ],
         },
         {

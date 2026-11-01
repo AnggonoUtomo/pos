@@ -47,8 +47,17 @@ QA: `php artisan test --filter=Parties`, `php scripts/qa/parties-mysql.php`,
 dan `node scripts/qa/parties-browser.mjs` dengan QA_PLAYWRIGHT_MODULE mengarah
 ke package Playwright existing. Tidak memasang dependency baru.
 
-Demo harga memerlukan demo Units/Items dan tiga level aktif. Mengisi hanya
+Demo harga memerlukan demo Units/Items dan sedikitnya satu level aktif. Mengisi hanya
 sembilan SKU CCTV/kelistrikan, melewati seluruh item bila sudah memiliki harga
 termasuk trashed. Tidak mengubah akun, stok atau harga user. Penerapan local
 terverifikasi: `php scripts/qa/apply-prices-local.php`; QA MySQL disposable:
 `php scripts/qa/item-prices-mysql.php`. Detail [work item harga](../../../work-items/item-price-matrix/README.md).
+
+Level pada runtime dinamis: kode/nama/jumlah berasal dari master aktif, bukan
+enum Eceran/Grosir/Installer. Ketiga nama itu hanya dataset contoh CCTV. Demo
+harga kini menerima setiap set level aktif (minimal satu); kode contoh memakai
+faktor demo existing, kode lain memakai harga dasar demo1x. Faktor demo bukan
+aturan harga produksi dan tidak menimpa item yang sudah memiliki histori harga.
+Public ItemPriceCatalog.markup membungkus domain MarkupPrice untuk consumer
+preview Items, exact rational dan HALF_UP dua desimal; persen bukan rule tersimpan.
+[Work item](../../../work-items/price-markup/README.md).

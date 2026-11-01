@@ -30,4 +30,13 @@ disepakati, perubahan role/permission, schema baru, dependency dan data toko.
 
 ## Status
 
-Dalam implementasi; lihat [rencana](plan.md) dan [checklist](tasks.md).
+Implementasi, QA dan aktivasi lokal selesai; penutupan Git pada
+[checklist](tasks.md), [rencana](plan.md).
+
+Gunakan Edit pada https://pos.test/inventory/items untuk barang dengan pembelian
+diterima. Persen level kosong dilewati; Terapkan ke form tidak menyimpan, Simpan
+barang tetap keputusan operator. Sumber/biaya dan tabel usulan bisa dilihat
+dengan scroll dialog. Installer existing tidak dihapus: ubah nama melalui master
+level bila sesuai kebijakan toko. Tidak ada perubahan data, akun, role/permission,
+stok/FIFO, scheduler, .env atau Old-docs. LSP user dikecualikan dari commit.
+PDF operator lama belum diregenerasi, panduan baru tersedia Markdown dan F1.

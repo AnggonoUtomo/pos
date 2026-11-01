@@ -95,6 +95,9 @@ class PriceMarkupTest extends StockTestCase
         $invalid = $body;
         $invalid['units'][0]['conversion_ratio'] = '2';
         $this->postJson($url, $invalid)->assertUnprocessable();
+        DB::table('units')->where('id', $this->box)->update(['is_active' => false]);
+        $this->postJson($url, $body)->assertUnprocessable();
+        DB::table('units')->where('id', $this->box)->update(['is_active' => true]);
         DB::table('customer_levels')->where('id', $body['markups'][0]['customer_level_id'])->update(['is_active' => false]);
         $this->postJson($url, $body)->assertUnprocessable();
         $this->app->detectEnvironment(fn () => 'local');

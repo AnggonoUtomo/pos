@@ -21,7 +21,7 @@ export default {
         },
     ],
     notes: [
-        'Kontak/alamat opsional, tetapi level wajib. Jangan memilih level Installer untuk pembeli Eceran hanya agar harga lebih murah.',
+        'Kontak/alamat opsional, tetapi level wajib. Pilih kelompok harga yang benar sesuai kebijakan toko, bukan sekadar harga termurah.',
         'Perubahan master pelanggan tidak mengubah snapshot transaksi yang sudah diposting.',
     ],
 } satisfies PageGuideContent;

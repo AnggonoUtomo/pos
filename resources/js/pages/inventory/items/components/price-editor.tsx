@@ -1,6 +1,7 @@
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import type { ItemPriceInput, ItemUnitInput, PriceLevel, UnitOption } from '../types';
+import { PriceAssistant } from './price-assistant';
 
 export function priceMatrix(units: ItemUnitInput[], levels: PriceLevel[], prices: ItemPriceInput[]): ItemPriceInput[] {
     const amounts = new Map(prices.map((price) => [`${price.unit_id}:${price.customer_level_id}`, price.amount]));
@@ -16,6 +17,7 @@ export function priceMatrix(units: ItemUnitInput[], levels: PriceLevel[], prices
 }
 
 export function PriceEditor({
+    itemId,
     units,
     levels,
     prices,
@@ -24,6 +26,7 @@ export function PriceEditor({
     disabled,
     onChange,
 }: {
+    itemId: string | null;
     units: ItemUnitInput[];
     levels: PriceLevel[];
     prices: ItemPriceInput[];
@@ -38,6 +41,7 @@ export function PriceEditor({
     return (
         <div className="space-y-3">
             <h3 className="text-sm font-semibold">Harga jual (Rp)</h3>
+            <PriceAssistant itemId={itemId} units={units} levels={levels} prices={matrix} options={options} disabled={disabled} onChange={onChange} />
             {saleUnits.length > 0 && levels.length === 0 && (
                 <p className="text-destructive text-sm" role="alert">
                     Belum ada level pelanggan aktif.

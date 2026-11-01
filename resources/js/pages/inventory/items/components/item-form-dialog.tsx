@@ -206,6 +206,7 @@ export function ItemFormDialog({
                     />
                     <InputError message={errors.inventory ?? errors.is_active} />
                     <PriceEditor
+                        itemId={record?.id ?? null}
                         units={form.data.units}
                         levels={levels}
                         prices={form.data.prices}

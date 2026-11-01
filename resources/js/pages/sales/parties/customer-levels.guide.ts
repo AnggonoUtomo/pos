@@ -1,13 +1,14 @@
 import type { PageGuideContent } from '@/components/shared/page-guide/types';
 export default {
     title: 'Panduan Level Pelanggan',
-    description: 'Kelompokkan harga jual Eceran, Grosir atau Installer sesuai kebijakan toko.',
+    description: 'Tentukan kelompok harga sesuai jenis usaha dan kebijakan toko.',
     sections: [
         {
             title: 'Membuat level',
             steps: [
                 'Cari kode/nama agar tidak menggandakan level yang sudah ada.',
                 'Tambah level pelanggan, isi kode dan nama, lalu simpan sebagai aktif.',
+                'Nama dan jumlah level bebas, misalnya Reguler, Grosir atau Member. Tidak ada level Installer yang wajib.',
             ],
         },
         {

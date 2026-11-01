@@ -61,6 +61,15 @@ Detail: [work item harga](../../../work-items/item-price-matrix/README.md).
 
 ## Operasi
 
+Editor harga memiliki bantuan markup persen per level aktif, preview dari harga
+beli terakhir diterima lintas gudang, lalu Terapkan ke form dan Simpan terpisah.
+Preview hanya inventory.manage dan tidak mengubah harga/ledger/audit. Units
+mengikuti isian konversi form, harga final tetap bisa diedit. Belum ada pembelian:
+harga manual. Lookup public PurchaseCostLookup milik Purchasing dan perhitungan
+melalui ItemPriceCatalog.markup milik Parties; tidak mengimpor domain privat.
+[Scope/bukti](../../../work-items/price-markup/README.md),
+[panduan](../../../user-guide/HARGA-BARANG.md). Tanpa schema/dependency baru.
+
 ```powershell
 php artisan migrate
 php artisan db:seed --class="App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder"

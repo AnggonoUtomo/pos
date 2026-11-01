@@ -37,9 +37,10 @@ final class PreviewItemPrices
             }
         }
         unset($markup);
+        $activeUnits = $this->units->findManyActive(array_map('strtolower', array_column($data['units'], 'unit_id')));
         foreach ($data['units'] as &$unit) {
             $unit['unit_id'] = strtolower($unit['unit_id']);
-            if ($this->units->findActiveById($unit['unit_id']) === null) {
+            if (! isset($activeUnits[$unit['unit_id']])) {
                 throw ValidationException::withMessages(['units' => 'Satuan harus aktif.']);
             }
             try {
