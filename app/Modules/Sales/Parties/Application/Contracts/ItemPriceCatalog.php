@@ -7,6 +7,8 @@ use App\Modules\Sales\Parties\Application\DTOs\PriceLevelData;
 
 interface ItemPriceCatalog
 {
+    public function markup(string $unitCost, string $purchaseRatio, string $saleRatio, string $percent): string;
+
     /** @return list<PriceLevelData> */
     public function activeLevels(bool $lock = false): array;
 

@@ -6,6 +6,7 @@ use App\Modules\Inventory\Items\Application\Contracts\ItemPricingLookup;
 use App\Modules\Sales\Parties\Application\Contracts\ItemPriceCatalog;
 use App\Modules\Sales\Parties\Application\Contracts\ItemPriceRepository;
 use App\Modules\Sales\Parties\Application\DTOs\ItemPriceData;
+use App\Modules\Sales\Parties\Domain\ValueObjects\MarkupPrice;
 use App\Modules\Sales\Parties\Domain\ValueObjects\PriceAmount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -15,6 +16,11 @@ use LogicException;
 class ManageItemPrices implements ItemPriceCatalog
 {
     public function __construct(private ItemPriceRepository $prices, private ItemPricingLookup $items) {}
+
+    public function markup(string $unitCost, string $purchaseRatio, string $saleRatio, string $percent): string
+    {
+        return MarkupPrice::calculate($unitCost, $purchaseRatio, $saleRatio, $percent);
+    }
 
     public function activeLevels(bool $lock = false): array
     {

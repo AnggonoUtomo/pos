@@ -9,6 +9,7 @@ use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Application\DTOs\ItemUnitData;
 use App\Modules\Inventory\Items\Application\Queries\GetItemImage;
 use App\Modules\Inventory\Items\Application\Queries\ListItems;
+use App\Modules\Inventory\Items\Application\Queries\PreviewItemPrices;
 use App\Modules\Inventory\Items\Presentation\Requests\ListItemsRequest;
 use App\Modules\Inventory\Items\Presentation\Requests\StoreItemRequest;
 use App\Modules\Inventory\Items\Presentation\Requests\UpdateItemRequest;
@@ -32,7 +33,7 @@ class ItemController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('can:inventory.view', only: ['data', 'index']),
-            new Middleware('can:inventory.manage', only: ['store', 'update', 'destroy', 'restore']),
+            new Middleware('can:inventory.manage', only: ['store', 'update', 'destroy', 'restore', 'pricePreview']),
         ];
     }
 
@@ -41,6 +42,11 @@ class ItemController extends Controller implements HasMiddleware
         $input = $request->validate(['page' => ['sometimes', 'integer', 'min:1', 'max:2147483647']]);
 
         return response()->json($query->handle((int) ($input['page'] ?? 1)));
+    }
+
+    public function pricePreview(Request $request, string $id, PreviewItemPrices $query): JsonResponse
+    {
+        return response()->json($query->handle($id, $request->all()))->header('Cache-Control', 'private, no-store');
     }
 
     public function image(string $id, string $mediaId, GetItemImage $query): BinaryFileResponse

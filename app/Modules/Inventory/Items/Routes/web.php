@@ -8,6 +8,7 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('inventory/items')->name(
     Route::get('/', [ItemController::class, 'index'])->name('index');
     Route::get('{id}/image/{mediaId}', [ItemController::class, 'image'])->whereUlid('id')->whereUlid('mediaId')->name('image');
     Route::post('/', [ItemController::class, 'store'])->name('store');
+    Route::post('{id}/price-preview', [ItemController::class, 'pricePreview'])->whereUlid('id')->name('price-preview');
     Route::put('{id}', [ItemController::class, 'update'])->whereUlid('id')->name('update');
     Route::delete('{id}', [ItemController::class, 'destroy'])->whereUlid('id')->name('destroy');
     Route::post('{id}/restore', [ItemController::class, 'restore'])->whereUlid('id')->name('restore');
