@@ -21,6 +21,13 @@ transaksi. Freeze opname dan aturan no-negative/FIFO existing tidak diubah.
 
 ## Status
 
-Dalam implementasi. [Rencana](plan.md) dan [checklist](tasks.md).
+Implementasi, QA dan aktivasi lokal selesai. [Rencana](plan.md) dan
+[checklist beserta bukti](tasks.md); penutupan Git dicatat pada checklist.
 Demo relevan CCTV/kelistrikan dibuat hanya pada database latihan/disposable;
 aktivasi toko tidak mengatur batas atau role akun tanpa input user.
+
+Halaman: https://pos.test/inventory/stock/minimums. Migration batch35 dan
+catalog dua permission sudah aktif, tanpa mengisi minimum toko atau mengubah
+akun, role, credential, transaksi, saldo, FIFO, Finance, scheduler dan .env.
+File LSP user dan Old-docs tidak disentuh. PDF panduan lama belum diregenerasi;
+tambahan operator tersedia pada Markdown dan F1.

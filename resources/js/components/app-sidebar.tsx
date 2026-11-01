@@ -12,6 +12,7 @@ import {
     Landmark,
     LayoutGrid,
     Package,
+    PackageSearch,
     ReceiptText,
     RotateCcw,
     Settings,
@@ -101,6 +102,13 @@ const mainNavGroups: NavGroup[] = [
                 icon: Boxes,
                 badgeTone: 'emerald',
                 permission: 'inventory.stock.counts.view',
+            },
+            {
+                title: 'Stok minimum',
+                url: '/inventory/stock/minimums',
+                icon: PackageSearch,
+                badgeTone: 'amber',
+                permission: 'inventory.stock.minimums.view',
             },
             {
                 title: 'Transfer antar-gudang',

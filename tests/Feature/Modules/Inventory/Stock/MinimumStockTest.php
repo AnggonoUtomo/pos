@@ -142,4 +142,15 @@ class MinimumStockTest extends StockTestCase
         }
         $this->assertDatabaseCount('stock_minimums', 0);
     }
+
+    public function test_dashboard_alerts_have_independent_permission_and_no_mutation(): void
+    {
+        app(ManageMinimumStock::class)->create($this->input(), $this->manager->id);
+        $viewer = User::factory()->create()->givePermissionTo('inventory.stock.minimums.view');
+        $before = Activity::count();
+        $this->actingAs($viewer)->get('/dashboard')->assertOk()->assertInertia(fn (Assert $p) => $p
+            ->where('summary', null)->where('low_stock.low_count', 1)->where('low_stock.empty_count', 1));
+        $this->actingAs(User::factory()->create())->get('/dashboard')->assertOk()->assertInertia(fn (Assert $p) => $p->where('low_stock', null));
+        $this->assertSame($before, Activity::count());
+    }
 }

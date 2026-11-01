@@ -2,13 +2,14 @@
 
 namespace App\Modules\Reporting\OperationalReports\Application\Queries;
 
+use App\Modules\Inventory\Stock\Application\Contracts\MinimumStockAlerts;
 use App\Modules\Sales\POS\Application\Contracts\InvoiceHistoryReader;
 
 class DashboardSummary
 {
-    public function __construct(private OperationalReport $report, private InvoiceHistoryReader $invoices) {}
+    public function __construct(private OperationalReport $report, private InvoiceHistoryReader $invoices, private MinimumStockAlerts $minimums) {}
 
-    public function handle(bool $viewReports, bool $viewInvoices, ?int $invoiceActorId): array
+    public function handle(bool $viewReports, bool $viewInvoices, ?int $invoiceActorId, bool $viewMinimums = false): array
     {
         $summary = null;
         if ($viewReports) {
@@ -30,7 +31,7 @@ class DashboardSummary
             $recent = array_slice($records['data'], 0, 5);
         }
 
-        return ['summary' => $summary, 'recent_sales' => $recent,
+        return ['summary' => $summary, 'recent_sales' => $recent, 'low_stock' => $viewMinimums ? $this->minimums->summary() : null,
             'sales_scope' => $viewInvoices ? ($invoiceActorId === null ? 'all' : 'own') : null,
             'generated_at' => now()->toIso8601String()];
     }

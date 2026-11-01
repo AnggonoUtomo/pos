@@ -4,6 +4,14 @@ export default {
     description: 'Baca ringkasan toko hari ini dan lanjutkan ke pekerjaan yang diperlukan.',
     sections: [
         {
+            title: 'Peringatan stok minimum',
+            steps: [
+                'Bila memiliki izin stok minimum, periksa jumlah pasangan barang/gudang yang perlu diperiksa dan yang habis.',
+                'Pilih Lihat peringatan untuk membuka daftar. Hanya pengaturan aktif dengan master aktif yang dihitung.',
+                'Gunakan Muat ulang ringkasan setelah transaksi untuk membaca saldo terbaru. Peringatan tidak memblokir penjualan atau membuat pembelian.',
+            ],
+        },
+        {
             title: 'Membaca ringkasan',
             steps: [
                 'Periksa waktu pembaruan dan tanggal hari ini dalam WIB.',

@@ -20,6 +20,8 @@ Skenario relasional baru: [Dataset latihan operasional](user-guide/LIFECYCLE-LAT
 (lihat status aktivasi pada dokumen tersebut).
 Persediaan: [Stock opname](user-guide/STOCK-OPNAME.md) sudah tersedia untuk
 hitung fisik per gudang dengan review supervisor dan penahanan mutasi sementara.
+Peringatan persediaan: [Stok minimum](user-guide/STOK-MINIMUM.md), per barang dan
+gudang tanpa memblokir transaksi.
 
 1. Baca [Project](PROJECT.md) untuk tujuan, scope, dan batas produk.
 2. Baca [Arsitektur](ARCHITECTURE.md) untuk boundary module dan dependency.

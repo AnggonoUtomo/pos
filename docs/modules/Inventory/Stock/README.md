@@ -28,6 +28,15 @@ disposable agar deployment tidak membekukan gudang toko.
 
 ## Tujuan Dan Boundary
 
+Stok minimum per barang/gudang: `/inventory/stock/minimums`, dengan permission
+inventory.stock.minimums.view/manage. Minimum >= 0 dalam satuan dasar; alert
+saat saldo <= minimum, tanpa pengaturan tidak diperingatkan. Nonaktif/soft
+delete/master tidak aktif menonaktifkan alert. Tidak menahan mutasi/FIFO.
+Public `MinimumStockAlerts::summary()` dikonsumsi dashboard Reporting dengan
+permission terpisah. [Work item](../../../work-items/minimum-stock/README.md),
+[panduan](../../../user-guide/STOK-MINIMUM.md). MinimumStockDemoSeeder hanya
+eksplisit local/testing setelah demo master, tanpa perubahan akun atau stok.
+
 Memiliki dokumen stok awal draft/posted, saldo dalam satuan dasar, movement,
 dan layer FIFO per barang + gudang. Activity log bukan ledger stok.
 Tidak memiliki dokumen penjualan/pembelian, transfer, reversal UI,

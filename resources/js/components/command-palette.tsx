@@ -14,6 +14,7 @@ import {
     Landmark,
     LayoutGrid,
     Package,
+    PackageSearch,
     ReceiptText,
     RotateCcw,
     Search,
@@ -28,6 +29,14 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
+    {
+        title: 'Stok minimum',
+        description: 'Batas dan peringatan barang per gudang',
+        url: '/inventory/stock/minimums',
+        permission: 'inventory.stock.minimums.view',
+        icon: PackageSearch,
+        tone: 'text-amber-600 dark:text-amber-300',
+    },
     {
         title: 'Log Aktivitas',
         description: 'Telusuri aktivitas dan perubahan data',

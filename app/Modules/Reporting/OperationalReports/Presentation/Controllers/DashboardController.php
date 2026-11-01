@@ -20,6 +20,7 @@ class DashboardController extends Controller
             Gate::allows('reporting.operational.view'),
             $viewAll || Gate::allows('sales.pos.invoices.post'),
             $viewAll ? null : (int) $request->user()->id,
+            Gate::allows('inventory.stock.minimums.view'),
         ));
     }
 }

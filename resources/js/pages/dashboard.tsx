@@ -9,7 +9,7 @@ import { OperationalCharts } from '@/pages/reporting/operational-reports/compone
 import { money } from '@/pages/reporting/operational-reports/lib/format';
 import { type OperationalReport } from '@/pages/reporting/operational-reports/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowDownLeft, ArrowUpRight, BarChart3, Boxes, PackageCheck, ReceiptText, RefreshCw, ShoppingCart } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, BarChart3, Boxes, PackageCheck, PackageSearch, ReceiptText, RefreshCw, ShoppingCart } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -26,11 +26,12 @@ type DashboardProps = {
     recent_sales: null | { id: string; number: string; customer_name: string; warehouse_name: string; total: string; posted_at: string }[];
     sales_scope: 'all' | 'own' | null;
     generated_at: string;
+    low_stock: null | { low_count: number; empty_count: number };
 };
 
 const dateTime = (value: string) => new Date(value).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'medium', timeStyle: 'short' });
 
-export default function Dashboard({ summary, recent_sales, sales_scope, generated_at }: DashboardProps) {
+export default function Dashboard({ summary, recent_sales, sales_scope, generated_at, low_stock }: DashboardProps) {
     const { can } = usePermission();
     const canOpenPos = can('sales.pos.invoices.create');
     const [refreshing, setRefreshing] = useState(false);
@@ -38,7 +39,7 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
         if (refreshing) return;
         setRefreshing(true);
         router.reload({
-            only: ['summary', 'recent_sales', 'sales_scope', 'generated_at'],
+            only: ['summary', 'recent_sales', 'sales_scope', 'generated_at', 'low_stock'],
             onError: () => toast.error('Ringkasan gagal dimuat.'),
             onFinish: () => setRefreshing(false),
         });
@@ -134,6 +135,26 @@ export default function Dashboard({ summary, recent_sales, sales_scope, generate
                     </div>
                 </header>
 
+                {low_stock && (
+                    <section
+                        aria-label="Peringatan stok minimum"
+                        className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-amber-500/20 bg-amber-500/5 p-4"
+                    >
+                        <div className="flex min-w-0 items-center gap-3">
+                            <PackageSearch className="size-6 shrink-0 text-amber-600 dark:text-amber-300" />
+                            <div>
+                                <h2 className="font-semibold">Stok minimum</h2>
+                                <p className="text-muted-foreground text-sm">
+                                    {low_stock.low_count.toLocaleString('id-ID')} pasangan barang/gudang perlu diperiksa ·{' '}
+                                    {low_stock.empty_count.toLocaleString('id-ID')} habis
+                                </p>
+                            </div>
+                        </div>
+                        <Button asChild variant="outline" size="sm">
+                            <Link href="/inventory/stock/minimums?status=low">Lihat peringatan</Link>
+                        </Button>
+                    </section>
+                )}
                 {summary ? (
                     <>
                         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">

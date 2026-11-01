@@ -24,7 +24,7 @@ final class DatabaseMinimumStockRepository implements MinimumStockAlerts, Minimu
         return StockMinimum::withTrashed()->where('warehouse_id', $warehouseId)->where('item_id', $itemId)->lockForUpdate()->first() !== null;
     }
 
-    public function insert(array $record, int $actorId): string
+    public function insert(array $record, ?int $actorId): string
     {
         $model = StockMinimum::create($record);
         if (! $model->exists) {
@@ -45,7 +45,7 @@ final class DatabaseMinimumStockRepository implements MinimumStockAlerts, Minimu
         $this->audit($model, $event, $before, $actorId);
     }
 
-    private function audit(StockMinimum $model, string $event, array $before, int $actorId): void
+    private function audit(StockMinimum $model, string $event, array $before, ?int $actorId): void
     {
         $log = activity('inventory.stock')->performedOn($model)->event('minimum.'.$event)->causedBy($actorId)
             ->withProperties(['old' => $before, 'attributes' => $model->only(['warehouse_id', 'item_id', 'minimum_quantity', 'is_active', 'deleted_at', 'version'])])->log('Stok minimum '.$event);

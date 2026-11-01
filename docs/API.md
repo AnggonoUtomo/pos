@@ -27,6 +27,29 @@ Public contract Platform/OperationalSettings: TablePreferences (default) dan
 TablePagination (ukuran request read yang tervalidasi). Schema setting tambahan
 bersifat additive; update memakai manage/version/audit existing.
 
+## Stok Minimum Internal
+
+GET `/inventory/stock/minimums` memerlukan inventory.stock.minimums.view.
+POST, PUT `{id}`, DELETE `{id}`, POST `{id}/restore` memerlukan
+inventory.stock.minimums.manage; session/auth/verified/CSRF dan ULID route.
+GET: search maksimal150 (SKU/nama/gudang, wildcard literal), warehouse_id ULID,
+status all/low/healthy/disabled/unavailable, trashed 0/1 dan pagination global.
+Props records(data/meta/summary), filters dan options master aktif.
+Summary daftar mengikuti filter tetapi tidak dibatasi halaman.
+
+Create: warehouse_id, item_id, minimum_quantity string desimal canonical >=0
+(maksimal14 digit integer dan6 pecahan), is_active boolean. Update: hanya
+minimum_quantity/is_active dan version. Delete/restore: version. Pasangan dan
+satuan dasar immutable. Input Indonesia dinormalisasi oleh form sebelum request.
+Version stale, duplikat termasuk terhapus, serta master tidak aktif menghasilkan
+validation error; delete tetap boleh untuk membersihkan pengaturan tidak berlaku.
+Tidak ada mutation ledger dari endpoint ini.
+
+Public Inventory/Stock `MinimumStockAlerts::summary()` menghasilkan low_count
+dan empty_count; consumer DashboardSummary mengisi low_stock hanya jika izin
+minimums.view. Angka dihitung pada semua pengaturan aktif/eligible, saldo kosong
+0, low ketika <= minimum. Bukan rekomendasi pembelian atau reservasi stok.
+
 ## Endpoint Internal Audit Log
 
 Session web/auth/verified dengan `platform.audit-log.view` untuk seluruh GET

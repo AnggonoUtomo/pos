@@ -16,7 +16,7 @@ final class ManageMinimumStock
     public function __construct(private MinimumStockRepository $records, private WarehouseLookup $warehouses,
         private ItemStockLookup $items, private UnitLookup $units) {}
 
-    public function create(array $input, int $actorId): string
+    public function create(array $input, ?int $actorId = null): string
     {
         $data = Validator::make($input, ['warehouse_id' => ['required', 'ulid'], 'item_id' => ['required', 'ulid']] + $this->rules())->validate();
 

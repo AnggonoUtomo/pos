@@ -8,7 +8,7 @@ interface MinimumStockRepository
 
     public function pairExists(string $warehouseId, string $itemId): bool;
 
-    public function insert(array $record, int $actorId): string;
+    public function insert(array $record, ?int $actorId): string;
 
     public function change(string $id, array $changes, string $event, int $actorId): void;
 

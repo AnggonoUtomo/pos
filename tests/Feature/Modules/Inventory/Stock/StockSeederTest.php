@@ -5,6 +5,7 @@ namespace Tests\Feature\Modules\Inventory\Stock;
 use App\Modules\Inventory\Items\Database\Seeders\ItemsDemoSeeder;
 use App\Modules\Inventory\Stock\Application\Actions\ManageOpening;
 use App\Modules\Inventory\Stock\Application\Actions\PostOpening;
+use App\Modules\Inventory\Stock\Database\Seeders\MinimumStockDemoSeeder;
 use App\Modules\Inventory\Stock\Database\Seeders\StockAccessSeeder;
 use App\Modules\Inventory\Stock\Database\Seeders\StockDemoSeeder;
 use App\Modules\Inventory\Units\Database\Seeders\UnitsDemoSeeder;
@@ -17,6 +18,19 @@ use Tests\TestCase;
 class StockSeederTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_minimum_demo_is_explicit_idempotent_and_preserves_deleted_settings_without_accounts(): void
+    {
+        $this->seed([WarehousesDemoSeeder::class, UnitsDemoSeeder::class, ItemsDemoSeeder::class, MinimumStockDemoSeeder::class]);
+        $before = Activity::count();
+        DB::table('stock_minimums')->limit(1)->update(['deleted_at' => now()]);
+        $this->seed(MinimumStockDemoSeeder::class);
+        $this->assertDatabaseCount('stock_minimums', 3);
+        $this->assertSame(1, DB::table('stock_minimums')->whereNotNull('deleted_at')->count());
+        $this->assertSame($before, Activity::count());
+        $this->assertDatabaseCount('stock_movements', 0);
+        $this->assertDatabaseCount('users', 0);
+    }
 
     public function test_permission_and_relational_demo_seeders_are_idempotent_without_accounts(): void
     {

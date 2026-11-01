@@ -65,7 +65,9 @@
 - [x] Tetapkan workflow opname dan perubahan stok selama sesi hitung.
   - User memilih freeze gudang dan HPP wajib untuk selisih tambah.
 - [x] Selesaikan opname per gudang; bukti pada [work item](../stock-counts/README.md).
-- [ ] Selesaikan stok minimum per gudang sebagai pekerjaan berikutnya.
+- [x] Selesaikan stok minimum per gudang.
+  - Batas <=, minimum 0, aktif/nonaktif, CRUD audited, dashboard berizin dan
+    panduan; [scope dan bukti](../minimum-stock/tasks.md). Tanpa PO otomatis.
 - [ ] Tetapkan serial/garansi/klaim lalu selesaikan alur lintas module-nya.
 
 ## Increment 6: Grosir Dan Proyek

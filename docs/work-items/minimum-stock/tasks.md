@@ -22,15 +22,38 @@
 
 ## Increment 2: Workspace dan Dashboard
 
-- [ ] Pengaturan/form Indonesia, daftar/filter/restore, shortcut dan F1.
-- [ ] Dashboard membaca ringkasan berizin via public contract; refresh aktual.
-- [ ] Demo CCTV/kelistrikan aman, panduan operator dan roadmap.
-- [ ] Typecheck/lint/build/page-guides dan commit save point.
+- [x] Pengaturan/form Indonesia, daftar/filter/restore, shortcut dan F1.
+- [x] Dashboard membaca ringkasan berizin via public contract; refresh aktual.
+- [x] Demo CCTV/kelistrikan aman, panduan operator dan roadmap.
+- [x] Typecheck/lint/build/page-guides dan commit save point.
+  - Focused minimum/seeder: 15 test / 151 assertions PASS. Dashboard hanya
+    mengirim low_stock untuk permission view, tanpa membuka akses laporan.
+  - tsc --noEmit, eslint resources/js, build 2942 modules dan page-guides
+    30 page PASS. Setelah koreksi class layout, hanya build/layout diulang.
 
 ## Increment 3: QA dan Delivery
 
-- [ ] Native MySQL exact dan unique/soft delete; tidak memakai data toko.
-- [ ] Browser alur berubah desktop/tablet via MCP atau fallback tercatat.
-- [ ] Satu regresi penuh, ulang hanya pemeriksaan terdampak bila perlu.
-- [ ] Backup verified, aktivasi additive dan fingerprint existing identik.
+- [x] Native MySQL exact dan unique/soft delete; tidak memakai data toko.
+  - minimum-stock-mysql.php PASS: migrate, DECIMAL(20,6), duplikat termasuk
+    terhapus, restore, summary; fingerprint stok/FIFO/sales/payment identik.
+    Database generated dibersihkan pada finally.
+- [x] Browser alur berubah desktop/tablet via MCP atau fallback tercatat.
+  - Chrome DevTools MCP cached bin/stdio isolated: login, DOM, screenshot PASS.
+    Namespace MCP tidak tersedia; executable existing dipakai tanpa instalasi.
+  - Chrome/Playwright existing: CRUD/status/restore/reload, Indonesia, F1,
+    shortcut, filter, dashboard refresh/link dan permission PASS; console bersih.
+    Bukti: storage/framework/testing/mvp-browser-21ca3427e9892536/visual-report.json.
+  - Screenshot awal tablet memperlihatkan pencarian menyempit; class diperbaiki
+    agar filter turun baris. Layout-only PASS, input >=200px tanpa overflow:
+    storage/framework/testing/mvp-browser-65d2108704046319/visual-report.json.
+    Kedua screenshot final desktop/tablet diperiksa visual.
+- [x] Satu regresi penuh, ulang hanya pemeriksaan terdampak bila perlu.
+  - php artisan test --compact: 965 PASS / 7703 assertions, 138,98 detik.
+    Tidak mengulang seluruh suite setelah perubahan class layout/dokumen saja.
+- [x] Backup verified, aktivasi additive dan fingerprint existing identik.
+  - pos:backup --verify: backups/pos-20261031-214921-788ba7a4.sql, restore
+    disposable identik. Nama file mengikuti runtime existing, bukan perubahan TZ.
+  - activate-minimum-stock-local.php PASS; tabel baru kosong, permission catalog
+    additive/idempotent tanpa grant, seluruh row/schema existing identik.
+    Migration batch35 Ran, lima route aktif/cache, HTTPS login 200 tanpa bypass TLS.
 - [ ] Dokumentasi bukti, commit, push dan verifikasi remote.
