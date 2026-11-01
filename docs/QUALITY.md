@@ -1086,6 +1086,25 @@ satu migration, catalog additive tanpa grant/demo/freeze, fingerprint seluruh
 data/kolom/metadata existing (kecuali cache/session) dan route cache. DDL MySQL
 tidak rollback otomatis. Jangan rollback schema berisi sesi.
 
+## QA Bantuan Harga Persen
+
+PriceMarkupTest/MarkupPriceTest/ItemPricesSeederTest menguji acuan pembelian
+diterima, bukti receipt, lintas gudang, draft diabaikan, custom level, konversi
+exact/rational dan HALF_UP sekali, nol/overflow/invalid/CSRF/permission serta
+preview tidak menulis harga/ledger/audit. UnitLookup memakai batch existing.
+
+QA_PRICE_MARKUP=1 pada workspace-tables-charts-browser.mjs memakai fixture
+SQLite/cache/session/credential disposable dan Chrome/Playwright existing.
+QA_DEVTOOLS_ENTRY opsional untuk bin MCP cached actual, status dilaporkan
+terpisah. Menguji persen Indonesia, preview/apply/cancel/no-save, harga manual
+setelah apply, save/reload, custom level, tanpa pembelian dan desktop/tablet.
+
+activate-price-markup-local.php memeriksa lookup biaya MySQL existing baca-saja,
+memperbarui route cache, membandingkan fingerprint semua tabel/kolom/grant
+existing kecuali cache/session. Tidak menjalankan migration, seed atau repricing.
+Skenario edge berada pada database test, bukan membuat transaksi di data toko.
+[Bukti](work-items/price-markup/tasks.md).
+
 ## QA Stok Minimum
 
 Focused MinimumStockTest/StockSeederTest memeriksa batas nol/sama, perubahan

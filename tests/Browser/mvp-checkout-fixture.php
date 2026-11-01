@@ -7,8 +7,11 @@ use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrde
 use App\Modules\Purchasing\PurchaseOrders\Database\Seeders\PurchaseOrdersAccessSeeder;
 use App\Modules\Reporting\OperationalReports\Application\Queries\OperationalReport;
 use App\Modules\Reporting\OperationalReports\Database\Seeders\OperationalReportsAccessSeeder;
+use App\Modules\Sales\Parties\Application\Contracts\ItemPriceCatalog;
+use App\Modules\Sales\Parties\Application\DTOs\ItemPriceData;
 use App\Modules\Sales\Parties\Database\Seeders\ItemPricesDemoSeeder;
 use App\Modules\Sales\Parties\Database\Seeders\PartiesDemoSeeder;
+use App\Modules\Sales\Parties\Infrastructure\Persistence\Models\CustomerLevel;
 use App\Modules\Sales\POS\Database\Seeders\POSAccessSeeder;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Console\Kernel;
@@ -153,8 +156,20 @@ if (($input['dashboard_only'] ?? false) === true) {
     $cashier = User::findOrFail(DB::table('sales_invoices')->where('id', $invoice['id'])->value('actor_id'));
     $cashier->forceFill(['email' => 'qa-cashier@example.test', 'password' => $input['password']])->save();
     $cashier->givePermissionTo('sales.pos.invoices.post');
+    $markup = [];
+    if (($input['price_markup_demo'] ?? false) === true) {
+        $level = CustomerLevel::create(['code' => 'MEMBER', 'name' => 'Member toko', 'is_active' => true]);
+        $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->sole();
+        $catalog = app(ItemPriceCatalog::class);
+        $rows = $catalog->forItems([$item->id])[$item->id];
+        foreach (DB::table('item_units')->where('item_id', $item->id)->where('is_sale_unit', true)->whereNull('deleted_at')->get() as $unit) {
+            $rows[] = new ItemPriceData($unit->unit_id, $level->id, '777777.00');
+        }
+        $catalog->saveForItem($item->id, $rows);
+        $markup = ['markup_item_id' => $item->id, 'markup_level_id' => $level->id];
+    }
     $audit = ($input['audit_demo'] ?? false) ? AuditLogFixture::create($input['password']) : [];
-    echo json_encode($audit + ['status' => 'READY', 'source_fingerprint' => $countSourceFingerprint(), 'invoice_number' => $invoice['number'],
+    echo json_encode($audit + $markup + ['status' => 'READY', 'source_fingerprint' => $countSourceFingerprint(), 'invoice_number' => $invoice['number'],
         'report' => app(OperationalReport::class)->handle([]), 'fingerprint' => PurchaseReturnRefundFixture::fingerprint()]);
     exit;
 }
