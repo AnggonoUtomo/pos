@@ -30,8 +30,8 @@ disepakati, perubahan role/permission, schema baru, dependency dan data toko.
 
 ## Status
 
-Implementasi, QA dan aktivasi lokal selesai; penutupan Git pada
-[checklist](tasks.md), [rencana](plan.md).
+Selesai: implementasi, QA, aktivasi lokal dan delivery ke origin/main.
+[Checklist/bukti](tasks.md), [rencana](plan.md).
 
 Gunakan Edit pada https://pos.test/inventory/items untuk barang dengan pembelian
 diterima. Persen level kosong dilewati; Terapkan ke form tidak menyimpan, Simpan
