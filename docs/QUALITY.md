@@ -1086,6 +1086,26 @@ satu migration, catalog additive tanpa grant/demo/freeze, fingerprint seluruh
 data/kolom/metadata existing (kecuali cache/session) dan route cache. DDL MySQL
 tidak rollback otomatis. Jangan rollback schema berisi sesi.
 
+## QA Stok Minimum
+
+Focused MinimumStockTest/StockSeederTest memeriksa batas nol/sama, perubahan
+saldo nyata, exact besar, pagination/filter literal, no-op/stale/duplikat,
+soft delete/restore, permission independen, master nonaktif dan audit rollback.
+minimum-stock-mysql.php memakai database generated pos_minimum_qa_ +16hex,
+memeriksa koneksi efektif sebelum migrate dan cleanup finally. Tidak ada
+perubahan saldo/FIFO/payment oleh pengaturan.
+
+QA_MINIMUM_STOCK=1 pada workspace-tables-charts-browser.mjs menguji alur berubah
+dengan QA_PLAYWRIGHT_MODULE existing. QA_DEVTOOLS_ENTRY dapat memakai bin MCP
+cached/stdio untuk smoke nyata, tanpa instalasi/editor/OS runner. Status MCP
+dan fallback dicatat terpisah bila gagal. QA_MINIMUM_STOCK_LAYOUT=1 hanya
+mengulang layout desktop/tablet setelah class berubah, bukan regresi alur ulang.
+
+Setelah pos:backup --verify, activate-minimum-stock-local.php menjalankan satu
+migration dan catalog idempotent tanpa auto-grant/demo/batas toko, memverifikasi
+fingerprint semua data/grant existing dan route cache. Tidak rollback schema
+berisi pengaturan. Bukti pada [work item](work-items/minimum-stock/tasks.md).
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

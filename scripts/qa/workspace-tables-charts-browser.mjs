@@ -44,7 +44,17 @@ try {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}: body overflow`);
         await page.screenshot({ path: path.join(artifacts, `${name}.png`), fullPage: true, animations: 'disabled' });
     };
-    if (process.env.QA_STOCK_COUNTS === '1') {
+    if (process.env.QA_MINIMUM_STOCK === '1') {
+        if (process.env.QA_DEVTOOLS_ENTRY) {
+            const { auditDevtoolsSmoke } = await import('./audit-log-devtools-smoke.mjs');
+            try {
+                checks.push(await auditDevtoolsSmoke({ url, password, artifacts, entry: process.env.QA_DEVTOOLS_ENTRY,
+                    pagePath: '/inventory/stock/minimums', heading: 'Stok minimum', screenshot: 'minimum-mcp.png' }));
+            } catch (error) { checks.push(`Chrome DevTools MCP BLOCKED: ${error.message}; fallback Chrome/Playwright.`); }
+        }
+        const { checkMinimumStock } = await import('./minimum-stock-checks.mjs');
+        await checkMinimumStock({ page, browser, password, url, shot, checks });
+    } else if (process.env.QA_STOCK_COUNTS === '1') {
         if (process.env.QA_DEVTOOLS_ENTRY) {
             const { auditDevtoolsSmoke } = await import('./audit-log-devtools-smoke.mjs');
             checks.push(await auditDevtoolsSmoke({ url, password, artifacts, entry: process.env.QA_DEVTOOLS_ENTRY,
