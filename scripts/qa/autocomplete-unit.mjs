@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { createElement, Fragment } from 'react';
+import { objectToFormData } from '@inertiajs/core';
+const { flattenOptions, filterOptions, optionText } = await import('../../resources/js/components/shared/autocomplete-options.ts');
+const nested = [{ value: 'a', label: createElement(Fragment, null, 'SUP-01', ' - ', 'Toko Maju') }, false, null,
+    [{ value: 'b', label: 'Kabel NYM', disabled: true }, undefined], ''];
+const rows = flattenOptions(nested);
+assert.equal(rows.length, 2);
+assert.equal(optionText(rows[0].label), 'SUP-01 - Toko Maju');
+assert.equal(optionText(createElement(Fragment, null, 'Unit', ' (', 'unit', ')')), 'Unit (unit)');
+assert.equal(filterOptions(rows, ' toko MAJU ')[0].value, 'a');
+assert.equal(filterOptions(rows, 'SUP-01')[0].value, 'a');
+assert.equal(filterOptions(rows, '%').length, 0);
+assert.equal(filterOptions(rows, 'kabel')[0].disabled, true);
+assert.equal(flattenOptions([rows, { value: 'a', label: 'Label terbaru' }]).length, 2);
+assert.equal(optionText(flattenOptions([rows, { value: 'a', label: 'Label terbaru' }])[0].label), 'Label terbaru');
+const file = new File(['test'], 'gambar.png', { type: 'image/png' });
+const payload = objectToFormData({ image: file, is_active: true, units: [{ unit_id: 'unit', conversion_ratio: '12', is_purchase_unit: true }], prices: [{ amount: '12000.00' }] }, undefined, null, 'indices');
+assert.equal(payload.get('is_active'), '1');
+assert.equal(payload.get('units[0][conversion_ratio]'), '12');
+assert.equal(payload.get('prices[0][amount]'), '12000.00');
+assert.equal(payload.get('image').name, 'gambar.png');
+console.log('PASS: nested master options, React labels, literal/case search, disabled metadata and stable ID deduplication.');
