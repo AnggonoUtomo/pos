@@ -5,6 +5,7 @@ namespace App\Modules\Inventory\Items\Presentation\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Inventory\Items\Application\Actions\ManageItem;
 use App\Modules\Inventory\Items\Application\Actions\SaveItemCatalog;
+use App\Modules\Inventory\Items\Application\Contracts\ItemClassificationLookup;
 use App\Modules\Inventory\Items\Application\DTOs\CreateItemData;
 use App\Modules\Inventory\Items\Application\DTOs\ItemUnitData;
 use App\Modules\Inventory\Items\Application\Queries\GetItemImage;
@@ -59,13 +60,14 @@ class ItemController extends Controller implements HasMiddleware
             'X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store']);
     }
 
-    public function index(ListItemsRequest $request, ListItems $query): Response
+    public function index(ListItemsRequest $request, ListItems $query, ItemClassificationLookup $classifications): Response
     {
         $filters = $request->filters();
 
         return Inertia::render('inventory/items/index', [
             'records' => $query->handle((int) $request->validated('page', 1), $filters),
             'filters' => $filters, 'unitOptions' => $query->unitOptions(), 'priceLevels' => $query->priceLevels(),
+            'classificationOptions' => $classifications->choices(),
         ]);
     }
 
@@ -77,7 +79,7 @@ class ItemController extends Controller implements HasMiddleware
             (bool) ($unit['is_sale_unit'] ?? true), (bool) ($unit['is_purchase_unit'] ?? true),
         ), $input['units'] ?? []);
         try {
-            $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, (bool) $input['is_active']), $this->priceData($input), $id, $request->imageData(), $request->boolean('remove_image'));
+            $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, (bool) $input['is_active'], array_intersect_key($input, array_flip(['category_id', 'brand_id']))), $this->priceData($input), $id, $request->imageData(), $request->boolean('remove_image'));
         } catch (InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['units' => $exception->getMessage()]);
         } catch (UniqueConstraintViolationException) {
@@ -119,7 +121,7 @@ class ItemController extends Controller implements HasMiddleware
         ), $input['units'] ?? []);
 
         try {
-            $id = $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, $request->boolean('is_active', true)), $this->priceData($input), image: $request->imageData(), removeImage: $request->boolean('remove_image'));
+            $id = $action->save(new CreateItemData($input['sku'], $input['name'], $input['base_unit_id'], $units, $request->boolean('is_active', true), array_intersect_key($input, array_flip(['category_id', 'brand_id']))), $this->priceData($input), image: $request->imageData(), removeImage: $request->boolean('remove_image'));
         } catch (InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['units' => $exception->getMessage()]);
         } catch (UniqueConstraintViolationException) {

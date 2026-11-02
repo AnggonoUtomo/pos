@@ -32,7 +32,7 @@ class POSController extends Controller implements HasMiddleware
     {
         $data = $request->validated();
 
-        return response()->json($query->handle($data['warehouse_id'], $data['customer_id'], $data['search'] ?? '', (int) ($data['page'] ?? 1)));
+        return response()->json($query->handle($data['warehouse_id'], $data['customer_id'], $data['search'] ?? '', (int) ($data['page'] ?? 1), array_intersect_key($data, array_flip(['category_id', 'brand_id']))));
     }
 
     public function scan(Request $request, SaleCatalog $query): JsonResponse

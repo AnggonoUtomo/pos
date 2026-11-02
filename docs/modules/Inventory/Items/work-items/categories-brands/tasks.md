@@ -16,15 +16,15 @@
   - Acceptance: referensi barang terhapus ikut melindungi master; locking current
     read; tidak ada query privat lintas modul atau permission baru.
   - Verification: focused tests, Pint, review dependency dan route.
-- [ ] Isi hasil dan commit save point.
+- [x] Isi hasil dan commit save point.
 
 ## Increment 2: Integrasi Barang Dan POS
 
-- [ ] Tambah pilihan nullable di DTO/normalisasi/create/update serta audit.
+- [x] Tambah pilihan nullable di DTO/normalisasi/create/update serta audit.
   - Acceptance: opsi invalid/nonaktif ditolak; omit mempertahankan, null clear;
     barang lama tetap valid; harga/satuan dan quick-create pembelian tetap utuh.
   - Verification: focused regression API/boundary.
-- [ ] Tambah label/filter Barang dan kategori/merek pada katalog POS.
+- [x] Tambah label/filter Barang dan kategori/merek pada katalog POS.
   - Acceptance: filter bergabung dengan search/page; reset halaman1; filter tidak
     menghapus keranjang atau membatasi scan; harga/stok/checkout tetap authority.
   - Verification: focused backend dan browser alur berubah.
@@ -32,11 +32,11 @@
 
 ## Increment 3: UI Dan Panduan
 
-- [ ] Halaman master, form, soft delete/restore, sidebar/command palette.
+- [x] Halaman master, form, soft delete/restore, sidebar/command palette.
   - Acceptance: shared workspace/table-pagination, Sonner, warna semantic,
     shortcut/F1, desktop/tablet dan permission guard existing.
   - Verification: typecheck/lint/build/page-guides dan browser.
-- [ ] Seeder demo relevan dan panduan F1/Markdown diperbarui.
+- [x] Seeder demo relevan dan panduan F1/Markdown diperbarui.
   - Acceptance: demo eksplisit testing/local idempotent tanpa overwrite legacy.
   - Verification: test seeder, review operator guide.
 - [ ] QA desktop/tablet serta commit.
@@ -44,14 +44,41 @@
 ## Increment 4: Aktivasi Dan Delivery
 
 - [ ] Satu gate regresi lengkap; ulang hanya pemeriksaan terdampak setelahnya.
-- [ ] Backup verified, migration additive/status MySQL dan route cache.
-- [ ] Fingerprint data/kolom/grant existing identik, kategori/merek lama null;
+- [x] Backup verified, migration additive/status MySQL dan route cache.
+- [x] Fingerprint data/kolom/grant existing identik, kategori/merek lama null;
   tanpa seed atau klasifikasi otomatis di toko.
 - [ ] Catat bukti/review, commit scope tanpa LSP, push dan verifikasi remote.
 
-## Bukti Awal
+## Bukti Verifikasi
 
 - RED2 gagal404, GREEN `ItemClassificationsTest`2 PASS/43 assertions.
 - Pint PHP terkait PASS; route inspection uncached terpisah menunjukkan5 route
   kategori. Route/cache produksi tidak dibersihkan untuk QA.
-- Belum migration/seed pada database toko; schema baru diuji SQLite disposable.
+- Foundation disimpan pada ab85bd2. Generator/dry-run N/A karena pengembangan
+  module Items existing, bukan menambah module baru.
+- Integrasi terfokus19 PASS/197 assertions; tambahan test boundary POS dan
+  harga/pembayaran/invoice5 PASS/63 assertions. Pint PHP terkait PASS.
+- MySQL disposable: current read referensi soft-deleted setelah snapshot,
+  inactive setelah snapshot, peer lock timeout dan restore unused PASS.
+  Database QA dibersihkan pada finally; database toko tidak dipakai test.
+- Backup `backups/pos-20261102-104653-174a301d.sql` verified dengan restore
+  disposable identik. Aktivasi native PASS: satu migration additive batch36 Ran,
+  fingerprint kolom/data/grant existing identik, barang lama null. Tidak seed,
+  reprice, assign role atau membuat transaksi di toko; route cache aktif.
+- Frontend: typecheck PASS, lint resources/js PASS, build2955 modul PASS,
+  page-guides32 halaman PASS. Build/hasil yang sama dipakai ulang bila source
+  runtime tidak berubah; hanya formatter fixture/selector QA yang berubah.
+- DevTools MCP cached/bin/stdio actual PASS: auth, Kategori barang, DOM dan
+  screenshot pada `storage/framework/testing/mvp-browser-4531c7a3b0f6331d/`.
+  Alur Chrome sesudahnya berhenti pada selector QA bernama Klasik, sedangkan
+  aria-label aktual Tampilan Klasik. Selector diperbaiki, bukan runtime UI.
+- Browser akhir PASS: `storage/framework/testing/mvp-browser-8e2454b74540d982/visual-report.json`.
+  Desktop1440x1000/tablet1024x768, create/restore/used guard, kategori/merek barang,
+  filter gabungan, F1/hotkey, POS Visual/Klasik, cart tetap, barcode di luar
+  filter dan pilihan quick-create/cancel pembelian. Console/page errors kosong.
+  Screenshot diperiksa; fingerprint transaksi/stok/FIFO/Finance identik.
+- Regresi penuh sebelum interupsi kehilangan output akhir; cache PHPUnit
+  historis tidak dijadikan bukti lulus. Gate akhir dipulihkan dengan JUnit
+  `storage/framework/testing/item-classifications-final.xml`, hasil menyusul.
+- HTTPS login200 dengan verifikasi TLS normal. Perangkat/printer/UAT fisik dan
+  scheduler/backup terpisah tetap pending di work item MVP, tidak diaktifkan ulang.

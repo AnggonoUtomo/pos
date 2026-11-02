@@ -19,6 +19,7 @@ class ListItemsRequest extends FormRequest
             'search' => ['nullable', 'string', 'max:150'],
             'status' => ['sometimes', Rule::in(['all', 'active', 'inactive'])],
             'trashed' => ['sometimes', 'boolean'],
+            'category_id' => ['nullable', 'ulid'], 'brand_id' => ['nullable', 'ulid'],
         ];
     }
 
@@ -26,6 +27,7 @@ class ListItemsRequest extends FormRequest
     {
         $input = $this->validated();
 
-        return ['search' => trim($input['search'] ?? ''), 'status' => $input['status'] ?? 'all', 'trashed' => $this->boolean('trashed')];
+        return ['search' => trim($input['search'] ?? ''), 'status' => $input['status'] ?? 'all', 'trashed' => $this->boolean('trashed'),
+            'category_id' => isset($input['category_id']) ? strtolower($input['category_id']) : null, 'brand_id' => isset($input['brand_id']) ? strtolower($input['brand_id']) : null];
     }
 }

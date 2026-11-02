@@ -12,6 +12,7 @@ use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class EloquentSaleItemCatalog implements SaleItemCatalog
@@ -45,13 +46,22 @@ class EloquentSaleItemCatalog implements SaleItemCatalog
             ->with(['media', 'units' => fn ($q) => $q->where('is_sale_unit', true)->orderBy('id')]);
     }
 
-    public function search(string $query, int $page): array
+    public function search(string $query, int $page, array $filters = []): array
     {
         if ($page < 1 || $page > 100000 || mb_strlen($query) > 150) {
             throw new InvalidArgumentException('Pencarian katalog tidak valid.');
         }
         $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], mb_strtolower(trim($query))).'%';
-        $rows = $this->query()->where(fn ($q) => $q->whereRaw("LOWER(sku) LIKE ? ESCAPE '!'", [$pattern])
+        $catalog = $this->query();
+        foreach (['category_id', 'brand_id'] as $field) {
+            if (! empty($filters[$field])) {
+                if (! is_string($filters[$field]) || ! Str::isUlid($filters[$field])) {
+                    throw new InvalidArgumentException('Filter klasifikasi tidak valid.');
+                }
+                $catalog->where($field, strtolower($filters[$field]));
+            }
+        }
+        $rows = $catalog->where(fn ($q) => $q->whereRaw("LOWER(sku) LIKE ? ESCAPE '!'", [$pattern])
             ->orWhereRaw("LOWER(name) LIKE ? ESCAPE '!'", [$pattern])
             ->orWhereHas('units', fn ($u) => $u->where('is_sale_unit', true)->whereRaw("LOWER(barcode) LIKE ? ESCAPE '!'", [$pattern])))
             ->orderBy('sku')->orderBy('id')->offset(($page - 1) * 25)->limit(26)->get();

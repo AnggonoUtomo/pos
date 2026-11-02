@@ -3,11 +3,37 @@
 namespace Tests\Feature\Modules\Inventory\Items;
 
 use App\Models\User;
+use App\Modules\Inventory\Items\Database\Seeders\ItemClassificationsDemoSeeder;
 use Illuminate\Support\Facades\DB;
 use Tests\Feature\Modules\Inventory\Stock\StockTestCase;
 
 class ItemClassificationsTest extends StockTestCase
 {
+    public function test_master_list_search_status_and_shared_pagination(): void
+    {
+        $this->withoutVite();
+        for ($number = 1; $number <= 12; $number++) {
+            $this->postJson('/inventory/categories', ['code' => sprintf('PAGE-%02d', $number), 'name' => 'Kategori halaman', 'is_active' => true])->assertCreated();
+        }
+        $this->get('/inventory/categories?search=halaman&per_page=10&page=2')->assertOk()->assertInertia(fn ($page) => $page
+            ->component('inventory/items/categories')->has('records.data', 2)->where('records.meta.total', 12)->where('records.meta.per_page', 10));
+        $this->get('/inventory/categories?search=halaman&status=inactive')->assertOk()->assertInertia(fn ($page) => $page->has('records.data', 0));
+    }
+
+    public function test_demo_is_explicit_idempotent_and_preserves_edits_deleted_rows_and_existing_items(): void
+    {
+        $seeder = ItemClassificationsDemoSeeder::class;
+        $this->seed($seeder);
+        DB::table('item_categories')->where('code', 'DEMO-CCTV')->update(['name' => 'Nama user', 'deleted_at' => now()]);
+        $this->seed($seeder);
+        $this->assertDatabaseCount('item_categories', 2);
+        $this->assertDatabaseCount('item_brands', 2);
+        $this->assertDatabaseHas('item_categories', ['code' => 'DEMO-CCTV', 'name' => 'Nama user']);
+        $this->assertSoftDeleted('item_categories', ['code' => 'DEMO-CCTV']);
+        $this->assertDatabaseHas('items', ['id' => $this->item, 'category_id' => null, 'brand_id' => null]);
+        $this->assertDatabaseCount('items', 1);
+    }
+
     public function test_category_and_brand_crud_audit_reserved_codes_and_permissions(): void
     {
         foreach (['categories' => 'item_categories', 'brands' => 'item_brands'] as $kind => $table) {

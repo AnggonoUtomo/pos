@@ -13,7 +13,7 @@ class CatalogRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['warehouse_id', 'customer_id'] as $key) {
+        foreach (['warehouse_id', 'customer_id', 'category_id', 'brand_id'] as $key) {
             if (is_string($this->input($key))) {
                 $this->merge([$key => strtolower(trim($this->input($key)))]);
             }
@@ -23,6 +23,7 @@ class CatalogRequest extends FormRequest
     public function rules(): array
     {
         return ['warehouse_id' => ['required', 'ulid'], 'customer_id' => ['required', 'ulid'],
+            'category_id' => ['nullable', 'ulid'], 'brand_id' => ['nullable', 'ulid'],
             'search' => ['sometimes', 'nullable', 'string', 'max:150'], 'page' => ['sometimes', 'integer', 'min:1', 'max:100000']];
     }
 }

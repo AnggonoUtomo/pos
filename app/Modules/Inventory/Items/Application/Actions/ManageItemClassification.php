@@ -17,7 +17,7 @@ final class ManageItemClassification
         $data = Validator::make([
             'code' => is_string($input['code'] ?? null) ? strtoupper(trim($input['code'])) : ($input['code'] ?? null),
             'name' => is_string($input['name'] ?? null) ? trim($input['name']) : ($input['name'] ?? null),
-            'is_active' => $input['is_active'] ?? true,
+            'is_active' => array_key_exists('is_active', $input) ? $input['is_active'] : true,
         ], ['code' => ['required', 'string', 'max:32'], 'name' => ['required', 'string', 'max:150'],
             'is_active' => ['required', 'boolean']])->validate();
 

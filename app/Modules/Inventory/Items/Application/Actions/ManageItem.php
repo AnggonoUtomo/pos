@@ -16,7 +16,7 @@ class ManageItem
     {
         $normalized = $this->creation->normalize($data);
         DB::transaction(function () use ($id, $normalized): void {
-            // Match create lock ordering: units first, then the item.
+            // Match create lock ordering: classification, units, then item.
             $this->creation->lockUnits($normalized);
             $current = $this->items->lock($id);
             if ($current['base_unit_id'] !== $normalized->baseUnitId) {

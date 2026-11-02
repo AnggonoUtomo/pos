@@ -15,10 +15,10 @@ class StoreItemRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['sku', 'name', 'base_unit_id'] as $field) {
+        foreach (['sku', 'name', 'base_unit_id', 'category_id', 'brand_id'] as $field) {
             if (is_string($this->input($field))) {
                 $value = trim($this->input($field));
-                $this->merge([$field => $field === 'base_unit_id' ? strtolower($value) : $value]);
+                $this->merge([$field => in_array($field, ['base_unit_id', 'category_id', 'brand_id'], true) ? strtolower($value) : $value]);
             }
         }
 
@@ -64,6 +64,8 @@ class StoreItemRequest extends FormRequest
             'sku' => ['required', 'string', 'max:64', Rule::unique('items', 'sku')],
             'name' => ['required', 'string', 'max:150'],
             'base_unit_id' => ['required', 'ulid'],
+            'category_id' => ['sometimes', 'nullable', 'ulid'],
+            'brand_id' => ['sometimes', 'nullable', 'ulid'],
             'is_active' => ['sometimes', 'boolean'],
             'units' => ['sometimes', 'array', 'list', 'max:100'],
             'units.*' => ['array:unit_id,conversion_ratio,barcode,is_sale_unit,is_purchase_unit'],

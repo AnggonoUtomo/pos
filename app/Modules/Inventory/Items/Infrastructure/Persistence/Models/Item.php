@@ -4,6 +4,7 @@ namespace App\Modules\Inventory\Items\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -18,7 +19,7 @@ class Item extends Model implements HasMedia
     use LogsActivity;
     use SoftDeletes;
 
-    protected $fillable = ['sku', 'name', 'base_unit_id', 'is_active'];
+    protected $fillable = ['sku', 'name', 'base_unit_id', 'is_active', 'category_id', 'brand_id'];
 
     protected $hidden = ['media'];
 
@@ -48,11 +49,21 @@ class Item extends Model implements HasMedia
         return $this->hasMany(ItemUnit::class);
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ItemCategory::class)->withTrashed();
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(ItemBrand::class)->withTrashed();
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->useLogName('inventory.items')
-            ->logOnly(['sku', 'name', 'base_unit_id', 'is_active', 'deleted_at'])
+            ->logOnly(['sku', 'name', 'base_unit_id', 'is_active', 'category_id', 'brand_id', 'deleted_at'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }

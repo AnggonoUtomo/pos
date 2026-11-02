@@ -13,11 +13,11 @@ class SaleCatalog
     public function __construct(private SaleContext $context, private SaleItemCatalog $items,
         private ItemPriceCatalog $prices, private StockAvailability $stock) {}
 
-    public function handle(string $warehouseId, string $customerId, string $search, int $page): array
+    public function handle(string $warehouseId, string $customerId, string $search, int $page, array $filters = []): array
     {
-        return DB::transaction(function () use ($warehouseId, $customerId, $search, $page): array {
+        return DB::transaction(function () use ($warehouseId, $customerId, $search, $page, $filters): array {
             $context = $this->context->resolve($warehouseId, $customerId);
-            $rows = $this->items->search($search, $page);
+            $rows = $this->items->search($search, $page, $filters);
 
             return ['items' => $this->map($rows['data'], $warehouseId, $context['customer']->levelId), 'has_more' => $rows['has_more'], 'customer' => $context['customer']];
         });

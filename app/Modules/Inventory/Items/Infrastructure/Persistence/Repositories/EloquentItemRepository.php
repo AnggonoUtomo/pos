@@ -26,7 +26,7 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
     public function update(string $id, CreateItemData $data): void
     {
         $item = Item::findOrFail($id);
-        $item->update(['sku' => $data->sku, 'name' => $data->name, 'is_active' => $data->isActive]);
+        $item->update(['sku' => $data->sku, 'name' => $data->name, 'is_active' => $data->isActive, ...$data->classification]);
         $selected = [];
         foreach ($data->units as $unit) {
             $selected[] = $unit->unitId;
@@ -71,11 +71,16 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
         if (in_array($filters['status'] ?? 'all', ['active', 'inactive'], true)) {
             $query->where('is_active', $filters['status'] === 'active');
         }
-        $columns = ['id', 'sku', 'name', 'base_unit_id', 'is_active'];
+        foreach (['category_id', 'brand_id'] as $field) {
+            if (! empty($filters[$field])) {
+                $query->where($field, $filters[$field]);
+            }
+        }
+        $columns = ['id', 'sku', 'name', 'base_unit_id', 'is_active', 'category_id', 'brand_id'];
         if ($filters !== []) {
             $columns[] = 'deleted_at';
         }
-        $paginator = $query->with(['media', 'units' => fn ($query) => $query
+        $paginator = $query->with(['media', 'category:id,code,name', 'brand:id,code,name', 'units' => fn ($query) => $query
             ->select(['id', 'item_id', 'unit_id', 'conversion_ratio', 'barcode', 'is_sale_unit', 'is_purchase_unit'])->orderBy('id')])
             ->orderBy('sku')->orderBy('id')->paginate($this->pagination->perPage(), $columns, page: $page);
 
@@ -100,6 +105,7 @@ class EloquentItemRepository implements ItemRepository, ItemUnitUsage
             'name' => $data->name,
             'base_unit_id' => $data->baseUnitId,
             'is_active' => $data->isActive,
+            ...$data->classification,
         ]);
 
         foreach ($data->units as $unit) {

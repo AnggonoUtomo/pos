@@ -11,5 +11,6 @@ final readonly class CreateItemData
         public string $baseUnitId,
         public array $units = [],
         public bool $isActive = true,
+        public array $classification = [],
     ) {}
 }

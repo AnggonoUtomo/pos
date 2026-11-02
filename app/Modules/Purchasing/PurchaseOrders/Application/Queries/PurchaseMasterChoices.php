@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchasing\PurchaseOrders\Application\Queries;
 
+use App\Modules\Inventory\Items\Application\Contracts\ItemClassificationLookup;
 use App\Modules\Inventory\Items\Application\Contracts\ItemStockLookup;
 use App\Modules\Inventory\Units\Application\Contracts\UnitLookup;
 use App\Modules\Purchasing\Suppliers\Application\Contracts\SupplierLookup;
@@ -11,11 +12,11 @@ use Illuminate\Validation\ValidationException;
 final class PurchaseMasterChoices
 {
     public function __construct(private ItemStockLookup $items, private SupplierLookup $suppliers,
-        private UnitLookup $units, private ItemPriceCatalog $prices) {}
+        private UnitLookup $units, private ItemPriceCatalog $prices, private ItemClassificationLookup $classifications) {}
 
     public function creationOptions(): array
     {
-        return ['units' => $this->units->listActive(), 'levels' => $this->prices->activeLevels()];
+        return ['units' => $this->units->listActive(), 'levels' => $this->prices->activeLevels(), 'classificationOptions' => $this->classifications->choices()];
     }
 
     public function find(string $kind, string $id): array

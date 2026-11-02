@@ -2,17 +2,18 @@
 
 namespace App\Modules\Sales\POS\Application\Queries;
 
+use App\Modules\Inventory\Items\Application\Contracts\ItemClassificationLookup;
 use App\Modules\Inventory\Warehouses\Application\Contracts\WarehouseLookup;
 use App\Modules\Sales\Parties\Application\Contracts\CustomerSalesLookup;
 use Illuminate\Validation\ValidationException;
 
 class SaleContext
 {
-    public function __construct(private WarehouseLookup $warehouses, private CustomerSalesLookup $customers) {}
+    public function __construct(private WarehouseLookup $warehouses, private CustomerSalesLookup $customers, private ItemClassificationLookup $classifications) {}
 
     public function options(): array
     {
-        return ['warehouses' => $this->warehouses->choices(), 'customers' => $this->customers->choices()];
+        return ['warehouses' => $this->warehouses->choices(), 'customers' => $this->customers->choices(), 'classificationOptions' => $this->classifications->choices()];
     }
 
     public function resolve(string $warehouseId, string $customerId, bool $lock = false): array

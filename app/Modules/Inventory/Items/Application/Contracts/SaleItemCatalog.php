@@ -11,7 +11,7 @@ interface SaleItemCatalog
     public function scan(string $code): ?SaleScanData;
 
     /** @return array{data: list<SaleItemData>, has_more: bool} */
-    public function search(string $query, int $page): array;
+    public function search(string $query, int $page, array $filters = []): array;
 
     /** @return array<string, SaleItemData> At most 100 requested items. */
     public function findMany(array $ids, bool $lock = false): array;
