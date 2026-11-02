@@ -19,7 +19,8 @@ satuan dan tidak mengubah harga/stok. Panduan operator:
 Memiliki barang, SKU, base unit, satuan jual/beli, barcode per satuan barang,
 dan rasio langsung ke base unit. Workflow form menyimpan matrix harga melalui
 public contract Sales/Parties, bukan memiliki persistence harga. Tidak memiliki stok, FIFO,
-payment, kategori/brand, atau transaksi POS pada increment ini.
+payment atau transaksi POS. Kategori/merek adalah metadata opsional milik Items,
+dengan halaman master terpisah, bukan module atau bounded context baru.
 
 ## Public Boundary Dan Dependency
 
@@ -60,6 +61,23 @@ dipakai fixture/provisioning tanpa harga; bukan workflow publik barang.
 Detail: [work item harga](../../../work-items/item-price-matrix/README.md).
 
 ## Operasi
+
+Kategori/merek: [scope dan bukti](work-items/categories-brands/README.md).
+`item_categories`/`item_brands` menyimpan kode unik, nama, status dan soft delete;
+`items.category_id`/`brand_id` nullable, maksimal satu masing-masing dan tanpa
+subkategori. Barang lama tidak diisi otomatis. Referensi barang termasuk yang
+terhapus melarang hapus/nonaktif master; guard memakai current locking read.
+Urutan lock: level harga (workflow katalog), kategori, merek, satuan, barang.
+Update yang tidak mengirim field mempertahankan nilai, null eksplisit melepas.
+Audit klasifikasi memakai inventory.item_categories/item_brands; perubahan
+referensi barang tercatat inventory.items. Permission inventory.view/manage
+existing, tanpa grant baru. Demo master eksplisit local/testing, tidak mengubah
+relasi barang existing; relasi contoh berada di fixture QA disposable.
+`ItemClassificationLookup.choices` menyediakan id/kode/nama aktif untuk POS dan
+quick-create pembelian. `SaleItemCatalog.search` menerima filter opsional
+category_id/brand_id sebelum pagination. Scan/findMany/quote/checkout tetap tidak
+dibatasi filter; DTO penjualan dan snapshot/FIFO/harga tidak ditambah klasifikasi.
+[Panduan operator](../../../user-guide/KATEGORI-MEREK.md).
 
 Editor harga memiliki bantuan markup persen per level aktif, preview dari harga
 beli terakhir diterima lintas gudang, lalu Terapkan ke form dan Simpan terpisah.

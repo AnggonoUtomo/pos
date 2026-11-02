@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Inventory\Items\Database\Seeders\ItemClassificationsDemoSeeder;
 use App\Modules\Platform\CompanySettings\Database\Seeders\CompanySettingsAccessSeeder;
 use App\Modules\Platform\OperationalSettings\Database\Seeders\OperationalSettingsAccessSeeder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrder;
@@ -157,6 +158,17 @@ if (($input['dashboard_only'] ?? false) === true) {
     $cashier->forceFill(['email' => 'qa-cashier@example.test', 'password' => $input['password']])->save();
     $cashier->givePermissionTo('sales.pos.invoices.post');
     $markup = [];
+    if (($input['classification_demo'] ?? false) === true) {
+        app(ItemClassificationsDemoSeeder::class)->run();
+        DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->update([
+            'category_id' => DB::table('item_categories')->where('code', 'DEMO-CCTV')->value('id'),
+            'brand_id' => DB::table('item_brands')->where('code', 'DEMO-VISION')->value('id'),
+        ]);
+        DB::table('items')->where('sku', 'DEMO-ELEC-MCB-6A')->update([
+            'category_id' => DB::table('item_categories')->where('code', 'DEMO-ELECTRICAL')->value('id'),
+            'brand_id' => DB::table('item_brands')->where('code', 'DEMO-VOLT')->value('id'),
+        ]);
+    }
     if (($input['price_markup_demo'] ?? false) === true) {
         $level = CustomerLevel::create(['code' => 'MEMBER', 'name' => 'Member toko', 'is_active' => true]);
         $item = DB::table('items')->where('sku', 'DEMO-CCTV-IP-2MP')->sole();

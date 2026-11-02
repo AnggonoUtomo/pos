@@ -27,4 +27,6 @@ dirujuk barang (termasuk soft-deleted) tidak boleh dihapus/dinonaktifkan.
 
 ## Status
 
-Dalam implementasi. [Rencana](plan.md), [checklist](tasks.md).
+Implementasi, aktivasi lokal dan QA selesai pada2 November2026. Master baru
+tetap kosong pada database toko, referensi barang lama null; operator mengisi
+klasifikasi sesuai kebutuhan. [Rencana](plan.md), [checklist](tasks.md).

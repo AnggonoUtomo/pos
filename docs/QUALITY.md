@@ -1141,6 +1141,28 @@ migration dan catalog idempotent tanpa auto-grant/demo/batas toko, memverifikasi
 fingerprint semua data/grant existing dan route cache. Tidak rollback schema
 berisi pengaturan. Bukti pada [work item](work-items/minimum-stock/tasks.md).
 
+## QA Kategori Dan Merek
+
+Focused ItemClassificationsTest/ItemClassificationIntegrationTest memeriksa
+CRUD, ULID/kode tombstone, audit, izin, optional/omit/null, invalid/nonaktif,
+filter/pagination, harga dan fingerprint ledger yang tidak berubah.
+`php scripts/qa/item-classifications-mysql.php` memakai database acak disposable,
+menguji REPEATABLE READ snapshot stale, referensi soft-deleted, current active
+read, peer lock timeout serta cleanup. Jangan mengganti targetnya ke DB toko.
+
+QA_ITEM_CLASSIFICATIONS=1 pada workspace-tables-charts-browser.mjs menguji
+master CRUD/restore/used guard, Barang/filter, POS Klasik/Visual, scan di luar
+filter dan quick-create pembelian pada desktop/tablet. QA_PLAYWRIGHT_MODULE
+memakai library existing; QA_DEVTOOLS_ENTRY opsional memakai bin MCP cached
+terisolasi. Fingerprint transaksi/stok/FIFO/Finance wajib identik. Fixture
+classification_demo hanya SQLite testing; bukan seed data toko.
+
+Sesudah backup verified, activate-item-classifications-local.php hanya satu
+migration additive dan route cache. Hash kolom/baris existing tetap identik;
+dua referensi baru nullable, tanpa backfill/seed/grant. DDL MySQL tidak rollback
+otomatis; jangan rollback schema berisi data. Bukti pada
+[checklist](modules/Inventory/Items/work-items/categories-brands/tasks.md).
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

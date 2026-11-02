@@ -52,6 +52,8 @@ Penyusunan panduan ini tidak mengubah role/akun/permission database.
 
 ## Cara Memakai Panduan
 
+- [Kategori dan merek barang](KATEGORI-MEREK.md) menjelaskan master opsional,
+  pengaman referensi dan filter Barang/POS; belum masuk PDF global/per-role lama.
 - Pilihan master sekarang mendukung [pencarian autocomplete](AUTOCOMPLETE-MASTER.md),
   termasuk tambah supplier/barang langsung dari draft pembelian sesuai izin.
   Tambahan ini belum digabungkan ke PDF global/per-role lama.

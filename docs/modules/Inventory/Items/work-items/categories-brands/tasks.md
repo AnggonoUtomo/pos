@@ -28,7 +28,7 @@
   - Acceptance: filter bergabung dengan search/page; reset halaman1; filter tidak
     menghapus keranjang atau membatasi scan; harga/stok/checkout tetap authority.
   - Verification: focused backend dan browser alur berubah.
-- [ ] Commit save point sesudah verifikasi.
+- [x] Commit save point sesudah verifikasi.
 
 ## Increment 3: UI Dan Panduan
 
@@ -39,15 +39,17 @@
 - [x] Seeder demo relevan dan panduan F1/Markdown diperbarui.
   - Acceptance: demo eksplisit testing/local idempotent tanpa overwrite legacy.
   - Verification: test seeder, review operator guide.
-- [ ] QA desktop/tablet serta commit.
+- [x] QA desktop/tablet.
+- [x] Commit UI dan panduan sesudah verifikasi.
 
 ## Increment 4: Aktivasi Dan Delivery
 
-- [ ] Satu gate regresi lengkap; ulang hanya pemeriksaan terdampak setelahnya.
+- [x] Satu gate regresi lengkap; ulang hanya pemeriksaan terdampak setelahnya.
 - [x] Backup verified, migration additive/status MySQL dan route cache.
 - [x] Fingerprint data/kolom/grant existing identik, kategori/merek lama null;
   tanpa seed atau klasifikasi otomatis di toko.
-- [ ] Catat bukti/review, commit scope tanpa LSP, push dan verifikasi remote.
+- [x] Catat bukti dan review scope tanpa LSP.
+- [ ] Commit penutupan, push dan verifikasi remote.
 
 ## Bukti Verifikasi
 
@@ -78,7 +80,16 @@
   filter dan pilihan quick-create/cancel pembelian. Console/page errors kosong.
   Screenshot diperiksa; fingerprint transaksi/stok/FIFO/Finance identik.
 - Regresi penuh sebelum interupsi kehilangan output akhir; cache PHPUnit
-  historis tidak dijadikan bukti lulus. Gate akhir dipulihkan dengan JUnit
-  `storage/framework/testing/item-classifications-final.xml`, hasil menyusul.
+  historis tidak dijadikan bukti lulus. Gate akhir dipulihkan dengan JUnit:
+  `php artisan test --compact --log-junit storage/framework/testing/item-classifications-final.xml`
+  PASS996 tests/7937 assertions,151,13 detik. Tidak ada perubahan runtime setelah
+  gate ini; hanya dokumentasi/formatter fixture/selector QA dan teks aktivasi.
+- Commit integrasi c318491, tanpa file LSP user. Review arsitektur/security:
+  Presentation memanggil use case/lookup publik; enum kind mencegah table bebas;
+  permission backend, CSRF, whitelist input dan unique DB tetap. Filter sebelum
+  pagination, label relasi eager-load, tidak ada model privat lintas module.
+  Lookup aktif bounded1.000 dicatat di API, belum pencarian remote tanpa batas.
+- Commit UI b3abecf memakai workspace/pagination/Autocomplete existing,
+  panduan lokal per page dan navigasi berizin; tanpa dependency/design system baru.
 - HTTPS login200 dengan verifikasi TLS normal. Perangkat/printer/UAT fisik dan
   scheduler/backup terpisah tetap pending di work item MVP, tidak diaktifkan ulang.

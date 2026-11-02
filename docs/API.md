@@ -1266,6 +1266,37 @@ di Finance setelah locking aktual; mismatch membatalkan invoice/stok/payment.
 GET `/pos/payment-methods` tanpa shift menghasilkan methods kosong; saat aktif
 hanya tunai laci tersebut plus non-tunai aktif. Tidak mengekspos akun rekening.
 
+## Kategori Dan Merek Barang
+
+GET `/inventory/categories` dan `/inventory/brands` adalah halaman Inertia
+inventory/items/categories dan brands, dengan records/meta/filters; permission
+inventory.view. Search/status/trashed/page dan shared per_page10/25/50/100 berlaku.
+POST pada URL yang sama: `{code,name,is_active?}`, kode dinormalisasi uppercase,
+unik termasuk soft-deleted, maksimal32; nama maksimal150. JSON201 `{id}`.
+PUT `/{id}` mengubah master; DELETE `/{id}` soft delete; POST `/{id}/restore`
+memulihkan; JSON200 `{id}`. Mutation memakai inventory.manage, auth/verified,
+CSRF dan audit. Berhasil lewat Inertia kembali dengan flash; validation422 JSON
+atau redirect errors web. Referensi barang termasuk soft-deleted menolak
+delete/nonaktif, juga untuk super-system; unknown/deleted ID404.
+
+POST/PUT barang menerima category_id/brand_id opsional nullable ULID. Omit saat
+update mempertahankan nilai; null melepas. Salah jenis, deleted/nonaktif ditolak
+saat transaksi/locking referensi. Respons daftar barang menambah dua ID dan
+projection category/brand `{id,code,name}` nullable; filter category_id/brand_id
+dapat digabungkan dengan pencarian dan pagination. Harga/satuan tetap diwajibkan
+oleh workflow existing, bukan dihapus ketika klasifikasi berubah.
+
+Public `ItemClassificationLookup.choices(): array` menghasilkan
+`{categories:[{id,code,name}],brands:[{id,code,name}]}` aktif, masing-masing
+maksimal1.000. Consumer Sales/POS dan metadata quick-create PurchaseOrders.
+`SaleItemCatalog.search(query,page,filters=[])` menerima dua ID filter opsional
+sebelum offset/limit existing. GET `/pos/catalog` menerima parameter nullable
+ULID yang sama; props `/pos` menambah classificationOptions. Filter tidak masuk
+payload quote/checkout, scan/findMany dan DTO snapshot transaksi tidak berubah.
+
+Metadata GET master-options pembelian juga menambah classificationOptions;
+permission existing tetap. Tidak ada endpoint mutation klasifikasi lintas modul.
+
 ## Pilihan Master Draft Pembelian
 
 GET `/purchasing/purchase-orders/master-options` memerlukan auth dan

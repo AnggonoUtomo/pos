@@ -120,7 +120,9 @@ tidak mengubah lifecycle relasi; restore mempertahankan konfigurasi satuan.
 ItemUnitUsage mempublikasikan pemeriksaan referensi (termasuk trashed) untuk guard
 Units. Sebelum consumer transaksi nyata dibuat, perubahan rasio/penghapusan
 barang/satuan wajib mendapat guard transaksi dan snapshot historis.
-Category/brand ditunda untuk menjaga scope foundation; pricing level berada
+Kategori/merek opsional tersedia sebagai metadata Items, master datar dan
+referensi barang termasuk soft-deleted dilindungi dari hapus/nonaktif.
+Lihat [scope dan bukti](work-items/categories-brands/README.md). Pricing level berada
 pada Sales/Parties melalui workflow SaveItemCatalog. UI tersedia pada resources/js/pages/inventory/items:
 list/filter/barcode search, pagination, dialog multi-satuan dan lifecycle,
 permission UX, Sonner, dropdown shortcut. Pilihan satuan memakai listActive
@@ -139,4 +141,5 @@ ItemPricingLookup mempublikasikan lookup SKU/konfigurasi satuan jual untuk
 consumer pricing; tidak mempublikasikan repository/model Items.
 Barang lama yang belum berharga harus dilengkapi saat edit. Tidak ada backfill
 harga rekaan. Menambah level membuat matrix lama perlu dilengkapi saat edit;
-belum ada consumer penjualan nyata. Restore mempertahankan konfigurasi existing.
+consumer Sales/POS memakai public catalog dan memeriksa harga saat quote/checkout.
+Restore mempertahankan konfigurasi existing.

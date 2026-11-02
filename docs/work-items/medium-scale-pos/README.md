@@ -68,5 +68,8 @@ Shift Kasir selesai melalui [work item](../cashier-shifts/README.md): laci
 eksklusif, modal dari Buku Kas, checkout wajib shift, tutup/hitung serta review
 selisih tanpa mutasi uang otomatis. Stock opname pada Tahap2 selesai melalui
 [work item](../stock-counts/README.md): freeze gudang, hitung/review, FIFO dan
-harga pokok selisih tambah. Stok minimum, serial/garansi dan Tahap3 belum
-diimplementasikan; seluruh roadmap belum dianggap selesai.
+harga pokok selisih tambah. Stok minimum selesai melalui
+[work item](../minimum-stock/README.md). Kategori/merek barang ditangani pada
+[work item Items](../../modules/Inventory/Items/work-items/categories-brands/README.md).
+Serial/garansi ditunda sesuai arahan user; Tahap3 belum diimplementasikan.
+Seluruh roadmap belum dianggap selesai.
