@@ -4,6 +4,12 @@ export default {
     description: 'Catat pembelian dari draft sampai penerimaan stok dan pembayaran lunas.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: [
+                'Cari supplier, gudang, barang, satuan atau metode pembayaran lewat kode/nama. Pilih hasil, bukan hanya mengetik nama. Jika master belum ada, gunakan Tambah supplier atau Tambah barang sesuai izin; isian draft tetap tersimpan di form.',
+            ],
+        },
+        {
             title: 'Menyiapkan draft',
             steps: [
                 'Pilih supplier dan gudang tujuan, lalu tambah atau scan barcode barang.',

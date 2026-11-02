@@ -1,3 +1,4 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
@@ -12,9 +13,10 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DataTable } from './components/data-table';
 import { LifecycleDialog } from './components/lifecycle-dialog';
+import type { CreatedMaster } from './components/master-creator';
 import { PaymentDialog } from './components/payment-dialog';
 import { PurchaseFormDialog } from './components/purchase-form-dialog';
-import type { PurchaseFilters, PurchasePageProps, PurchaseRow } from './types';
+import type { PurchaseFilters, PurchaseOptions, PurchasePageProps, PurchaseRow } from './types';
 
 export default function PurchaseOrders({ records, filters, options }: PurchasePageProps) {
     const { can } = usePermission();
@@ -23,6 +25,20 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
     const canPay = can('purchasing.purchase-orders.pay');
     const [paying, setPaying] = useState<PurchaseRow | null>(null);
     const [dialog, setDialog] = useState<{ record: PurchaseRow | null; readOnly: boolean } | null>(null);
+    const [added, setAdded] = useState<Pick<PurchaseOptions, 'suppliers' | 'items' | 'units'>>({ suppliers: [], items: [], units: [] });
+    const merge = <T extends { id: string }>(rows: T[], additions: T[]) => [...new Map([...rows, ...additions].map((row) => [row.id, row])).values()];
+    const catalog = {
+        ...options,
+        suppliers: merge(options.suppliers, added.suppliers),
+        items: merge(options.items, added.items),
+        units: merge(options.units, added.units),
+    };
+    const masterCreated = (master: CreatedMaster) =>
+        setAdded((current) =>
+            master.kind === 'supplier'
+                ? { ...current, suppliers: merge(current.suppliers, [master.choice]) }
+                : { ...current, items: merge(current.items, [master.choice]), units: merge(current.units, master.units) },
+        );
     const [lifecycle, setLifecycle] = useState<PurchaseRow | null>(null);
     const [search, setSearch] = useState(filters.search);
     const [loading, setLoading] = useState(false);
@@ -122,29 +138,35 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                     {(['supplier', 'warehouse'] as const).map((kind) => {
                         const key = `${kind}_id` as const;
                         const label = kind === 'supplier' ? 'supplier' : 'gudang';
-                        const choices = kind === 'supplier' ? options.suppliers : options.warehouses;
+                        const choices = kind === 'supplier' ? catalog.suppliers : catalog.warehouses;
                         return (
-                            <Select
+                            <Autocomplete
                                 key={kind}
                                 value={filters[key] || 'all'}
                                 onValueChange={(id) => visit({ [key]: id === 'all' ? '' : id })}
                                 disabled={loading}
-                            >
-                                <SelectTrigger className="w-56" aria-label={`Filter ${label}`}>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Semua {label}</SelectItem>
-                                    {filters[key] && !choices.some((choice) => choice.id === filters[key]) && (
-                                        <SelectItem value={filters[key]}>Pilihan tidak aktif</SelectItem>
-                                    )}
-                                    {choices.map((choice) => (
-                                        <SelectItem key={choice.id} value={choice.id}>
-                                            {choice.code} - {choice.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                className="w-56"
+                                aria-label={`Filter ${label}`}
+                                options={[
+                                    {
+                                        value: 'all',
+                                        label: <>Semua {label}</>,
+                                    },
+                                    filters[key] &&
+                                        !choices.some((choice) => choice.id === filters[key]) && {
+                                            value: filters[key],
+                                            label: <>Pilihan tidak aktif</>,
+                                        },
+                                    choices.map((choice) => ({
+                                        value: choice.id,
+                                        label: (
+                                            <>
+                                                {choice.code} - {choice.name}
+                                            </>
+                                        ),
+                                    })),
+                                ]}
+                            />
                         );
                     })}
                     <Select value={filters.status} onValueChange={(status: PurchaseFilters['status']) => visit({ status })} disabled={loading}>
@@ -206,7 +228,8 @@ export default function PurchaseOrders({ records, filters, options }: PurchasePa
                 <PurchaseFormDialog
                     key={`${dialog.record?.id ?? 'new'}-${dialog.readOnly}`}
                     record={dialog.record}
-                    options={options}
+                    options={catalog}
+                    onMasterCreated={masterCreated}
                     readOnly={dialog.readOnly || dialog.record?.status === 'posted'}
                     onClose={() => setDialog(null)}
                 />

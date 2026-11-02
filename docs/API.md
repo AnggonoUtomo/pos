@@ -1265,3 +1265,23 @@ sama berhasil sebelum pemeriksaan shift. Metode tunai dipastikan ke akun shift
 di Finance setelah locking aktual; mismatch membatalkan invoice/stok/payment.
 GET `/pos/payment-methods` tanpa shift menghasilkan methods kosong; saat aktif
 hanya tunai laci tersebut plus non-tunai aktif. Tidak mengekspos akun rekening.
+
+## Pilihan Master Draft Pembelian
+
+GET `/purchasing/purchase-orders/master-options` memerlukan auth dan
+`purchasing.purchase-orders.manage` serta `inventory.manage`. Menghasilkan
+`{units,levels}` dari public UnitLookup dan ItemPriceCatalog: satuan dan level
+pelanggan aktif untuk form tambah barang existing.
+
+GET `/purchasing/purchase-orders/master-choice/{kind}/{id}` memerlukan auth dan
+`purchasing.purchase-orders.manage`, kind supplier/item dan ID ULID. Supplier
+aktif menghasilkan `{id,code,name}`. Barang aktif dengan satuan dasar aktif dan
+sedikitnya satu satuan beli aktif menghasilkan
+`{id,sku,name,base_unit_id,units:[{unit_id,conversion_ratio,barcode}]}`.
+Tidak tersedia menghasilkan422, tidak berizin403; JSON private/no-store.
+Lookup ID tidak terikat batas daftar awal halaman.
+
+Quick-create tetap POST pada `/purchasing/suppliers` atau `/inventory/items`
+dengan Accept application/json dan CSRF, permission serta validasi master asli.
+Respons201 `{id}`; validation422. Gambar memakai multipart dengan indeks
+array numerik. Tidak menyimpan pembelian atau mem-posting stok/pembayaran.

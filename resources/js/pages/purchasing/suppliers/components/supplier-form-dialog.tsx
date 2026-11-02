@@ -5,13 +5,22 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useMasterCreate } from '@/hooks/use-master-create';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Save } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { toast } from 'sonner';
 import type { SupplierRow } from '../types';
 
-export function SupplierFormDialog({ record, onClose }: { record: SupplierRow | null; onClose: () => void }) {
+export function SupplierFormDialog({
+    record,
+    onClose,
+    onCreated,
+}: {
+    record: SupplierRow | null;
+    onClose: () => void;
+    onCreated?: (id: string) => void | Promise<void>;
+}) {
     const form = useForm({
         code: record?.code ?? '',
         name: record?.name ?? '',
@@ -20,9 +29,17 @@ export function SupplierFormDialog({ record, onClose }: { record: SupplierRow | 
         address: record?.address ?? '',
         is_active: record?.is_active ?? true,
     });
-    const submit = (event: FormEvent) => {
+    const creator = useMasterCreate(onCreated);
+    const processing = form.processing || creator.processing;
+    const submit = async (event: FormEvent) => {
         event.preventDefault();
-        if (form.processing) return;
+        if (processing) return;
+        if (!record && onCreated) {
+            form.clearErrors();
+            if (await creator.submit(route('purchasing.suppliers.store'), form.data, (fields) => form.setError(fields as typeof form.errors)))
+                onClose();
+            return;
+        }
         const options = {
             preserveScroll: true,
             onSuccess: () => {
@@ -38,16 +55,16 @@ export function SupplierFormDialog({ record, onClose }: { record: SupplierRow | 
         <Dialog
             open
             onOpenChange={(open) => {
-                if (!open && !form.processing) onClose();
+                if (!open && !processing) onClose();
             }}
         >
             <DialogContent
                 className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl"
                 onEscapeKeyDown={(e) => {
-                    if (form.processing) e.preventDefault();
+                    if (processing) e.preventDefault();
                 }}
                 onPointerDownOutside={(e) => {
-                    if (form.processing) e.preventDefault();
+                    if (processing) e.preventDefault();
                 }}
             >
                 <DialogHeader>
@@ -64,7 +81,7 @@ export function SupplierFormDialog({ record, onClose }: { record: SupplierRow | 
                         }
                     }}
                 >
-                    <fieldset disabled={form.processing} className="space-y-4">
+                    <fieldset disabled={processing || creator.created} className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                             {(
                                 [
@@ -106,18 +123,19 @@ export function SupplierFormDialog({ record, onClose }: { record: SupplierRow | 
                                 id="supplier-active"
                                 checked={form.data.is_active}
                                 onCheckedChange={(checked) => form.setData('is_active', checked === true)}
-                                disabled={form.processing}
+                                disabled={processing || Boolean(onCreated)}
                             />
                             <Label htmlFor="supplier-active">Aktif</Label>
                         </div>
                         <InputError message={form.errors.is_active} />
+                        <InputError message={(form.errors as Record<string, string>).master} />
                     </fieldset>
                     <DialogFooter>
-                        <Button type="button" variant="outline" disabled={form.processing} onClick={onClose}>
+                        <Button type="button" variant="outline" disabled={processing} onClick={onClose}>
                             Batal
                         </Button>
-                        <Button type="submit" disabled={form.processing}>
-                            {form.processing ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />}Simpan
+                        <Button type="submit" disabled={processing}>
+                            {processing ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />}Simpan
                         </Button>
                     </DialogFooter>
                 </form>

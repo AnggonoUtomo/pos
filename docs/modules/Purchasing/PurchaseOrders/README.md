@@ -7,6 +7,8 @@ Source app/Modules/Purchasing/PurchaseOrders, UI purchasing/purchase-orders.
 Owner draft/header/baris, posting/status dan snapshot; bukan owner ledger stok atau finance.
 Public dependency: Suppliers/SupplierLookup, Warehouses/WarehouseLookup,
 Items/ItemStockLookup, Units/UnitLookup, Stock/PurchaseStockWriter.
+Sales/Parties `ItemPriceCatalog` menyediakan level aktif untuk reuse form
+barang pada quick-create, bukan menetapkan harga pembelian atau memutasi harga.
 Finance/Payments menyediakan PurchasePaymentWriter dan PurchasePaymentMethods.
 Tidak mengambil model privat module lain.
 `ReturnPurchaseLookup`/`ReturnPurchaseData` mempublikasikan projection aman
@@ -57,3 +59,13 @@ metadata dari ItemStockLookup, Alt+B/Enter, pilih barang/satuan beli dan qty1,
 scan ulang satuan sama menambah1 tanpa mengubah harga. Beda satuan pada barang
 yang sudah ada ditolak (invariant satu barang satu baris tetap). Enter scanner
 tidak submit; biaya harus diisi dan stok hanya bertambah setelah posting.
+
+Form dan filter pilihan master memakai shared Autocomplete. Draft dapat membuka
+form supplier/barang existing tanpa navigate atau menyimpan draft; masing-masing
+create tetap membutuhkan permission master. `PurchaseMasterChoices` memuat
+metadata satuan/level dan projection pilihan baru melalui public contract.
+Barang quick-create aktif dan memiliki satuan beli; harga jual tetap lengkap
+sesuai level aktif. Callback JSON memilih master baru di baris asal, menjaga
+qty/biaya/catatan/gudang. Master tetap ada saat draft dibatalkan. Tidak ada
+migration, seed, grant atau perubahan posting/stock/payment. Lihat
+[work item autocomplete](../../../work-items/master-autocomplete/README.md).
