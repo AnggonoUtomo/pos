@@ -8,6 +8,7 @@ final class AuditLogProjection
 {
     public const MODULES = [
         'identity' => 'Identitas & Akses', 'inventory.units' => 'Satuan', 'inventory.items' => 'Barang',
+        'inventory.item_categories' => 'Kategori barang', 'inventory.item_brands' => 'Merek barang',
         'inventory.warehouses' => 'Gudang', 'inventory.stock' => 'Stok', 'inventory.transfers' => 'Transfer gudang', 'inventory.item_units' => 'Satuan barang',
         'sales.customers' => 'Pelanggan', 'sales.customer_levels' => 'Level pelanggan', 'sales.pos' => 'Penjualan POS',
         'sales.pos.held_carts' => 'Keranjang tertahan', 'sales.pos.shifts' => 'Shift kasir', 'sales.returns' => 'Retur penjualan', 'sales.item_prices' => 'Harga jual',
@@ -18,6 +19,7 @@ final class AuditLogProjection
 
     public const FIELDS = [
         'code' => 'Kode', 'sku' => 'SKU', 'name' => 'Nama', 'symbol' => 'Simbol', 'number' => 'Nomor dokumen',
+        'category_id' => 'ID kategori', 'brand_id' => 'ID merek',
         'is_active' => 'Aktif', 'status' => 'Status', 'version' => 'Versi', 'deleted_at' => 'Waktu dihapus',
         'quantity' => 'Kuantitas', 'base_quantity' => 'Kuantitas dasar', 'unit_cost' => 'Harga pokok', 'total_value' => 'Nilai total',
         'total' => 'Total', 'direction' => 'Arah', 'outcome' => 'Hasil', 'review_status' => 'Status review', 'kind' => 'Jenis',
