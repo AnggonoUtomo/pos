@@ -4,6 +4,10 @@ export default {
     description: 'Tetapkan stok awal, baca saldo/kartu stok dan catat koreksi fisik yang sudah disahkan.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Ketik kode/nama barang atau gudang pada pilihan form dan filter, lalu pilih hasil. Satuan mengikuti barang yang dipilih.'],
+        },
+        {
             title: 'Stok awal',
             steps: [
                 'Pilih gudang dan buat draft stok awal untuk barang yang benar-benar sudah tersedia sebelum operasional.',

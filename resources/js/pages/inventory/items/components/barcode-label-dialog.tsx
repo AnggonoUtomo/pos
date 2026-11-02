@@ -1,3 +1,4 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -81,18 +82,18 @@ export function BarcodeLabelDialog({ item, units, onClose }: { item: ItemRow; un
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="barcode-unit">Satuan label</Label>
-                            <Select value={unitId} onValueChange={setUnitId}>
-                                <SelectTrigger id="barcode-unit">
-                                    <SelectValue placeholder="Pilih satuan" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {printable.map((unit) => (
-                                        <SelectItem key={unit.unit_id} value={unit.unit_id}>
-                                            {units.find((row) => row.id === unit.unit_id)?.name ?? unit.unit_id}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Autocomplete
+                                value={unitId}
+                                onValueChange={setUnitId}
+                                id="barcode-unit"
+                                placeholder="Pilih satuan"
+                                options={[
+                                    printable.map((unit) => ({
+                                        value: unit.unit_id,
+                                        label: <>{units.find((row) => row.id === unit.unit_id)?.name ?? unit.unit_id}</>,
+                                    })),
+                                ]}
+                            />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="barcode-paper">Kertas</Label>

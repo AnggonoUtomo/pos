@@ -1,9 +1,9 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatDecimalInput as format, parseDecimalInput as parse } from '@/lib/decimal-input';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
@@ -112,29 +112,34 @@ export function TransferFormDialog({
                                     {readOnly ? (
                                         <Input id={`transfer-${prefix}`} value={record?.[`${prefix}_warehouse_name`] ?? ''} readOnly />
                                     ) : (
-                                        <Select
+                                        <Autocomplete
                                             value={form.data[key]}
                                             disabled={disabled}
                                             onValueChange={(id) =>
                                                 form.setData((data) => ({ ...data, [key]: id, [other]: data[other] === id ? '' : data[other] }))
                                             }
-                                        >
-                                            <SelectTrigger id={`transfer-${prefix}`} className="w-full">
-                                                <SelectValue placeholder={`Pilih ${label.toLowerCase()}`} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {record && form.data[key] && !options.warehouses.some((row) => row.id === form.data[key]) && (
-                                                    <SelectItem value={form.data[key]} disabled>
-                                                        {record[`${prefix}_warehouse_name`]} (tidak tersedia)
-                                                    </SelectItem>
-                                                )}
-                                                {options.warehouses.map((row) => (
-                                                    <SelectItem key={row.id} value={row.id} disabled={row.id === form.data[other]}>
-                                                        {row.code} - {row.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                            id={`transfer-${prefix}`}
+                                            className="w-full"
+                                            placeholder={`Pilih ${label.toLowerCase()}`}
+                                            options={[
+                                                record &&
+                                                    form.data[key] &&
+                                                    !options.warehouses.some((row) => row.id === form.data[key]) && {
+                                                        value: form.data[key],
+                                                        label: <>{record[`${prefix}_warehouse_name`]} (tidak tersedia)</>,
+                                                        disabled: true,
+                                                    },
+                                                options.warehouses.map((row) => ({
+                                                    value: row.id,
+                                                    label: (
+                                                        <>
+                                                            {row.code} - {row.name}
+                                                        </>
+                                                    ),
+                                                    disabled: row.id === form.data[other],
+                                                })),
+                                            ]}
+                                        />
                                     )}
                                     <InputError message={errors[key]} />
                                 </div>
@@ -194,7 +199,7 @@ export function TransferFormDialog({
                                         <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_2.25rem]">
                                             <div className="min-w-0 space-y-2">
                                                 <Label htmlFor={`transfer-item-${index}`}>Barang {index + 1}</Label>
-                                                <Select
+                                                <Autocomplete
                                                     value={line.item_id}
                                                     disabled={disabled}
                                                     onValueChange={(id) =>
@@ -203,52 +208,51 @@ export function TransferFormDialog({
                                                             unit_id: options.items.find((row) => row.id === id)?.units[0]?.unit_id ?? '',
                                                         })
                                                     }
-                                                >
-                                                    <SelectTrigger id={`transfer-item-${index}`} className="w-full">
-                                                        <SelectValue placeholder="Pilih barang" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {original && !item && (
-                                                            <SelectItem value={line.item_id} disabled>
-                                                                {original.item_name} (tidak tersedia)
-                                                            </SelectItem>
-                                                        )}
-                                                        {options.items.map((row) => (
-                                                            <SelectItem
-                                                                key={row.id}
-                                                                value={row.id}
-                                                                disabled={form.data.lines.some((other, i) => i !== index && other.item_id === row.id)}
-                                                            >
-                                                                {row.sku} - {row.name}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                    id={`transfer-item-${index}`}
+                                                    className="w-full"
+                                                    placeholder="Pilih barang"
+                                                    options={[
+                                                        original &&
+                                                            !item && {
+                                                                value: line.item_id,
+                                                                label: <>{original.item_name} (tidak tersedia)</>,
+                                                                disabled: true,
+                                                            },
+                                                        options.items.map((row) => ({
+                                                            value: row.id,
+                                                            label: (
+                                                                <>
+                                                                    {row.sku} - {row.name}
+                                                                </>
+                                                            ),
+                                                            disabled: form.data.lines.some((other, i) => i !== index && other.item_id === row.id),
+                                                        })),
+                                                    ]}
+                                                />
                                                 <InputError message={errors[`lines.${index}.item_id`]} />
                                             </div>
                                             <div className="min-w-0 space-y-2">
                                                 <Label htmlFor={`transfer-unit-${index}`}>Satuan {index + 1}</Label>
-                                                <Select
+                                                <Autocomplete
                                                     value={line.unit_id}
                                                     disabled={disabled || !item}
                                                     onValueChange={(unit_id) => change(index, { unit_id })}
-                                                >
-                                                    <SelectTrigger id={`transfer-unit-${index}`} className="w-full">
-                                                        <SelectValue placeholder="Pilih satuan" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {original && !item?.units.some((row) => row.unit_id === line.unit_id) && (
-                                                            <SelectItem value={line.unit_id} disabled>
-                                                                {original.unit_name} (tidak tersedia)
-                                                            </SelectItem>
-                                                        )}
-                                                        {item?.units.map((row) => (
-                                                            <SelectItem key={row.unit_id} value={row.unit_id}>
-                                                                {options.units.find((unit) => unit.id === row.unit_id)?.name}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                    id={`transfer-unit-${index}`}
+                                                    className="w-full"
+                                                    placeholder="Pilih satuan"
+                                                    options={[
+                                                        original &&
+                                                            !item?.units.some((row) => row.unit_id === line.unit_id) && {
+                                                                value: line.unit_id,
+                                                                label: <>{original.unit_name} (tidak tersedia)</>,
+                                                                disabled: true,
+                                                            },
+                                                        item?.units.map((row) => ({
+                                                            value: row.unit_id,
+                                                            label: <>{options.units.find((unit) => unit.id === row.unit_id)?.name}</>,
+                                                        })),
+                                                    ]}
+                                                />
                                                 <InputError message={errors[`lines.${index}.unit_id`]} />
                                             </div>
                                             <div className="space-y-2">

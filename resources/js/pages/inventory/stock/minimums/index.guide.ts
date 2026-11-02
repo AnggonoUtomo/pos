@@ -4,6 +4,10 @@ export default {
     description: 'Tentukan batas barang per gudang dan periksa stok yang perlu ditambah.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari barang dan gudang lewat kode/nama pada form maupun filter, lalu pilih hasil yang sesuai.'],
+        },
+        {
             title: 'Menentukan batas',
             steps: [
                 'Pilih Tambah batas, tentukan gudang dan cari barang.',

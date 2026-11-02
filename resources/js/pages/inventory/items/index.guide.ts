@@ -4,6 +4,10 @@ export default {
     description: 'Atur identitas barang, gambar, satuan, barcode dan harga jual sesuai usaha toko.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari satuan dasar atau satuan tambahan dengan nama/simbol, lalu pilih hasilnya. Satuan dasar barang existing tetap terkunci.'],
+        },
+        {
             title: 'Persiapan',
             steps: [
                 'Pastikan satuan dan level pelanggan yang diperlukan sudah aktif.',

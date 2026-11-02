@@ -1,9 +1,9 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -80,22 +80,25 @@ export function OpeningDialog({
                             {readOnly ? (
                                 <Input id="stock-warehouse" value={record?.warehouse_name ?? ''} readOnly />
                             ) : (
-                                <Select
+                                <Autocomplete
                                     value={form.data.warehouse_id}
                                     onValueChange={(value) => form.setData('warehouse_id', value)}
                                     disabled={disabled}
-                                >
-                                    <SelectTrigger id="stock-warehouse" className="w-full" aria-invalid={!!errors.warehouse_id}>
-                                        <SelectValue placeholder="Pilih gudang" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {options.warehouses.map((row) => (
-                                            <SelectItem key={row.id} value={row.id}>
-                                                {row.code} - {row.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                    id="stock-warehouse"
+                                    className="w-full"
+                                    aria-invalid={!!errors.warehouse_id}
+                                    placeholder="Pilih gudang"
+                                    options={[
+                                        options.warehouses.map((row) => ({
+                                            value: row.id,
+                                            label: (
+                                                <>
+                                                    {row.code} - {row.name}
+                                                </>
+                                            ),
+                                        })),
+                                    ]}
+                                />
                             )}
                             <InputError message={errors.warehouse_id} />
                         </div>
@@ -151,7 +154,7 @@ export function OpeningDialog({
                                     <div key={index} className="grid gap-3 py-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto]">
                                         <div className="min-w-0 space-y-2">
                                             <Label htmlFor={`stock-item-${index}`}>Barang {index + 1}</Label>
-                                            <Select
+                                            <Autocomplete
                                                 value={line.item_id}
                                                 onValueChange={(item_id) => {
                                                     if (!item_id) return;
@@ -159,46 +162,46 @@ export function OpeningDialog({
                                                     change(index, { item_id, unit_id: next?.base_unit_id ?? '' });
                                                 }}
                                                 disabled={disabled}
-                                            >
-                                                <SelectTrigger id={`stock-item-${index}`} className="w-full">
-                                                    <SelectValue placeholder="Pilih barang" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {options.items
+                                                id={`stock-item-${index}`}
+                                                className="w-full"
+                                                placeholder="Pilih barang"
+                                                options={[
+                                                    options.items
                                                         .filter(
                                                             (row) =>
                                                                 row.id === line.item_id ||
                                                                 !form.data.lines.some((selected) => selected.item_id === row.id),
                                                         )
-                                                        .map((row) => (
-                                                            <SelectItem key={row.id} value={row.id}>
-                                                                {row.sku} - {row.name}
-                                                            </SelectItem>
-                                                        ))}
-                                                </SelectContent>
-                                            </Select>
+                                                        .map((row) => ({
+                                                            value: row.id,
+                                                            label: (
+                                                                <>
+                                                                    {row.sku} - {row.name}
+                                                                </>
+                                                            ),
+                                                        })),
+                                                ]}
+                                            />
                                             <InputError message={errors[`lines.${index}.item_id`]} />
                                         </div>
                                         <div className="min-w-0 space-y-2">
                                             <Label htmlFor={`stock-unit-${index}`}>Satuan {index + 1}</Label>
-                                            <Select
+                                            <Autocomplete
                                                 value={line.unit_id}
                                                 onValueChange={(unit_id) => {
                                                     if (unit_id) change(index, { unit_id });
                                                 }}
                                                 disabled={disabled || !item}
-                                            >
-                                                <SelectTrigger id={`stock-unit-${index}`} className="w-full">
-                                                    <SelectValue placeholder="Pilih satuan" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {units.map((unit) => (
-                                                        <SelectItem key={unit.unit_id} value={unit.unit_id}>
-                                                            {options.units.find((row) => row.id === unit.unit_id)?.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                                id={`stock-unit-${index}`}
+                                                className="w-full"
+                                                placeholder="Pilih satuan"
+                                                options={[
+                                                    units.map((unit) => ({
+                                                        value: unit.unit_id,
+                                                        label: <>{options.units.find((row) => row.id === unit.unit_id)?.name}</>,
+                                                    })),
+                                                ]}
+                                            />
                                             <InputError message={errors[`lines.${index}.unit_id`]} />
                                         </div>
                                         <div className="space-y-2">

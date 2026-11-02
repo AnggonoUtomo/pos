@@ -1,8 +1,8 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Plus, ScanBarcode, Trash2 } from 'lucide-react';
 import { internalBarcode } from '../lib/barcode';
@@ -70,24 +70,25 @@ export function UnitEditor({
                             return (
                                 <tr key={`${index}-${unit.unit_id}`}>
                                     <td className="min-w-36 px-3 py-3 align-top">
-                                        <Select
+                                        <Autocomplete
                                             value={unit.unit_id}
                                             onValueChange={(unit_id) => update(index, { unit_id })}
                                             disabled={disabled || base}
-                                        >
-                                            <SelectTrigger aria-label={`Satuan baris ${index + 1}`}>
-                                                <SelectValue placeholder="Pilih satuan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {options
+                                            aria-label={`Satuan baris ${index + 1}`}
+                                            placeholder="Pilih satuan"
+                                            options={[
+                                                options
                                                     .filter((option) => option.id === unit.unit_id || !units.some((row) => row.unit_id === option.id))
-                                                    .map((option) => (
-                                                        <SelectItem key={option.id} value={option.id}>
-                                                            {option.name} ({option.symbol})
-                                                        </SelectItem>
-                                                    ))}
-                                            </SelectContent>
-                                        </Select>
+                                                    .map((option) => ({
+                                                        value: option.id,
+                                                        label: (
+                                                            <>
+                                                                {option.name} ({option.symbol})
+                                                            </>
+                                                        ),
+                                                    })),
+                                            ]}
+                                        />
                                         <InputError message={errors[`units.${index}.unit_id`]} />
                                     </td>
                                     <td className="min-w-32 px-3 py-3 align-top">

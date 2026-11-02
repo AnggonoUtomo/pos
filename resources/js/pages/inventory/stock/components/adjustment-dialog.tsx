@@ -1,9 +1,9 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
 import { Check, LoaderCircle } from 'lucide-react';
 import { useRef } from 'react';
@@ -77,34 +77,44 @@ export function AdjustmentDialog({ options, operationKey, onClose }: { options: 
                     <fieldset disabled={form.processing} className="space-y-4">
                         <div className="space-y-2">
                             <Label>Gudang</Label>
-                            <Select value={form.data.warehouse_id} onValueChange={(id) => form.setData('warehouse_id', id)}>
-                                <SelectTrigger aria-label="Gudang koreksi" className="w-full">
-                                    <SelectValue placeholder="Pilih gudang" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {options.warehouses.map((row) => (
-                                        <SelectItem key={row.id} value={row.id}>
-                                            {row.code} - {row.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Autocomplete
+                                value={form.data.warehouse_id}
+                                onValueChange={(id) => form.setData('warehouse_id', id)}
+                                aria-label="Gudang koreksi"
+                                className="w-full"
+                                placeholder="Pilih gudang"
+                                options={[
+                                    options.warehouses.map((row) => ({
+                                        value: row.id,
+                                        label: (
+                                            <>
+                                                {row.code} - {row.name}
+                                            </>
+                                        ),
+                                    })),
+                                ]}
+                            />
                             <InputError message={errors.warehouse_id} />
                         </div>
                         <div className="space-y-2">
                             <Label>Barang</Label>
-                            <Select value={form.data.item_id} onValueChange={(id) => form.setData('item_id', id)}>
-                                <SelectTrigger aria-label="Barang koreksi" className="w-full">
-                                    <SelectValue placeholder="Pilih barang" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {options.items.map((row) => (
-                                        <SelectItem key={row.id} value={row.id}>
-                                            {row.sku} - {row.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Autocomplete
+                                value={form.data.item_id}
+                                onValueChange={(id) => form.setData('item_id', id)}
+                                aria-label="Barang koreksi"
+                                className="w-full"
+                                placeholder="Pilih barang"
+                                options={[
+                                    options.items.map((row) => ({
+                                        value: row.id,
+                                        label: (
+                                            <>
+                                                {row.sku} - {row.name}
+                                            </>
+                                        ),
+                                    })),
+                                ]}
+                            />
                             <InputError message={errors.item_id} />
                         </div>
                         <div className="flex gap-2" role="group" aria-label="Arah koreksi">

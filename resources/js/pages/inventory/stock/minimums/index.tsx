@@ -1,3 +1,4 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Badge } from '@/components/ui/badge';
@@ -123,23 +124,23 @@ export default function MinimumStock({ records, filters, options }: MinimumProps
                             <Search className="text-sky-600" />
                         </Button>
                     </form>
-                    <Select
+                    <Autocomplete
                         value={filters.warehouse_id || 'all'}
                         onValueChange={(id) => visit({ warehouse_id: id === 'all' ? '' : id })}
                         disabled={busy}
-                    >
-                        <SelectTrigger aria-label="Filter gudang" className="w-52">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua gudang</SelectItem>
-                            {options.warehouses.map((w) => (
-                                <SelectItem key={w.id} value={w.id}>
-                                    {w.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        aria-label="Filter gudang"
+                        className="w-52"
+                        options={[
+                            {
+                                value: 'all',
+                                label: <>Semua gudang</>,
+                            },
+                            options.warehouses.map((w) => ({
+                                value: w.id,
+                                label: <>{w.name}</>,
+                            })),
+                        ]}
+                    />
                     <Select
                         value={filters.status}
                         onValueChange={(status) => visit({ status: status as MinimumProps['filters']['status'] })}

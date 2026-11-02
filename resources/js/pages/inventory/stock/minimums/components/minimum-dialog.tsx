@@ -1,14 +1,13 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatDecimalInput, parseDecimalInput } from '@/lib/decimal-input';
 import { useForm } from '@inertiajs/react';
 import { Save } from 'lucide-react';
-import { useState } from 'react';
 import { toast } from 'sonner';
 import type { MinimumProps, MinimumRow } from '../types';
 
@@ -20,7 +19,6 @@ export function MinimumDialog({ row, options, onClose }: { row: MinimumRow | nul
         is_active: row?.is_active ?? true,
         version: row?.version ?? 0,
     });
-    const [search, setSearch] = useState('');
     const item = options.items.find((item) => item.id === form.data.item_id);
     const unit = row?.unit_name ?? options.units.find((unit) => unit.id === item?.base_unit_id)?.name;
     const submit = () => {
@@ -74,42 +72,42 @@ export function MinimumDialog({ row, options, onClose }: { row: MinimumRow | nul
                         {!row && (
                             <>
                                 <Label>Gudang</Label>
-                                <Select value={form.data.warehouse_id} onValueChange={(id) => form.setData('warehouse_id', id)}>
-                                    <SelectTrigger aria-label="Gudang stok minimum" className="w-full">
-                                        <SelectValue placeholder="Pilih gudang" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {options.warehouses.map((w) => (
-                                            <SelectItem key={w.id} value={w.id}>
-                                                {w.code} - {w.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Label htmlFor="minimum-item-search">Cari barang</Label>
-                                <Input
-                                    id="minimum-item-search"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="SKU atau nama barang"
+                                <Autocomplete
+                                    value={form.data.warehouse_id}
+                                    onValueChange={(id) => form.setData('warehouse_id', id)}
+                                    aria-label="Gudang stok minimum"
+                                    className="w-full"
+                                    placeholder="Pilih gudang"
+                                    options={[
+                                        options.warehouses.map((w) => ({
+                                            value: w.id,
+                                            label: (
+                                                <>
+                                                    {w.code} - {w.name}
+                                                </>
+                                            ),
+                                        })),
+                                    ]}
                                 />
-                                <Select value={form.data.item_id} onValueChange={(id) => form.setData('item_id', id)}>
-                                    <SelectTrigger aria-label="Barang stok minimum" className="w-full">
-                                        <SelectValue placeholder="Pilih barang" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {options.items
-                                            .filter(
-                                                (i) =>
-                                                    i.id === form.data.item_id || `${i.sku} ${i.name}`.toLowerCase().includes(search.toLowerCase()),
-                                            )
-                                            .map((i) => (
-                                                <SelectItem key={i.id} value={i.id}>
+                                <Label htmlFor="minimum-item">Barang</Label>
+                                <Autocomplete
+                                    id="minimum-item"
+                                    value={form.data.item_id}
+                                    onValueChange={(id) => form.setData('item_id', id)}
+                                    aria-label="Barang stok minimum"
+                                    className="w-full"
+                                    placeholder="Pilih barang"
+                                    options={[
+                                        options.items.map((i) => ({
+                                            value: i.id,
+                                            label: (
+                                                <>
                                                     {i.sku} - {i.name}
-                                                </SelectItem>
-                                            ))}
-                                    </SelectContent>
-                                </Select>
+                                                </>
+                                            ),
+                                        })),
+                                    ]}
+                                />
                             </>
                         )}
                         <div className="space-y-2">

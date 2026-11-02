@@ -1,9 +1,9 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
 import { LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
@@ -56,18 +56,23 @@ export function StartDialog({
                 >
                     <fieldset disabled={form.processing} className="space-y-4">
                         <Label>Gudang</Label>
-                        <Select value={form.data.warehouse_id} onValueChange={(id) => form.setData('warehouse_id', id)}>
-                            <SelectTrigger aria-label="Gudang opname" className="w-full">
-                                <SelectValue placeholder="Pilih gudang" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {warehouses.map((row) => (
-                                    <SelectItem key={row.id} value={row.id}>
-                                        {row.code} - {row.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Autocomplete
+                            value={form.data.warehouse_id}
+                            onValueChange={(id) => form.setData('warehouse_id', id)}
+                            aria-label="Gudang opname"
+                            className="w-full"
+                            placeholder="Pilih gudang"
+                            options={[
+                                warehouses.map((row) => ({
+                                    value: row.id,
+                                    label: (
+                                        <>
+                                            {row.code} - {row.name}
+                                        </>
+                                    ),
+                                })),
+                            ]}
+                        />
                         <InputError message={form.errors.warehouse_id} />
                         <Label htmlFor="count-notes">Catatan sesi</Label>
                         <Input

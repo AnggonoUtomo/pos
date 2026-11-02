@@ -4,6 +4,10 @@ export default {
     description: 'Pindahkan barang antar lokasi tanpa mengubah jumlah total persediaan toko.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari gudang asal/tujuan dan barang dengan kode/nama. Pilih satuan yang tersedia; gudang tetap wajib berbeda.'],
+        },
+        {
             title: 'Membuat draft',
             steps: [
                 'Tambah draft, pilih gudang asal dan tujuan yang berbeda.',

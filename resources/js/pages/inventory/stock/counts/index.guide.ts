@@ -4,6 +4,10 @@ export default {
     description: 'Mulai sesi hitung fisik per gudang dan pantau pemeriksaan hasilnya.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Ketik kode/nama gudang pada pilihan gudang untuk memulai atau memfilter sesi, lalu pilih hasil.'],
+        },
+        {
             title: 'Sebelum mulai',
             steps: [
                 'Selesaikan transaksi stok yang sedang berlangsung dan siapkan barang untuk dihitung.',

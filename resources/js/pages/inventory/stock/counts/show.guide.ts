@@ -4,6 +4,10 @@ export default {
     description: 'Hitung fisik, simpan hasil, lalu minta supervisor mengesahkan selisih.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Ketik SKU/nama barang pada pilihan tambah baris, lalu pilih barang yang sesuai.'],
+        },
+        {
             title: 'Menghitung barang',
             steps: [
                 'Isi Fisik dalam satuan dasar. Contoh 2 dus isi 12 berarti 24 unit.',

@@ -1,3 +1,4 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Badge } from '@/components/ui/badge';
@@ -98,23 +99,24 @@ export default function StockCounts({ records, filters, warehouses, operationKey
                             <Search className="text-sky-600" />
                         </Button>
                     </form>
-                    <Select
+                    <Autocomplete
                         value={filters.warehouse_id || 'all'}
                         onValueChange={(id) => visit({ warehouse_id: id === 'all' ? '' : id })}
                         disabled={loading}
-                    >
-                        <SelectTrigger aria-label="Filter gudang" className="w-56">
-                            <SelectValue placeholder="Semua gudang" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua gudang</SelectItem>
-                            {warehouses.map((row) => (
-                                <SelectItem key={row.id} value={row.id}>
-                                    {row.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        aria-label="Filter gudang"
+                        className="w-56"
+                        placeholder="Semua gudang"
+                        options={[
+                            {
+                                value: 'all',
+                                label: <>Semua gudang</>,
+                            },
+                            warehouses.map((row) => ({
+                                value: row.id,
+                                label: <>{row.name}</>,
+                            })),
+                        ]}
+                    />
                     <Select
                         value={filters.status || 'all'}
                         onValueChange={(status) => visit({ status: status === 'all' ? '' : status })}

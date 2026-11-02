@@ -1,3 +1,4 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
@@ -156,41 +157,49 @@ export default function StockIndex({ filters, records, options, adjustmentKey }:
                             <Search className="size-4 text-sky-600 dark:text-sky-300" />
                         </Button>
                     </form>
-                    <Select
+                    <Autocomplete
                         value={filters.warehouse_id || 'all'}
                         onValueChange={(id) => visit({ warehouse_id: id === 'all' ? '' : id })}
                         disabled={loading}
-                    >
-                        <SelectTrigger aria-label="Filter gudang" className="w-56">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua gudang</SelectItem>
-                            {options.warehouses.map((row) => (
-                                <SelectItem key={row.id} value={row.id}>
-                                    {row.code} - {row.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        aria-label="Filter gudang"
+                        className="w-56"
+                        options={[
+                            {
+                                value: 'all',
+                                label: <>Semua gudang</>,
+                            },
+                            options.warehouses.map((row) => ({
+                                value: row.id,
+                                label: (
+                                    <>
+                                        {row.code} - {row.name}
+                                    </>
+                                ),
+                            })),
+                        ]}
+                    />
                     {filters.tab !== 'openings' && (
-                        <Select
+                        <Autocomplete
                             value={filters.item_id || 'all'}
                             onValueChange={(id) => visit({ item_id: id === 'all' ? '' : id })}
                             disabled={loading}
-                        >
-                            <SelectTrigger aria-label="Filter barang" className="w-56">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Semua barang</SelectItem>
-                                {options.items.map((row) => (
-                                    <SelectItem key={row.id} value={row.id}>
-                                        {row.sku} - {row.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            aria-label="Filter barang"
+                            className="w-56"
+                            options={[
+                                {
+                                    value: 'all',
+                                    label: <>Semua barang</>,
+                                },
+                                options.items.map((row) => ({
+                                    value: row.id,
+                                    label: (
+                                        <>
+                                            {row.sku} - {row.name}
+                                        </>
+                                    ),
+                                })),
+                            ]}
+                        />
                     )}
                     {filters.tab === 'openings' && (
                         <>

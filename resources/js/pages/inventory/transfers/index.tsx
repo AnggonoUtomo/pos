@@ -1,8 +1,8 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
@@ -115,24 +115,29 @@ export default function Transfers({ records, filters, options }: TransferPagePro
                         const key = `${prefix}_warehouse_id` as const;
                         const label = prefix === 'source' ? 'Gudang asal' : 'Gudang tujuan';
                         return (
-                            <Select
+                            <Autocomplete
                                 key={prefix}
                                 value={filters[key] || 'all'}
                                 disabled={loading}
                                 onValueChange={(id) => visit({ [key]: id === 'all' ? '' : id })}
-                            >
-                                <SelectTrigger className="w-48" aria-label={`Filter ${label.toLowerCase()}`}>
-                                    <SelectValue placeholder={label} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Semua {label.toLowerCase()}</SelectItem>
-                                    {options.warehouses.map((row) => (
-                                        <SelectItem key={row.id} value={row.id}>
-                                            {row.code} - {row.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                className="w-48"
+                                aria-label={`Filter ${label.toLowerCase()}`}
+                                placeholder={label}
+                                options={[
+                                    {
+                                        value: 'all',
+                                        label: <>Semua {label.toLowerCase()}</>,
+                                    },
+                                    options.warehouses.map((row) => ({
+                                        value: row.id,
+                                        label: (
+                                            <>
+                                                {row.code} - {row.name}
+                                            </>
+                                        ),
+                                    })),
+                                ]}
+                            />
                         );
                     })}
                     <div className="flex rounded-md border p-1" role="group" aria-label="Data transfer">

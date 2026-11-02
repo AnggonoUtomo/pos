@@ -1,7 +1,7 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
@@ -293,20 +293,26 @@ export default function CountShow({ record, options }: CountShowProps) {
                     </form>
                     {editable && (
                         <>
-                            <Select value={itemId} onValueChange={setItemId} disabled={busy || dirty}>
-                                <SelectTrigger aria-label="Barang tambahan opname" className="w-64">
-                                    <SelectValue placeholder="Tambahkan barang" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {options.items
+                            <Autocomplete
+                                value={itemId}
+                                onValueChange={setItemId}
+                                disabled={busy || dirty}
+                                aria-label="Barang tambahan opname"
+                                className="w-64"
+                                placeholder="Tambahkan barang"
+                                options={[
+                                    options.items
                                         .filter((item) => !record.lines.some((line) => line.item_id === item.id))
-                                        .map((item) => (
-                                            <SelectItem key={item.id} value={item.id}>
-                                                {item.sku} - {item.name}
-                                            </SelectItem>
-                                        ))}
-                                </SelectContent>
-                            </Select>
+                                        .map((item) => ({
+                                            value: item.id,
+                                            label: (
+                                                <>
+                                                    {item.sku} - {item.name}
+                                                </>
+                                            ),
+                                        })),
+                                ]}
+                            />
                             <Button
                                 size="icon"
                                 variant="outline"
