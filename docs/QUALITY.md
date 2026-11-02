@@ -1086,6 +1086,22 @@ satu migration, catalog additive tanpa grant/demo/freeze, fingerprint seluruh
 data/kolom/metadata existing (kecuali cache/session) dan route cache. DDL MySQL
 tidak rollback otomatis. Jangan rollback schema berisi sesi.
 
+## QA Autocomplete Master
+
+`node scripts/qa/autocomplete-unit.mjs` memeriksa label React/nested options,
+pencarian literal, deduplikasi ID, metadata disabled dan serializer multipart.
+`QA_MASTER_AUTOCOMPLETE=1` pada workspace-tables-charts-browser.mjs memakai
+Chrome existing dengan SQLite/cache/session disposable. QA_DEVTOOLS_ENTRY
+opsional mencoba executable MCP cached; timeout dicatat BLOCKED, bukan PASS.
+Alur: klik/keyboard/empty/Escape, pilihan terkunci, tambah supplier/barang,
+cancel parent, isian draft terjaga dan master dapat dipilih sesudah reload.
+Tidak membuat draft/posting; fingerprint pembelian/stok/FIFO/Finance identik.
+
+`php scripts/qa/activate-master-autocomplete-local.php` hanya metadata baca-saja,
+route cache dan fingerprint seluruh tabel/kolom/grant existing (kecuali
+cache/session). Tidak migration, seed, repricing atau mutation toko.
+Lihat [checklist](work-items/master-autocomplete/tasks.md).
+
 ## QA Bantuan Harga Persen
 
 PriceMarkupTest/MarkupPriceTest/ItemPricesSeederTest menguji acuan pembelian

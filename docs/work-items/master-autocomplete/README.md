@@ -29,7 +29,7 @@ sejenis di form lain, bukan mengganti enum status/jenis menjadi input bebas.
 
 ## Status
 
-Dalam verifikasi akhir. Inventaris AST menemukan 44 deklarasi pilihan dinamis
+Implementasi dan QA selesai. Inventaris AST menemukan 44 deklarasi pilihan dinamis
 di 34 file TSX; satu deklarasi dalam loop dapat menghasilkan beberapa field.
 Ini bukan 44 form terpisah. Editor dan filter berbagi komponen yang sama.
 

@@ -121,6 +121,11 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Untuk UI, gunakan shadcn/ui dan `lucide-react` sebagai default sebelum membuat
   komponen custom.
 - Untuk feedback operasi CRUD UI, gunakan Sonner toast dari shadcn/ui.
+- Pilihan master dinamis (barang, supplier, pelanggan, satuan, gudang,
+  akun/metode bayar, level dan lookup sejenis) memakai shared Autocomplete,
+  bukan dropdown panjang tanpa pencarian. Enum/status/jenis tetap Select.
+  Memilih opsi tidak boleh menyimpan form. Quick-create harus berizin,
+  memakai validasi master existing dan mempertahankan draft induk.
 - Setiap halaman module wajib menyediakan daftar shortcut operasi halaman dalam
   bentuk dropdown di atas panel workspace.
 - Daftar master/riwayat/stok memakai shared TablePagination dan contract publik

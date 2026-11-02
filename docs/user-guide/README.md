@@ -52,6 +52,9 @@ Penyusunan panduan ini tidak mengubah role/akun/permission database.
 
 ## Cara Memakai Panduan
 
+- Pilihan master sekarang mendukung [pencarian autocomplete](AUTOCOMPLETE-MASTER.md),
+  termasuk tambah supplier/barang langsung dari draft pembelian sesuai izin.
+  Tambahan ini belum digabungkan ke PDF global/per-role lama.
 - Pada daftar modul, pilih **Baris per halaman** (10/25/50/100). Informasi rentang
   dan total mengikuti filter; gunakan nomor halaman atau tombol pertama,
   sebelumnya, berikutnya dan terakhir. Mengganti ukuran kembali ke halaman 1
