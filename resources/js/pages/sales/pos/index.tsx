@@ -45,7 +45,7 @@ import type {
     RecalledCart,
 } from './types';
 
-export default function PosIndex({ warehouses, customers }: PosPageProps) {
+export default function PosIndex({ warehouses, customers, classificationOptions }: PosPageProps) {
     const [warehouseId, setWarehouseId] = useState(() => initialPosContext(warehouses, customers).warehouseId);
     const [customerId, setCustomerId] = useState(() => initialPosContext(warehouses, customers).customerId);
     const [view, setView] = useState<WorkspaceView>('visual');
@@ -68,6 +68,8 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     };
     const [query, setQuery] = useState('');
     const [page, setPage] = useState(1);
+    const [categoryId, setCategoryId] = useState('');
+    const [brandId, setBrandId] = useState('');
     const [catalogVersion, setCatalogVersion] = useState(0);
     const [lines, setLines] = useState<CartLine[]>([]);
     const lineState = useRef(lines);
@@ -85,7 +87,7 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
     const shift = useShiftContext(canPost);
     const refreshShift = shift.refresh;
     const request = useRef<AbortController | null>(null);
-    const { result, loading, error: catalogError } = useCatalog(warehouseId, customerId, query, page, catalogVersion);
+    const { result, loading, error: catalogError } = useCatalog(warehouseId, customerId, query, page, catalogVersion, categoryId, brandId);
     const ready = Boolean(warehouseId && customerId);
 
     const invalidate = useCallback(() => {
@@ -516,6 +518,14 @@ export default function PosIndex({ warehouses, customers }: PosPageProps) {
                     }
                     catalog={
                         <ItemSearch
+                            classificationOptions={classificationOptions}
+                            categoryId={categoryId}
+                            brandId={brandId}
+                            onClassification={(kind, id) => {
+                                if (kind === 'categories') setCategoryId(id);
+                                else setBrandId(id);
+                                setPage(1);
+                            }}
                             visual={view === 'visual'}
                             items={result?.items ?? []}
                             query={query}

@@ -4,6 +4,14 @@ export default {
     description: 'Atur identitas barang, gambar, satuan, barcode dan harga jual sesuai usaha toko.',
     sections: [
         {
+            title: 'Kategori dan merek',
+            steps: [
+                'Siapkan master melalui menu Kategori atau Merek. Saat mengisi barang, cari dan pilih kategori/merek aktif bila diperlukan; keduanya opsional.',
+                'Gunakan filter kategori/merek pada daftar untuk mempersempit hasil bersama pencarian. Mengganti filter kembali ke halaman pertama.',
+                'Mengganti kategori/merek tidak mengganti harga, satuan, stok, FIFO atau snapshot transaksi lama.',
+            ],
+        },
+        {
             title: 'Mencari pilihan',
             steps: ['Cari satuan dasar atau satuan tambahan dengan nama/simbol, lalu pilih hasilnya. Satuan dasar barang existing tetap terkunci.'],
         },

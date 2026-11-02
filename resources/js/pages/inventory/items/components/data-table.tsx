@@ -63,7 +63,24 @@ export function DataTable({
                             <td className="max-w-sm min-w-36 px-4 py-3 font-medium break-words">
                                 <div className="flex items-center gap-3">
                                     <ItemImage src={row.image_url} name={row.name} />
-                                    <span className="min-w-0 break-words">{row.name}</span>
+                                    <div className="min-w-0 space-y-1">
+                                        <span className="break-words">{row.name}</span>
+                                        <div className="flex flex-wrap gap-1 text-xs">
+                                            {row.category && (
+                                                <Badge variant="outline" className="border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300">
+                                                    {row.category.name}
+                                                </Badge>
+                                            )}
+                                            {row.brand && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                                                >
+                                                    {row.brand.name}
+                                                </Badge>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                             <td className="px-4 py-3">{labels.get(row.base_unit_id)?.name ?? row.base_unit_id}</td>

@@ -4,6 +4,12 @@ export default {
     description: 'Catat pembelian dari draft sampai penerimaan stok dan pembayaran lunas.',
     sections: [
         {
+            title: 'Klasifikasi barang baru',
+            steps: [
+                'Saat menambah barang dari draft pembelian, kategori dan merek aktif dapat dicari dan dipilih. Keduanya opsional; harga seluruh satuan jual dan level tetap wajib lengkap.',
+            ],
+        },
+        {
             title: 'Mencari pilihan',
             steps: [
                 'Cari supplier, gudang, barang, satuan atau metode pembayaran lewat kode/nama. Pilih hasil, bukan hanya mengetik nama. Jika master belum ada, gunakan Tambah supplier atau Tambah barang sesuai izin; isian draft tetap tersimpan di form.',

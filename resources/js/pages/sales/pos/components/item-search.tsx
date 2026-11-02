@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import type { ClassificationOptions } from '@/pages/inventory/items/types';
 import { ChevronLeft, ChevronRight, LoaderCircle, PackagePlus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { hasStock, localDecimal, money } from '../lib/decimal';
@@ -73,6 +74,10 @@ export function ItemSearch({
     onBarcode,
     onRetry,
     visual = false,
+    classificationOptions,
+    categoryId,
+    brandId,
+    onClassification,
 }: {
     items: PosItem[];
     query: string;
@@ -87,6 +92,10 @@ export function ItemSearch({
     onBarcode: () => void;
     onRetry: () => void;
     visual?: boolean;
+    classificationOptions: ClassificationOptions;
+    categoryId: string;
+    brandId: string;
+    onClassification: (kind: 'categories' | 'brands', id: string) => void;
 }) {
     return (
         <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="Katalog barang" aria-busy={loading}>
@@ -111,6 +120,21 @@ export function ItemSearch({
                             }
                         }}
                     />
+                </div>
+                <div className="grid min-w-0 grid-cols-2 gap-2">
+                    {(['categories', 'brands'] as const).map((kind) => (
+                        <Autocomplete
+                            key={kind}
+                            aria-label={kind === 'categories' ? 'Filter kategori POS' : 'Filter merek POS'}
+                            value={(kind === 'categories' ? categoryId : brandId) || 'all'}
+                            disabled={!ready}
+                            onValueChange={(id) => onClassification(kind, id === 'all' ? '' : id)}
+                            options={[
+                                { value: 'all', label: kind === 'categories' ? 'Semua kategori' : 'Semua merek' },
+                                classificationOptions[kind].map((row) => ({ value: row.id, label: `${row.code} - ${row.name}` })),
+                            ]}
+                        />
+                    ))}
                 </div>
             </div>
             <div data-testid="catalog-scroll" className="min-h-0 flex-1 overflow-auto overscroll-contain p-3">

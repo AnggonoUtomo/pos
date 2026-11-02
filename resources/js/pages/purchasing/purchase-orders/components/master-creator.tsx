@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ItemFormDialog } from '@/pages/inventory/items/components/item-form-dialog';
-import type { PriceLevel, UnitOption } from '@/pages/inventory/items/types';
+import type { ClassificationOptions, PriceLevel, UnitOption } from '@/pages/inventory/items/types';
 import { SupplierFormDialog } from '@/pages/purchasing/suppliers/components/supplier-form-dialog';
 import { LoaderCircle, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -18,7 +18,9 @@ export function MasterCreator({
     onCreated: (master: CreatedMaster) => void;
     onClose: () => void;
 }) {
-    const [metadata, setMetadata] = useState<{ units: UnitOption[]; levels: PriceLevel[] } | null>(null);
+    const [metadata, setMetadata] = useState<{ units: UnitOption[]; levels: PriceLevel[]; classificationOptions: ClassificationOptions } | null>(
+        null,
+    );
     const [error, setError] = useState('');
     const [retry, setRetry] = useState(0);
     useEffect(() => {
@@ -61,7 +63,17 @@ export function MasterCreator({
         }
     };
     if (kind === 'supplier') return <SupplierFormDialog record={null} onCreated={created} onClose={onClose} />;
-    if (metadata) return <ItemFormDialog record={null} options={metadata.units} levels={metadata.levels} onCreated={created} onClose={onClose} />;
+    if (metadata)
+        return (
+            <ItemFormDialog
+                record={null}
+                options={metadata.units}
+                levels={metadata.levels}
+                classificationOptions={metadata.classificationOptions}
+                onCreated={created}
+                onClose={onClose}
+            />
+        );
     return (
         <Dialog
             open

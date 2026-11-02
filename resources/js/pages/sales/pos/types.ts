@@ -39,7 +39,11 @@ export type CartQuote = {
     warehouse: WarehouseOption;
     fingerprint: string;
 };
-export type PosPageProps = { warehouses: WarehouseOption[]; customers: CustomerOption[] };
+export type PosPageProps = {
+    warehouses: WarehouseOption[];
+    customers: CustomerOption[];
+    classificationOptions: import('@/pages/inventory/items/types').ClassificationOptions;
+};
 
 export type PaymentMethod = { id: string; code: string; name: string; type: 'cash' | 'debit' | 'transfer' };
 export type PaymentDraft = { methodId: string; amount: string };

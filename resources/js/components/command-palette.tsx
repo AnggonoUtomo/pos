@@ -30,6 +30,22 @@ import { useEffect, useMemo, useState } from 'react';
 
 const commandItems = [
     {
+        title: 'Kategori barang',
+        description: 'Kelompok barang toko',
+        url: '/inventory/categories',
+        permission: 'inventory.view',
+        icon: Tags,
+        tone: 'text-sky-600 dark:text-sky-300',
+    },
+    {
+        title: 'Merek barang',
+        description: 'Master merek produk',
+        url: '/inventory/brands',
+        permission: 'inventory.view',
+        icon: Tags,
+        tone: 'text-amber-600 dark:text-amber-300',
+    },
+    {
         title: 'Stok minimum',
         description: 'Batas dan peringatan barang per gudang',
         url: '/inventory/stock/minimums',

@@ -3,11 +3,13 @@ import { MasterWorkspace } from '@/components/shared/master-workspace';
 import { usePermission } from '@/hooks/use-permission';
 import { useCallback, useState } from 'react';
 import { BarcodeLabelDialog } from './components/barcode-label-dialog';
+import { CatalogNavigation } from './components/catalog-navigation';
+import { ClassificationFilters } from './components/classification-filters';
 import { DataTable } from './components/data-table';
 import { ItemFormDialog } from './components/item-form-dialog';
 import type { ItemPageProps, ItemRow } from './types';
 
-export default function ItemIndex({ records, filters, unitOptions, priceLevels }: ItemPageProps) {
+export default function ItemIndex({ records, filters, unitOptions, priceLevels, classificationOptions }: ItemPageProps) {
     const { can } = usePermission();
     const canManage = can('inventory.manage');
     const [form, setForm] = useState<{ record: ItemRow | null } | null>(null);
@@ -23,6 +25,12 @@ export default function ItemIndex({ records, filters, unitOptions, priceLevels }
             canManage={canManage}
             onCreate={create}
             searchPlaceholder="Cari SKU, nama, atau barcode..."
+            controls={
+                <div className="space-y-3">
+                    <CatalogNavigation active="items" />
+                    <ClassificationFilters filters={filters} options={classificationOptions} />
+                </div>
+            }
             extraShortcuts={[
                 { label: 'Cetak label', description: 'Pada dialog label barcode', keys: ['Ctrl/Cmd', 'Enter'] },
                 { label: 'Hitung harga', description: 'Pada editor harga barang', keys: ['Alt', 'G'], disabled: !canManage },
@@ -43,6 +51,7 @@ export default function ItemIndex({ records, filters, unitOptions, priceLevels }
                     record={form.record}
                     options={unitOptions}
                     levels={priceLevels}
+                    classificationOptions={classificationOptions}
                     onClose={() => setForm(null)}
                 />
             )}

@@ -75,6 +75,8 @@ const mainNavGroups: NavGroup[] = [
                 badgeTone: 'emerald',
                 permission: 'inventory.view',
             },
+            { title: 'Kategori barang', url: '/inventory/categories', icon: Tags, badgeTone: 'blue', permission: 'inventory.view' },
+            { title: 'Merek barang', url: '/inventory/brands', icon: Tags, badgeTone: 'amber', permission: 'inventory.view' },
             {
                 title: 'Gudang',
                 url: '/inventory/warehouses',

@@ -4,8 +4,17 @@ export default {
     description: 'Layani pembeli dari scan barang sampai pembayaran lunas dan bukti penjualan.',
     sections: [
         {
+            title: 'Filter katalog',
+            steps: [
+                'Pilih kategori dan merek melalui pencarian di bawah kolom Cari barang; Semua kategori/Semua merek melepas filter.',
+                'Filter hanya membatasi katalog yang terlihat, tidak menghapus keranjang. Scan barcode tetap mencari barang secara langsung walaupun di luar filter.',
+            ],
+        },
+        {
             title: 'Mencari pilihan',
-            steps: ['Cari gudang, satuan atau metode pembayaran dengan nama/kode lalu pilih hasil. Pelanggan tetap memakai pencarian autocomplete; harga dan stok diperiksa backend.'],
+            steps: [
+                'Cari gudang, satuan atau metode pembayaran dengan nama/kode lalu pilih hasil. Pelanggan tetap memakai pencarian autocomplete; harga dan stok diperiksa backend.',
+            ],
         },
         {
             title: 'Sebelum melayani',

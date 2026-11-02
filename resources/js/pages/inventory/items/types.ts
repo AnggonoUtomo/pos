@@ -14,6 +14,10 @@ export interface ItemUnitInput {
     is_purchase_unit: boolean;
 }
 export interface ItemRow extends MasterRecord {
+    category_id: string | null;
+    brand_id: string | null;
+    category: ClassificationChoice | null;
+    brand: ClassificationChoice | null;
     sku: string;
     image_url: string | null;
     base_unit_id: string;
@@ -32,10 +36,14 @@ export interface PriceLevel {
 }
 export interface ItemPageProps {
     records: MasterRecords<ItemRow>;
-    filters: MasterFilters;
+    filters: MasterFilters & { category_id?: string | null; brand_id?: string | null };
+    classificationOptions: ClassificationOptions;
     unitOptions: UnitOption[];
     priceLevels: PriceLevel[];
 }
+
+export type ClassificationChoice = { id: string; code: string; name: string };
+export type ClassificationOptions = { categories: ClassificationChoice[]; brands: ClassificationChoice[] };
 
 export function baseRow(unitId: string): ItemUnitInput {
     return { unit_id: unitId, conversion_ratio: '1', barcode: null, is_sale_unit: true, is_purchase_unit: true };

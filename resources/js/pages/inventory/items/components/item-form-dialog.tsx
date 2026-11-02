@@ -11,7 +11,15 @@ import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Save } from 'lucide-react';
 import { type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { baseRow, type ItemPriceInput, type ItemRow, type ItemUnitInput, type PriceLevel, type UnitOption } from '../types';
+import {
+    baseRow,
+    type ClassificationOptions,
+    type ItemPriceInput,
+    type ItemRow,
+    type ItemUnitInput,
+    type PriceLevel,
+    type UnitOption,
+} from '../types';
 import { ImageEditor } from './image-editor';
 import { PriceEditor, priceMatrix } from './price-editor';
 import { UnitEditor } from './unit-editor';
@@ -22,12 +30,14 @@ export function ItemFormDialog({
     levels,
     onClose,
     onCreated,
+    classificationOptions = { categories: [], brands: [] },
 }: {
     record: ItemRow | null;
     options: UnitOption[];
     levels: PriceLevel[];
     onClose: () => void;
     onCreated?: (id: string) => void | Promise<void>;
+    classificationOptions?: ClassificationOptions;
 }) {
     const initialUnits: ItemUnitInput[] =
         record?.units.map((unit) => ({
@@ -40,6 +50,8 @@ export function ItemFormDialog({
     const form = useForm({
         sku: record?.sku ?? '',
         name: record?.name ?? '',
+        category_id: record?.category_id ?? (null as string | null),
+        brand_id: record?.brand_id ?? (null as string | null),
         base_unit_id: record?.base_unit_id ?? '',
         is_active: record?.is_active ?? true,
         units: initialUnits,
@@ -206,6 +218,35 @@ export function ItemFormDialog({
                                 />
                                 <Label htmlFor="item-active">Aktif</Label>
                             </div>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {(['categories', 'brands'] as const).map((kind) => {
+                                const field = kind === 'categories' ? 'category_id' : 'brand_id';
+                                const label = kind === 'categories' ? 'Kategori' : 'Merek';
+                                const current = kind === 'categories' ? record?.category : record?.brand;
+                                return (
+                                    <div key={kind} className="min-w-0 space-y-2">
+                                        <Label htmlFor={`item-${field}`}>{label}</Label>
+                                        <Autocomplete
+                                            id={`item-${field}`}
+                                            value={form.data[field] ?? 'none'}
+                                            disabled={processing}
+                                            onValueChange={(id) => form.setData(field, id === 'none' ? null : id)}
+                                            options={[
+                                                { value: 'none', label: `Tanpa ${label.toLowerCase()}` },
+                                                form.data[field] &&
+                                                    !classificationOptions[kind].some((row) => row.id === form.data[field]) && {
+                                                        value: form.data[field]!,
+                                                        label: current?.name ?? `${label} terpilih`,
+                                                        disabled: true,
+                                                    },
+                                                classificationOptions[kind].map((row) => ({ value: row.id, label: `${row.code} - ${row.name}` })),
+                                            ]}
+                                        />
+                                        <InputError message={errors[field]} />
+                                    </div>
+                                );
+                            })}
                         </div>
                         <ImageEditor
                             currentUrl={record?.image_url ?? null}

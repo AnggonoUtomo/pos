@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { posRequest } from '../lib/request';
 import type { CatalogResult } from '../types';
 
-export function useCatalog(warehouseId: string, customerId: string, query: string, page: number, version: number) {
+export function useCatalog(warehouseId: string, customerId: string, query: string, page: number, version: number, categoryId = '', brandId = '') {
     const [result, setResult] = useState<CatalogResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -17,6 +17,8 @@ export function useCatalog(warehouseId: string, customerId: string, query: strin
         setLoading(true);
         const timer = setTimeout(() => {
             const params = new URLSearchParams({ warehouse_id: warehouseId, customer_id: customerId, search: query, page: String(page) });
+            if (categoryId) params.set('category_id', categoryId);
+            if (brandId) params.set('brand_id', brandId);
             posRequest<CatalogResult>(route('pos.catalog') + '?' + params.toString(), controller.signal)
                 .then((data) => {
                     if (!controller.signal.aborted) setResult(data);
@@ -32,6 +34,6 @@ export function useCatalog(warehouseId: string, customerId: string, query: strin
             clearTimeout(timer);
             controller.abort();
         };
-    }, [warehouseId, customerId, query, page, version]);
+    }, [warehouseId, customerId, query, page, version, categoryId, brandId]);
     return { result, loading, error };
 }
