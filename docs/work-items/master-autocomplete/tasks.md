@@ -31,7 +31,7 @@
 - [x] Satu regresi penuh dan lint/typecheck/build/page-guides.
 - [x] Route/cache dan fingerprint data/schema/grant existing identik.
 - [x] Review scope, checklist dan commit terfokus.
-- [ ] Push dan verifikasi remote.
+- [x] Push dan verifikasi remote.
 
 ## Bukti Verifikasi
 
@@ -72,3 +72,5 @@
   tidak diam-diam diubah menjadi pencarian server seluruh database.
 - Save point:40b815d backend, d57c909 shared,4aa039a quick-create,00b1c45 Inventory,
   f27b73a Sales/Finance/filter. File LSP staged/untracked user tetap dikecualikan.
+- Delivery main: d6d0e38 berhasil dipush ke origin; `ls-remote` cocok dengan
+  HEAD dan divergence0/0. Commit penutupan checklist menyusul tanpa runtime change.
