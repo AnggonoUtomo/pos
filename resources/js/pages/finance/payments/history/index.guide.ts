@@ -4,6 +4,10 @@ export default {
     description: 'Telusuri uang masuk/keluar dari penjualan, pembelian dan kedua jenis retur.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Ketik kode/nama akun atau metode pada filter, pilih hasil lalu terapkan. Detail pembayaran tetap baca-saja.'],
+        },
+        {
             title: 'Mencari pembayaran',
             steps: [
                 'Gunakan nomor transaksi atau filter tanggal, arah, akun dan metode.',

@@ -1,6 +1,6 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Users, Warehouse } from 'lucide-react';
 import type { CustomerOption, WarehouseOption } from '../types';
@@ -35,18 +35,19 @@ export function SaleContextBar({
                     <Warehouse className="size-4 text-emerald-600 dark:text-emerald-300" />
                     Gudang
                 </Label>
-                <Select value={warehouseId} onValueChange={onWarehouseChange}>
-                    <SelectTrigger id="pos-warehouse" className="w-full min-w-0 [&>span]:truncate">
-                        <SelectValue placeholder="Pilih gudang" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {warehouses.map((row) => (
-                            <SelectItem key={row.id} value={row.id}>
-                                {row.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <Autocomplete
+                    value={warehouseId}
+                    onValueChange={onWarehouseChange}
+                    id="pos-warehouse"
+                    className="w-full min-w-0 [&>span]:truncate"
+                    placeholder="Pilih gudang"
+                    options={[
+                        warehouses.map((row) => ({
+                            value: row.id,
+                            label: <>{row.name}</>,
+                        })),
+                    ]}
+                />
             </div>
             <div className={cn('min-w-0 space-y-1.5', compact ? '' : 'w-72')}>
                 <div className="flex min-w-0 items-center justify-between gap-2">

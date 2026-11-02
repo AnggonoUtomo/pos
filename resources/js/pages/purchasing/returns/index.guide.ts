@@ -4,6 +4,10 @@ export default {
     description: 'Kembalikan barang dari pembelian diterima dan catat uang kembali supplier.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari metode pembayaran dengan nama/kode saat menerima uang kembali. Pencarian dokumen pembelian asal tetap memakai pencarian yang tersedia.'],
+        },
+        {
             title: 'Draft dan serah barang',
             steps: [
                 'Buat draft dari pembelian yang sudah Diterima, lalu pilih baris dan jumlah sesuai snapshot asal.',

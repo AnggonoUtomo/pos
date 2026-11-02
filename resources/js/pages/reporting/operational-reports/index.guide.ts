@@ -4,6 +4,10 @@ export default {
     description: 'Baca transaksi, arus pembayaran dan persediaan dengan periode/gudang yang sesuai.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari nama/kode gudang pada filter, pilih hasil lalu terapkan. Ringkasan mengikuti gudang dan periode yang dipilih.'],
+        },
+        {
             title: 'Mengatur laporan',
             steps: [
                 'Pilih Dari tanggal dan Sampai tanggal; periode maksimal 366 hari.',

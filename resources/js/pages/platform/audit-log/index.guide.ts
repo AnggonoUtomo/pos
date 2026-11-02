@@ -5,6 +5,10 @@ export default {
     description: 'Menelusuri aktivitas dan perubahan data yang sudah dicatat aplikasi.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Ketik nama modul, aktivitas atau pelaku pada pilihan filter, pilih hasil lalu terapkan. Pencarian tidak mengubah log.'],
+        },
+        {
             title: 'Temukan aktivitas',
             steps: [
                 'Isi kode/nomor dokumen, ID objek atau nama pengguna pada Pencarian.',

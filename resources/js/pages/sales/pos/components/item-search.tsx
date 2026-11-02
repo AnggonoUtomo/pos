@@ -1,8 +1,8 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { ItemImage } from '@/components/shared/item-image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, LoaderCircle, PackagePlus, Search } from 'lucide-react';
 import { useState } from 'react';
@@ -31,18 +31,19 @@ function CatalogItem({ item, onAdd, visual }: { item: PosItem; onAdd: (item: Pos
                 </span>
             </div>
             <div className="mt-auto flex items-center gap-2">
-                <Select value={unit?.id} onValueChange={setUnitId}>
-                    <SelectTrigger aria-label={`Satuan katalog ${item.name}`} className="min-w-0 flex-1">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {item.units.map((row) => (
-                            <SelectItem key={row.id} value={row.id} disabled={row.price === null}>
-                                {row.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <Autocomplete
+                    value={unit?.id}
+                    onValueChange={setUnitId}
+                    aria-label={`Satuan katalog ${item.name}`}
+                    className="min-w-0 flex-1"
+                    options={[
+                        item.units.map((row) => ({
+                            value: row.id,
+                            label: <>{row.name}</>,
+                            disabled: row.price === null,
+                        })),
+                    ]}
+                />
                 <Button
                     size="icon"
                     variant="outline"

@@ -1,7 +1,7 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { MasterLifecycleDialog } from '@/components/shared/master-actions';
 import { MasterWorkspace } from '@/components/shared/master-workspace';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePermission } from '@/hooks/use-permission';
 import { router } from '@inertiajs/react';
 import { useCallback, useState } from 'react';
@@ -32,7 +32,7 @@ export default function Customers({ records, filters, levelOptions }: CustomerPa
                     <PartiesNavigation />
                     <div className="flex flex-wrap items-center gap-3">
                         <Label htmlFor="level-filter">Level pelanggan</Label>
-                        <Select
+                        <Autocomplete
                             value={filters.customer_level_id ?? 'all'}
                             onValueChange={(id) =>
                                 router.get(
@@ -41,22 +41,29 @@ export default function Customers({ records, filters, levelOptions }: CustomerPa
                                     { preserveState: true, preserveScroll: true, onError: () => toast.error('Filter tidak valid.') },
                                 )
                             }
-                        >
-                            <SelectTrigger id="level-filter" className="w-56" aria-label="Filter level">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Semua level</SelectItem>
-                                {filters.customer_level_id && !levelOptions.some((level) => level.id === filters.customer_level_id) && (
-                                    <SelectItem value={filters.customer_level_id}>Level tidak aktif</SelectItem>
-                                )}
-                                {levelOptions.map((level) => (
-                                    <SelectItem key={level.id} value={level.id}>
-                                        {level.code} - {level.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            id="level-filter"
+                            className="w-56"
+                            aria-label="Filter level"
+                            options={[
+                                {
+                                    value: 'all',
+                                    label: <>Semua level</>,
+                                },
+                                filters.customer_level_id &&
+                                    !levelOptions.some((level) => level.id === filters.customer_level_id) && {
+                                        value: filters.customer_level_id,
+                                        label: <>Level tidak aktif</>,
+                                    },
+                                levelOptions.map((level) => ({
+                                    value: level.id,
+                                    label: (
+                                        <>
+                                            {level.code} - {level.name}
+                                        </>
+                                    ),
+                                })),
+                            ]}
+                        />
                     </div>
                 </div>
             }

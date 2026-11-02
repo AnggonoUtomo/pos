@@ -4,6 +4,10 @@ export default {
     description: 'Tentukan cara bayar dan akun uang yang benar untuk setiap metode.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari akun kas/bank dengan kode/nama pada form atau filter. Jenis metode tetap dipilih dari pilihan tetap.'],
+        },
+        {
             title: 'Membuat metode',
             steps: [
                 'Pastikan akun tujuan sudah aktif pada Kas dan bank.',

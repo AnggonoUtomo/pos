@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -115,37 +116,45 @@ export function OperationDialog({
                                 )}
                                 <div className="space-y-2">
                                     <Label htmlFor="cash-primary">Akun {kind === 'transfer' && operation.action === 'entry' ? 'asal' : ''}</Label>
-                                    <Select value={primary} onValueChange={setPrimary}>
-                                        <SelectTrigger id="cash-primary">
-                                            <SelectValue placeholder="Pilih akun" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {choices.map((account) => (
-                                                <SelectItem key={account.id} value={account.id}>
-                                                    {account.code} - {account.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <Autocomplete
+                                        value={primary}
+                                        onValueChange={setPrimary}
+                                        id="cash-primary"
+                                        placeholder="Pilih akun"
+                                        options={[
+                                            choices.map((account) => ({
+                                                value: account.id,
+                                                label: (
+                                                    <>
+                                                        {account.code} - {account.name}
+                                                    </>
+                                                ),
+                                            })),
+                                        ]}
+                                    />
                                     <InputError message={fields.account_id} />
                                 </div>
                                 {kind === 'transfer' && operation.action === 'entry' && (
                                     <div className="space-y-2">
                                         <Label htmlFor="cash-counter">Akun tujuan</Label>
-                                        <Select value={counter} onValueChange={setCounter}>
-                                            <SelectTrigger id="cash-counter">
-                                                <SelectValue placeholder="Pilih akun tujuan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {choices
+                                        <Autocomplete
+                                            value={counter}
+                                            onValueChange={setCounter}
+                                            id="cash-counter"
+                                            placeholder="Pilih akun tujuan"
+                                            options={[
+                                                choices
                                                     .filter((account) => account.id !== primary)
-                                                    .map((account) => (
-                                                        <SelectItem key={account.id} value={account.id}>
-                                                            {account.code} - {account.name}
-                                                        </SelectItem>
-                                                    ))}
-                                            </SelectContent>
-                                        </Select>
+                                                    .map((account) => ({
+                                                        value: account.id,
+                                                        label: (
+                                                            <>
+                                                                {account.code} - {account.name}
+                                                            </>
+                                                        ),
+                                                    })),
+                                            ]}
+                                        />
                                         <InputError message={fields.counter_account_id} />
                                     </div>
                                 )}

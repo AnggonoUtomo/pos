@@ -4,6 +4,10 @@ export default {
     description: 'Buka laci, hitung uang saat tutup dan telusuri review selisih kasir.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari akun laci dengan nama/kode lalu pilih hasil saat membuka shift. Aturan satu kasir dan satu laci per shift aktif tetap berlaku.'],
+        },
+        {
             title: 'Membuka shift sendiri',
             steps: [
                 'Pastikan akun Kas dan metode Tunai sesuai laci sudah aktif serta saldo awal Buku Kas sudah ditetapkan.',

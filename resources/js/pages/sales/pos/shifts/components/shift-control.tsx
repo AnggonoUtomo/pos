@@ -1,8 +1,8 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from '@inertiajs/react';
 import { Clock3, LoaderCircle, RefreshCw } from 'lucide-react';
@@ -214,18 +214,24 @@ export function ShiftControl({
                         <>
                             <div className="space-y-2">
                                 <Label htmlFor="shift-account">Laci kas</Label>
-                                <Select value={account} onValueChange={setAccount} disabled={busy}>
-                                    <SelectTrigger id="shift-account" className="w-full">
-                                        <SelectValue placeholder="Pilih akun kas" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {state.drawers.map((row) => (
-                                            <SelectItem key={row.id} value={row.id}>
-                                                {row.code} · {row.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <Autocomplete
+                                    value={account}
+                                    onValueChange={setAccount}
+                                    disabled={busy}
+                                    id="shift-account"
+                                    className="w-full"
+                                    placeholder="Pilih akun kas"
+                                    options={[
+                                        state.drawers.map((row) => ({
+                                            value: row.id,
+                                            label: (
+                                                <>
+                                                    {row.code} · {row.name}
+                                                </>
+                                            ),
+                                        })),
+                                    ]}
+                                />
                             </div>
                             {!state.drawers.length && (
                                 <p className="text-sm">Belum ada akun kas dengan saldo awal Buku Kas. Minta admin menetapkannya dahulu.</p>

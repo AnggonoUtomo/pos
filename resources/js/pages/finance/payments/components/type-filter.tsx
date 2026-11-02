@@ -1,3 +1,4 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { router } from '@inertiajs/react';
@@ -31,25 +32,31 @@ export function TypeFilter({ filters, methods = false, accounts = [] }: { filter
             {methods && (
                 <>
                     <Label htmlFor="payment-account-filter">Akun</Label>
-                    <Select
+                    <Autocomplete
                         value={filters.payment_account_id ?? 'all'}
                         onValueChange={(id) => visit({ payment_account_id: id === 'all' ? null : id })}
-                    >
-                        <SelectTrigger id="payment-account-filter" className="w-64">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua akun</SelectItem>
-                            {filters.payment_account_id && !accounts.some((account) => account.id === filters.payment_account_id) && (
-                                <SelectItem value={filters.payment_account_id}>Akun tidak aktif</SelectItem>
-                            )}
-                            {accounts.map((account) => (
-                                <SelectItem key={account.id} value={account.id}>
-                                    {account.code} - {account.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        id="payment-account-filter"
+                        className="w-64"
+                        options={[
+                            {
+                                value: 'all',
+                                label: <>Semua akun</>,
+                            },
+                            filters.payment_account_id &&
+                                !accounts.some((account) => account.id === filters.payment_account_id) && {
+                                    value: filters.payment_account_id,
+                                    label: <>Akun tidak aktif</>,
+                                },
+                            accounts.map((account) => ({
+                                value: account.id,
+                                label: (
+                                    <>
+                                        {account.code} - {account.name}
+                                    </>
+                                ),
+                            })),
+                        ]}
+                    />
                 </>
             )}
         </div>

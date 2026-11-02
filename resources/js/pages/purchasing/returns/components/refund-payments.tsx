@@ -1,7 +1,7 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { parseDecimalInput as parse } from '@/lib/decimal-input';
 import { Plus, Trash2 } from 'lucide-react';
 import type { RefundPayment, RefundQuote } from '../types';
@@ -39,22 +39,21 @@ export function RefundPayments({
                 <div key={index} className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-start gap-2">
                     <div className="min-w-0 space-y-2">
                         <Label htmlFor={`refund-method-${index}`}>Metode {index + 1}</Label>
-                        <Select value={row.method_id || undefined} onValueChange={(method_id) => patch(index, { method_id })} disabled={disabled}>
-                            <SelectTrigger id={`refund-method-${index}`} className="w-full min-w-0">
-                                <SelectValue placeholder="Pilih metode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {quote.methods.map((method) => (
-                                    <SelectItem
-                                        key={method.id}
-                                        value={method.id}
-                                        disabled={rows.some((other, i) => i !== index && other.method_id === method.id)}
-                                    >
-                                        {method.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Autocomplete
+                            value={row.method_id || undefined}
+                            onValueChange={(method_id) => patch(index, { method_id })}
+                            disabled={disabled}
+                            id={`refund-method-${index}`}
+                            className="w-full min-w-0"
+                            placeholder="Pilih metode"
+                            options={[
+                                quote.methods.map((method) => ({
+                                    value: method.id,
+                                    label: <>{method.name}</>,
+                                    disabled: rows.some((other, i) => i !== index && other.method_id === method.id),
+                                })),
+                            ]}
+                        />
                     </div>
                     <div className="min-w-0 space-y-2">
                         <Label htmlFor={`refund-amount-${index}`}>Jumlah {index + 1}</Label>

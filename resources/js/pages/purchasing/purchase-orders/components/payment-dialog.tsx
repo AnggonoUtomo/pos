@@ -1,9 +1,9 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatDecimalInput as format, parseDecimalInput as parse } from '@/lib/decimal-input';
 import { useForm } from '@inertiajs/react';
 import { Banknote, LoaderCircle, Plus, Trash2 } from 'lucide-react';
@@ -110,26 +110,21 @@ export function PaymentDialog({
                             <div key={index} className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-start gap-2">
                                 <div className="min-w-0 space-y-2">
                                     <Label htmlFor={`pay-method-${index}`}>Metode {index + 1}</Label>
-                                    <Select
+                                    <Autocomplete
                                         value={row.method_id || undefined}
                                         onValueChange={(method_id) => change(index, { method_id })}
                                         disabled={form.processing}
-                                    >
-                                        <SelectTrigger id={`pay-method-${index}`} className="w-full min-w-0">
-                                            <SelectValue placeholder="Pilih metode" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {methods.map((method) => (
-                                                <SelectItem
-                                                    key={method.id}
-                                                    value={method.id}
-                                                    disabled={form.data.payments.some((other, i) => i !== index && other.method_id === method.id)}
-                                                >
-                                                    {method.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        id={`pay-method-${index}`}
+                                        className="w-full min-w-0"
+                                        placeholder="Pilih metode"
+                                        options={[
+                                            methods.map((method) => ({
+                                                value: method.id,
+                                                label: <>{method.name}</>,
+                                                disabled: form.data.payments.some((other, i) => i !== index && other.method_id === method.id),
+                                            })),
+                                        ]}
+                                    />
                                     <InputError message={errors[`payments.${index}.method_id`]} />
                                 </div>
                                 <div className="min-w-0 space-y-2">

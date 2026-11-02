@@ -1,7 +1,7 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RotateCcw, Search } from 'lucide-react';
 import type { RefObject } from 'react';
 import type { HistoryFilters, HistoryOption } from '../types';
@@ -74,22 +74,27 @@ export function FilterBar({
             ).map(({ key, label, options }) => (
                 <div key={key} className="min-w-0 space-y-1.5">
                     <Label htmlFor={`history-${key}`}>{label}</Label>
-                    <Select value={draft[key] ?? 'all'} onValueChange={(value) => onChange({ [key]: value === 'all' ? null : value })}>
-                        <SelectTrigger id={`history-${key}`} className="w-full min-w-0 [&>span]:truncate">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua {label.toLowerCase()}</SelectItem>
-                            {draft[key] && !options.some((option) => option.id === draft[key]) && (
-                                <SelectItem value={draft[key]!}>Pilihan tidak tersedia</SelectItem>
-                            )}
-                            {options.map((option) => (
-                                <SelectItem key={option.id} value={option.id}>
-                                    {option.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <Autocomplete
+                        value={draft[key] ?? 'all'}
+                        onValueChange={(value) => onChange({ [key]: value === 'all' ? null : value })}
+                        id={`history-${key}`}
+                        className="w-full min-w-0 [&>span]:truncate"
+                        options={[
+                            {
+                                value: 'all',
+                                label: <>Semua {label.toLowerCase()}</>,
+                            },
+                            draft[key] &&
+                                !options.some((option) => option.id === draft[key]) && {
+                                    value: draft[key]!,
+                                    label: <>Pilihan tidak tersedia</>,
+                                },
+                            options.map((option) => ({
+                                value: option.id,
+                                label: <>{option.name}</>,
+                            })),
+                        ]}
+                    />
                 </div>
             ))}
             <div className="col-span-2 flex flex-wrap gap-2 xl:col-span-6">

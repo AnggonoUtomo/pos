@@ -1,11 +1,11 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
@@ -108,19 +108,26 @@ export default function OperationalReports(report: OperationalReport) {
                     </div>
                     <div className="space-y-2">
                         <Label>Gudang transaksi/stok</Label>
-                        <Select value={form.data.warehouse_id || 'all'} onValueChange={(id) => form.setData('warehouse_id', id === 'all' ? '' : id)}>
-                            <SelectTrigger aria-label="Gudang laporan" className="w-60">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Semua gudang</SelectItem>
-                                {report.warehouses.map((row) => (
-                                    <SelectItem key={row.id} value={row.id}>
-                                        {row.code} - {row.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Autocomplete
+                            value={form.data.warehouse_id || 'all'}
+                            onValueChange={(id) => form.setData('warehouse_id', id === 'all' ? '' : id)}
+                            aria-label="Gudang laporan"
+                            className="w-60"
+                            options={[
+                                {
+                                    value: 'all',
+                                    label: <>Semua gudang</>,
+                                },
+                                report.warehouses.map((row) => ({
+                                    value: row.id,
+                                    label: (
+                                        <>
+                                            {row.code} - {row.name}
+                                        </>
+                                    ),
+                                })),
+                            ]}
+                        />
                         <InputError message={form.errors.warehouse_id} />
                     </div>
                     <Button disabled={form.processing}>

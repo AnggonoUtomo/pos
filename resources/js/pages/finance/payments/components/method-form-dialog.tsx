@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -115,29 +116,31 @@ export function MethodFormDialog({ record, accounts, onClose }: { record: Method
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="method-account">Akun tujuan</Label>
-                            <Select
+                            <Autocomplete
                                 value={form.data.payment_account_id}
                                 disabled={form.processing}
                                 onValueChange={(id) => form.setData('payment_account_id', id)}
-                            >
-                                <SelectTrigger id="method-account" aria-invalid={Boolean(errors.payment_account_id)}>
-                                    <SelectValue placeholder="Pilih akun aktif" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {record &&
+                                id="method-account"
+                                aria-invalid={Boolean(errors.payment_account_id)}
+                                placeholder="Pilih akun aktif"
+                                options={[
+                                    record &&
                                         form.data.payment_account_id === record.payment_account_id &&
-                                        !options.some((account) => account.id === record.payment_account_id) && (
-                                            <SelectItem value={record.payment_account_id} disabled>
-                                                Akun tidak tersedia
-                                            </SelectItem>
-                                        )}
-                                    {options.map((account) => (
-                                        <SelectItem key={account.id} value={account.id}>
-                                            {account.code} - {account.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                        !options.some((account) => account.id === record.payment_account_id) && {
+                                            value: record.payment_account_id,
+                                            label: <>Akun tidak tersedia</>,
+                                            disabled: true,
+                                        },
+                                    options.map((account) => ({
+                                        value: account.id,
+                                        label: (
+                                            <>
+                                                {account.code} - {account.name}
+                                            </>
+                                        ),
+                                    })),
+                                ]}
+                            />
                             <InputError message={errors.payment_account_id} />
                         </div>
                     </div>

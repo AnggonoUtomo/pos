@@ -1,10 +1,10 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { TablePagination } from '@/components/shared/table-pagination';
 import { tablePageParams } from '@/components/shared/table-pagination-model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WorkspaceShortcutDropdown } from '@/components/workspace-shortcuts';
 import { usePermission } from '@/hooks/use-permission';
 import AppLayout from '@/layouts/app-layout';
@@ -125,22 +125,24 @@ export default function Cashbook({ records, accounts, filters, today }: Cashbook
                 >
                     <div className="min-w-0 space-y-2">
                         <Label htmlFor="cashbook-account">Akun kas/bank</Label>
-                        <Select
+                        <Autocomplete
                             value={draft.account_id ?? ''}
                             onValueChange={(account_id) => setDraft({ ...draft, account_id })}
                             disabled={filterBusy}
-                        >
-                            <SelectTrigger id="cashbook-account" className="w-full [&>span]:truncate">
-                                <SelectValue placeholder="Pilih akun" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {accounts.map((account) => (
-                                    <SelectItem key={account.id} value={account.id}>
-                                        {account.code} - {account.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            id="cashbook-account"
+                            className="w-full [&>span]:truncate"
+                            placeholder="Pilih akun"
+                            options={[
+                                accounts.map((account) => ({
+                                    value: account.id,
+                                    label: (
+                                        <>
+                                            {account.code} - {account.name}
+                                        </>
+                                    ),
+                                })),
+                            ]}
+                        />
                         <InputError message={filterErrors.account_id} />
                     </div>
                     {(['date_from', 'date_to'] as const).map((field) => (

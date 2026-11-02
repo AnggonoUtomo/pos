@@ -4,6 +4,10 @@ export default {
     description: 'Cari invoice yang sudah berhasil dan cetak ulang bukti tanpa membuat penjualan baru.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari gudang atau pelanggan lewat nama/kode pada filter, lalu pilih hasil dan terapkan. Riwayat tetap baca-saja.'],
+        },
+        {
             title: 'Mencari invoice',
             steps: [
                 'Cari nomor invoice atau gunakan filter tanggal, gudang dan pelanggan.',

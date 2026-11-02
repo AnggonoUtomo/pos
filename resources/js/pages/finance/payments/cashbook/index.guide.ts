@@ -4,6 +4,10 @@ export default {
     description: 'Baca saldo per akun serta catat biaya, pemasukan operasional dan transfer internal.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Ketik kode/nama akun kas/bank pada pilihan akun atau transfer, lalu pilih hasil. Perubahan pilihan tidak mencatat mutasi.'],
+        },
+        {
             title: 'Saldo awal satu kali',
             steps: [
                 'Bersama penanggung jawab, tentukan akun, tanggal mulai dan posisi uang yang sebenarnya.',

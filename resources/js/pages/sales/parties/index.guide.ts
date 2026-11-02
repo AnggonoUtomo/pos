@@ -4,6 +4,10 @@ export default {
     description: 'Daftarkan pembeli dan level harga yang akan digunakan pada POS.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari nama/kode level pelanggan pada form dan filter, lalu pilih hasil. Level wajib aktif untuk pelanggan baru.'],
+        },
+        {
             title: 'Membuat pelanggan',
             steps: [
                 'Pastikan level pelanggan yang sesuai sudah aktif dan harganya tersedia.',

@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,26 +73,28 @@ export function FilterBar({
                     return (
                         <div key={key} className="min-w-0 space-y-2">
                             <Label htmlFor={`payment-${key}`}>{label}</Label>
-                            <Select
+                            <Autocomplete
                                 value={draft[key] || 'all'}
                                 onValueChange={(value) => onChange({ [key]: value === 'all' ? null : value })}
                                 disabled={loading}
-                            >
-                                <SelectTrigger id={`payment-${key}`} className="w-full min-w-0">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Semua {label.toLowerCase()}</SelectItem>
-                                    {draft[key] && !choices.some((choice) => choice.id === draft[key]) && (
-                                        <SelectItem value={draft[key]!}>Pilihan tidak ditemukan</SelectItem>
-                                    )}
-                                    {choices.map((choice) => (
-                                        <SelectItem key={choice.id} value={choice.id}>
-                                            {choice.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                id={`payment-${key}`}
+                                className="w-full min-w-0"
+                                options={[
+                                    {
+                                        value: 'all',
+                                        label: <>Semua {label.toLowerCase()}</>,
+                                    },
+                                    draft[key] &&
+                                        !choices.some((choice) => choice.id === draft[key]) && {
+                                            value: draft[key]!,
+                                            label: <>Pilihan tidak ditemukan</>,
+                                        },
+                                    choices.map((choice) => ({
+                                        value: choice.id,
+                                        label: <>{choice.name}</>,
+                                    })),
+                                ]}
+                            />
                             <InputError message={errors[key]} />
                         </div>
                     );

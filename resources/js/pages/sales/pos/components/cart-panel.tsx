@@ -1,6 +1,6 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ShoppingBasket, Trash2 } from 'lucide-react';
 import { money } from '../lib/decimal';
 import type { CartLine, CartQuote } from '../types';
@@ -52,18 +52,17 @@ export function CartPanel({
                                     </Button>
                                 </div>
                                 <div className="grid grid-cols-[minmax(0,1fr)_5rem] gap-3">
-                                    <Select value={line.unitId} onValueChange={(id) => onUnit(index, id)}>
-                                        <SelectTrigger aria-label={`Satuan ${line.item.name}`}>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {line.item.units.map((unit) => (
-                                                <SelectItem key={unit.id} value={unit.id}>
-                                                    {unit.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <Autocomplete
+                                        value={line.unitId}
+                                        onValueChange={(id) => onUnit(index, id)}
+                                        aria-label={`Satuan ${line.item.name}`}
+                                        options={[
+                                            line.item.units.map((unit) => ({
+                                                value: unit.id,
+                                                label: <>{unit.name}</>,
+                                            })),
+                                        ]}
+                                    />
                                     <Input
                                         aria-label={`Kuantitas ${line.item.name}`}
                                         value={line.quantity}

@@ -1,8 +1,8 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RotateCcw, Search } from 'lucide-react';
 import type { RefObject } from 'react';
 import type { AuditFilters, AuditProps } from '../types';
@@ -61,26 +61,28 @@ export function FilterBar({
                 ).map(({ key, label, choices }) => (
                     <div key={key} className="min-w-0 space-y-2 xl:col-span-3">
                         <Label htmlFor={`audit-${key}`}>{label}</Label>
-                        <Select
+                        <Autocomplete
                             value={draft[key] ?? 'all'}
                             disabled={loading}
                             onValueChange={(value) => onChange({ [key]: value === 'all' ? null : value })}
-                        >
-                            <SelectTrigger id={`audit-${key}`} className="w-full min-w-0 [&>span]:truncate">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Semua {label.toLowerCase()}</SelectItem>
-                                {draft[key] && !choices.some((choice) => choice.id === draft[key]) && (
-                                    <SelectItem value={draft[key]!}>Pilihan tidak tersedia</SelectItem>
-                                )}
-                                {choices.map((choice) => (
-                                    <SelectItem key={choice.id} value={choice.id}>
-                                        {choice.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            id={`audit-${key}`}
+                            className="w-full min-w-0 [&>span]:truncate"
+                            options={[
+                                {
+                                    value: 'all',
+                                    label: <>Semua {label.toLowerCase()}</>,
+                                },
+                                draft[key] &&
+                                    !choices.some((choice) => choice.id === draft[key]) && {
+                                        value: draft[key]!,
+                                        label: <>Pilihan tidak tersedia</>,
+                                    },
+                                choices.map((choice) => ({
+                                    value: choice.id,
+                                    label: <>{choice.name}</>,
+                                })),
+                            ]}
+                        />
                         <InputError message={errors[key]} />
                     </div>
                 ))}

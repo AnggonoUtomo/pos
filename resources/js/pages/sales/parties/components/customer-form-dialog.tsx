@@ -1,10 +1,10 @@
 import InputError from '@/components/input-error';
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Save } from 'lucide-react';
@@ -91,27 +91,31 @@ export function CustomerFormDialog({ record, levels, onClose }: { record: Custom
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="customer-level">Level pelanggan</Label>
-                        <Select
+                        <Autocomplete
                             value={form.data.customer_level_id}
                             onValueChange={(id) => form.setData('customer_level_id', id)}
                             disabled={form.processing}
-                        >
-                            <SelectTrigger id="customer-level" className="w-full" aria-invalid={Boolean(errors.customer_level_id)}>
-                                <SelectValue placeholder="Pilih level" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {record && !levels.some((level) => level.id === record.customer_level_id) && (
-                                    <SelectItem value={record.customer_level_id} disabled>
-                                        {record.customer_level_name} (nonaktif)
-                                    </SelectItem>
-                                )}
-                                {levels.map((level) => (
-                                    <SelectItem key={level.id} value={level.id}>
-                                        {level.code} - {level.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            id="customer-level"
+                            className="w-full"
+                            aria-invalid={Boolean(errors.customer_level_id)}
+                            placeholder="Pilih level"
+                            options={[
+                                record &&
+                                    !levels.some((level) => level.id === record.customer_level_id) && {
+                                        value: record.customer_level_id,
+                                        label: <>{record.customer_level_name} (nonaktif)</>,
+                                        disabled: true,
+                                    },
+                                levels.map((level) => ({
+                                    value: level.id,
+                                    label: (
+                                        <>
+                                            {level.code} - {level.name}
+                                        </>
+                                    ),
+                                })),
+                            ]}
+                        />
                         <InputError message={errors.customer_level_id} />
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">

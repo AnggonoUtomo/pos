@@ -1,8 +1,8 @@
+import { Autocomplete } from '@/components/shared/autocomplete';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Banknote, CreditCard, LoaderCircle, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { localDecimal, money } from '../lib/decimal';
@@ -119,26 +119,23 @@ export function PaymentDialog({
                         <div key={index} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-end gap-3">
                             <div className="min-w-0 space-y-1.5">
                                 <Label htmlFor={`payment-method-${index}`}>Metode {index + 1}</Label>
-                                <Select
+                                <Autocomplete
                                     value={row.methodId}
                                     disabled={locked}
                                     onValueChange={(methodId) => setRows(rows.map((item, at) => (at === index ? { ...item, methodId } : item)))}
-                                >
-                                    <SelectTrigger id={`payment-method-${index}`}>
-                                        <SelectValue placeholder="Pilih metode" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {displayedMethods
+                                    id={`payment-method-${index}`}
+                                    placeholder="Pilih metode"
+                                    options={[
+                                        displayedMethods
                                             .filter(
                                                 (method) => method.id === row.methodId || !displayedRows.some((item) => item.methodId === method.id),
                                             )
-                                            .map((method) => (
-                                                <SelectItem key={method.id} value={method.id}>
-                                                    {method.name}
-                                                </SelectItem>
-                                            ))}
-                                    </SelectContent>
-                                </Select>
+                                            .map((method) => ({
+                                                value: method.id,
+                                                label: <>{method.name}</>,
+                                            })),
+                                    ]}
+                                />
                             </div>
                             <div className="min-w-0 space-y-1.5">
                                 <Label htmlFor={`payment-amount-${index}`}>Nominal {index + 1}</Label>

@@ -4,6 +4,10 @@ export default {
     description: 'Layani pembeli dari scan barang sampai pembayaran lunas dan bukti penjualan.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari gudang, satuan atau metode pembayaran dengan nama/kode lalu pilih hasil. Pelanggan tetap memakai pencarian autocomplete; harga dan stok diperiksa backend.'],
+        },
+        {
             title: 'Sebelum melayani',
             steps: [
                 'Masuk dengan akun kasir sendiri. Klik Buka shift, pilih laci yang sudah memiliki saldo awal Buku Kas, lalu Mulai shift.',

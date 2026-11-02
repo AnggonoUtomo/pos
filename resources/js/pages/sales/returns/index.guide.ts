@@ -4,6 +4,10 @@ export default {
     description: 'Terima kembali barang layak jual dan proses refund berdasarkan invoice asal.',
     sections: [
         {
+            title: 'Mencari pilihan',
+            steps: ['Cari nomor invoice atau nama pelanggan pada Invoice asal lalu pilih hasil. Metode pengembalian uang juga dapat dicari; nominal tetap dihitung sistem.'],
+        },
+        {
             title: 'Draft dan penerimaan barang',
             steps: [
                 'Buat draft dari invoice posted, pilih barang dan jumlah yang benar-benar kembali.',
