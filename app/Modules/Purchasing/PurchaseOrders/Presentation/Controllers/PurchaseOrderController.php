@@ -8,6 +8,7 @@ use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ManagePurchaseOrde
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PayPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\PostPurchaseOrder;
 use App\Modules\Purchasing\PurchaseOrders\Application\Actions\ReceiveAndPayPurchase;
+use App\Modules\Purchasing\PurchaseOrders\Application\Queries\PurchaseMasterChoices;
 use App\Modules\Purchasing\PurchaseOrders\Application\Queries\PurchaseWorkspace;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\ListPurchaseOrdersRequest;
 use App\Modules\Purchasing\PurchaseOrders\Presentation\Requests\PayPurchaseOrderRequest;
@@ -18,6 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,7 +28,7 @@ class PurchaseOrderController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [new Middleware('can:purchasing.purchase-orders.view', only: ['index', 'data']),
-            new Middleware('can:purchasing.purchase-orders.manage', only: ['store', 'update', 'destroy', 'restore']),
+            new Middleware('can:purchasing.purchase-orders.manage', only: ['store', 'update', 'destroy', 'restore', 'masterOptions', 'masterChoice']),
             new Middleware('can:purchasing.purchase-orders.post', only: ['post', 'receiveAndPay']),
             new Middleware('can:purchasing.purchase-orders.pay', only: ['pay', 'receiveAndPay'])];
     }
@@ -42,6 +44,18 @@ class PurchaseOrderController extends Controller implements HasMiddleware
     public function data(ListPurchaseOrdersRequest $request, PurchaseWorkspace $query): JsonResponse
     {
         return response()->json($query->records((int) $request->validated('page', 1), $request->filters()));
+    }
+
+    public function masterOptions(PurchaseMasterChoices $query): JsonResponse
+    {
+        Gate::authorize('inventory.manage');
+
+        return response()->json($query->creationOptions())->header('Cache-Control', 'private, no-store');
+    }
+
+    public function masterChoice(string $kind, string $id, PurchaseMasterChoices $query): JsonResponse
+    {
+        return response()->json($query->find($kind, $id))->header('Cache-Control', 'private, no-store');
     }
 
     public function store(SavePurchaseOrderRequest $request, ManagePurchaseOrder $action): JsonResponse|RedirectResponse

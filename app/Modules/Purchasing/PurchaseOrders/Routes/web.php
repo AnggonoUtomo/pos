@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'verified'])->prefix('purchasing/purchase-orders')->name('purchasing.purchase-orders.')->group(function (): void {
     Route::get('data', [PurchaseOrderController::class, 'data'])->name('data');
+    Route::get('master-options', [PurchaseOrderController::class, 'masterOptions'])->name('master-options');
+    Route::get('master-choice/{kind}/{id}', [PurchaseOrderController::class, 'masterChoice'])->whereIn('kind', ['item', 'supplier'])->whereUlid('id')->name('master-choice');
     Route::get('/', [PurchaseOrderController::class, 'index'])->name('index');
     Route::post('/', [PurchaseOrderController::class, 'store'])->name('store');
     Route::put('{id}', [PurchaseOrderController::class, 'update'])->whereUlid('id')->name('update');
