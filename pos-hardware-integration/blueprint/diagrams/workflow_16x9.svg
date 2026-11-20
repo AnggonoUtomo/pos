@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Alur aman Codex untuk integrasi hardware POS, format 16 banding 9">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0a1424"/><stop offset="1" stop-color="#1b2a42"/></linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#192d46"/><stop offset="1" stop-color="#14233a"/></linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#78a8cc"/></marker>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="70" y="64" width="1460" height="100" rx="22" fill="#14263b" stroke="#345877"/>
+  <text x="110" y="112" fill="#f4f7fb" font-size="38" font-weight="700" font-family="Arial, sans-serif">POS Hardware — Workflow Aman Codex</text>
+  <text x="110" y="145" fill="#9fc3da" font-size="19" font-family="Arial, sans-serif">Additive · Feature flag OFF · Tidak mengganggu modul existing</text>
+  <g font-family="Arial, sans-serif">
+    <rect x="85" y="220" width="260" height="150" rx="20" fill="url(#card)" stroke="#4279a4" stroke-width="2"/>
+    <text x="115" y="263" fill="#76d8fd" font-size="23" font-weight="bold">01 · AGENTS.md</text><text x="115" y="298" fill="#eef5ff" font-size="20">Baca batas perubahan</text><text x="115" y="328" fill="#a9c4d8" font-size="16">&amp; aturan repository</text>
+    <rect x="385" y="220" width="260" height="150" rx="20" fill="url(#card)" stroke="#4279a4" stroke-width="2"/>
+    <text x="415" y="263" fill="#76d8fd" font-size="23" font-weight="bold">02 · Discovery</text><text x="415" y="298" fill="#eef5ff" font-size="20">Audit read-only</text><text x="415" y="328" fill="#a9c4d8" font-size="16">kontrak existing</text>
+    <rect x="685" y="220" width="260" height="150" rx="20" fill="url(#card)" stroke="#4279a4" stroke-width="2"/>
+    <text x="715" y="263" fill="#76d8fd" font-size="23" font-weight="bold">03 · Mockup UI</text><text x="715" y="298" fill="#eef5ff" font-size="20">Desain seluruh</text><text x="715" y="328" fill="#a9c4d8" font-size="16">workspace hardware</text>
+    <rect x="985" y="220" width="260" height="150" rx="20" fill="url(#card)" stroke="#4279a4" stroke-width="2"/>
+    <text x="1015" y="263" fill="#76d8fd" font-size="23" font-weight="bold">04 · PLAN</text><text x="1015" y="298" fill="#eef5ff" font-size="20">File allowlist</text><text x="1015" y="328" fill="#a9c4d8" font-size="16">+ check-plan</text>
+    <rect x="1285" y="220" width="230" height="150" rx="20" fill="#382b24" stroke="#e9ad64" stroke-width="3"/>
+    <text x="1310" y="263" fill="#ffd38c" font-size="23" font-weight="bold">05 · APPROVAL</text><text x="1310" y="298" fill="#fff3df" font-size="20">Wajib Ino</text><text x="1310" y="328" fill="#f1cba6" font-size="16">STOP sebelum izin</text>
+    <path d="M345 295H380 M645 295H680 M945 295H980 M1245 295H1280" fill="none" stroke="#78a8cc" stroke-width="4" marker-end="url(#arr)"/>
+    <path d="M1400 375V468" fill="none" stroke="#78a8cc" stroke-width="4" marker-end="url(#arr)"/>
+    <rect x="1010" y="480" width="505" height="145" rx="20" fill="#173a34" stroke="#53bfa4" stroke-width="2"/>
+    <text x="1040" y="527" fill="#7ae6c7" font-size="25" font-weight="bold">06 · Satu Vertical Slice</text>
+    <text x="1040" y="566" fill="#e7fff6" font-size="21">UI/UX + API + adapter + pengujian</text>
+    <text x="1040" y="594" fill="#b7eadb" font-size="17">Hanya file dan lingkup yang disetujui</text>
+    <rect x="490" y="480" width="475" height="145" rx="20" fill="url(#card)" stroke="#4279a4" stroke-width="2"/>
+    <text x="520" y="527" fill="#76d8fd" font-size="25" font-weight="bold">07 · REPORT + check-report</text>
+    <text x="520" y="566" fill="#e7f4ff" font-size="21">Regression, UAT, audit &amp; rollback</text>
+    <text x="520" y="594" fill="#a9c4d8" font-size="17">Flag OFF tetap sama seperti baseline</text>
+    <rect x="85" y="480" width="360" height="145" rx="20" fill="url(#card)" stroke="#4279a4" stroke-width="2"/>
+    <text x="115" y="527" fill="#76d8fd" font-size="25" font-weight="bold">08 · Handoff</text>
+    <text x="115" y="566" fill="#e7f4ff" font-size="21">STATUS · NEXT_TASK</text>
+    <text x="115" y="594" fill="#a9c4d8" font-size="17">SESSION_HANDOFF · TASK_INDEX</text>
+    <path d="M1005 552H971 M485 552H451" fill="none" stroke="#78a8cc" stroke-width="4" marker-end="url(#arr)"/>
+  </g>
+  <rect x="85" y="690" width="1430" height="127" rx="22" fill="#231f2d" stroke="#806583"/>
+  <text x="115" y="743" fill="#f2d8ff" font-size="26" font-weight="bold" font-family="Arial, sans-serif">GERBANG PENGAMAN</text>
+  <text x="115" y="782" fill="#f1e8fa" font-size="22" font-family="Arial, sans-serif">Tanpa APPROVAL → tidak ada coding, migrasi, instalasi, commit, push, atau perubahan modul existing.</text>
+  <text x="1515" y="866" text-anchor="end" fill="#7896ad" font-family="Arial, sans-serif" font-size="15">PIMS-style • v1.0 • 16:9</text>
+</svg>

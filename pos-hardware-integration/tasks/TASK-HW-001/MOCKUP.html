@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'none'; base-uri 'none'">
+  <title>Draft Workspace Perangkat POS</title>
+  <style>
+    :root { color-scheme: light; --background: #f6f8fb; --surface: #fff; --text: #283647; --muted: #637184; --border: #dfe5ed; --primary: #4269d6; --tint: #edf2ff; --green: #167658; --amber: #946219; --red: #b63d4a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--background); color: var(--text); font: 14px/1.5 'Segoe UI', system-ui, sans-serif; letter-spacing: 0; }
+    button, input, select { font: inherit; }
+    button, summary, nav label { min-height: 44px; }
+    button, input, select { border: 1px solid var(--border); border-radius: 6px; padding: 9px 12px; background: var(--surface); color: inherit; }
+    button:disabled { cursor: not-allowed; opacity: .72; }
+    button.primary { background: var(--primary); border-color: var(--primary); color: white; }
+    a { color: var(--primary); }
+    :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+    .notice { padding: 8px 20px; background: #fff5df; color: #765014; border-bottom: 1px solid #ead7af; font-size: 12px; }
+    .shell { display: grid; grid-template-columns: 204px minmax(0, 1fr); min-height: calc(100vh - 35px); }
+    .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 22px 14px; }
+    .brand { font-size: 19px; font-weight: 700; padding: 0 12px 24px; }
+    .sidebar p { margin: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; }
+    .sidebar span { display: block; padding: 11px 12px; margin: 4px 0; border-radius: 6px; }
+    .sidebar .selected { background: var(--tint); color: var(--primary); font-weight: 600; }
+    .content { min-width: 0; }
+    .topbar { min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 28px; }
+    .topbar small, .muted { color: var(--muted); }
+    .workspace { max-width: 1500px; margin: auto; padding: 24px 28px 76px; }
+    h1 { font-size: 24px; margin: 0; } h2 { font-size: 17px; margin: 0 0 14px; } h3 { font-size: 14px; margin: 0 0 8px; }
+    p { margin: 6px 0 14px; } small { font-size: 12px; }
+    .heading, .actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .heading { margin-bottom: 16px; }
+    .tag { display: inline-block; border-radius: 4px; padding: 3px 8px; font-size: 12px; font-weight: 600; background: var(--tint); color: #3151a2; }
+    .green { background: #e6f4ee; color: var(--green); } .amber { background: #fff2d9; color: var(--amber); } .red { background: #fbecef; color: var(--red); }
+    .shortcuts { margin-bottom: 12px; } .shortcuts summary { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; padding: 8px 0; color: var(--muted); }
+    .shortcuts p { padding: 12px; border-left: 3px solid var(--primary); background: var(--surface); }
+    .tab-radio { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--border); gap: 4px; margin-bottom: 22px; }
+    .tabs label { cursor: pointer; padding: 12px 14px; border-bottom: 2px solid transparent; }
+    #overview:checked ~ .tabs label[for="overview"], #devices:checked ~ .tabs label[for="devices"], #scanner:checked ~ .tabs label[for="scanner"], #labels:checked ~ .tabs label[for="labels"], #queue:checked ~ .tabs label[for="queue"] { color: var(--primary); border-color: var(--primary); font-weight: 600; }
+    .tab-radio:focus-visible ~ .tabs { outline: 2px solid var(--primary); outline-offset: 3px; }
+    .panel { display: none; }
+    #overview:checked ~ #overview-panel, #devices:checked ~ #devices-panel, #scanner:checked ~ #scanner-panel, #labels:checked ~ #labels-panel, #queue:checked ~ #queue-panel { display: block; }
+    .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--border); background: var(--surface); margin-bottom: 24px; }
+    .metric { padding: 18px 20px; border-right: 1px solid var(--border); } .metric:last-child { border: 0; }
+    .metric b { display: block; font-size: 21px; padding: 8px 0; font-weight: 650; }
+    .columns { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr); gap: 24px; }
+    .band { border-top: 1px solid var(--border); padding: 18px 0; }
+    .device { border-bottom: 1px solid var(--border); padding: 16px 0; }
+    .device strong { display: block; margin-bottom: 6px; }
+    .state { padding: 12px 14px; margin-bottom: 12px; border-left: 3px solid #cc9c48; background: #fff7e8; }
+    .state.error { background: #fff0f1; border-color: #cd6c76; }
+    .state p { margin: 6px 0 0; font-size: 13px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field { display: grid; gap: 6px; min-width: 0; } .field input, .field select { width: 100%; min-width: 0; }
+    .wide { grid-column: 1 / -1; }
+    .table-wrap { overflow-x: auto; border-block: 1px solid var(--border); background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; min-width: 560px; font-size: 13px; }
+    th, td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #eef2f8; font-weight: 600; } tr:nth-child(even) td { background: #fafbfd; }
+    .pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; font-size: 12px; }
+    .label-preview { border: 1px solid var(--border); border-radius: 6px; background: white; color: #111; padding: 22px; max-width: 380px; margin: 14px 0; text-align: center; }
+    .barcode-space { border: 1px dashed #a2abb7; padding: 18px 8px; margin: 14px 0; color: #566272; font-size: 12px; }
+    .steps { margin: 0; padding-left: 22px; } .steps li { margin: 10px 0; }
+    .guide { position: fixed; right: 24px; bottom: 20px; z-index: 10; }
+    .guide > summary { cursor: pointer; background: var(--primary); color: white; border-radius: 6px; padding: 10px 16px; list-style: none; }
+    .guide[open] { top: 35px; right: 0; bottom: 0; width: min(400px, 94%); padding: 24px; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--border); box-shadow: -8px 0 28px #24314a18; }
+    .guide[open] > summary { margin-bottom: 22px; }
+    code { overflow-wrap: anywhere; font-size: 12px; }
+    @media (max-width: 1100px) { .shell { grid-template-columns: 1fr; } .sidebar { display: none; } .topbar { padding-inline: 22px; } .workspace { padding: 20px 22px 76px; } }
+    @media (max-width: 820px) { .columns { grid-template-columns: 1fr; gap: 16px; } .metrics { grid-template-columns: 1fr; } .metric { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-right: 0; border-bottom: 1px solid var(--border); padding: 10px 16px; } .metric b { font-size: 17px; } .topbar { flex-wrap: wrap; } }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } .tabs label { padding: 10px; } .workspace { padding-inline: 16px; } }
+  </style>
+</head>
+<body>
+  <div class="notice"><strong>DRAFT TASK-HW-001</strong> | Mockup lokal. Semua data SIMULASI. Hardware OFF; perangkat fisik belum diuji.</div>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Konteks navigasi ilustratif">
+      <div class="brand">POS Modular</div>
+      <p>Platform</p><span>Dasbor</span><span>Pengaturan toko</span><span>Operasional</span><span class="selected">Perangkat POS</span>
+      <p>Operasional toko</p><span>Barang</span><span>Gudang</span><span>Penjualan</span><span>Pembelian</span>
+      <p>Menu ilustrasi, bukan navigasi aplikasi</p>
+    </aside>
+    <div class="content">
+      <header class="topbar"><div>Platform / <strong>Perangkat POS</strong></div><div><span class="tag amber">Fitur OFF</span> <small>Terminal Demo Kasir-01</small></div></header>
+      <main class="workspace">
+        <div class="heading"><div><h1>Perangkat POS</h1><p class="muted">Printer label dan scanner toko</p></div><span class="tag">MODE VIRTUAL</span></div>
+        <details class="shortcuts"><summary>Shortcut halaman <small>+</small></summary><p>Usulan: F1 panduan, Alt+F pencarian, Alt+S fokus uji scanner. Mockup tidak memasang shortcut aplikasi.</p></details>
+        <input class="tab-radio" type="radio" name="view" id="overview" checked aria-label="Ringkasan">
+        <input class="tab-radio" type="radio" name="view" id="devices" aria-label="Terminal dan printer">
+        <input class="tab-radio" type="radio" name="view" id="scanner" aria-label="Uji scanner">
+        <input class="tab-radio" type="radio" name="view" id="labels" aria-label="Label produk">
+        <input class="tab-radio" type="radio" name="view" id="queue" aria-label="Antrean cetak">
+        <nav class="tabs" aria-label="Bagian mockup"><label for="overview">Ringkasan</label><label for="devices">Terminal &amp; printer</label><label for="scanner">Uji scanner</label><label for="labels">Label produk</label><label for="queue">Antrean cetak</label></nav>
+        <section class="panel" id="overview-panel" aria-label="Ringkasan perangkat">
+          <div class="metrics"><div class="metric"><span>Terminal demo</span><b>Kasir-01</b><span class="tag">Belum dipasangkan</span></div><div class="metric"><span>Printer label</span><b>CASHCOW CT420D</b><span class="tag amber">UAT fisik pending</span></div><div class="metric"><span>Scanner</span><b>HC-4208DB</b><span class="tag amber">UAT fisik pending</span></div></div>
+          <div class="columns"><section><h2>Perangkat yang direncanakan</h2><div class="device"><strong>CT420D / Printer label</strong><p>Profil TSPL/CPCL. USB, Bluetooth dan Serial mengikuti profil bundle; koneksi nyata belum diuji.</p><span class="tag">Label, bukan struk</span></div><div class="device"><strong>HC-4208DB / Scanner barang</strong><p>Rencana input HID: barcode satuan + Enter. Scan POS dan pembelian existing tetap dipertahankan.</p><span class="tag green">Tidak mengubah stok saat scan</span></div></section><section><h2>Perlu perhatian</h2><div class="state"><strong>Gateway belum dipasangkan</strong><p>Tidak ada service atau koneksi printer yang berjalan dari mockup ini.</p></div><div class="state"><strong>Uji fisik belum dilakukan</strong><p>Hasil simulasi tidak membuktikan USB, Bluetooth atau barcode pada kertas bekerja.</p></div><button disabled title="Ilustrasi aksi setelah implementasi dan approval">Uji label demo</button></section></div>
+          <section class="band"><h2>Alur yang diusulkan</h2><p>Pilih barang dan satuan &gt; periksa label &gt; buat job berizin &gt; kirim melalui adapter sesuai profil &gt; scan-back hasil fisik.</p><small class="muted">Cetak struk browser tetap seperti sekarang. Tidak ada aktivasi atau perubahan checkout.</small></section>
+        </section>
+        <section class="panel" id="devices-panel" aria-label="Terminal dan printer">
+          <div class="heading"><h2>Terminal dan printer</h2><button disabled>Tambah perangkat</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Nama</th><th>Profil</th><th>Assignment</th><th>Status</th></tr></thead><tbody><tr><td>Kasir-01 (demo)</td><td>Windows browser</td><td>Instalasi toko ini</td><td><span class="tag">Belum dipasangkan</span></td></tr><tr><td>CASHCOW CT420D</td><td>Label TSPL/CPCL</td><td>Belum ada gateway</td><td><span class="tag amber">Fisik pending</span></td></tr><tr><td>Printer struk</td><td>Belum ditentukan</td><td>Tidak ada</td><td><span class="tag">Belum didukung</span></td></tr></tbody></table></div>
+          <div class="state error"><strong>Akses pengaturan ditolak</strong><p>Contoh state: pengguna tanpa permission tidak dapat mengubah assignment atau pairing. Backend wajib menolak, bukan hanya menyembunyikan tombol.</p></div>
+          <div class="state"><strong>Model/protokol tidak sesuai</strong><p>CT420D tidak menerima job ESC/POS, cutter atau cash drawer. Tidak ada pilihan cabang atau tenant.</p></div>
+        </section>
+        <section class="panel" id="scanner-panel" aria-label="Uji scanner virtual">
+          <h2>Uji scanner virtual</h2><div class="columns"><div><div class="form-grid"><label class="field">Gudang (contoh)<input value="Gudang Utama" readonly></label><label class="field">Pelanggan (contoh)<input value="Pelanggan Eceran" readonly></label><label class="field wide">Barcode satuan<input value="DEMO-CCTV-2MP-UNIT" readonly></label></div><div class="actions band"><button class="primary" disabled>Simulasikan scan + Enter</button><span class="tag">Tanpa koneksi hardware</span></div><div class="table-wrap"><table><thead><tr><th>Input simulasi</th><th>Hasil yang diharapkan</th></tr></thead><tbody><tr><td>Kode sama dua kali</td><td>Qty +2, bukan debounce yang menghapus scan kedua</td></tr><tr><td>0012345</td><td>Nol awal tetap dipertahankan</td></tr><tr><td>Modal pembayaran terbuka</td><td>Scan tidak mengambil fokus pembayaran</td></tr></tbody></table></div></div><div><div class="state error"><strong>Barcode tidak ditemukan</strong><p>Contoh error. Tidak membuat barang otomatis atau mengubah transaksi.</p></div><div class="state"><strong>Scanner terputus (simulasi)</strong><p>Input manual existing tetap tersedia. Tidak mengklaim status Bluetooth nyata.</p></div></div></div>
+        </section>
+        <section class="panel" id="labels-panel" aria-label="Label produk">
+          <h2>Label produk / CT420D</h2><div class="columns"><div><div class="form-grid"><label class="field wide">Barang (autocomplete kelak)<input value="Kamera CCTV IP 2 MP - DEMO" readonly></label><label class="field">Satuan<input value="UNIT" readonly></label><label class="field">Template<select disabled><option>Kode produk</option><option>Harga produk</option></select></label><label class="field">Lebar x tinggi (contoh mm)<input value="90 x 40" readonly></label><label class="field">Jumlah label<input value="1" readonly></label></div><div class="state band"><strong>Ukuran contoh, belum profil media tervalidasi</strong><p>Harga opsional kelak memakai satuan dan level pelanggan pilihan, bukan harga cabang. Margin/gap/printable width menunggu manual dan UAT.</p></div><div class="actions"><button class="primary" disabled>Buat job label demo</button><button disabled>Cetak browser (dialog)</button></div></div><div><h3>Pratinjau rancangan</h3><div class="label-preview"><strong>Kamera CCTV IP 2 MP - DEMO</strong><p>UNIT / SKU DEMO-CCTV-2MP</p><div class="barcode-space">Area Code128<br>Ilustrasi tata letak, bukan barcode untuk dipindai</div><code>DEMO-CCTV-2MP-UNIT</code></div><small class="muted">Preview belum menghasilkan TSPL/CPCL. Tidak ada cetak atau scan-back nyata.</small></div></div>
+        </section>
+        <section class="panel" id="queue-panel" aria-label="Antrean cetak">
+          <div class="heading"><h2>Antrean cetak (contoh status)</h2><label class="field">Cari job<input placeholder="Nomor job / nama barang" readonly></label></div>
+          <div class="table-wrap"><table><thead><tr><th>Job demo</th><th>Tujuan</th><th>Status transport</th><th>Tindakan</th></tr></thead><tbody><tr><td>LABEL-DEMO-001<br><small>Kamera CCTV / UNIT</small></td><td>CT420D</td><td><span class="tag">Menunggu gateway</span></td><td>Belum terkirim</td></tr><tr><td>LABEL-DEMO-002<br><small>MCB / UNIT</small></td><td>CT420D</td><td><span class="tag green">Diterima transport (contoh)</span></td><td>Bukan bukti tercetak</td></tr><tr><td>LABEL-DEMO-003<br><small>Kabel UTP / ROLL</small></td><td>CT420D</td><td><span class="tag amber">Tidak pasti / uncertain</span></td><td>Periksa fisik sebelum ulang</td></tr><tr><td>LABEL-DEMO-004<br><small>Adaptor / UNIT</small></td><td>CT420D</td><td><span class="tag red">Gagal sebelum kirim</span></td><td>Printer offline / media habis (simulasi)</td></tr></tbody></table></div>
+          <div class="pagination"><span>Menampilkan 1-4 dari 4 contoh</span><span><label>Baris <select disabled><option>10</option><option>25</option><option>50</option><option>100</option></select></label> <button disabled aria-label="Halaman pertama">&laquo;</button> <button disabled aria-label="Halaman sebelumnya">&lsaquo;</button> 1 <button disabled aria-label="Halaman berikutnya">&rsaquo;</button> <button disabled aria-label="Halaman terakhir">&raquo;</button></span></div>
+          <div class="state"><strong>Status tidak pasti: jangan kirim ulang otomatis</strong><p>Kelak operator memeriksa hasil fisik, lalu mengajukan salinan berizin dan audited. Penjualan, pembayaran dan FIFO tidak diposting ulang.</p></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <details class="guide"><summary>Panduan halaman / Tutup</summary><h2>Panduan perangkat POS</h2><ol class="steps"><li>Ini rancangan, bukan pengaturan aktif. Fitur hardware tetap OFF.</li><li>Gunakan barcode milik satuan barang; scan tidak mengubah stok sebelum posting transaksi.</li><li>CT420D dipakai untuk label TSPL/CPCL, bukan struk ESC/POS.</li><li>Periksa preview, ukuran media dan jumlah sebelum job dibuat kelak.</li><li>Dikirim atau diterima transport belum berarti label sudah keluar atau terbaca.</li><li>Jika status uncertain, periksa hasil fisik sebelum meminta salinan.</li></ol><div class="state"><strong>Perangkat nyata belum diuji</strong><p>USB/Bluetooth, media dan hasil scan-back menunggu UAT terpisah. Tidak ada instruksi instalasi driver otomatis.</p></div></details>
+</body>
+</html>

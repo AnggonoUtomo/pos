@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Mockup konseptual workspace perangkat POS ukuran 16 banding 9">
+  <rect width="1600" height="900" fill="#eef2f7"/>
+  <rect x="0" y="0" width="255" height="900" fill="#172842"/>
+  <text x="32" y="60" fill="#ffffff" font-family="Arial, sans-serif" font-size="33" font-weight="bold">POS SaaS</text>
+  <text x="32" y="95" fill="#9db5cd" font-family="Arial, sans-serif" font-size="18">Hardware Workspace</text>
+  <g font-family="Arial, sans-serif" font-size="21" fill="#a4bad0"><text x="34" y="184">◉  Ringkasan</text><rect x="17" y="225" width="221" height="54" rx="12" fill="#2b5da6"/><text x="34" y="259" fill="white">▣  Perangkat</text><text x="34" y="334">▥  Antrian Cetak</text><text x="34" y="410">▤  Tes Scanner</text><text x="34" y="486">◫  Panduan</text></g>
+  <rect x="255" y="0" width="1345" height="96" fill="#ffffff"/>
+  <text x="310" y="60" fill="#21334c" font-family="Arial, sans-serif" font-size="27" font-weight="bold">Pengaturan Hardware Kasir</text>
+  <rect x="1105" y="27" width="260" height="45" rx="14" fill="#f1f5fa" stroke="#dce4ef"/>
+  <text x="1131" y="57" font-size="18" fill="#7b8da6" font-family="Arial, sans-serif">⌕  Command palette</text>
+  <circle cx="1517" cy="49" r="21" fill="#9e66d0"/><text x="1506" y="57" fill="white" font-size="22" font-family="Arial, sans-serif">I</text>
+  <text x="310" y="156" fill="#182b47" font-size="33" font-weight="bold" font-family="Arial, sans-serif">Overview Perangkat</text>
+  <text x="310" y="192" fill="#71849b" font-size="19" font-family="Arial, sans-serif">Toko Melati  /  Cabang Sukamaju  /  Kasir-01 · Demo, bukan sistem existing</text>
+  <g font-family="Arial, sans-serif">
+    <rect x="310" y="230" width="389" height="140" rx="18" fill="#ffffff" stroke="#dce6ef"/><text x="340" y="276" fill="#66809a" font-size="19">PRINTER UTAMA</text><text x="340" y="320" fill="#243852" font-size="25" font-weight="bold">Thermal LAN 80 mm</text><text x="340" y="350" fill="#168d6b" font-size="18">● Gateway terhubung</text>
+    <rect x="721" y="230" width="389" height="140" rx="18" fill="#ffffff" stroke="#dce6ef"/><text x="751" y="276" fill="#66809a" font-size="19">SCANNER</text><text x="751" y="320" fill="#243852" font-size="25" font-weight="bold">USB HID / Bluetooth</text><text x="751" y="350" fill="#168d6b" font-size="18">● Siap uji scan</text>
+    <rect x="1132" y="230" width="389" height="140" rx="18" fill="#ffffff" stroke="#dce6ef"/><text x="1162" y="276" fill="#66809a" font-size="19">ANTRIAN CETAK</text><text x="1162" y="320" fill="#243852" font-size="25" font-weight="bold">2 pekerjaan</text><text x="1162" y="350" fill="#b77d22" font-size="18">● 1 butuh perhatian</text>
+    <rect x="310" y="396" width="819" height="375" rx="18" fill="white" stroke="#dce6ef"/><text x="344" y="446" fill="#203753" font-size="26" font-weight="bold">Daftar Printer</text><rect x="344" y="474" width="751" height="55" rx="10" fill="#e9f0f7"/><text x="365" y="509" fill="#596f8a" font-size="18">Nama perangkat</text><text x="770" y="509" fill="#596f8a" font-size="18">Status</text><text x="965" y="509" fill="#596f8a" font-size="18">Aksi</text>
+    <text x="365" y="578" fill="#203753" font-size="20">Thermal-LAN-80</text><text x="770" y="578" fill="#168d6b" font-size="18">Terhubung</text><rect x="960" y="547" width="100" height="43" rx="12" fill="#2563eb"/><text x="973" y="574" fill="#ffffff" font-size="17">Tes Cetak</text><line x1="344" y1="604" x2="1095" y2="604" stroke="#e1e7f0"/>
+    <text x="365" y="655" fill="#203753" font-size="20">Printer-58-Cadangan</text><text x="770" y="655" fill="#b77d22" font-size="18">Belum diuji</text><rect x="960" y="624" width="100" height="43" rx="12" fill="#dbe5f3"/><text x="975" y="651" fill="#526c8c" font-size="17">Atur</text>
+    <text x="365" y="727" fill="#7086a1" font-size="17">«   ‹ Prev    1   2   3   …   10    Next ›   »</text>
+    <rect x="1151" y="396" width="370" height="375" rx="18" fill="#ffffff" stroke="#dce6ef"/><text x="1183" y="445" fill="#203753" font-size="26" font-weight="bold">Tes Barcode</text><rect x="1183" y="482" width="306" height="62" rx="11" fill="#f5f8fb" stroke="#cbd8e5"/><text x="1201" y="523" fill="#a6b5c5" font-size="19">Scan di sini…</text><text x="1183" y="602" fill="#596f8a" font-size="18">Gunakan suffix Enter.</text><text x="1183" y="636" fill="#596f8a" font-size="18">Mode input aktif.</text><rect x="1183" y="683" width="306" height="55" rx="13" fill="#2563eb"/><text x="1261" y="718" fill="white" font-size="18">Panduan Scanner</text>
+  </g>
+  <rect x="310" y="803" width="1211" height="62" rx="15" fill="#fff5e7" stroke="#f1d4ab"/>
+  <text x="337" y="843" fill="#926128" font-size="19" font-family="Arial, sans-serif">Mockup konseptual — approval UI wajib, tidak menunjukkan tampilan POS yang sedang berjalan.</text>
+  <circle cx="1514" cy="824" r="39" fill="#225ed3"/><text x="1500" y="837" fill="#ffffff" font-size="35" font-family="Arial, sans-serif">?</text>
+</svg>
