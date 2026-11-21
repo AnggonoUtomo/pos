@@ -48,11 +48,12 @@
     getVersion2.3.0+1. User mengonfirmasi QZ terpasang/berjalan.
   - Skip beralasan: download/hash installer serta pemasangan/UAC oleh agent
     digantikan instalasi manual user sesuai APPROVAL. Startup user tidak diubah;
-    pemeriksaan HKCU tidak menemukan entri, lokasi startup lain belum dibuktikan.
+    pemeriksaan HKCU tidak menemukan entri, tetapi shortcut startup QZ ditemukan
+    dan targetnya sesuai executable. Reboot/login cycle tidak diuji.
 - [x] Uji koneksi native WSS dan daftar printer secara read-only.
   - Acceptance: tanpa TLS bypass/DB mutation; daftar OS bukan hardware proof.
   - Verification: native smoke; prompt user bila diperlukan.
-- [ ] Lengkapi REPORT, validator, allowlist dan status acceptance terpisah.
+- [x] Lengkapi REPORT, validator, allowlist dan status acceptance terpisah.
   - Acceptance: software/native install/native connection/physical dibedakan.
   - Verification: check_report, diff review, checklist berbasis bukti.
 - [ ] Commit dan push setelah scope selesai serta Git diizinkan.
@@ -86,3 +87,9 @@ Tidak mencentang physical checklist hanya dari instalasi QZ atau input manual.
 - Helper juga berjalan dalam mode pemeriksaan di Windows PowerShell5.1 tanpa
   install ulang. Cached flags hardware ON/printing OFF; native report URL404,
   TLS valid dan output privat ignored.
+- Native startup shortcut menunjuk executable QZ yang benar, diperiksa baca-saja;
+  agent tidak mengubah shortcut/registry/trust. Installer baru oleh agent tidak
+  dijalankan; native installation diambil alih user sesuai APPROVAL.
+- PLAN/REPORT validator, frozen fingerprint dan exact allowlist PASS;
+  95 link relatif valid, git diff --check PASS. Regresi backend012 dipakai
+  kembali karena tidak ada file backend/contract/transaksi berubah.

@@ -13,8 +13,16 @@ installer/download/upgrade atau mengubah trust/startup. Source autodiscovery
 workspace, tes scanner keyboard dan helper setup Windows/panduan Linux selesai.
 Native smoke read-only PASS:2.3.0+1,6 printer OS, signature valid/QZ Industries,
 tanpa cetak; artifact qz-setup-08d4c7d4af43e493 privat, browser ditutup.
-Typecheck/lint/build2975/guides34/unit PASS; QA browser akhir berjalan.
-Tidak ada perubahan backend/database/.env/flag print. Lanjut checklist013.
+Typecheck/lint/build2975/guides34/unit PASS; QA browser akhir12 cek PASS pada
+hardware-label-409605eb9fc1ba58, fingerprint QA identik, server/browser ditutup.
+Startup shortcut QZ target valid diperiksa baca-saja; reboot tidak diuji.
+Source commit d00cb82; REPORT013 tersedia, penutupan Git berjalan.
+Tidak ada perubahan backend/database/.env/flag print.
+
+User meminta download driver CT420D ke project, bukan install. Penelusuran
+resmi belum mencocokkan model; katalog Cashcow menampilkan CT-428/CT-428S.
+Pertanyaan foto label/model atau link pembelian sudah diajukan. Tunggu bukti
+model, jangan menebak compatible driver atau download installer pihak ketiga.
 
 TASK-HW-012 APPROVED dan COMPLETE; implementasi dipush8aa0c86, origin/main
 diverifikasi. Workspace https://pos.test/platform/hardware, scanner ON/printing OFF.

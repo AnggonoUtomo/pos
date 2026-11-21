@@ -7,8 +7,15 @@ desktop disiapkan pada PC ini dan memilih scanner keyboard langsung scan + tes
 kesiapan. PLAN exact33 path APPROVED beserta Git; user mengambil alih instalasi
 manual QZ, jadi agent tidak download/install/upgrade kedua. Source/helper/docs
 selesai, native read-only PASS (2.3.0+1,6 printer, tanpa print), QA browser
-akhir sedang berjalan. Lanjut dari checklist013; jangan mengubah trust/startup
-OS user atau menyalakan cetak fisik.
+akhir12 cek PASS. [REPORT013](tasks/TASK-HW-013/REPORT.md) tersedia; penutupan
+Git berjalan. Jangan mengubah trust/startup OS user atau menyalakan cetak fisik.
+
+Permintaan terbaru: cari/unduh driver CT420D dan simpan dalam project, tanpa
+install. Discovery web belum menemukan kecocokan model/download resmi; katalog
+[katalog Cashcow](https://www.cashcow.co.id/our-products/thermal-printer/)
+menampilkan CT-428/CT-428S. Tunggu foto label/model atau
+link pembelian dari user, jangan mengganti driver dengan model mirip. Belum
+download/install driver, belum ada perubahan source atau schema untuk permintaan ini.
 
 TASK-HW-002 scanner virtual selesai. Lihat
 [REPORT](tasks/TASK-HW-002/REPORT.md) dan [checklist](tasks/TASK-HW-002/tasks.md).
