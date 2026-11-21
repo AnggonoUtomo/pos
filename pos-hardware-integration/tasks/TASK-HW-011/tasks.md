@@ -29,7 +29,7 @@
 - [x] Smoke HTTPS login/akses guest dan siapkan rollback.
   - Acceptance: feature ON terverifikasi tetapi tetap membutuhkan login/permission.
   - Verification: HTTP smoke; tidak membuat transaksi/akun uji toko.
-- [ ] Lengkapi REPORT, checklist, metadata, commit dan push sesuai izin.
+- [x] Lengkapi REPORT, checklist, metadata, commit dan push sesuai izin.
   - Acceptance: PHYSICAL_PENDING, printer/gateway tidak diklaim siap.
   - Verification: check_report, diff allowlist, status Git/file user.
 
@@ -52,3 +52,5 @@ Tidak ada checklist implementasi diisi sebelum pekerjaan benar-benar dilakukan.
   URL salinan privat404. Tidak ada login atau transaksi uji pada database toko.
 - REPORT mencatat batas physical pending dan bukti rollback yang tidak disimulasikan
   dengan mematikan ulang fitur toko.
+- Implementasi dipush pada826056de189b2b3aa3b857fca7a189edd8a1965c;
+  origin/main diverifikasi identik. Empat blob LSP staged user tetap sama.

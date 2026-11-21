@@ -34,3 +34,5 @@ guard subset 4 test/26 assertion setelah isolasi flag test, browser 12 cek,
 fingerprint 71 tabel latihan identik. Tidak mengulang gate source yang sama.
 HTTPS login200, scanner guest302 ke login dan resolve guest401; TLS tervalidasi.
 Tidak mengubah akun, master, transaksi atau permission toko.
+Implementasi aktivasi sudah dipush pada commit `826056d`; origin/main
+diverifikasi sama. .env, cache dan backup privat tidak masuk Git.

@@ -138,5 +138,8 @@ restore produksi. Tidak mengubah ACL/OS atau menghapus snapshot otomatis.
 
 COMPLETE untuk scope TASK-HW-011: diagnostik scanner aktif di production dan
 guard/QA/deployment smoke lulus. PLAN lama tetap snapshot; hardware fisik tetap
-pending. Commit/push TASK-HW-00296bddfe sudah diverifikasi pada origin/main
-sebelum perubahan ini. Save point task aktivasi dibuat sesudah review akhir.
+pending. Commit/push TASK-HW-002 96bddfe sudah diverifikasi pada origin/main
+sebelum perubahan ini. Implementasi aktivasi kemudian di-commit/push pada
+826056de189b2b3aa3b857fca7a189edd8a1965c; origin/main diverifikasi identik.
+Review akhir exact21 path allowlist, hash PLAN, report browser dan empat blob
+LSP staged user PASS. Checklist Git diisi sesudah push benar-benar berhasil.

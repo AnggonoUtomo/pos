@@ -8,7 +8,7 @@
 | Discovery dan mockup TASK-HW-001 | COMPLETE; approved, commit5e3b4a5 sudah di origin/main |
 | Organisasi POS | Single company + multi-gudang; tanpa tenant/multi-cabang sesuai user |
 | TASK-HW-002 scanner virtual | COMPLETE; commit96bddfe sudah di origin/main |
-| TASK-HW-011 akses produksi scanner | COMPLETE, APPROVED; diagnostik ON di instalasi toko |
+| TASK-HW-011 akses produksi scanner | COMPLETE, APPROVED; diagnostik ON, implementasi dipush826056d |
 | Source module POS existing | Tidak diubah; penambahan module Platform/Hardware baru saja |
 | Flag hardware | Default source OFF; instalasi toko ON, cached production terverifikasi |
 | Permission | inventory.view existing; tidak ada grant/role baru pada toko |

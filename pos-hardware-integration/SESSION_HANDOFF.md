@@ -53,6 +53,7 @@ Aktivasi: [REPORT TASK-HW-011](tasks/TASK-HW-011/REPORT.md).
 
 TASK-HW-011 COMPLETE: gate39 test/449 assertion, guard final4/26, build2959,
 guides33, browser12 production-like dan fingerprint71 tabel identik PASS.
+Implementasi dipush826056d; origin/main diverifikasi, LSP user tetap terpisah.
 Artefak final hardware-scanner-9d2ca02114c52165; server/browser sudah ditutup.
 MCP tidak tersedia pada kelanjutan; Playwright existing dipakai sebagai fallback.
 Backup privat3 file hash-identik pada hardware-activation-a9813b349f6c408aaaab9108d7db41da,
