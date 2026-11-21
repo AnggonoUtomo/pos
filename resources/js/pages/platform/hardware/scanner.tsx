@@ -36,10 +36,10 @@ export default function ScannerWorkspace() {
     }, [hasResults]);
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Uji scanner virtual', href: route('platform.hardware.scanner.index') }]}>
-            <Head title="Uji scanner virtual" />
+        <AppLayout breadcrumbs={[{ title: 'Uji scanner', href: route('platform.hardware.scanner.index') }]}>
+            <Head title="Uji scanner" />
             <WorkspaceShortcutDropdown
-                title="Uji scanner virtual"
+                title="Uji scanner"
                 description="Perangkat POS"
                 shortcuts={[
                     { label: 'Fokus scanner', description: 'Fokus input kode', keys: ['Alt', 'S'] },
@@ -57,7 +57,7 @@ export default function ScannerWorkspace() {
                     </div>
                     <Badge variant="outline" className="gap-1.5 text-amber-700 dark:text-amber-300">
                         <Activity className="size-3.5" />
-                        Virtual / fisik belum diuji
+                        Perangkat fisik belum diuji
                     </Badge>
                 </header>
                 <div className="grid min-w-0 gap-6 border-y border-[var(--app-border)] bg-[var(--app-panel)] px-4 py-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">

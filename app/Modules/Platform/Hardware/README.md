@@ -6,7 +6,7 @@ writer, payment writer, job, driver atau gateway pada slice ini.
 
 - Flag `pos_hardware.enabled` default false, bersumber dari
   `POS_HARDWARE_ENABLED` melalui Config/hardware.php.
-- Hanya local/testing; production selalu404 bahkan jika flag true.
+- Flag ON mendukung production; OFF selalu404 termasuk untuk super-system.
 - Route: GET `/platform/hardware/scanner` dan `/resolve?code=...`.
 - Auth web/verified existing dan permission inventory.view. Tidak ada grant baru.
 - Query mengonsumsi public SaleItemCatalog milik Inventory/Items, tanpa model
@@ -16,4 +16,5 @@ writer, payment writer, job, driver atau gateway pada slice ini.
 
 Dokumen canonical: `docs/modules/Platform/Hardware/`.
 Persetujuan dan bukti: `pos-hardware-integration/tasks/TASK-HW-002/`.
+Aktivasi produksi diagnostik: `pos-hardware-integration/tasks/TASK-HW-011/`.
 Tidak ada klaim USB/Bluetooth atau hardware fisik sudah teruji.

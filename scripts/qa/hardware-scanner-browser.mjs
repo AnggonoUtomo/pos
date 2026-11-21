@@ -44,7 +44,7 @@ await writeFile(path.join(qa, 'before.json'), JSON.stringify(before, null, 2));
 const bootCheck = fixture('verify');
 assert.deepEqual(bootCheck.table_fingerprints, before.table_fingerprints, 'Snapshot setup dan bootstrap baru harus identik.');
 const server = spawn('php', ['-S', `127.0.0.1:${port}`, path.join(root, 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], {
-    cwd: path.join(root, 'public'), env, stdio: 'ignore', windowsHide: true,
+    cwd: path.join(root, 'public'), env: { ...env, APP_ENV: 'production' }, stdio: 'ignore', windowsHide: true,
 });
 const report = { status: 'RUNNING', software: 'NOT_RUN', physical: 'PHYSICAL_PENDING', artifacts: qa, checks: [], errors: [], expectedHttpErrors: 0 };
 let browser;
@@ -133,7 +133,7 @@ try {
     check('Bounded serial queue and clear abort/stale-response isolation');
 
     await page.keyboard.press('F1');
-    await page.getByRole('heading', { name: 'Panduan uji scanner virtual', exact: true }).waitFor();
+    await page.getByRole('heading', { name: 'Panduan uji scanner', exact: true }).waitFor();
     const inputBefore = await page.locator('#hardware-scan-code').inputValue();
     await page.keyboard.press('Alt+s');
     assert.notEqual(await page.evaluate(() => document.activeElement?.id), 'hardware-scan-code');

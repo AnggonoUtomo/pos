@@ -5,7 +5,8 @@
 | Task | Slice | Status | Approval |
 | --- | --- | --- | --- |
 | [TASK-HW-001](tasks/TASK-HW-001/README.md) | Discovery dan mockup saja | COMPLETE; dipush5e3b4a5 | APPROVED untuk discovery/desain |
-| [TASK-HW-002](tasks/TASK-HW-002/README.md) | Scanner virtual read-only | COMPLETE; VIRTUAL_PASSED, PHYSICAL_PENDING; izin Git diterima | APPROVED untuk exact PLAN dan QA disposable; commit/push diizinkan terpisah |
+| [TASK-HW-002](tasks/TASK-HW-002/README.md) | Scanner virtual read-only | COMPLETE; VIRTUAL_PASSED, PHYSICAL_PENDING; dipush96bddfe | APPROVED untuk exact PLAN dan QA disposable; commit/push diizinkan terpisah |
+| [TASK-HW-011](tasks/TASK-HW-011/README.md) | Akses produksi diagnostik scanner | COMPLETE; production ON, VIRTUAL_PASSED, PHYSICAL_PENDING | APPROVED untuk PLAN source/QA/.env/cache |
 
 ## Usulan Bundle, Bukan Task Aktif
 
@@ -22,4 +23,4 @@
 
 Nomor usulan tidak memberi izin coding. Setiap slice baru membutuhkan PLAN,
 allowlist dan approval khusus. Tidak ada scope tenant/multi-cabang. Jangan
-menutup physical gate dari hasil simulasi atau mengaktifkan produksi otomatis.
+menutup physical gate dari hasil simulasi atau mengaktifkan fitur lain otomatis.

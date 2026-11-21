@@ -1,4 +1,4 @@
-# Spesifikasi Uji Scanner Virtual
+# Spesifikasi Uji Scanner
 
 ## HTTP
 
@@ -8,7 +8,8 @@ printable maksimal64 karakter; trim mengikuti existing, nol awal tetap teks.
 Field asing ditolak422. Endpoint resolve dibatasi120 request/menit menggunakan
 throttle existing. Session web/verified serta can:inventory.view per action;
 tanpa permission403, guest401/redirect sesuai jenis request. Feature/env gate
-di luar Gate menolak404 saat OFF atau bukan local/testing, termasuk super-system.
+di luar Gate menolak404 saat OFF, termasuk super-system. Saat ON, akses juga
+didukung pada production tanpa melewati auth/verified/permission.
 
 Response200 hanya item_id, sku, name, unit_id, unit_name dan barcode nullable.
 Tidak mengirim HPP/harga/stok/customer/token atau field persistence. Unknown,
@@ -48,4 +49,6 @@ Fingerprint seluruh business/master/grant/audit dibandingkan sebelum/sesudah
 uji lookup; session/cache QA dikecualikan. Lihat REPORT task untuk hasil aktual.
 
 Status software yang lulus hanya meliputi slice scanner virtual. Physical
-HC-4208DB dan CT420D tetap PHYSICAL_PENDING; production/pilot belum diizinkan.
+HC-4208DB dan CT420D tetap PHYSICAL_PENDING; pilot perangkat belum diizinkan.
+Aktivasi diagnostik production memiliki PLAN/approval tersendiri TASK-HW-011;
+izin akses halaman tidak menjadi izin pilot printer atau verifikasi hardware.
