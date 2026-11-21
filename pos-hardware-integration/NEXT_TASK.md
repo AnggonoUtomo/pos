@@ -10,16 +10,17 @@ Tidak ada coding task berikutnya yang diizinkan oleh penyelesaian ini.
    dan selesai: [REPORT](tasks/TASK-HW-011/REPORT.md). Halaman diagnostik ON di
    https://pos.test/platform/hardware/scanner; login/inventory.view wajib.
    Menunggu perangkat untuk UAT fisik, bukan mengklaim hardware sudah verified.
-2. Jika pemilik meminta kelanjutan label/gateway, susun PLAN exact-file
-   vertical slice tersendiri. Reuse barcode/katalog/cetak browser existing;
-   jangan mengubah checkout atau membuat OS runner diam-diam.
-3. Pastikan manual TSPL/CPCL sesuai CT420D tersedia sebelum command builder.
-   Driver/gateway nyata dan physical scan-back memerlukan izin/UAT tersendiri.
-4. FakeGateway/FakePrintTransport dan preview/snapshot baru dibuat bila punya
-   consumer dalam PLAN yang disetujui. Jangan menyebut scanner virtual sebagai
-   hardware USB/Bluetooth verified atau label printer siap produksi.
+2. [TASK-HW-012](tasks/TASK-HW-012/REPORT.md) telah disetujui dan diselesaikan:
+   workspace https://pos.test/platform/hardware, SDK QZ, profil/preview/job/history
+   dan tes scanner tersedia. Migration/permission/cache diaktifkan setelah backup
+   verified, tanpa grant/data bisnis berubah. Physical print tetap OFF.
+3. Langkah perangkat berikutnya menunggu arahan pemilik dan hardware: admin
+   memasang QZ/driver manual, uji media/ukuran/cetak/scan-back, lalu putuskan pilot.
+   Driver-image bukan TSPL/CPCL raw; jangan menebak command firmware.
+4. Advisory dependency existing dicatat di REPORT012. Perbaikannya memerlukan
+   scope/approval tersendiri; tidak menjalankan audit fix atau fitur lain otomatis.
 
 Tetap single company, multi-gudang, tanpa tenant/cabang. Flag toko ON hanya
-untuk diagnostik scanner; printer/gateway belum dibuat. Jangan mengubah .env,
+untuk akses module/diagnostik, bukan pengiriman cetak. Jangan mengubah .env,
 root AGENTS, module existing, dependency, database toko atau pending MVP
 di luar arahan user dan PLAN baru yang disetujui.

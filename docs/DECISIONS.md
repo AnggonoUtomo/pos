@@ -29,3 +29,7 @@ mengubah baseline arsitektur/domain.
 [ADR-019](decisions/ADR-019-OPERATIONAL-MVP-POSTING-AND-PRICING.md) menetapkan
 posting transfer/koreksi, diskon/pajak, penerimaan pembelian langsung lunas,
 serta snapshot identitas toko dalam scope empat paket MVP.
+
+[ADR-020](decisions/ADR-020-QZ-LABEL-GATEWAY.md) menetapkan gateway QZ manual,
+driver-image label dan lifecycle pengiriman konservatif tanpa mengubah checkout.
+Print default OFF; perangkat fisik tetap memerlukan UAT.

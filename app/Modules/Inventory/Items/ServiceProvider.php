@@ -5,6 +5,7 @@ namespace App\Modules\Inventory\Items;
 use App\Modules\Inventory\Items\Application\Contracts\ItemClassificationLookup;
 use App\Modules\Inventory\Items\Application\Contracts\ItemClassificationRepository;
 use App\Modules\Inventory\Items\Application\Contracts\ItemImageStore;
+use App\Modules\Inventory\Items\Application\Contracts\ItemLabelCatalog;
 use App\Modules\Inventory\Items\Application\Contracts\ItemPricingLookup;
 use App\Modules\Inventory\Items\Application\Contracts\ItemRepository;
 use App\Modules\Inventory\Items\Application\Contracts\ItemStockLookup;
@@ -12,6 +13,7 @@ use App\Modules\Inventory\Items\Application\Contracts\ItemUnitUsage;
 use App\Modules\Inventory\Items\Application\Contracts\SaleItemCatalog;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Models\ItemMedia;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories\EloquentItemClassificationRepository;
+use App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories\EloquentItemLabelCatalog;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories\EloquentItemPricingLookup;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories\EloquentItemRepository;
 use App\Modules\Inventory\Items\Infrastructure\Persistence\Repositories\EloquentItemStockLookup;
@@ -25,6 +27,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(ItemLabelCatalog::class, EloquentItemLabelCatalog::class);
         $this->app->bind(ItemClassificationRepository::class, EloquentItemClassificationRepository::class);
         $this->app->bind(ItemClassificationLookup::class, EloquentItemClassificationRepository::class);
         $this->app['config']->set('media-library.media_model', ItemMedia::class);

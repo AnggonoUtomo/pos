@@ -37,6 +37,7 @@ export interface SharedData {
     auth: Auth;
     printing?: { paper: ReceiptPaper } | null;
     tables?: { default_per_page: number } | null;
+    hardware?: { enabled: boolean; printing_enabled: boolean } | null;
     [key: string]: unknown;
 }
 

@@ -1,7 +1,7 @@
 import { NavMain } from '@/components/nav-main';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavGroup } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavGroup, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import {
     ArrowRightLeft,
     BarChart3,
@@ -13,6 +13,7 @@ import {
     LayoutGrid,
     Package,
     PackageSearch,
+    Printer,
     ReceiptText,
     RotateCcw,
     Settings,
@@ -232,6 +233,11 @@ const mainNavGroups: NavGroup[] = [
 let sidebarScrollTop = 0;
 
 export function AppSidebar() {
+    const { hardware } = usePage<SharedData>().props;
+    const groups = mainNavGroups.map((group) => group.title === 'Platform' && hardware?.enabled ? {
+        ...group,
+        items: [...group.items, { title: 'Perangkat POS', url: '/platform/hardware', icon: Printer, badgeTone: 'emerald' as const, permission: 'platform.hardware.view' }],
+    } : group);
     const contentRef = useRef<HTMLDivElement>(null);
     useLayoutEffect(() => {
         const content = contentRef.current;
@@ -268,7 +274,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent ref={contentRef} className="scrollbar-none gap-3 pb-5 group-data-[collapsible=icon]:overflow-auto">
-                <NavMain groups={mainNavGroups} />
+                <NavMain groups={groups} />
             </SidebarContent>
         </Sidebar>
     );

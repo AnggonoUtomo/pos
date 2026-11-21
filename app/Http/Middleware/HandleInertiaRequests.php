@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\Platform\Hardware\Application\Contracts\HardwareAvailability;
 use App\Modules\Platform\OperationalSettings\Application\Contracts\PrintingPreferences;
 use App\Modules\Platform\OperationalSettings\Application\Contracts\TablePreferences;
 use Illuminate\Foundation\Inspiring;
@@ -43,6 +44,8 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             'name' => config('app.name'),
+            'hardware' => fn () => $user ? ['enabled' => app(HardwareAvailability::class)->enabled(),
+                'printing_enabled' => app(HardwareAvailability::class)->printingEnabled()] : null,
             'printing' => fn () => $user ? app(PrintingPreferences::class)->printing() : null,
             'tables' => fn () => $user ? ['default_per_page' => app(TablePreferences::class)->defaultPerPage()] : null,
             'quote' => ['message' => trim($message), 'author' => trim($author)],

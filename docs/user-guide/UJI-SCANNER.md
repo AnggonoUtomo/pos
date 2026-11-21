@@ -56,3 +56,8 @@ backup konfigurasi privat. OFF kembali menutup halaman tanpa mengubah data.
 Jangan mengubah APP_ENV/debug, memasang runner OS atau membuat transaksi uji
 pada data toko hanya untuk memeriksa scanner. Status aktivasi instalasi dan
 hasil QA ada pada TASK-HW-011; cetak CT420D masih pekerjaan terpisah.
+
+Workspace [Perangkat POS](PRINTER-LABEL.md) menambahkan konfigurasi QZ,
+pratinjau label dan tes scan-back. Ini terpisah dari lookup satuan jual pada
+halaman ini. Diagnostik ON tidak mengaktifkan print fisik; flag print dan UAT
+tersendiri tetap diperlukan.

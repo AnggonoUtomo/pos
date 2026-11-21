@@ -8,6 +8,6 @@ class HardwareDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        // Tidak memiliki data persisten; fixture katalog hanya dibuat oleh QA disposable.
+        // Printer nyata dipilih admin; profil/job virtual hanya dibuat oleh fixture QA disposable.
     }
 }

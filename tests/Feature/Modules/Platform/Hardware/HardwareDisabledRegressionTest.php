@@ -60,10 +60,19 @@ class HardwareDisabledRegressionTest extends TestCase
 
     public function test_off_does_not_install_navigation_or_global_keyboard_capture(): void
     {
-        foreach (['resources/js/components/app-sidebar.tsx', 'resources/js/components/command-palette.tsx',
-            'resources/js/pages/sales/pos/index.tsx', 'resources/js/pages/sales/pos/hooks/use-pos-scanner.ts'] as $path) {
+        config(['pos_hardware.enabled' => false, 'pos_hardware.printing_enabled' => true]);
+        $this->actingAs(User::factory()->create());
+        $this->withoutVite()->get('/settings/profile')->assertOk()->assertViewHas('page',
+            fn (array $page) => $page['props']['hardware'] === ['enabled' => false, 'printing_enabled' => false]);
+        $this->getJson('/platform/hardware')->assertNotFound();
+        $this->postJson('/platform/hardware/labels', [])->assertNotFound();
+        foreach (['resources/js/pages/sales/pos/index.tsx', 'resources/js/pages/sales/pos/hooks/use-pos-scanner.ts'] as $path) {
             $this->assertStringNotContainsString('platform.hardware', file_get_contents(base_path($path)));
             $this->assertStringNotContainsString('/platform/hardware', file_get_contents(base_path($path)));
+        }
+        foreach (['resources/js/components/app-sidebar.tsx', 'resources/js/components/command-palette.tsx'] as $path) {
+            $this->assertStringContainsString('hardware?.enabled', file_get_contents(base_path($path)));
+            $this->assertStringNotContainsString('qz-tray', file_get_contents(base_path($path)));
         }
     }
 }

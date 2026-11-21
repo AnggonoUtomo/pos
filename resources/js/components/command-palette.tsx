@@ -2,8 +2,9 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { usePermission } from '@/hooks/use-permission';
+import type { SharedData } from '@/types';
 import { cn } from '@/lib/utils';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import {
     ArrowRightLeft,
     BarChart3,
@@ -15,6 +16,7 @@ import {
     LayoutGrid,
     Package,
     PackageSearch,
+    Printer,
     ReceiptText,
     RotateCcw,
     Search,
@@ -249,6 +251,7 @@ const commandItems = [
 ];
 
 export function CommandPalette() {
+    const { hardware } = usePage<SharedData>().props;
     const { can, canAny } = usePermission();
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
@@ -267,19 +270,21 @@ export function CommandPalette() {
 
     const filteredItems = useMemo(() => {
         const normalizedQuery = query.trim().toLowerCase();
+        const available = hardware?.enabled ? [...commandItems, { title: 'Perangkat POS', description: 'Printer label dan tes scanner',
+            url: '/platform/hardware', permission: 'platform.hardware.view', icon: Printer, tone: 'text-emerald-600 dark:text-emerald-300' }] : commandItems;
 
         if (!normalizedQuery) {
-            return commandItems.filter(
+            return available.filter(
                 (item) => !item.permission || (typeof item.permission === 'string' ? can(item.permission) : canAny(item.permission)),
             );
         }
 
-        return commandItems.filter(
+        return available.filter(
             (item) =>
                 (!item.permission || (typeof item.permission === 'string' ? can(item.permission) : canAny(item.permission))) &&
                 `${item.title} ${item.description}`.toLowerCase().includes(normalizedQuery),
         );
-    }, [query, can, canAny]);
+    }, [query, can, canAny, hardware?.enabled]);
 
     const runCommand = (item: (typeof commandItems)[number]) => {
         if (!item.url) {

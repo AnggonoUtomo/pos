@@ -29,6 +29,8 @@ Peringatan: [Stok minimum](STOK-MINIMUM.md), batas per barang/gudang dan
 ringkasan dasbor tanpa blokir transaksi; belum digabungkan ke PDF lama.
 Harga: [Harga beli, markup dan harga jual](HARGA-BARANG.md), level dinamis dan
 preview persen sebelum simpan; belum digabungkan ke PDF lama.
+Hardware: [Gateway label dan tes scanner](PRINTER-LABEL.md), konfigurasi QZ,
+pratinjau dan status pengiriman; belum digabungkan ke PDF lama.
 
 [Unduh buku global PDF](../../output/pdf/user-guide/panduan-global-pos.pdf).
 PDF global berisi alur global, panduan modul, serta role/akses. Gunakan daftar

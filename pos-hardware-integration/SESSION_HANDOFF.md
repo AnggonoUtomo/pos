@@ -4,6 +4,23 @@
 
 ## Kondisi Aktual
 
+TASK-HW-012 APPROVED dan implementasi/aktivasi aplikasi COMPLETE; penutupan Git
+berjalan. Workspace https://pos.test/platform/hardware, scanner ON/printing OFF.
+QZ SDK2.3.0 saja terpasang, bukan aplikasi/driver OS. Gate79 test/774 assertion,
+typecheck/scoped lint/Pint/build2975/guides34 dan browser12 cek PASS. Artefak
+final hardware-label-1f955754a7cfea6d; semua server/browser QA sudah ditutup.
+Backup pos-20261121-214732-3e2d347b.sql restore-disposable identik PASS; dua
+cache privat hardware-label-deploy-46b06cb33d5a7ca8 hash-identik. Migration
+Hardware batch37 Ran,4 permission baru,3 tabel kosong, fingerprint69 tabel
+existing serta baris permission/migration lama identik, role/grant tidak berubah.
+HTTPS login200/workspace guest302/catalog guest401/TLS valid/backup404.
+Lihat [REPORT012](tasks/TASK-HW-012/REPORT.md) untuk bukti dan residual advisory
+npm existing. Physical PHYSICAL_PENDING. Jangan ulang gate source identik atau
+nyalakan print/pasang QZ/driver/sertifikat/service tanpa arahan.
+
+Bagian di bawah mencatat baseline scanner sebelum TASK-HW-012; batas "belum
+ada gateway/tabel" hanya berlaku pada baseline lama, bukan status kini.
+
 Repo C:\laragon\www\pos telah diperiksa. TASK-HW-001 discovery/mockup disetujui
 dan dipush pada5e3b4a51ca3da1689ee224ffc393f6971b564984. User mengoreksi bundle:
 single company + multi-gudang, tidak menggunakan tenant atau cabang.
@@ -58,7 +75,14 @@ Artefak final hardware-scanner-9d2ca02114c52165; server/browser sudah ditutup.
 MCP tidak tersedia pada kelanjutan; Playwright existing dipakai sebagai fallback.
 Backup privat3 file hash-identik pada hardware-activation-a9813b349f6c408aaaab9108d7db41da,
 di storage/app/private, ignored dan URL404. Jangan cetak/commit isi snapshot.
-Tunggu perangkat/arah user berikutnya, bukan ulang QA source yang sudah hijau.
+User kemudian meminta gateway/konfigurasi autodetect, mengonfirmasi CT420D
+label + HC-4208DB tanpa struk, serta memilih QZ Tray dipasang manual.
+[TASK-HW-012](tasks/TASK-HW-012/README.md) memuat PRD/PLAN/checklist;
+APPROVAL sekarang APPROVED. Jalur driver-image, bukan menebak TSPL/CPCL.
+PLAN83 exact path, npm SDK qz-tray2.3.0 saja, fake QA, deployment aplikasi
+telah dilakukan setelah backup verified; print fisik tetap OFF. Source/SDK,
+schema/seeder Hardware dan cache berubah sesuai allowlist, bukan .env/OS.
+Langkah berikutnya menunggu hardware/UAT dan arahan pemilik.
 Jangan menganggap approval
 TASK-HW-002 memberi izin task lain, install, service, live migration/seed,
 produksi, root AGENTS atau refactor source existing. Baca exact allowlist sebelum
