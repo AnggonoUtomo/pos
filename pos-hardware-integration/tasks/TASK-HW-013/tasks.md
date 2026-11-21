@@ -56,7 +56,7 @@
 - [x] Lengkapi REPORT, validator, allowlist dan status acceptance terpisah.
   - Acceptance: software/native install/native connection/physical dibedakan.
   - Verification: check_report, diff review, checklist berbasis bukti.
-- [ ] Commit dan push setelah scope selesai serta Git diizinkan.
+- [x] Commit dan push setelah scope selesai serta Git diizinkan.
   - Acceptance: file user tetap terpisah; hash remote cocok.
   - Verification: status/index/diff/log dan ls-remote.
 
@@ -93,3 +93,6 @@ Tidak mencentang physical checklist hanya dari instalasi QZ atau input manual.
 - PLAN/REPORT validator, frozen fingerprint dan exact allowlist PASS;
   95 link relatif valid, git diff --check PASS. Regresi backend012 dipakai
   kembali karena tidak ada file backend/contract/transaksi berubah.
+- Source d00cb82 dan report aa38d54 dipush; origin/main diverifikasi cocok.
+  Empat hash LSP staged identik dan lima LSP untracked tetap dipertahankan;
+  tidak ada artifact storage/installer/secret pada commit task.

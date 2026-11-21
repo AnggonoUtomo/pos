@@ -1,6 +1,6 @@
 # TASK-HW-013: Setup Awal QZ Dan Kesiapan Perangkat
 
-Status: COMPLETE untuk software/native verification; penutupan Git berjalan.
+Status: COMPLETE untuk software/native verification; commit/push berhasil.
 Tanggal: 21 November 2026. Module target: Platform/Hardware.
 
 User mengubah keputusan pemasangan QZ: ingin QZ terpasang pada PC ini agar
@@ -19,7 +19,8 @@ menjalankan installer/download/upgrade kedua atau mengubah trust/startup.
 Source autodiscovery dan kesiapan scanner, helper setup klien, panduan/ADR
 sudah dibuat dan QA akhir lulus. Tidak ada perubahan backend/database/.env/flag cetak.
 Native read-only PASS: QZ2.3.0+1 dan6 printer OS, tanpa cetak; browser final12
-cek PASS. Implementasi disimpan pada d00cb82, tanpa file LSP user.
+cek PASS. Implementasi d00cb82 dan report aa38d54 dipush, origin/main
+diverifikasi cocok, tanpa file LSP user. Physical gate tetap pending/OFF.
 
 Setelah exact PLAN disetujui, paket diselesaikan tanpa persetujuan ulang per
 langkah kecil. UAC/izin OS tetap memerlukan tindakan user jika diminta Windows.

@@ -7,8 +7,9 @@ desktop disiapkan pada PC ini dan memilih scanner keyboard langsung scan + tes
 kesiapan. PLAN exact33 path APPROVED beserta Git; user mengambil alih instalasi
 manual QZ, jadi agent tidak download/install/upgrade kedua. Source/helper/docs
 selesai, native read-only PASS (2.3.0+1,6 printer, tanpa print), QA browser
-akhir12 cek PASS. [REPORT013](tasks/TASK-HW-013/REPORT.md) tersedia; penutupan
-Git berjalan. Jangan mengubah trust/startup OS user atau menyalakan cetak fisik.
+akhir12 cek PASS. [REPORT013](tasks/TASK-HW-013/REPORT.md) tersedia; source
+d00cb82/report aa38d54 dipush dan remote diverifikasi. Jangan mengubah
+trust/startup OS user atau menyalakan cetak fisik.
 
 Permintaan terbaru: cari/unduh driver CT420D dan simpan dalam project, tanpa
 install. Discovery web belum menemukan kecocokan model/download resmi; katalog
