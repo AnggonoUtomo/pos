@@ -9,7 +9,7 @@
 | Organisasi POS | Single company + multi-gudang; tanpa tenant/multi-cabang sesuai user |
 | TASK-HW-002 scanner virtual | COMPLETE; commit96bddfe sudah di origin/main |
 | TASK-HW-011 akses produksi scanner | COMPLETE, APPROVED; diagnostik ON, implementasi dipush826056d |
-| TASK-HW-012 gateway label QZ | APPROVED; implementasi/QA/aktivasi aplikasi COMPLETE; penutupan Git berjalan |
+| TASK-HW-012 gateway label QZ | COMPLETE; APPROVED, implementasi dipush8aa0c86, origin/main diverifikasi |
 | Source module POS existing | Hanya seam Items contract/barcode helper dan shell yang diizinkan; alur transaksi tidak diubah |
 | Flag hardware | Default source OFF; instalasi toko ON, cached production terverifikasi |
 | Permission |4 key Hardware baru; inventory.view existing; role/grant toko tidak berubah |

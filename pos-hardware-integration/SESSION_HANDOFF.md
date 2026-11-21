@@ -4,8 +4,8 @@
 
 ## Kondisi Aktual
 
-TASK-HW-012 APPROVED dan implementasi/aktivasi aplikasi COMPLETE; penutupan Git
-berjalan. Workspace https://pos.test/platform/hardware, scanner ON/printing OFF.
+TASK-HW-012 APPROVED dan COMPLETE; implementasi dipush8aa0c86, origin/main
+diverifikasi. Workspace https://pos.test/platform/hardware, scanner ON/printing OFF.
 QZ SDK2.3.0 saja terpasang, bukan aplikasi/driver OS. Gate79 test/774 assertion,
 typecheck/scoped lint/Pint/build2975/guides34 dan browser12 cek PASS. Artefak
 final hardware-label-1f955754a7cfea6d; semua server/browser QA sudah ditutup.

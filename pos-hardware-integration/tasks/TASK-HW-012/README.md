@@ -1,6 +1,6 @@
 # TASK-HW-012: Gateway QZ Dan Konfigurasi Perangkat Label
 
-**Status:** Implementasi dan aktivasi aplikasi selesai; penutupan Git berjalan.
+**Status:** COMPLETE; implementasi dan aktivasi aplikasi selesai, commit/push berhasil.
 **Tanggal:** 21 November 2026.
 **Module utama:** Platform/Hardware.
 **Integrasi terbatas:** Inventory/Items, shell navigasi dan shared feature props.
@@ -35,6 +35,7 @@ Tiga tabel Hardware dan4 permission sudah diaktifkan setelah backup/restore
 disposable PASS; tidak ada grant atau perubahan data bisnis existing.
 Software VIRTUAL_PASSED, physical PHYSICAL_PENDING. Printing tetap OFF;
 QZ desktop/driver/cert tidak dipasang otomatis.
+Implementasi dipush pada8aa0c86; origin/main telah diverifikasi cocok.
 
 Setelah approval, increment dikerjakan sampai paket selesai tanpa meminta izin
 setiap langkah kecil. Pertanyaan baru hanya jika scope berubah atau keputusan

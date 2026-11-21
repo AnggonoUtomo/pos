@@ -7,7 +7,7 @@
 | [TASK-HW-001](tasks/TASK-HW-001/README.md) | Discovery dan mockup saja | COMPLETE; dipush5e3b4a5 | APPROVED untuk discovery/desain |
 | [TASK-HW-002](tasks/TASK-HW-002/README.md) | Scanner virtual read-only | COMPLETE; VIRTUAL_PASSED, PHYSICAL_PENDING; dipush96bddfe | APPROVED untuk exact PLAN dan QA disposable; commit/push diizinkan terpisah |
 | [TASK-HW-011](tasks/TASK-HW-011/README.md) | Akses produksi diagnostik scanner | COMPLETE; dipush826056d, production ON, VIRTUAL_PASSED, PHYSICAL_PENDING | APPROVED untuk PLAN source/QA/.env/cache |
-| [TASK-HW-012](tasks/TASK-HW-012/README.md) | QZ label gateway, konfigurasi dan tes scanner | Implementasi/aktivasi COMPLETE; VIRTUAL_PASSED, PHYSICAL_PENDING, print OFF; penutupan Git berjalan | APPROVED untuk exact PLAN, SDK, QA, backup/migration/seeder/cache dan commit/push; tanpa instalasi OS |
+| [TASK-HW-012](tasks/TASK-HW-012/README.md) | QZ label gateway, konfigurasi dan tes scanner | COMPLETE; implementasi dipush8aa0c86, VIRTUAL_PASSED, PHYSICAL_PENDING, print OFF | APPROVED untuk exact PLAN, SDK, QA, backup/migration/seeder/cache dan commit/push; tanpa instalasi OS |
 
 ## Usulan Bundle, Bukan Task Aktif
 

@@ -56,7 +56,7 @@
 - [x] Lengkapi ADR/canonical docs/operator, REPORT dan validators.
   - Acceptance: batas driver-image dan langkah manual QZ/cert/UAT dapat dipahami.
   - Verification: check_report, exact allowlist/link/diff review.
-- [ ] Commit save point dan push hanya sesuai izin Git eksplisit.
+- [x] Commit save point dan push hanya sesuai izin Git eksplisit.
   - Acceptance: file user, backup/QA/secret/cache tidak ikut Git.
   - Verification: status/index user, diff, hash commit dan remote bila dipush.
 
@@ -91,5 +91,8 @@ hardware/driver/service atau menyalakan print production tanpa instruksi.
 - HTTPS login200/workspace guest302/catalog guest401/TLS valid; backup404.
 - REPORT/PLAN validator PASS;84 link relatif valid; diff/allowlist review PASS.
   Snapshot cache privat juga mengembalikan404 lewat HTTPS.
+- Implementasi commit8aa0c863cc1858870d661ee56d918b7e5b30c9a0 dipush ke
+  origin/main; ls-remote cocok. Empat hash LSP staged user tetap identik,
+  lima LSP untracked tetap ada. Commit task tidak memuat storage/backup/cache/.env.
 - Npm audit belum bersih:8 advisory existing, bukan rantai qz-tray. Tidak
   memperluas update dependency tanpa approval. Detail/batas pada REPORT.
