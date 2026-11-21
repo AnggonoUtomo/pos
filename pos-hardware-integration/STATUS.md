@@ -1,26 +1,26 @@
-# STATUS — POS Hardware Companion v1.3 (In-Repo Virtual-First)
+# Status Integrasi Hardware POS
 
-**Last updated:** 20 November 2026
+**Diperbarui:** 21 November 2026.
 
-| Item | State |
-|---|---|
-| Documentation bundle | READY FOR REVIEW |
-| Existing POS source inspection | NOT STARTED / SOURCE NOT PROVIDED |
-| Existing repository files modified | NONE |
-| Production development | NOT AUTHORIZED |
-| UI mockup | CONCEPTUAL ONLY / AWAITING OWNER APPROVAL |
-| Feature flag | DESIGN ONLY / NOT CREATED |
-| Gateway | DESIGN ONLY / NOT INSTALLED |
-| Test hardware compatibility | NOT VERIFIED |
-| CASHCOW CT420D printer protocol | IDENTIFIED FROM OWNER SPEC: TSPL/CPCL LABEL; PHYSICAL TEST PENDING |
-| CASHCOW HC-4208DB scanner | IDENTIFIED IN OFFICIAL CATALOGUE: USB/2.4GHz/BLUETOOTH 1D/2D; PHYSICAL TEST PENDING |
-| Target location | `<POS_REPO_ROOT>/pos-hardware-integration/` (in-repository, no `docs/`) |
-| Inserted into owner's actual POS repo | NOT YET / REPO NOT PROVIDED |
-| Virtual test framework | DOCUMENTED / NOT IMPLEMENTED |
-| Virtual scanner/print/gateway tests | NOT_RUN |
-| Software acceptance | NOT_RUN |
+| Bagian | Status aktual |
+| --- | --- |
+| Lokasi companion | pos-hardware-integration/ di root POS existing |
+| Discovery dan mockup TASK-HW-001 | COMPLETE; approved, commit5e3b4a5 sudah di origin/main |
+| Organisasi POS | Single company + multi-gudang; tanpa tenant/multi-cabang sesuai user |
+| TASK-HW-002 scanner virtual | COMPLETE sesuai PLAN/approval; izin commit/push diterima |
+| Source module POS existing | Tidak diubah; penambahan module Platform/Hardware baru saja |
+| Flag hardware | Default OFF, local/testing-only; production selalu ditolak |
+| Permission | inventory.view existing; tidak ada grant/role baru pada toko |
+| Regresi |69 test/680 assertion PASS; focused checks sesudahnya sesuai REPORT |
+| Browser scanner |12 cek PASS; fingerprint71 tabel bisnis QA identik |
+| Software acceptance | VIRTUAL_PASSED untuk scanner saja |
 | Physical acceptance | PHYSICAL_PENDING |
-| Production/hardware-ready claim | NOT AUTHORIZED |
-| User acceptance | PENDING |
+| CT420D | Profil printer LABEL TSPL/CPCL; driver/media/cetak/scan-back belum diuji |
+| HC-4208DB | Input keyboard sintetik diuji; USB/dongle/Bluetooth nyata belum diuji |
+| Gateway/print transport/label commands | Belum diimplementasikan atau diaktifkan |
+| Deployment/pilot | NOT_APPROVED |
+| Server/browser QA | Sudah ditutup; artefak ignored tersimpan lokal |
 
-This is **not** a report of implementation completion. This package is **ready to insert** as a new documentation-only subfolder; no actual POS application files have been inspected, inserted, or modified here.
+Bukti dan batas: [REPORT TASK-HW-002](tasks/TASK-HW-002/REPORT.md).
+Blueprint generik masih usulan; istilah tenant/cabang/SaaS tidak mengganti
+model POS existing. Tidak ada task lain yang otomatis diizinkan.

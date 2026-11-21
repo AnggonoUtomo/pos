@@ -1,14 +1,23 @@
-# NEXT_TASK — TASK-HW-001
+# Langkah Berikutnya
 
-**Only permitted next activity without further approval:** non-mutating discovery of the *actual* POS codebase, a compatibility report, and refined hardware-workspace mockups. User must provide/open the repository and approve further code changes separately.
+**Diperbarui:** 21 November 2026.
 
-1. Read real repository `AGENTS.md`; compare against this companion's `AGENTS.md`.
-2. Record git working tree status and existing contract locations; do not modify.
-3. Locate tenant, branch, sales post-commit, product lookup, receipt, auth/permission and UI navigation seams.
-3a. Review **owner-supplied** CT420D label TSPL+CPCL specification and HC-4208DB scanner official capability **without requiring the devices**. Physical driver, USB/Bluetooth pairing, media and scan-back are explicitly **PHYSICAL_PENDING**.
-4. Identify safe additive module path and feature flag convention, or raise collision.
-5. Produce a filled `PLAN.md` with exact allowlist and proposed regression matrix.
-6. Show module mockups for PC and Android tablet.
-6a. Include a distinct product barcode **label printing** mockup, TSPL/CPCL adapter design, and scan-back UAT in the draft PLAN. Receipt printer remains a separate future device.
-6b. Include `blueprint/VIRTUAL_FIRST_DEVELOPMENT.md` and `blueprint/VIRTUAL_ACCEPTANCE_MATRIX.md` as mandatory plan inputs; propose mock hardware test harness before physical printer work. Do not execute tests until the specific task implementation is approved.
-7. **STOP** and request `APPROVAL.md` from Ino. Do not implement, install, migrate, seed, commit or push.
+TASK-HW-002 scanner virtual selesai. Lihat
+[REPORT](tasks/TASK-HW-002/REPORT.md) dan [checklist](tasks/TASK-HW-002/tasks.md).
+Tidak ada coding task berikutnya yang diizinkan oleh penyelesaian ini.
+
+1. Commit/push TASK-HW-002 sesuai izin terbaru pada 21 November 2026;
+   jangan memasukkan LSP staged milik user. Setelahnya susun PLAN akses
+   produksi; jangan melepas guard dari PLAN sebelumnya tanpa approval baru.
+2. Jika pemilik meminta kelanjutan label/gateway, susun PLAN exact-file
+   vertical slice tersendiri. Reuse barcode/katalog/cetak browser existing;
+   jangan mengubah checkout atau membuat OS runner diam-diam.
+3. Pastikan manual TSPL/CPCL sesuai CT420D tersedia sebelum command builder.
+   Driver/gateway nyata dan physical scan-back memerlukan izin/UAT tersendiri.
+4. FakeGateway/FakePrintTransport dan preview/snapshot baru dibuat bila punya
+   consumer dalam PLAN yang disetujui. Jangan menyebut scanner virtual sebagai
+   hardware USB/Bluetooth verified atau label printer siap produksi.
+
+Tetap single company, multi-gudang, tanpa tenant/cabang. Flag toko OFF;
+production/pilot NOT_APPROVED. Jangan mengubah .env, root AGENTS, module
+existing, dependency, database toko atau pending MVP di luar arahan user.
