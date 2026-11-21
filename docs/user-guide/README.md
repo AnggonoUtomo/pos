@@ -83,6 +83,8 @@ Penyusunan panduan ini tidak mengubah role/akun/permission database.
 
 ## Pemeliharaan Dokumen
 
+Setup klien QZ/printer dan scanner keyboard: [Setup perangkat](SETUP-PERANGKAT.md).
+
 Jika label/alur berubah, ubah Markdown dan bangun ulang PDF, lalu periksa hasil
 render. Command dan bukti verifikasi ada pada
 [work item panduan](../work-items/user-guide/README.md).

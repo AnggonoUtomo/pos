@@ -65,19 +65,22 @@ try {
     };
     await login(page, 'label.operator@example.test');
     assert.equal(fake.connections, 0);
+    fake.mode = 'empty';
     await page.goto(url + '/platform/hardware');
     await page.getByRole('heading', { name: 'Perangkat POS', exact: true }).waitFor();
-    assert.equal(fake.connections, 0);
-    check('No QZ socket on login/dashboard or workspace before user command');
-
-    fake.mode = 'empty';
-    await page.getByRole('button', { name: 'Cari printer', exact: true }).click();
     await page.getByText('0 printer terdaftar pada OS.', { exact: false }).waitFor();
+    assert.equal(fake.connections, 1);
+    const firstDiscoveryCalls = fake.calls.filter((call) => call.startsWith('printers.detail')).length;
+    await page.waitForTimeout(300);
+    assert.equal(fake.calls.filter((call) => call.startsWith('printers.detail')).length, firstDiscoveryCalls);
+    assert.equal(firstDiscoveryCalls, 1);
+    check('No QZ on login/dashboard; one automatic discovery in authorized workspace, no polling');
+
     fake.mode = 'denied';
-    await page.getByRole('button', { name: 'Cari printer', exact: true }).click();
+    await page.getByRole('button', { name: 'Deteksi ulang', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Gateway belum tersedia' }).waitFor();
     fake.mode = 'ready';
-    await page.getByRole('button', { name: 'Cari printer', exact: true }).click();
+    await page.getByRole('button', { name: 'Deteksi ulang', exact: true }).click();
     await page.getByText('2 printer terdaftar pada OS.', { exact: false }).waitFor();
     check('QZ protocol handshake, permission rejection, empty and multiple printer discovery');
 
@@ -147,15 +150,24 @@ try {
     await page.keyboard.press('F1');
     await page.getByRole('heading', { name: 'Panduan Perangkat POS', exact: true }).waitFor();
     await page.keyboard.press('Escape'); await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    const connectionCount = fake.connections;
+    fake.disconnect();
     await page.keyboard.press('Alt+4');
-    await page.locator('#hardware-keyboard-test').click();
+    await page.getByRole('status').filter({ hasText: 'Belum diuji' }).waitFor();
+    assert(await page.locator('#hardware-keyboard-test').evaluate((input) => input === document.activeElement));
     await page.keyboard.type('001234567890'); await page.keyboard.press('Enter');
     await page.getByText('Sesuai', { exact: true }).waitFor();
+    await page.getByRole('status').filter({ hasText: 'Input diterima' }).waitFor();
     await page.keyboard.type('001234567890'); await page.keyboard.press('Enter');
     assert.equal(await page.getByText('Sesuai', { exact: true }).count(), 2);
-    check('F1 guide and focused HID-style Enter/duplicate/scan-back without hardware identity claims');
+    await page.waitForTimeout(300); assert.equal(fake.connections, connectionCount);
+    check('F1, scanner auto-focus/readiness and exact Enter/duplicate scan-back work with QZ disconnected');
 
     await page.getByRole('button', { name: 'Label', exact: true }).click();
+    await page.getByText('Belum terhubung', { exact: true }).waitFor();
+    fake.mode = 'ready';
+    await page.getByRole('button', { name: 'Deteksi ulang', exact: true }).click();
+    await page.getByText('2 printer terdaftar pada OS.', { exact: false }).waitFor();
     fake.mode = 'lost_ack';
     await page.getByRole('button', { name: 'Kirim label', exact: true }).click();
     await page.getByText('Hasil pengiriman belum pasti. Periksa printer; jangan kirim ulang otomatis.', { exact: true }).waitFor();
@@ -179,11 +191,14 @@ try {
     check('Dark theme representative');
 
     const viewerContext = await browser.newContext({ viewport: { width: 1024, height: 768 } });
+    const viewerFake = new FakeQzGateway();
+    await viewerFake.install(viewerContext);
     await viewerContext.route('https://fonts.bunny.net/**', (route) => route.fulfill({ contentType: 'text/css', body: '' }));
     const viewer = await viewerContext.newPage();
     await login(viewer, 'label.viewer@example.test'); await viewer.goto(url + '/platform/hardware');
     assert.equal(await viewer.getByRole('button', { name: 'Tambah profil', exact: true }).count(), 0);
-    assert(await viewer.getByRole('button', { name: 'Cari printer', exact: true }).isDisabled());
+    assert(await viewer.getByRole('button', { name: 'Deteksi ulang', exact: true }).isDisabled());
+    await viewer.waitForTimeout(300); assert.equal(viewerFake.connections, 0);
     assert.equal((await viewerContext.request.get(url + '/platform/hardware/catalog?q=Kamera')).status(), 403);
     await viewerContext.close();
     check('Viewer cannot discover/manage/print/catalog or access other operator jobs');

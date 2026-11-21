@@ -35,7 +35,9 @@ job baru beralasan dan memakai snapshot identitas asal. Sending kedaluwarsa
 ditandai uncertain ketika recovery/reprint, tidak diambil ulang untuk dispatch.
 Pembatalan queued dicatat failed_before_send/cancelled tanpa print attempt.
 
-SDK QZ lazy dan koneksi manual WSS allowlist (default localhost/127.0.0.1),
+SDK QZ lazy, WSS allowlist (default localhost/127.0.0.1). TASK-HW-013
+menambahkan satu initial discovery saat mount workspace bagi manage/print;
+viewer tidak connect, refresh manual tersedia, tidak polling di module lain,
 tanpa downgrade TLS. Discovery membaca printer terdaftar OS; pemilihan selalu
 eksplisit. Jalur image-only memakai raster PNG203dpi, modul Code128 integer
 minimal2dot, quiet zone10modul dan nearest-neighbor. Barcode/nama tidak
@@ -46,8 +48,12 @@ Workspace menyediakan Printer/Label/Riwayat/Scanner, remote Autocomplete,
 shared TablePagination, Sonner, F1 dan Alt+1..4/Alt+F. Scanner test memakai
 input fokus + Enter, mempertahankan nol awal, membandingkan kode label dan
 menyimpan maksimal20 hasil sementara. Tidak mengklaim identitas HC-4208DB.
+Tab Scanner fokus input otomatis dan menampilkan Belum diuji/Input diterima
+sebagai status sesi; tetap dapat dipakai jika QZ terputus.
 
-SDK npm bukan aplikasi QZ desktop. Admin memasang QZ/driver secara manual;
+SDK npm bukan aplikasi QZ desktop. QZ disiapkan sekali pada tahap deployment
+melalui installer resmi/helper Windows admin; driver terpisah. User mengambil
+alih pemasangan QZ lokal TASK-HW-013, agent tidak menjalankan installer kedua;
 unsigned permission prompt tetap berlaku. Driver/ukuran/gap/scan-back nyata
 belum diverifikasi. Physical print OFF sampai UAT dan persetujuan pemilik.
 

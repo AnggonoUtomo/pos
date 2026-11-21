@@ -2,6 +2,10 @@
 
 Status: Accepted. Tanggal: 21 November 2026.
 
+Catatan keputusan terbaru: [ADR-021](ADR-021-SETUP-QZ-DAN-KESIAPAN-PERANGKAT.md)
+menggantikan hanya pemasangan/koneksi manual di bawah dengan setup awal sekali
+dan discovery workspace satu kali. Boundary, lifecycle dan physical gate tetap.
+
 ## Konteks
 
 Pemilik memilih CT420D untuk label dan HC-4208DB untuk scanner, tanpa printer

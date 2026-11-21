@@ -41,7 +41,7 @@ export default function HardwareWorkspace({ profiles, allowedHosts, printingEnab
     const [search, setSearch] = useState(filters.q ?? '');
     const [status, setStatus] = useState(filters.status ?? 'all');
     const [mutating, setMutating] = useState(false);
-    const connection = useQzGateway(allowedHosts);
+    const connection = useQzGateway(allowedHosts, manage || print);
     const changed = () => router.reload({ only: ['profiles', 'history'] });
     const printing = useLabelPrint(connection.gateway, changed);
     const creation = useRef({ fingerprint: '', key: '' });

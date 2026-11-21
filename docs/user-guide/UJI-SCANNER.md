@@ -61,3 +61,7 @@ Workspace [Perangkat POS](PRINTER-LABEL.md) menambahkan konfigurasi QZ,
 pratinjau label dan tes scan-back. Ini terpisah dari lookup satuan jual pada
 halaman ini. Diagnostik ON tidak mengaktifkan print fisik; flag print dan UAT
 tersendiri tetap diperlukan.
+
+[Setup perangkat](SETUP-PERANGKAT.md) menjelaskan pemasangan QZ/printer awal.
+Scanner mode keyboard tidak membutuhkan QZ atau pemilihan perangkat. Tab Scanner
+pada Perangkat POS menampilkan status sesi input; bukan identifikasi merek.

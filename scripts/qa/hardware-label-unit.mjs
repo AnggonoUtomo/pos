@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 registerHooks({ resolve(specifier, context, next) {
     try { return next(specifier, context); } catch (error) {
@@ -28,4 +29,9 @@ const gateway = createQzGateway(['localhost']);
 await assert.rejects(() => gateway.connect('evil.example'));
 assert.equal(gateway.isConnected(), false);
 await gateway.disconnect();
+const workspace = readFileSync(new URL('../../resources/js/pages/platform/hardware/index.tsx', import.meta.url), 'utf8');
+assert.match(workspace, /useQzGateway\(allowedHosts, manage \|\| print\)/, 'Autodiscovery must be enabled only by workspace permission.');
+const scanner = readFileSync(new URL('../../resources/js/pages/platform/hardware/components/scanner-test-panel.tsx', import.meta.url), 'utf8');
+assert(scanner.includes('Belum diuji') && scanner.includes('Input diterima'), 'Scanner reports session input readiness, not device identity.');
+assert(!scanner.includes('qz.') && !scanner.includes('addEventListener'), 'Keyboard scanner must not require QZ or global capture.');
 console.log('PASS: integer-dot Code128 layout, quiet zones, size/copies, metric density and host restriction; no hardware IO.');

@@ -5,11 +5,13 @@ export class FakeQzGateway {
     connections = 0;
     calls = [];
     prints = [];
+    sockets = [];
     printers = [{ name: 'Office PDF QA', driver: 'Virtual PDF' }, { name: 'CT420D QA', driver: 'Virtual label driver' }];
 
     async install(context) {
         await context.routeWebSocket(/^wss:\/\/(localhost|127\.0\.0\.1):(?:8181|8282|8383|8484)\/?$/, (socket) => {
             this.connections++;
+            this.sockets.push(socket);
             socket.onMessage((raw) => {
                 if (raw === 'ping') return;
                 const message = JSON.parse(raw.toString());
@@ -35,5 +37,9 @@ export class FakeQzGateway {
                 throw new Error('Unexpected QZ API: ' + message.call);
             });
         });
+    }
+
+    disconnect() {
+        for (const socket of this.sockets.splice(0)) socket.close({ code: 1001, reason: 'QA gateway unavailable' });
     }
 }

@@ -2,6 +2,14 @@
 
 **Diperbarui:** 21 November 2026.
 
+Prioritas baru: [TASK-HW-013](tasks/TASK-HW-013/README.md). User meminta QZ
+desktop disiapkan pada PC ini dan memilih scanner keyboard langsung scan + tes
+kesiapan. PLAN exact33 path APPROVED beserta Git; user mengambil alih instalasi
+manual QZ, jadi agent tidak download/install/upgrade kedua. Source/helper/docs
+selesai, native read-only PASS (2.3.0+1,6 printer, tanpa print), QA browser
+akhir sedang berjalan. Lanjut dari checklist013; jangan mengubah trust/startup
+OS user atau menyalakan cetak fisik.
+
 TASK-HW-002 scanner virtual selesai. Lihat
 [REPORT](tasks/TASK-HW-002/REPORT.md) dan [checklist](tasks/TASK-HW-002/tasks.md).
 Tidak ada coding task berikutnya yang diizinkan oleh penyelesaian ini.

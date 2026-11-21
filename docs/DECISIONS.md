@@ -33,3 +33,8 @@ serta snapshot identitas toko dalam scope empat paket MVP.
 [ADR-020](decisions/ADR-020-QZ-LABEL-GATEWAY.md) menetapkan gateway QZ manual,
 driver-image label dan lifecycle pengiriman konservatif tanpa mengubah checkout.
 Print default OFF; perangkat fisik tetap memerlukan UAT.
+
+[ADR-021](decisions/ADR-021-SETUP-QZ-DAN-KESIAPAN-PERANGKAT.md) menetapkan
+setup QZ sekali, discovery hanya saat workspace Hardware dibuka oleh user
+berizin dan tes kesiapan scanner keyboard tanpa QZ. Menggantikan bagian
+pemasangan/koneksi manual ADR-020, bukan physical gate atau transaksi.

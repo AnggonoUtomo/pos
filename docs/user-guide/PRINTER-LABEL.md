@@ -10,15 +10,17 @@ bahwa label telah tercetak atau dapat dipindai.
 2. Gunakan hak view untuk membuka, manage untuk profil, print untuk kirim dan
    reprint untuk cetak ulang. Katalog juga memerlukan inventory.view.
    Permission baru tidak otomatis diberikan ke role/akun existing.
-3. Admin memasang [QZ Tray resmi](https://qz.io/download/) dan driver CT420D
-   secara manual pada PC tujuan. Aplikasi tidak memasang driver, Java,
-   sertifikat, service atau runner PowerShell.
+3. QZ disiapkan sekali pada PC tujuan; lihat [Setup perangkat](SETUP-PERANGKAT.md)
+   untuk installer resmi atau script admin Windows. Driver CT420D dipasang
+   terpisah. Web POS tidak memasang driver, service atau runner PowerShell.
 4. Sebelum UAT fisik, pengiriman cetak nonaktif. Konfigurasi/pratinjau tetap
    tersedia; jangan membuat printer palsu agar tombol terlihat aktif.
 
 ## 2. Cari Dan Simpan Printer
 
-1. Pada **Printer**, pilih gateway lalu **Cari printer**.
+1. Pada **Printer**, gateway awal diperiksa sekali otomatis bagi pemegang izin
+   manage/print. Bila printer baru dipasang atau koneksi gagal, pilih gateway
+   yang benar lalu **Deteksi ulang**. Tidak ada polling atau auto-print.
 2. Jika QZ belum berjalan/izin ditolak, periksa QZ serta izinnya. Jangan melewati
    warning TLS, mematikan secure cookie atau mengubah APP_ENV.
 3. Pilih printer yang benar dari hasil OS. Printer ditemukan masih bisa offline
@@ -79,9 +81,11 @@ baru yang menaut ke asal. Bukan retry otomatis atau pengulangan transaksi.
 ## 6. Tes Scanner Dan Tablet
 
 1. Pilih barang pada Label, lalu buka **Scanner**.
-2. Fokus input. Scanner mode keyboard perlu mengirim kode diikuti Enter.
+2. Input otomatis fokus. Scanner mode keyboard perlu mengirim kode diikuti
+   Enter; tidak memerlukan QZ atau pemilihan perangkat.
 3. Periksa teks persis/nol awal dan scan yang sengaja diulang.
-4. Hasil dibandingkan dengan barcode label pilihan. Ketikan manual juga diterima,
+4. Status sesi Belum diuji menjadi Input diterima setelah kode masuk. Hasil
+   dibandingkan dengan barcode label pilihan. Ketikan manual juga diterima,
    sehingga hasil tidak membuktikan merek atau koneksi hardware terdeteksi.
 5. Diagnostik satuan jual existing tetap tersedia untuk lookup barang.
 

@@ -1,13 +1,19 @@
 import { BarcodeInput } from '@/components/shared/barcode-input';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
 import { CircleCheck, ScanBarcode, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function ScannerTestPanel({ expected, allowLookup }: { expected?: string; allowLookup: boolean }) {
     const [codes, setCodes] = useState<string[]>([]);
-    return <section className="space-y-5">
-        <h2 className="flex items-center gap-2 text-base font-semibold"><ScanBarcode className="size-5 text-violet-600 dark:text-violet-300" />Tes input scanner</h2>
+    const panel = useRef<HTMLElement>(null);
+    useEffect(() => { panel.current?.querySelector('input')?.focus({ preventScroll: true }); }, []);
+    return <section ref={panel} className="space-y-5">
+        <header className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2 text-base font-semibold"><ScanBarcode className="size-5 text-violet-600 dark:text-violet-300" />Tes input scanner</h2>
+            <Badge variant="outline" role="status" className={codes.length ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'}>{codes.length ? 'Input diterima' : 'Belum diuji'}</Badge>
+        </header>
         <BarcodeInput id="hardware-keyboard-test" disabled={false} onScan={(code) => setCodes((rows) => [code, ...rows].slice(0, 20))} />
         <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{codes.length} hasil sementara; identitas perangkat belum diverifikasi.</p><Button variant="outline" disabled={!codes.length} onClick={() => setCodes([])}><Trash2 className="text-rose-600" />Bersihkan</Button></div>
         {expected && <p className="break-all font-mono text-sm">Kode pembanding: {expected}</p>}

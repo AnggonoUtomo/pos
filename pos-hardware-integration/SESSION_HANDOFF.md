@@ -4,6 +4,18 @@
 
 ## Kondisi Aktual
 
+TASK-HW-013 APPROVED: user ingin QZ dipasang pada PC ini; scanner
+dipilih mode keyboard langsung scan + tes kesiapan, tanpa enumerasi USB/HID.
+PRD/PLAN/checklist/APPROVAL tersedia; exact33 path, validator approved
+PASS, PLAN SHA2567CEA2517308C91611DC353E1CC2D938CC7952D1B6AF40297BB9DCF15487E1187.
+User kemudian memasang QZ secara manual, sehingga agent tidak menjalankan
+installer/download/upgrade atau mengubah trust/startup. Source autodiscovery
+workspace, tes scanner keyboard dan helper setup Windows/panduan Linux selesai.
+Native smoke read-only PASS:2.3.0+1,6 printer OS, signature valid/QZ Industries,
+tanpa cetak; artifact qz-setup-08d4c7d4af43e493 privat, browser ditutup.
+Typecheck/lint/build2975/guides34/unit PASS; QA browser akhir berjalan.
+Tidak ada perubahan backend/database/.env/flag print. Lanjut checklist013.
+
 TASK-HW-012 APPROVED dan COMPLETE; implementasi dipush8aa0c86, origin/main
 diverifikasi. Workspace https://pos.test/platform/hardware, scanner ON/printing OFF.
 QZ SDK2.3.0 saja terpasang, bukan aplikasi/driver OS. Gate79 test/774 assertion,

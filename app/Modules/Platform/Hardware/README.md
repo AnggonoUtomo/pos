@@ -17,8 +17,10 @@ stok/payment atau perubahan checkout. Provider mengikuti loader existing.
 - Tabel hardware_printers memakai version/soft delete; hardware_label_jobs dan
   hardware_print_attempts menyimpan snapshot/claim/outcome tanpa soft delete.
 - Idempotency/single claim menjaga dispatch; uncertain tidak auto-retry.
-- QZ SDK lazy, WSS allowlist dan image-only melalui driver OS. Instalasi QZ,
-  driver dan sertifikat dilakukan admin secara manual.
+- QZ SDK lazy, WSS allowlist dan image-only melalui driver OS. Discovery satu
+  kali hanya saat workspace Hardware berizin dibuka; refresh manual tersedia.
+- QZ disiapkan sekali melalui installer resmi/helper Windows admin; driver
+  terpisah. Scanner keyboard tidak memerlukan QZ; status sesi bukan device ID.
 - Demo seeder no-op; profil/job sintetis hanya fixture QA disposable.
 
 Dokumen canonical: `docs/modules/Platform/Hardware/`.

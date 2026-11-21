@@ -12,7 +12,7 @@ export function GatewayPanel({ connection, hosts, disabled }: { connection: Retu
                 <h2 className="flex items-center gap-2 text-base font-semibold"><Wifi className="size-5 text-cyan-600 dark:text-cyan-300" />Gateway QZ Tray</h2>
                 <Badge variant="outline" className={connection.connected ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'}>
                     {connection.connected ? <Wifi className="mr-1 size-3.5" /> : <WifiOff className="mr-1 size-3.5" />}
-                    {connection.connected ? 'Gateway terhubung' : 'Belum terhubung'}
+                    {connection.busy ? 'Memeriksa gateway' : connection.connected ? 'Gateway terhubung' : 'Belum terhubung'}
                 </Badge>
             </div>
             <div className="flex flex-wrap items-end gap-3">
@@ -22,7 +22,7 @@ export function GatewayPanel({ connection, hosts, disabled }: { connection: Retu
                         options={hosts.map((host) => ({ value: host, label: host }))} disabled={disabled || connection.busy} />
                 </div>
                 <Button onClick={() => void connection.discover()} disabled={disabled || connection.busy || !connection.host}>
-                    {connection.busy ? <LoaderCircle className="animate-spin" /> : <RefreshCw />}Cari printer
+                    {connection.busy ? <LoaderCircle className="animate-spin" /> : <RefreshCw />}Deteksi ulang
                 </Button>
             </div>
             {connection.error && <p role="alert" className="text-destructive text-sm">{connection.error}</p>}

@@ -33,7 +33,10 @@ belum ada verifikasi perangkat fisik.
 
 POS_HARDWARE_PRINTING_ENABLED default OFF, terpisah dari konfigurasi/preview.
 TASK-HW-012 tidak mengaktifkan cetak fisik atau memasang aplikasi OS.
-QZ Tray/driver dipasang manual; printer yang ditemukan adalah daftar OS,
+QZ disiapkan sekali melalui installer resmi/helper admin Windows; driver tetap
+terpisah. Discovery berjalan sekali saat workspace dibuka oleh pemegang izin
+manage/print, dengan Deteksi ulang manual dan tanpa polling di module lain.
+Printer yang ditemukan adalah daftar OS,
 bukan bukti CT420D siap cetak. Scanner keyboard/HID tidak dideteksi mereknya.
 Tablet membutuhkan print-server WSS dan trust/allowlist yang diatur admin,
 bukan localhost tablet. Hasil submitted berarti diterima gateway, bukan
@@ -44,6 +47,7 @@ terbukti tercetak. Software acceptance dan physical acceptance dipisahkan.
 - [Spesifikasi](specification.md).
 - [Panduan operator](../../../user-guide/UJI-SCANNER.md).
 - [Printer label](../../../user-guide/PRINTER-LABEL.md).
+- [Setup awal](../../../user-guide/SETUP-PERANGKAT.md).
 - [PLAN dan approval task](../../../../pos-hardware-integration/tasks/TASK-HW-002/README.md).
 - [Akses produksi diagnostik](../../../../pos-hardware-integration/tasks/TASK-HW-011/README.md).
 - [Gateway label](../../../../pos-hardware-integration/tasks/TASK-HW-012/README.md).
