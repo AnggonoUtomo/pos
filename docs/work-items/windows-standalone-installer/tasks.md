@@ -3,8 +3,9 @@
 ## Status
 
 PLAN diterima untuk memulai Increment 1. Tanggal: 22 November 2026.
-MySQL tetap dipilih user untuk aplikasi tertutup; izin bundel belum terbukti.
-Distribusi penuh BLOCKED_LICENSE, build privat/preflight dikerjakan terpisah.
+MySQL tetap dipilih untuk aplikasi tertutup. Revisi 23 November 2026: dipasang
+manual oleh admin, bukan dibundel; pengajuan Oracle dihentikan. Distribusi
+penuh belum diimplementasikan; build privat/preflight dikerjakan terpisah.
 Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 
 ## Sebelum Mulai
@@ -20,31 +21,60 @@ Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 - [x] PLAN/komponen/allowlist/ADR/pengecualian OS diterima user.
 - [ ] Gate lisensi distribusi, dukungan OS, signing dan lingkungan QA dituntaskan.
 
-## Penutupan Gate Izin Oracle Dan Windows Bersih
+## Revisi MySQL Manual Dan Pemulihan QA Windows
 
-Instruksi user 22 November 2026: lengkapi izin Oracle dan uji Windows bersih.
-Pekerjaan ini tidak mengubah scope bisnis atau memberi izin transaksi legal,
-pembelian, install hypervisor atau perubahan VM existing secara diam-diam.
+Instruksi awal 22 November: lengkapi izin Oracle dan uji Windows bersih.
+Revisi 23 November: abaikan pengajuan Oracle; MySQL dipasang manual nanti.
+Tidak mengubah scope bisnis atau memberi izin pembelian, install hypervisor
+atau perubahan VM existing secara diam-diam.
 
-- [x] Verifikasi kembali kebijakan OEM Oracle dan jalur Contact Sales resmi.
-  - Acceptance: tidak menganggap Community gratis sebagai bukti izin bundel
-    proprietary; tidak menebak alamat email/biaya/lisensi.
-  - Verification: halaman Oracle OEM/Contact Sales aktual, menuju Oracle SSO.
-- [x] Siapkan draft pengajuan teknis dan kriteria bukti izin pada PLAN.
-  - Acceptance: rancangan nyata dan pertanyaan konfirmasi, tanpa menyatakan
-    perjanjian terbit atau mengganti lisensi/engine.
-  - Verification: review terhadap PLAN/source baseline; belum dikirim.
-- [ ] Pemilik melengkapi identitas, email, wilayah/volume dan meninjau draft.
-- [ ] Kirim melalui jalur resmi sesudah persetujuan; catat referensi kasus.
-- [ ] Terima bukti tertulis dengan cakupan sesuai bundel dan penuhi syaratnya.
-  - Acceptance: hanya bukti/perjanjian yang sesuai menutup BLOCKED_LICENSE;
-    pembelian/penandatanganan tetap keputusan pemilik.
-  - Verification: tinjauan dokumen privat, ringkasan nonrahasia pada work item.
+- [x] Hentikan pengajuan Oracle dan tetapkan MySQL sebagai prasyarat manual.
+  - Acceptance: tidak mengirim draft, membeli lisensi, mengganti engine atau
+    mengklaim izin diperoleh. Kebutuhan identitas/SSO tidak dilanjutkan.
+  - Verification: instruksi user, PRD/PLAN/ADR-022 diperbarui; draft privat
+    ditandai dibatalkan dan tidak masuk Git/payload.
+- [x] Selaraskan manifest dan preflight dengan prasyarat MySQL manual.
+  - Acceptance: tidak ada MySQL pada komponen bundled/nama service milik POS;
+    listener DB existing bukan konflik atau bukti koneksi valid. Distribusi
+    tetap ditolak karena installer lengkap belum diimplementasikan.
+  - Verification: test terfokus, publish native, manifest dan pesan preflight.
+    RED listener DB terbukti, GREEN 45 kasus; publish PASS. CLI read-only
+    exit 2 pada Windows 10/non-admin, databaseConnectionVerified=false.
+    Manifest tidak membundel MySQL dan Distribution ditolak sebelum build baru.
+- [ ] Implementasikan validasi koneksi/DB kosong/hak akses/alat backup manual.
+  - Acceptance: Increment 2, tanpa mutasi service/datadir/akun MySQL existing,
+    tanpa password pada argumen/log atau database toko sebagai fixture.
+  - Verification: test dan MySQL disposable; belum tersedia pada preflight.
 - [x] Periksa kesiapan lingkungan Windows secara read-only.
   - Acceptance: tidak install/start/stop hypervisor atau menyentuh VM pemilik.
   - Verification: CIM/registry/config metadata; VirtualBox 7.2.14 terpasang,
     Authenticode Valid/Oracle, dua VM terdaftar. Tidak ada VM dijalankan.
-- [ ] Konfirmasi VM khusus/ISO Windows 11/PC uji serta izin penggunaannya.
+- [x] Konfirmasi VM khusus/ISO Windows 11/PC uji serta izin penggunaannya.
+  - Hasil: user memilih WS-RTR2-01 dan menyetujui clone POS-QA-WS-RTR2-01;
+    clone harus tanpa jaringan/shared folder sebelum boot, VM asal utuh.
+- [x] Diagnosis interupsi dan verifikasi fingerprint VM asal setelah percobaan.
+  - Verification: daftar VM/running VM, log VBoxSVC dan SHA256 seluruh VDI
+    serta konfigurasi. Kedua hash identik dengan catatan sebelum percobaan;
+    laporan privat qa-vm-source-after.json dan qa-vm-recovery-report.json.
+- [ ] Buat clone penuh dan verifikasi isolasi serta fingerprint VM asal.
+  - Acceptance: no overwrite, no snapshot restore/reset pada VM asal;
+    seluruh NIC dan shared folder clone OFF sebelum boot.
+  - Verification: showvminfo, hash konfigurasi/disk asal dan artefak QA privat.
+  - Discovery: share RTR2 ternyata global. User menyetujui OFF sementara saat
+    QA dan restore persis setelah clone mati; belum dijalankan saat staging.
+  - Attempt 1: FAIL RPC_S_SERVER_UNAVAILABLE/0x800706ba; user mungkin end
+    proses Oracle/VirtualBox lewat Task Manager. VM QA belum terdaftar;
+    artefak parsial dipertahankan dan bukan image siap pakai. SHA256 config
+    VM asal tetap identik, VM asal poweroff. Retry satu kali pada path baru.
+  - Attempt 2: INTERRUPTED; pemeriksaan 23 November menemukan hanya VDI
+    parsial 3.170.893.824 byte, tanpa konfigurasi/registrasi VM QA dan tanpa
+    proses clone aktif. Log VBoxSVC merekam shutdown sesi Windows pada
+    22 November pukul 17.16 WIB. Exit code akhir tidak tersedia; jangan
+    menyalin diagnosis RPC attempt pertama ke attempt kedua.
+  - Tidak ada retry ketiga otomatis atau penghapusan artefak parsial.
+    Tidak ada VM diboot atau global share diubah; BLOCKED_ENVIRONMENT.
+  - VS Code tidak diwajibkan ditutup. Tidak memaksa boot guest saat RAM host
+    terbatas; clone powered-off bukan bukti Windows bersih lulus QA.
 - [ ] Buktikan baseline bersih dan jalankan preflight native di Windows uji.
   - Acceptance: tidak ada data toko/dependency developer; OS/lisensi/snapshot
     dan checksum tercatat. VM existing tidak dianggap bersih dari namanya.
@@ -54,9 +84,10 @@ pembelian, install hypervisor atau perubahan VM existing secara diam-diam.
     preflight saja tidak menutup penerimaan installer.
   - Verification: skenario Increment 5 pada OS disposable.
 
-Status sekarang: pengajuan Oracle **BELUM DIKIRIM**, izin **BELUM TERBIT**,
-Windows bersih **BELUM DIUJI**. Data pemohon dan lingkungan uji ditanyakan ke
-user; tidak mengisi identitas atau mengubah OS berdasarkan tebakan.
+Status sekarang: pengajuan Oracle **DIBATALKAN USER, TIDAK DIKIRIM**; izin
+bundel MySQL **NOT_APPLICABLE** karena tidak dibundel. Windows bersih
+**BELUM DIUJI**. Clone disetujui tetapi dua percobaan belum selesai;
+tidak boot/reset atau mengubah VM asal. Tidak ada install atau QA OS yang lulus.
 
 ## Increment 0: Dokumentasi Perencanaan
 
@@ -78,7 +109,7 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
 
 - [x] Staging aplikasi dari commit, manifest file/hash dan penolakan data privat.
 - [x] Test negatif payload/path/konflik dan preflight native read-only.
-- [ ] Gate distribusi MySQL, pin seluruh vendor dan build EXE offline lengkap.
+- [ ] Pin seluruh vendor bundled, validasi prasyarat manual dan build EXE lengkap.
 - [ ] QA Windows disposable; tidak menggunakan PC toko sebagai target install.
 
 - [ ] Kunci manifest komponen, NuGet/build tool, sumber, hash dan lisensi.
@@ -91,7 +122,7 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
   - Verification: allowlist payload, path traversal/symlink checks,
     `composer check-platform-reqs --no-dev`, typecheck/lint/build staging.
   - Hasil parsial: payload aplikasi PASS, 7.884 file; tool builder masih
-    menggunakan PHP lokal. Runtime PHP/Apache/MySQL bundled belum dipin/diuji,
+    menggunakan PHP lokal. Runtime PHP/Apache bundled belum dipin/diuji,
     sehingga item payload offline lengkap ini belum ditutup.
 - [ ] Buat EXE bootstrap/preflight yang tidak mutasi saat gagal.
   - Acceptance: offline, konflik port/path/service jelas, tanpa takeover;
@@ -110,9 +141,10 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
   - Acceptance: mode OFF identik baseline; backup fallback/output kompatibel;
     media publik tersedia tetapi private/backup/key tidak dapat diakses web.
   - Verification: StandaloneRuntimeTest, BackupPosTest, path dengan spasi.
-- [ ] Provision DB baru privat, katalog permission aman dan role produksi.
-  - Acceptance: loopback/credential unik/hak minimum; tanpa migrate:fresh,
-    seed demo/lifecycle, reset key/password atau akses DB existing.
+- [ ] Validasi MySQL manual dan DB khusus kosong, katalog permission/role produksi.
+  - Acceptance: loopback/akun khusus/hak minimum dan mysql/mysqldump tersedia;
+    tidak memasang/mengubah service/datadir MySQL; tanpa migrate:fresh,
+    seed demo/lifecycle, reset key/password atau memakai DB toko existing.
   - Verification: daftar data awal dan fingerprint DB disposable.
 - [ ] Buat wizard lokal dan bootstrap owner CLI milik Identity.
   - Acceptance: password bukan argumen/log, hash/validation/audit atomic,
@@ -161,7 +193,7 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
     fingerprint sebelum-sesudah pada instalasi disposable.
 - [ ] Implementasikan uninstall tanpa purge data/shared runtime.
   - Acceptance: hanya executable/service/rule milik instalasi dihapus;
-    DB/config/key/media/backup dan QZ/WebView2/redist user tetap ada.
+    DB/config/key/media/backup dan MySQL/QZ/WebView2/redist user tetap ada.
   - Verification: clean install -> repair/update -> uninstall -> inspeksi data.
 - [ ] Buktikan recovery dan rollback tanpa menghilangkan transaksi baru.
   - Acceptance: file rollback hanya schema kompatibel; jika tidak aman,
@@ -178,9 +210,10 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
   - Acceptance: PHP/native tests dan typecheck/lint/build lulus; fixture
     shift -> POS lunas -> stok/FIFO/payment/invoice -> backup konsisten.
   - Verification: command PLAN, DB/ENV/cache disposable; reuse hasil unchanged.
-- [ ] Uji offline pada Windows bersih tanpa Laragon/tool developer.
+- [ ] Uji offline pada Windows bersih tanpa Laragon/tool developer, MySQL manual siap.
   - Acceptance: install/owner/login/LAN/background/reboot/repair/uninstall
-    bekerja pada setiap OS yang diklaim, tanpa dependency dari PC pembuat.
+    bekerja pada setiap OS yang diklaim, tanpa dependency dari PC pembuat;
+    MySQL manual tercatat sebagai prasyarat, bukan dianggap ikut dibundel.
   - Verification: snapshot VM/mesin bersih, network-off, checksum artifact.
 - [ ] Tulis panduan installer dan laporan penerimaan.
   - Acceptance: BUILD/INSTALL/LAN/STORE/PHYSICAL dipisahkan; pending printer,
@@ -205,7 +238,7 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
 | Pemeriksaan | Hasil | Catatan |
 | --- | --- | --- |
 | SDK portable | PASS | 10.0.404, SHA512 cocok metadata Microsoft, dotnet.exe Authenticode Valid/Microsoft; tidak memasang SDK global |
-| Harness deployment | PASS | 43 kasus. RED nyata pada parent path berupa file dan direktori privat kosong; GREEN setelah koreksi |
+| Harness deployment | PASS | 45 kasus setelah revisi MySQL manual; termasuk RED listener DB lalu GREEN. Dua kasus baru melengkapi 43 pengaman awal |
 | Restore locked + publish native | PASS | .NET 10.0.15 self-contained win-x64; NuGet lockfile dan source tooling dicatat |
 | `composer install --no-dev --no-scripts --no-plugins` | PASS | 87 package dari composer.lock commit source, staging tanpa env; tidak menjalankan Artisan |
 | `composer check-platform-reqs --no-dev --no-plugins` | PASS | PHP builder 8.4.16; bukan bukti PHP runtime bundled |
@@ -213,9 +246,9 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
 | Vite + CSS Tailwind | PASS sesudah koreksi | Ignore walker semula melewatkan source ignored. Marker boundary dan .gitignore commit memperbaiki; CSS final 104.423 byte, empat utilitas dasar diperiksa |
 | Manifest + native verifier | PASS | 7.884 file dan checksum seluruh payload; fixture hash yang dirusak ditolak oleh EXE dan wrapper PowerShell |
 | Preflight PC ini | PASS penolakan | Exit 2: Windows 10/non-admin ditolak; installationPerformed=false. Bukan INSTALL_VERIFIED |
-| `-Distribution` | PASS penolakan | BLOCKED_LICENSE sebelum build directory baru atau download |
+| `-Distribution` | PASS penolakan | Setelah revisi: BLOCKED_IMPLEMENTATION sebelum build directory baru atau download, bukan izin rilis |
 | Syntax PowerShell, diff, scope/link docs | PASS | Pemeriksaan terfokus, file LSP staged user tetap terpisah |
-| Lisensi MySQL bundel aplikasi tertutup | BLOCKED_LICENSE | Pilihan versi gratis user dicatat; kebijakan Oracle bukan izin otomatis. Tidak membeli/mengganti engine |
+| Lisensi MySQL bundel aplikasi tertutup | NOT_APPLICABLE setelah revisi | MySQL/server/client tools tidak dibundel; dipasang manual admin. Pengajuan Oracle dibatalkan sebelum dikirim, bukan izin telah terbit |
 | Vendor runtime lengkap, signing, OS disposable, WebView2/instalasi aktual | PENDING | Tidak menutup Increment 1 penuh atau mulai provisioning produksi |
 | PHP regresi/migration/browser DevTools | SKIPPED | Tidak ada source/schema/UI web POS berubah; QA native UI dan clean install tetap pending, bukan diganti mock/Chrome |
 
@@ -246,6 +279,30 @@ ditrust dan sudah tidak ditemukan. Builder kini menetapkan
 `DOTNET_GENERATE_ASPNET_CERTIFICATE=false` serta cache/CLI home privat.
 Tidak mengubah sertifikat POS/Laragon, database, service, firewall, QZ atau
 driver. Jangan memakai cleanup semua sertifikat untuk mengatasi kejadian ini.
+
+### Hasil Revisi MySQL Manual, 23 November 2026
+
+- PRD/PLAN/ADR-022, indeks dan README tooling memakai prasyarat MySQL manual;
+  server/mysql/mysqldump tidak ada di daftar runtime bundled. Tidak ada
+  pengajuan Oracle dikirim, MySQL dipasang, atau database toko diubah.
+- Preflight hanya memeriksa konflik HTTPS/service POS, tidak mengklaim koneksi
+  DB valid. Test listener DB existing FAIL sebelum perbaikan lalu 45 kasus
+  PASS. Publish native berhasil tanpa restore/dependency baru.
+- Artifact preflight terbaru:
+  `storage/app/private/windows-installer/builds/manual-mysql-preflight-dcefeed1f1fd4a90a55f1ec0ca80f210/Pos.Setup.exe`.
+  SHA256 `dc305ae82e84a9b654ddf2f1c4074fdfd084d0b43f634b548da51723de01418d`,
+  116.131.982 byte. verification-report.json mencatat source hash/tooling dirty;
+  bukan build aplikasi atau installer lengkap baru.
+- CLI native aktual: exit 2, Windows 10/non-admin ditolak, installationPerformed
+  dan databaseConnectionVerified keduanya false. Tidak ada service/registry/DB
+  yang dimutasi. UI native visual dan Windows bersih tetap BELUM DIUJI.
+- Manifest JSON dan penolakan Distribution PASS. Diff/link/scope diperiksa
+  sebelum commit; regresi PHP/frontend tidak diulang karena source aplikasi
+  POS, schema, asset web dan dependency tidak berubah. DevTools SKIPPED:
+  perubahan native/preflight, bukan halaman web; bukan pengganti QA native.
+- Konfigurasi dan seluruh disk VM asal cocok SHA256 sebelum/sesudah kedua
+  interupsi. Tidak ada VM QA terdaftar atau boot; share global tidak diubah.
+  Kedua disk parsial tetap privat dan bukan VM QA yang siap dipakai.
 
 Save point mencakup hanya tooling, ignore build dan dokumentasi terkait;
 work item keseluruhan belum selesai dan belum dipush.

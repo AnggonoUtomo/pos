@@ -3,22 +3,26 @@
 ## Status
 
 Kebutuhan dan PLAN diterima untuk mulai Increment 1, 22 November 2026.
-Distribusi aplikasi tertutup dipilih user; izin bundel MySQL Community masih
-BLOCKED_LICENSE. Persetujuan build bukan izin deployment pada PC aktual.
+Distribusi aplikasi tertutup dipilih user. Revisi 23 November 2026: MySQL
+dipasang manual oleh admin, bukan bagian bundel; pengajuan Oracle dihentikan.
+Persetujuan build bukan izin deployment pada PC aktual.
 
 ## Masalah Dan Tujuan
 
-Klien perlu memasang POS tanpa menyiapkan Laragon, PHP/MySQL, build frontend,
-atau terminal sendiri. Satu paket offline harus menyiapkan runtime dan toko
-baru, mempertahankan aplikasi bisnis serta data saat update/uninstall.
+Klien perlu memasang POS tanpa Laragon, menyiapkan PHP atau build frontend.
+Admin memasang MySQL manual lebih dahulu. Sesudah prasyarat itu terpenuhi,
+paket offline menyiapkan runtime aplikasi dan toko baru, mempertahankan
+aplikasi bisnis serta data saat update/uninstall.
 
 ## Pengguna Dan Lifecycle
 
-1. Admin Windows menjalankan satu `POS-Setup-<versi>-win-x64.exe`, menyelesaikan
+1. Admin memasang MySQL serta mysql/mysqldump manual, menyediakan database baru
+   kosong dan akun khusus. Admin menjalankan `POS-Setup-<versi>-win-x64.exe`, menyelesaikan
    UAC dan lisensi. Preflight memeriksa OS, disk, port dan instalasi existing.
 2. Wizard Bahasa Indonesia menampilkan opsi server otomatis, LAN, pemicu
    Scheduler dan QZ. Dampak service/firewall/trust tidak disembunyikan.
-3. Database privat baru disiapkan. Pemilik membuat nama/email/password pertama
+3. Koneksi, database kosong, hak akses dan alat backup diverifikasi tanpa
+   mengelola service/datadir MySQL. Pemilik membuat nama/email/password pertama
    dengan konfirmasi; tidak ada akun baku atau penyalinan dataset toko ini.
 4. Kasir membuka shortcut WebView2 ke login existing. Pengaturan toko, gudang,
    barang/harga, kas/metode bayar dan shift memakai modul/panduan yang sudah ada.
@@ -27,16 +31,17 @@ baru, mempertahankan aplikasi bisnis serta data saat update/uninstall.
 
 "Sekali klik" berarti satu paket terpandu, bukan tanpa UAC, input akun,
 persetujuan lisensi, atau onboarding sertifikat klien. Offline berarti tidak
-perlu internet saat install/pakai lokal; akses LAN tetap membutuhkan jaringan.
+perlu internet saat install/pakai lokal setelah prasyarat MySQL manual tersedia;
+akses LAN tetap membutuhkan jaringan.
 
 ## Requirement
 
 | ID | Kebutuhan |
 | --- | --- |
-| INS-01 | Runtime, vendor PHP produksi dan asset frontend sudah dibangun dalam paket |
+| INS-01 | Runtime aplikasi, vendor PHP produksi dan asset frontend dibangun dalam paket; MySQL/mysql/mysqldump eksternal manual |
 | INS-02 | Klien tidak membutuhkan Node/npm, Composer, Git, .NET SDK atau dev server |
 | INS-03 | Windows x64; edisi/versi OS hanya diklaim setelah didukung runtime dan diuji |
-| INS-04 | MySQL privat loopback, credential unik, bukan root kosong/user web global admin |
+| INS-04 | Validasi MySQL manual loopback, database khusus kosong dan akun terbatas; tanpa memasang/mengendalikan service/datadir MySQL |
 | INS-05 | Owner/admin pertama dibuat sekali; rerun tidak mereset password/APP_KEY |
 | INS-06 | Tidak ada setup HTTP publik, akun default, master/demo/transaksi latihan |
 | INS-07 | Server dapat otomatis menyala dan tetap hidup saat desktop ditutup |
@@ -53,12 +58,14 @@ perlu internet saat install/pakai lokal; akses LAN tetap membutuhkan jaringan.
 
 Fitur bisnis, tenant/cabang, migrasi data Laragon, purge data, auto-update
 internet, driver universal, gateway struk baru, silent signing dan printer
-tablet jarak jauh. Tidak menutup UAT operator/printer atau backup off-device
+tablet jarak jauh, bundel/installer otomatis MySQL dan pengajuan Oracle.
+Tidak menutup UAT operator/printer atau backup off-device
 hanya karena installer berhasil.
 
 ## Acceptance Dan Keputusan Terbuka
 
-- [ ] Windows bersih/offline menghasilkan login yang bekerja tanpa data developer.
+- [ ] Windows bersih dengan MySQL manual siap menghasilkan login offline tanpa
+  Laragon atau data developer; tidak diklaim tanpa prasyarat eksternal.
 - [ ] Setup race/retry/failure tidak membuat takeover atau menghilangkan data.
 - [ ] Background, reboot, TLS/LAN, backup/restore dan uninstall terbukti.
 - [ ] Dukungan OS, lisensi bundling dan code-signing ditetapkan sebelum distribusi.

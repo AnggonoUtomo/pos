@@ -7,8 +7,9 @@ garis besar PRD dan ADR lama yang sudah dipindahkan ke dokumen aktif ini.
 ## Mulai Di Sini
 
 Rencana distribusi baru: [Installer Windows standalone dan WebView2](work-items/windows-standalone-installer/README.md).
-PLAN diterima untuk mulai tooling build dan preflight. Gate lisensi bundel
-vendor tetap terbuka; tidak mengizinkan pemasangan service pada PC toko.
+PLAN diterima untuk mulai tooling build dan preflight. MySQL dipasang manual
+oleh admin, bukan dibundel; gate komponen bundled/implementasi/QA tetap terbuka.
+Tidak mengizinkan pemasangan service pada PC toko.
 Deployment existing tetap berlaku.
 
 Prioritas sekarang adalah koreksi/perbaikan/tambahan kecil per module atau

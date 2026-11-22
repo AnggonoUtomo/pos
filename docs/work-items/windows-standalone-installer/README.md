@@ -3,9 +3,10 @@
 ## Status
 
 Disetujui untuk mulai Increment 1, 22 November 2026. Build privat/staging dan
-preflight dikerjakan; bukan izin deployment pada PC toko. Distribusi aplikasi
-tertutup dengan MySQL Community pilihan user masih memerlukan bukti izin
-bundel sesuai ketentuan Oracle (BLOCKED_LICENSE).
+preflight dikerjakan; bukan izin deployment pada PC toko. Revisi user
+23 November 2026: MySQL beserta alat backup dipasang manual oleh admin,
+tidak dibundel. Pengajuan Oracle dihentikan sebelum dikirim. Implementasi
+installer lengkap dan QA Windows bersih tetap belum selesai.
 
 ## Owner Dan Lokasi
 
@@ -17,7 +18,8 @@ bundel sesuai ketentuan Oracle (BLOCKED_LICENSE).
 ## Kebutuhan Yang Dikonfirmasi
 
 1. Satu installer offline Windows x64 tanpa Laragon, memakai desktop WebView2.
-2. Webserver, PHP, MySQL, redist, dan dependency runtime disertakan.
+2. Webserver, PHP, redist, dan dependency desktop disertakan. MySQL serta
+   mysql/mysqldump adalah prasyarat manual, tidak membutuhkan Laragon.
 3. PC utama sekaligus server/kasir; PC/tablet lain melalui browser LAN.
 4. Opsi server otomatis saat Windows menyala; tutup kasir tidak mematikan server.
    Tidak ada jendela terminal/PowerShell yang muncul berkala.
@@ -54,7 +56,8 @@ mengaktifkan physical print atau menutup pending UAT lama.
 
 ## Acceptance Criteria
 
-- [ ] Install offline pada Windows bersih tanpa Laragon berhasil sampai login.
+- [ ] Setelah MySQL manual siap, install offline pada Windows bersih tanpa
+  Laragon berhasil sampai login; prasyarat eksternal dijelaskan kepada admin.
 - [ ] Pemilik pertama dibuat aman, tanpa akun/password default atau data demo.
 - [ ] Desktop dan klien LAN memakai HTTPS yang dipercaya tanpa bypass TLS.
 - [ ] Startup otomatis/manual, close-window dan reboot sesuai opsi.
@@ -66,7 +69,7 @@ mengaktifkan physical print atau menutup pending UAT lama.
 
 | Area | Batas perubahan yang diusulkan |
 | --- | --- |
-| Database | Database baru privat; migration existing, tanpa schema bisnis baru |
+| Database | MySQL manual admin, database khusus kosong; migration existing, tanpa schema bisnis baru |
 | Identity | CLI first-owner, katalog permission/role produksi, audit tanpa secret |
 | Route/UI aplikasi | Login/module existing; tidak ada route setup/registrasi publik |
 | Demo | Tidak disertakan; fixture QA hanya pada instalasi disposable |
@@ -79,7 +82,7 @@ mengaktifkan physical print atau menutup pending UAT lama.
 | No | Status | Hasil |
 | --- | --- | --- |
 | 0 | Passed | Dokumen perencanaan, bukan implementasi |
-| 1 | Partial | Payload aplikasi dan preflight privat lulus; bundel vendor lengkap/QA OS masih pending dan lisensi blocked |
+| 1 | Partial | Payload aplikasi dan preflight privat lulus; vendor bundled/QA OS pending; MySQL eksternal manual |
 | 2 | Planned | Setup database, owner pertama, login dan backup |
 | 3 | Planned | WebView2, LAN/HTTPS, service dan scheduler opsional |
 | 4 | Planned | Repair/update/uninstall dan pemulihan kegagalan |
@@ -98,3 +101,7 @@ di staging. [Tooling dan command](../../../deployment/windows/README.md).
 First-run SDK sempat membuat satu development certificate; sudah dihapus
 spesifik dan perilaku dinonaktifkan (detail pada tasks). Bukan installer siap
 klien; DB/akun/service tidak dibuat. Semua source module POS tetap dipertahankan.
+
+Pemulihan VM: dua clone terinterupsi, belum ada VM QA siap boot. Log retry
+kedua mencatat shutdown Windows; konfigurasi dan disk VM asal identik SHA256.
+Uji Windows bersih BLOCKED_ENVIRONMENT, bukan PASS. VS Code tidak perlu ditutup.

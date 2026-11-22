@@ -28,6 +28,13 @@ internal static class InstallationSafetyTests
             });
             Check("existing service cannot be taken over", () =>
                 Require(RuntimeConfiguration.Check(Input() with { ExistingServices = ["posstandaloneweb"] }).Count > 0));
+            Check("manual database listener is not an installer port conflict", () =>
+                Require(RuntimeConfiguration.Check(Input() with { BusyPorts = [3307] }).Count == 0));
+            Check("manual database service is not owned by POS", () =>
+            {
+                Require(!RuntimeConfiguration.ServiceNames.Contains("PosStandaloneDatabase", StringComparer.OrdinalIgnoreCase));
+                Require(RuntimeConfiguration.Check(Input() with { ExistingServices = ["MySQL84", "PosStandaloneDatabase"] }).Count == 0);
+            });
             Check("a file cannot be used as a parent directory", () =>
             {
                 var file = Path.Combine(root, "not-a-directory");

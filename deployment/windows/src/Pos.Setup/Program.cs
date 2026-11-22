@@ -17,7 +17,8 @@ internal static class Program
             if (args.Length == 1 && args[0] == "--preflight-defaults")
             {
                 var issues = SetupWizard.CheckDefaults();
-                Console.WriteLine(JsonSerializer.Serialize(new { status = issues.Count == 0 ? "PASS" : "BLOCKED", issues, installationPerformed = false }));
+                Console.WriteLine(JsonSerializer.Serialize(new { status = issues.Count == 0 ? "PASS" : "BLOCKED", issues,
+                    installationPerformed = false, databaseConnectionVerified = false }));
                 return issues.Count == 0 ? 0 : 2;
             }
             if (args.Length > 0) throw new InvalidDataException("Argumen tidak dikenal.");

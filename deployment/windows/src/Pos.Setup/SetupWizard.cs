@@ -21,7 +21,7 @@ internal sealed class SetupWizard : Form
         layout.Controls.Add(new Label { AutoSize = true, Text = "Pemeriksaan kesiapan PC", Font = new Font(Font, FontStyle.Bold), Margin = new Padding(0, 0, 0, 14) });
         layout.Controls.Add(new Label { AutoSize = true, MaximumSize = new Size(680, 0), Text =
             "Alat internal ini hanya memeriksa port, folder dan nama service. Tidak memasang POS, mengubah data atau membuka jaringan.\n" +
-            "Bundel MySQL untuk distribusi aplikasi tertutup masih menunggu kepastian lisensi.\n" +
+            "MySQL dan alat backup dipasang manual oleh admin, bukan bagian installer. Koneksi database belum diuji alat ini.\n" +
             "Opsi server otomatis, LAN dan Scheduler belum diterapkan pada tahap ini.", Margin = new Padding(0, 0, 0, 16) });
         var output = new TextBox { ReadOnly = true, Multiline = true, ScrollBars = ScrollBars.Vertical, Dock = DockStyle.Fill,
             Text = "Klik Periksa untuk pemeriksaan read-only. Instalasi penuh nantinya memerlukan UAC administrator dan persetujuan lisensi." };
@@ -35,7 +35,7 @@ internal sealed class SetupWizard : Form
             try
             {
                 var issues = CheckDefaults();
-                output.Text = issues.Count == 0 ? "Pemeriksaan awal lulus. Ini bukan bukti instalasi atau izin distribusi." : string.Join(Environment.NewLine + Environment.NewLine, issues);
+                output.Text = issues.Count == 0 ? "Pemeriksaan awal lulus. Koneksi MySQL belum diuji; ini bukan bukti instalasi atau izin distribusi." : string.Join(Environment.NewLine + Environment.NewLine, issues);
             }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException or NetworkInformationException)
             {
@@ -57,7 +57,7 @@ internal sealed class SetupWizard : Form
         return RuntimeConfiguration.Check(new PreflightInput(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "POS"),
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "POS"),
-            8443, 3307,
+            8443, 3306,
             System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X64 && Environment.OSVersion.Version.Build >= 22000,
             new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator),
             servicesKey?.GetSubKeyNames() ?? throw new IOException("Daftar service tidak dapat dibaca; preflight tidak diluluskan."),

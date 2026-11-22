@@ -44,5 +44,6 @@ pemasangan/koneksi manual ADR-020, bukan physical gate atau transaksi.
 [ADR-022](decisions/ADR-022-INSTALLER-WINDOWS-STANDALONE-WEBVIEW2.md) berstatus
 Accepted untuk rancangan: installer offline Windows x64, desktop WebView2, runtime terisolasi,
 data persisten, dan opsi service oleh admin deployment. Kebutuhan inti telah
-diterima user untuk mulai Increment 1. Izin bundel vendor tetap gate rilis;
+diterima user untuk mulai Increment 1. Revisi 23 November: MySQL prasyarat
+manual, tidak dibundel atau dikelola installer. Izin vendor bundled tetap gate rilis;
 tidak mengizinkan deployment pada komputer sekarang.

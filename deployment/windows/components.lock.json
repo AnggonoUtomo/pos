@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "distributionStatus": "BLOCKED_LICENSE",
+  "distributionStatus": "BLOCKED_IMPLEMENTATION",
   "target": "win-x64",
   "candidateOS": "Windows 11 x64; QA dan lifecycle edisi wajib sebelum rilis",
   "buildTools": {
@@ -16,18 +16,21 @@
     }
   },
   "requiredRuntimeComponents": [
-    { "id": "mysql", "family": "8.4 LTS Community x64", "status": "BLOCKED_LICENSE", "source": "https://dev.mysql.com/downloads/mysql/", "licenseUrl": "https://www.mysql.com/about/legal/licensing/oem/" },
     { "id": "apache", "family": "2.4 x64", "status": "PENDING_PIN", "source": "https://www.apachelounge.com/download/", "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0" },
     { "id": "php", "family": "8.4 x64 Thread Safe", "status": "PENDING_PIN_ABI", "source": "https://windows.php.net/download/", "licenseUrl": "https://www.php.net/license/" },
     { "id": "vc-redist", "family": "x64 compatible Apache/PHP", "status": "PENDING_PIN", "source": "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist", "licenseUrl": "https://visualstudio.microsoft.com/license-terms/" },
     { "id": "webview2", "family": "Evergreen offline x64", "status": "PENDING_PIN_LICENSE", "source": "https://developer.microsoft.com/en-us/microsoft-edge/webview2/", "licenseReviewSource": "https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution" },
     { "id": "inno-setup", "family": "6", "status": "PENDING_PIN", "source": "https://jrsoftware.org/isdl.php", "licenseUrl": "https://jrsoftware.org/files/is/license.txt" }
   ],
+  "requiredExternalComponents": [
+    { "id": "mysql", "family": "8.4 LTS x64", "status": "MANUAL_PREREQUISITE", "bundled": false, "source": "https://dev.mysql.com/downloads/mysql/", "requiredTools": ["mysql", "mysqldump"], "managedBy": "deployment-admin", "validationStatus": "PENDING_IMPLEMENTATION" }
+  ],
   "notes": [
     "Manifest parsial internal; bukan lock vendor lengkap yang siap didistribusikan.",
     "Tidak ada hash kosong/placeholder yang dianggap lolos verifikasi.",
     "Inno LICENSE mengizinkan commercial use dengan ketentuan; permintaan pembelian di situs bukan bukti kewajiban membeli. Belum ada pembelian.",
-    "User memilih aplikasi tertutup dan MySQL gratis. Kebijakan OEM Oracle tetap gate; tidak menganggap pilihan tersebut sebagai bukti izin bundel.",
+    "Revisi user 23 November 2026: MySQL/mysql/mysqldump dipasang manual admin, tidak diunduh atau dibundel. Pengajuan Oracle dihentikan sebelum dikirim.",
+    "Installer penuh dan validasi koneksi/DB kosong/alat backup belum diimplementasikan. Pengecualian MySQL bukan kelulusan rilis atau izin semua vendor bundled.",
     "Tidak memasukkan driver printer privat atau installer QZ sebelum opsi dan pin distribusinya diverifikasi."
   ]
 }

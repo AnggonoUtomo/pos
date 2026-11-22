@@ -7,16 +7,17 @@ Implementasi awal Increment 1: staging aplikasi dan alat preflight internal.
 WebView2, service, TLS LAN, repair atau uninstall. Tidak menjalankan installer
 pada PC toko untuk menguji hasil build.
 
-User memilih distribusi aplikasi tertutup dan MySQL Community gratis.
-[Kebijakan OEM Oracle](https://www.mysql.com/about/legal/licensing/oem/) belum
-memberikan dasar izin bundel untuk keputusan tersebut. `-Distribution` selalu
-berhenti sebelum download/build/mutasi sampai gate distribusi dituntaskan.
-Tidak membeli lisensi, mengganti MySQL atau mengganti lisensi POS otomatis.
+Revisi user 23 November 2026: MySQL beserta mysql/mysqldump dipasang manual
+oleh admin, tidak dibundel atau dikelola installer. Pengajuan Oracle dihentikan
+sebelum dikirim. Manifest membedakan vendor bundled dari prasyarat eksternal.
+`-Distribution` tetap berhenti sebelum download/build/mutasi dengan status
+BLOCKED_IMPLEMENTATION: installer penuh, pin/lisensi vendor bundled dan QA
+belum selesai. Tidak membeli lisensi atau mengganti MySQL/lisensi POS.
 
 ## Isi
 
 - `components.lock.json`: SDK portable terkunci beserta SHA512 dari metadata
-  Microsoft; status vendor lainnya eksplisit pending, bukan hash placeholder.
+  Microsoft; vendor bundled pending dan prasyarat MySQL manual dipisahkan.
 - `app-files.json`: source build dan payload yang boleh disalin.
 - `build.ps1`: build privat dari commit aplikasi, test pengaman, EXE preflight,
   lalu opsional vendor produksi/aset frontend di staging baru.
@@ -90,9 +91,12 @@ development pada first-run tanpa opsi terakhir; builder menonaktifkannya.
 Jangan memakai `dotnet test` untuk harness ini: tidak ada test adapter yang
 akan menemukannya. Exit nonzero dan nama kasus adalah indikator gagal.
 
-`Pos.Setup.exe --preflight-defaults` membaca OS/admin/port/folder/nama service;
+`Pos.Setup.exe --preflight-defaults` membaca OS/admin/port HTTPS/folder/nama service POS;
 exit `0` berarti pemeriksaan awal lulus, `2` konflik/prasyarat belum terpenuhi,
 `1` error pembacaan/argumen. Exit 0 bukan izin lisensi atau bukti install.
+Port DB yang terpakai bukan konflik, karena MySQL dikelola admin. Preflight
+ini tidak menguji koneksi/hak database atau ketersediaan alat backup;
+output CLI menyatakan `databaseConnectionVerified=false`.
 Windows 11 x64 adalah kandidat; lifecycle edisi dan QA OS bersih tetap wajib.
 EXE tanpa argumen membuka tampilan pemeriksaan, tanpa tombol install semu.
 EXE self-contained dapat mengekstrak library native ke cache sementara .NET;

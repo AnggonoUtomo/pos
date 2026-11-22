@@ -4,8 +4,9 @@
 
 Accepted untuk rancangan deployment dan mulai Increment 1, 22 November 2026.
 Izin redistribusi vendor/dukungan OS/signing tetap menjadi gate rilis terpisah.
-Tidak memberi izin instalasi OS sekarang. User memilih aplikasi tertutup;
-bundel MySQL Community belum mendapat bukti izin redistribusi yang sesuai.
+Tidak memberi izin instalasi OS sekarang. User memilih aplikasi tertutup.
+Revisi diterima 23 November 2026: MySQL dipasang manual oleh admin klien,
+tidak dibundel; pengajuan Oracle dihentikan sebelum dikirim.
 
 ## Tanggal
 
@@ -25,8 +26,13 @@ otomatis. Installer deployment memerlukan pengecualian eksplisit yang sempit.
 
 - Tool deployment di `deployment/windows/`, bukan bounded context/framework
   bisnis baru. Shell C#/.NET self-contained + WebView2 memakai UI POS existing.
-- Apache/PHP/MySQL privat dan kandidat Inno Setup; versi/ABI/lisensi dikunci
+- Apache/PHP privat dan kandidat Inno Setup; versi/ABI/lisensi dikunci
   sebelum build. Client tidak memerlukan tool developer atau Laragon.
+- MySQL beserta mysql/mysqldump adalah prasyarat manual milik admin, bukan
+  payload/service/datadir milik POS. Setup memvalidasi koneksi, database khusus
+  kosong dan hak akses; tidak memasang, mengambil alih atau menghapus MySQL.
+  Offline berlaku setelah prasyarat disediakan. Bundel ulang perlu keputusan
+  dan review lisensi baru, bukan menganggap izin Oracle sudah diperoleh.
 - Program Files untuk binary, ProgramData untuk data/config/key/backup dengan
   ACL per fungsi, profil WebView2 per user. Desktop bukan administrator.
 - Service server hanya dari installer yang dijalankan admin dengan opsi

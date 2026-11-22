@@ -5,7 +5,7 @@ public sealed record PreflightInput(string ProgramPath, string DataPath, int Htt
 
 public static class RuntimeConfiguration
 {
-    public static readonly string[] ServiceNames = ["PosStandaloneDatabase", "PosStandaloneWeb", "PosStandaloneScheduler"];
+    public static readonly string[] ServiceNames = ["PosStandaloneWeb", "PosStandaloneScheduler"];
 
     public static List<string> Check(PreflightInput input)
     {
@@ -14,8 +14,9 @@ public static class RuntimeConfiguration
         if (!input.IsAdministrator) errors.Add("Instalasi penuh nantinya memerlukan persetujuan administrator (UAC).");
         if (input.HttpsPort is < 1024 or > 65535 || input.DatabasePort is < 1024 or > 65535 || input.HttpsPort == input.DatabasePort)
             errors.Add("Pilih dua port berbeda dalam rentang 1024-65535.");
-        if (input.BusyPorts.Contains(input.HttpsPort) || input.BusyPorts.Contains(input.DatabasePort))
-            errors.Add("Port pilihan sudah dipakai. Tidak ada proses yang dihentikan.");
+        // MySQL is managed externally; its listener is neither a conflict nor proof of database readiness.
+        if (input.BusyPorts.Contains(input.HttpsPort))
+            errors.Add("Port HTTPS pilihan sudah dipakai. Tidak ada proses yang dihentikan.");
         if (input.ExistingServices.Intersect(ServiceNames, StringComparer.OrdinalIgnoreCase).Any())
             errors.Add("Nama service POS sudah ada. Gunakan alur repair, bukan mengambil alih service.");
         var program = CheckPath(input.ProgramPath, input.RequiredFreeBytes, errors);
