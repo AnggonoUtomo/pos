@@ -58,6 +58,12 @@ module cukup signifikan, buat dokumen module sebelum coding.
 - Pemicu Laravel Scheduler (cron/penjadwal OS) disiapkan admin saat deployment.
   Jangan memasang task, service atau runner OS otomatis pada komputer user;
   aplikasi hanya menyimpan opsi jadwal dan menyediakan command Laravel.
+- Pengecualian ADR-022 hanya untuk installer standalone yang dipilih dan
+  dijalankan admin klien: opsi service/penjadwal harus terlihat. Persetujuan
+  build installer tidak mengizinkan pemasangan service, sertifikat, firewall
+  atau runtime global pada PC toko/developer sekarang. Build privat berada di
+  `storage/app/private/windows-installer/`; gate lisensi vendor wajib dipenuhi
+  sebelum distribusi. Aturan OS-neutral Laravel tetap berlaku.
 - Setelah task atau increment selesai dan verifikasi relevan lulus, buat commit
   otomatis sebagai save point.
 - Push hanya dilakukan saat keseluruhan work item/task besar selesai atau jika

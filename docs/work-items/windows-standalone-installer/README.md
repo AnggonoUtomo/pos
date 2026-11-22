@@ -2,13 +2,15 @@
 
 ## Status
 
-Draft, 22 November 2026. Kebutuhan inti dikonfirmasi user. PLAN teknis menunggu
-persetujuan; penyusunan dokumen bukan izin coding atau deployment.
+Disetujui untuk mulai Increment 1, 22 November 2026. Build privat/staging dan
+preflight dikerjakan; bukan izin deployment pada PC toko. Distribusi aplikasi
+tertutup dengan MySQL Community pilihan user masih memerlukan bukti izin
+bundel sesuai ketentuan Oracle (BLOCKED_LICENSE).
 
 ## Owner Dan Lokasi
 
 - Lintas deployment, Platform/Identity, dan Platform/OperationalSettings.
-- Calon tool deployment: `deployment/windows/`, bukan module bisnis baru.
+- Tooling deployment: `deployment/windows/`, bukan module bisnis baru.
 - [PRD](PRD.md), [PLAN](plan.md), [checklist](tasks.md).
 - Usulan keputusan: [ADR-022](../../decisions/ADR-022-INSTALLER-WINDOWS-STANDALONE-WEBVIEW2.md).
 
@@ -77,7 +79,7 @@ mengaktifkan physical print atau menutup pending UAT lama.
 | No | Status | Hasil |
 | --- | --- | --- |
 | 0 | Passed | Dokumen perencanaan, bukan implementasi |
-| 1 | Planned | Payload offline terverifikasi dan bebas data toko |
+| 1 | Partial | Payload aplikasi dan preflight privat lulus; bundel vendor lengkap/QA OS masih pending dan lisensi blocked |
 | 2 | Planned | Setup database, owner pertama, login dan backup |
 | 3 | Planned | WebView2, LAN/HTTPS, service dan scheduler opsional |
 | 4 | Planned | Repair/update/uninstall dan pemulihan kegagalan |
@@ -85,7 +87,14 @@ mengaktifkan physical print atau menutup pending UAT lama.
 
 ## Handoff
 
-Tahap sekarang hanya dokumentasi. Tidak ada executable installer dibuat,
-dependency dipasang, cache/database produksi diubah, atau service baru
-diregistrasikan. Old-docs dan file user tidak disentuh. Gate keputusan dan
-verifikasi tersedia pada PLAN dan tasks.
+Implementasi dimulai pada tooling deployment. Tidak ada izin memasang service,
+mengubah database/cache produksi, membeli lisensi atau mengganti MySQL. SDK
+build portable hanya di direktori privat yang diabaikan Git. Old-docs dan file
+user tetap tidak disentuh. Bukti hasil diperbarui pada tasks setelah diperiksa.
+
+Hasil awal: 43 kasus pengaman lulus, native preflight self-contained berhasil
+dibangun dan payload 7.884 file terverifikasi setelah koreksi scanning Tailwind
+di staging. [Tooling dan command](../../../deployment/windows/README.md).
+First-run SDK sempat membuat satu development certificate; sudah dihapus
+spesifik dan perilaku dinonaktifkan (detail pada tasks). Bukan installer siap
+klien; DB/akun/service tidak dibuat. Semua source module POS tetap dipertahankan.

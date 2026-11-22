@@ -7,8 +7,9 @@ garis besar PRD dan ADR lama yang sudah dipindahkan ke dokumen aktif ini.
 ## Mulai Di Sini
 
 Rencana distribusi baru: [Installer Windows standalone dan WebView2](work-items/windows-standalone-installer/README.md).
-Status masih Draft; bukan izin mengubah aplikasi, menjalankan installer atau
-memasang service pada PC toko. Deployment existing tetap berlaku.
+PLAN diterima untuk mulai tooling build dan preflight. Gate lisensi bundel
+vendor tetap terbuka; tidak mengizinkan pemasangan service pada PC toko.
+Deployment existing tetap berlaku.
 
 Prioritas sekarang adalah koreksi/perbaikan/tambahan kecil per module atau
 lintas module sesuai arahan user. [Backlog skala menengah](BACKLOG.md) dicatat

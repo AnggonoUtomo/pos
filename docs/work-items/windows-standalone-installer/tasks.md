@@ -2,7 +2,9 @@
 
 ## Status
 
-PLAN Draft, implementasi belum diizinkan. Tanggal: 22 November 2026.
+PLAN diterima untuk memulai Increment 1. Tanggal: 22 November 2026.
+MySQL tetap dipilih user untuk aplikasi tertutup; izin bundel belum terbukti.
+Distribusi penuh BLOCKED_LICENSE, build privat/preflight dikerjakan terpisah.
 Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 
 ## Sebelum Mulai
@@ -15,7 +17,7 @@ Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 - [x] Referensi primer runtime/installer ditinjau; ketidakpastian dicatat.
 - [x] Source baseline dan file LSP user dicatat; Old-docs tidak disentuh.
 - [x] Acceptance, increment, QA dan rollback ditulis.
-- [ ] PLAN/komponen/allowlist/ADR/pengecualian OS diterima user.
+- [x] PLAN/komponen/allowlist/ADR/pengecualian OS diterima user.
 - [ ] Gate lisensi distribusi, dukungan OS, signing dan lingkungan QA dituntaskan.
 
 ## Increment 0: Dokumentasi Perencanaan
@@ -34,6 +36,13 @@ Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 
 ## Increment 1: Payload Offline Terverifikasi
 
+Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
+
+- [x] Staging aplikasi dari commit, manifest file/hash dan penolakan data privat.
+- [x] Test negatif payload/path/konflik dan preflight native read-only.
+- [ ] Gate distribusi MySQL, pin seluruh vendor dan build EXE offline lengkap.
+- [ ] QA Windows disposable; tidak menggunakan PC toko sebagai target install.
+
 - [ ] Kunci manifest komponen, NuGet/build tool, sumber, hash dan lisensi.
   - Acceptance: ABI/arsitektur/OS cocok; signature/hash/lisensi gagal berarti
     berhenti, bukan bypass atau mirror acak. Exact file list dilengkapi dahulu.
@@ -43,11 +52,17 @@ Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
     backup/cache/hot/LSP/driver privat atau dependency Laragon terselip.
   - Verification: allowlist payload, path traversal/symlink checks,
     `composer check-platform-reqs --no-dev`, typecheck/lint/build staging.
+  - Hasil parsial: payload aplikasi PASS, 7.884 file; tool builder masih
+    menggunakan PHP lokal. Runtime PHP/Apache/MySQL bundled belum dipin/diuji,
+    sehingga item payload offline lengkap ini belum ditutup.
 - [ ] Buat EXE bootstrap/preflight yang tidak mutasi saat gagal.
   - Acceptance: offline, konflik port/path/service jelas, tanpa takeover;
     UAC/lisensi/opsi OS terlihat, tidak download saat install.
   - Verification: PayloadTests, InstallationSafetyTests, instalasi disposable.
-- [ ] Catat hasil dan commit scoped tanpa binary/runtime data.
+  - Hasil parsial: EXE preflight self-contained dibangun dan CLI read-only
+    diuji; bukan Inno installer/wizard instalasi lengkap. Tidak ada opsi OS
+    aktif, service dibuat, atau klaim native UI/clean install sudah lulus.
+- [x] Catat hasil dan commit scoped tanpa binary/runtime data.
   - Acceptance: source, manifest dan artifact/checksum terhubung.
   - Verification: review diff dan report; tidak push parsial otomatis.
 
@@ -147,15 +162,55 @@ Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 - [ ] ADR, dokumen module, panduan operator dan batas izin OS selaras.
 - [ ] Data toko, cache produksi, Old-docs dan LSP user tetap tidak berubah.
 
-## Hasil Verifikasi Perencanaan
+## Hasil Aktual Increment 1 (Parsial)
 
 | Pemeriksaan | Hasil | Catatan |
 | --- | --- | --- |
-| Discovery source/runtime requirements | PASS | Read-only, bukan production readiness |
-| `git diff --cached --check -- <tujuh path dokumen>` | PASS | Tidak ada error whitespace pada scope dokumen |
-| Pemeriksaan tautan Markdown relatif | PASS | 7 dokumen, 53 tautan, 0 target hilang |
-| Review scope/status | PASS | ADR Proposed, PLAN Draft; lima increment implementasi belum dicentang |
-| Test/build/installer/OS/browser | NOT RUN | Dokumentasi saja, implementasi belum ada |
+| SDK portable | PASS | 10.0.404, SHA512 cocok metadata Microsoft, dotnet.exe Authenticode Valid/Microsoft; tidak memasang SDK global |
+| Harness deployment | PASS | 43 kasus. RED nyata pada parent path berupa file dan direktori privat kosong; GREEN setelah koreksi |
+| Restore locked + publish native | PASS | .NET 10.0.15 self-contained win-x64; NuGet lockfile dan source tooling dicatat |
+| `composer install --no-dev --no-scripts --no-plugins` | PASS | 87 package dari composer.lock commit source, staging tanpa env; tidak menjalankan Artisan |
+| `composer check-platform-reqs --no-dev --no-plugins` | PASS | PHP builder 8.4.16; bukan bukti PHP runtime bundled |
+| `npm ci`, `tsc --noEmit`, ESLint nonmutating | PASS | Staging commit; warning deprecation ESLint existing dicatat tanpa upgrade di luar scope |
+| Vite + CSS Tailwind | PASS sesudah koreksi | Ignore walker semula melewatkan source ignored. Marker boundary dan .gitignore commit memperbaiki; CSS final 104.423 byte, empat utilitas dasar diperiksa |
+| Manifest + native verifier | PASS | 7.884 file dan checksum seluruh payload; fixture hash yang dirusak ditolak oleh EXE dan wrapper PowerShell |
+| Preflight PC ini | PASS penolakan | Exit 2: Windows 10/non-admin ditolak; installationPerformed=false. Bukan INSTALL_VERIFIED |
+| `-Distribution` | PASS penolakan | BLOCKED_LICENSE sebelum build directory baru atau download |
+| Syntax PowerShell, diff, scope/link docs | PASS | Pemeriksaan terfokus, file LSP staged user tetap terpisah |
+| Lisensi MySQL bundel aplikasi tertutup | BLOCKED_LICENSE | Pilihan versi gratis user dicatat; kebijakan Oracle bukan izin otomatis. Tidak membeli/mengganti engine |
+| Vendor runtime lengkap, signing, OS disposable, WebView2/instalasi aktual | PENDING | Tidak menutup Increment 1 penuh atau mulai provisioning produksi |
+| PHP regresi/migration/browser DevTools | SKIPPED | Tidak ada source/schema/UI web POS berubah; QA native UI dan clean install tetap pending, bukan diganti mock/Chrome |
+
+### Artefak Privat Dan Provenance
+
+Root build: `storage/app/private/windows-installer/builds/095b625c1b73-19cfb292c5e6402ba024533819ccb270/`.
+
+- Commit aplikasi: `095b625c1b73c2ea1df7e289dbaa4603ba5367c0`.
+- Payload diterima: `application-verified/`, bukan `source/` atau `application/`
+  lama yang CSS-nya tidak lengkap. Artefak lama tetap ada tetapi ditolak report.
+- Manifest: `application-verified-manifest.json`, SHA256
+  `593def5c7522e326364c0d45b16a337241f8de722deef9f2be742bc0f41bfbe0`.
+- EXE internal `preflight/Pos.Setup.exe` 116.131.982 byte, SHA256
+  `d195cb3d561e5aabdd51bcfd1f07ff3f53b871394b2e8db65c930401912039f7`.
+- `build-report.json` menghubungkan manifest aplikasi, lockfile dan tooling;
+  `tooling-manifest.json` menyimpan hash source build. Tooling belum committed
+  ketika build dijalankan ditandai eksplisit. Binary/report tidak masuk Git.
+- Gate sebelumnya yang tidak terdampak dipakai kembali. Setelah temuan Tailwind,
+  hanya frontend diperbaiki/dibangun ulang; pemeriksaan arsitektur native
+  diperbaiki dan publish/probe terkait saja diulang. Tidak mengulang regresi POS.
+
+### Efek Samping SDK Yang Sudah Ditangani
+
+First-run SDK sempat membuat satu ASP.NET development certificate pada
+CurrentUser/My, 22 November 2026 16:30:35. Sertifikat baru tersebut dihapus
+secara exact thumbprint setelah subject/OID/waktu diperiksa; tidak pernah
+ditrust dan sudah tidak ditemukan. Builder kini menetapkan
+`DOTNET_GENERATE_ASPNET_CERTIFICATE=false` serta cache/CLI home privat.
+Tidak mengubah sertifikat POS/Laragon, database, service, firewall, QZ atau
+driver. Jangan memakai cleanup semua sertifikat untuk mengatasi kejadian ini.
+
+Save point mencakup hanya tooling, ignore build dan dokumentasi terkait;
+work item keseluruhan belum selesai dan belum dipush.
 
 Jangan menambah scope tanpa revisi PLAN/persetujuan atau menutup checklist
 implementasi sebelum coding dan pemeriksaan terkait benar-benar selesai.

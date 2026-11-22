@@ -2,8 +2,9 @@
 
 ## Status
 
-Draft, 22 November 2026. Kebutuhan inti dikonfirmasi dalam percakapan; pilihan
-teknis, persetujuan coding dan izin deployment pada PC aktual tetap terpisah.
+Kebutuhan dan PLAN diterima untuk mulai Increment 1, 22 November 2026.
+Distribusi aplikasi tertutup dipilih user; izin bundel MySQL Community masih
+BLOCKED_LICENSE. Persetujuan build bukan izin deployment pada PC aktual.
 
 ## Masalah Dan Tujuan
 

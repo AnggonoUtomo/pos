@@ -1163,6 +1163,17 @@ dua referensi baru nullable, tanpa backfill/seed/grant. DDL MySQL tidak rollback
 otomatis; jangan rollback schema berisi data. Bukti pada
 [checklist](modules/Inventory/Items/work-items/categories-brands/tasks.md).
 
+## QA Tooling Standalone Windows
+
+[Tooling Windows](../deployment/windows/README.md) memiliki assertion harness
+native terpisah dari PHPUnit. Jalankan dengan SDK portable/CLI home privat dan
+`DOTNET_GENERATE_ASPNET_CERTIFICATE=false`. Gunakan lockfile dan source commit,
+verifikasi semua file payload serta keberadaan utilitas CSS hasil Vite.
+Build/preflight read-only bukan bukti install, lisensi, Windows lifecycle,
+WebView2 aktual, reboot, LAN, backup/restore atau hardware. Gate tersebut tetap
+memerlukan OS disposable dan bukti tersendiri pada
+[checklist installer](work-items/windows-standalone-installer/tasks.md).
+
 ## Checklist Invariant Transaksi
 
 Saat menyentuh Sales POS, Purchasing, Inventory Stock, Returns, atau Finance

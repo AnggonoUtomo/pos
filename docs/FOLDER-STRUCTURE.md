@@ -96,6 +96,13 @@ Aturan frontend:
 
 ## Test Executable
 
+Tooling installer Windows berada di `deployment/windows/`, bukan module bisnis
+atau framework reusable. Source native, manifest dan script build masuk Git;
+SDK portable, cache, staging, binary dan report build berada di ignored
+`storage/app/private/windows-installer/`. `bin/obj` native juga diabaikan.
+Lihat [PLAN installer](work-items/windows-standalone-installer/plan.md) untuk
+exact file list dan batas izin deployment.
+
 ```text
 tests/Feature/Modules/{Domain}/{Module}/
 tests/Unit/Modules/{Domain}/{Module}/

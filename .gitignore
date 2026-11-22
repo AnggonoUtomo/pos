@@ -18,6 +18,9 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/app/private/windows-installer/
+/deployment/windows/**/bin/
+/deployment/windows/**/obj/
 /vendor
 auth.json
 Homestead.json

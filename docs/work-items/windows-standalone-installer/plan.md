@@ -2,9 +2,16 @@
 
 ## Status Dan Batas Izin
 
-Draft, 22 November 2026. User meminta PLAN. Belum ada izin coding, mengubah
-modul atau deployment OS. Persetujuan kebutuhan produk bukan penerimaan semua
-usulan teknis di bawah. Scope dikunci pada [PRD](PRD.md) dan [README](README.md).
+Disetujui user untuk mulai Increment 1, 22 November 2026. Persetujuan mencakup
+tooling build privat, staging dan preflight; bukan pemasangan service atau
+perubahan database/OS PC toko sekarang. Scope mengikuti [PRD](PRD.md) dan
+[README](README.md). Increment berikutnya tetap mengikuti batas PLAN ini.
+
+User memilih distribusi aplikasi tertutup dengan MySQL Community gratis.
+Kebijakan OEM Oracle belum mendukung asumsi izin bundel tersebut. Sampai ada
+bukti izin redistribusi yang sesuai, komponen MySQL dan EXE distribusi penuh
+berstatus BLOCKED_LICENSE; tidak membeli lisensi atau mengganti engine.
+Payload source aplikasi dan alat preflight internal dapat diverifikasi terpisah.
 
 ## Usulan Komponen
 
@@ -167,9 +174,10 @@ tetap kompatibel dengan adapter ArtisanBackupExecutor, tanpa adapter baru.
 
 ## Allowlist Usulan
 
-Saat ini hanya tujuh dokumen perencanaan/index boleh berubah. Daftar berikut
-calon implementasi, bukan izin sekarang. Perluasan exact file list harus
-direvisi/disetujui sebelum coding; tidak membuat folder/class kosong.
+Daftar berikut diterima untuk implementasi sesuai increment. Pada Increment 1
+hanya tooling deployment, ignore build privat, dan dokumentasi terkait yang
+diubah. Perluasan exact file list harus direvisi/disetujui sebelum coding;
+tidak membuat folder/class kosong.
 
 Existing: `AGENTS.md`, `.gitignore`, `bootstrap/app.php`,
 `app/Console/Commands/BackupPos.php`,
@@ -260,6 +268,12 @@ php artisan test --compact tests/Feature/Modules/Platform/Identity/InitialOwnerT
 dotnet test deployment/windows/tests/Pos.Deployment.Tests/Pos.Deployment.Tests.csproj
 node scripts/qa/page-guides.mjs
 ```
+
+Untuk Increment 1, test deployment menggunakan executable assertion harness
+tanpa dependency NuGet: `dotnet run --project deployment/windows/tests/Pos.Deployment.Tests/Pos.Deployment.Tests.csproj`.
+`dotnet test` di atas baru berlaku jika test SDK benar-benar ditambahkan.
+Ini menghindari package tanpa consumer; setiap assertion gagal menghasilkan
+exit code nonzero dan nama kasus, bukan sekadar script yang selalu sukses.
 
 Build staging: `composer check-platform-reqs --no-dev`, `npm ci`,
 `npx tsc --noEmit`, lint source aktif nonmutating, `npm run build`.

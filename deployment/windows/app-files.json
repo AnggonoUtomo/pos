@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "buildDirectories": ["app", "bootstrap", "config", "database", "public", "resources", "routes"],
+  "buildFiles": [".gitignore", "artisan", "composer.json", "composer.lock", "package.json", "package-lock.json", "tsconfig.json", "vite.config.js", "eslint.config.js", "components.json"],
+  "payloadDirectories": ["app", "config", "database", "public", "resources", "routes", "vendor"],
+  "payloadFiles": ["artisan", "composer.json", "composer.lock", "bootstrap/app.php", "bootstrap/providers.php"],
+  "generatedDirectory": "public/build",
+  "requiredFiles": ["artisan", "composer.json", "composer.lock", "bootstrap/app.php", "vendor/autoload.php", "public/build/manifest.json"]
+}

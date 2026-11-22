@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "distributionStatus": "BLOCKED_LICENSE",
+  "target": "win-x64",
+  "candidateOS": "Windows 11 x64; QA dan lifecycle edisi wajib sebelum rilis",
+  "buildTools": {
+    "dotnet": {
+      "version": "10.0.404",
+      "runtimeVersion": "10.0.15",
+      "url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.404/dotnet-sdk-10.0.404-win-x64.zip",
+      "sha512": "330ddd2665b43cd2e428216a0d8ea1ac7bb19b5434fdc530e62010dc3b52823a620bf95489d628e1ed6f5122401793ee4887cca4a019122361a1231497f632ee",
+      "publisher": "Microsoft Corporation",
+      "metadataUrl": "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/10.0/releases.json",
+      "licenseUrl": "https://github.com/dotnet/sdk/blob/main/LICENSE.TXT",
+      "scope": "build-only; ZIP privat, tanpa installer global"
+    }
+  },
+  "requiredRuntimeComponents": [
+    { "id": "mysql", "family": "8.4 LTS Community x64", "status": "BLOCKED_LICENSE", "source": "https://dev.mysql.com/downloads/mysql/", "licenseUrl": "https://www.mysql.com/about/legal/licensing/oem/" },
+    { "id": "apache", "family": "2.4 x64", "status": "PENDING_PIN", "source": "https://www.apachelounge.com/download/", "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0" },
+    { "id": "php", "family": "8.4 x64 Thread Safe", "status": "PENDING_PIN_ABI", "source": "https://windows.php.net/download/", "licenseUrl": "https://www.php.net/license/" },
+    { "id": "vc-redist", "family": "x64 compatible Apache/PHP", "status": "PENDING_PIN", "source": "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist", "licenseUrl": "https://visualstudio.microsoft.com/license-terms/" },
+    { "id": "webview2", "family": "Evergreen offline x64", "status": "PENDING_PIN_LICENSE", "source": "https://developer.microsoft.com/en-us/microsoft-edge/webview2/", "licenseReviewSource": "https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution" },
+    { "id": "inno-setup", "family": "6", "status": "PENDING_PIN", "source": "https://jrsoftware.org/isdl.php", "licenseUrl": "https://jrsoftware.org/files/is/license.txt" }
+  ],
+  "notes": [
+    "Manifest parsial internal; bukan lock vendor lengkap yang siap didistribusikan.",
+    "Tidak ada hash kosong/placeholder yang dianggap lolos verifikasi.",
+    "Inno LICENSE mengizinkan commercial use dengan ketentuan; permintaan pembelian di situs bukan bukti kewajiban membeli. Belum ada pembelian.",
+    "User memilih aplikasi tertutup dan MySQL gratis. Kebijakan OEM Oracle tetap gate; tidak menganggap pilihan tersebut sebagai bukti izin bundel.",
+    "Tidak memasukkan driver printer privat atau installer QZ sebelum opsi dan pin distribusinya diverifikasi."
+  ]
+}

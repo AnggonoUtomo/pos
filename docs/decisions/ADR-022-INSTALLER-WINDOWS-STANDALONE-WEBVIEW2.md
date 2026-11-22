@@ -2,8 +2,10 @@
 
 ## Status
 
-Proposed. Kebutuhan produk dikonfirmasi; usulan teknis belum diterima.
-Tidak mengubah aturan aktif atau memberi izin instalasi OS sekarang.
+Accepted untuk rancangan deployment dan mulai Increment 1, 22 November 2026.
+Izin redistribusi vendor/dukungan OS/signing tetap menjadi gate rilis terpisah.
+Tidak memberi izin instalasi OS sekarang. User memilih aplikasi tertutup;
+bundel MySQL Community belum mendapat bukti izin redistribusi yang sesuai.
 
 ## Tanggal
 
@@ -19,7 +21,7 @@ bukan runtime PHP/database. Data toko/developer tidak boleh ikut rilis.
 Larangan runner OS tetap melindungi aplikasi web dari pemasangan service
 otomatis. Installer deployment memerlukan pengecualian eksplisit yang sempit.
 
-## Keputusan Yang Diusulkan
+## Keputusan
 
 - Tool deployment di `deployment/windows/`, bukan bounded context/framework
   bisnis baru. Shell C#/.NET self-contained + WebView2 memakai UI POS existing.
@@ -41,7 +43,7 @@ otomatis. Installer deployment memerlukan pengecualian eksplisit yang sempit.
 - QZ opsional mengikuti ADR-020/021, bukan menyalakan physical print, driver
   universal, gateway struk baru atau remote QZ tablet.
 
-Jika diterima, pengecualian deployment Windows dicatat di AGENTS/struktur dan
+Pengecualian deployment Windows dicatat di AGENTS/struktur dan
 panduan terkait. Aturan OS-neutral untuk Linux/web tetap. ADR-020/021,
 identifier, permission dan invariant stok/FIFO/payment/pricing tidak diganti.
 
@@ -67,4 +69,4 @@ build/mock saja bukan bukti siap produksi/hardware.
 [PLAN](../work-items/windows-standalone-installer/plan.md) memuat sumber primer,
 allowlist/QA/recovery. [PRD](../work-items/windows-standalone-installer/PRD.md)
 dan [tasks](../work-items/windows-standalone-installer/tasks.md) memisahkan
-kebutuhan, hasil perencanaan dan implementasi yang belum dijalankan.
+kebutuhan, hasil build/preflight dan increment yang masih pending.

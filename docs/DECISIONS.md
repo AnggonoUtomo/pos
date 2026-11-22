@@ -39,10 +39,10 @@ setup QZ sekali, discovery hanya saat workspace Hardware dibuka oleh user
 berizin dan tes kesiapan scanner keyboard tanpa QZ. Menggantikan bagian
 pemasangan/koneksi manual ADR-020, bukan physical gate atau transaksi.
 
-## Usulan Belum Aktif
+## Deployment Windows
 
 [ADR-022](decisions/ADR-022-INSTALLER-WINDOWS-STANDALONE-WEBVIEW2.md) berstatus
-Proposed: installer offline Windows x64, desktop WebView2, runtime terisolasi,
+Accepted untuk rancangan: installer offline Windows x64, desktop WebView2, runtime terisolasi,
 data persisten, dan opsi service oleh admin deployment. Kebutuhan inti telah
-dikonfirmasi user; PLAN teknis/pengecualian aturan OS belum diterima. Tidak
-mengubah keputusan aktif atau mengizinkan deployment pada komputer sekarang.
+diterima user untuk mulai Increment 1. Izin bundel vendor tetap gate rilis;
+tidak mengizinkan deployment pada komputer sekarang.
