@@ -20,6 +20,44 @@ Checklist dicentang sesudah hasil diperiksa, bukan saat pekerjaan dimulai.
 - [x] PLAN/komponen/allowlist/ADR/pengecualian OS diterima user.
 - [ ] Gate lisensi distribusi, dukungan OS, signing dan lingkungan QA dituntaskan.
 
+## Penutupan Gate Izin Oracle Dan Windows Bersih
+
+Instruksi user 22 November 2026: lengkapi izin Oracle dan uji Windows bersih.
+Pekerjaan ini tidak mengubah scope bisnis atau memberi izin transaksi legal,
+pembelian, install hypervisor atau perubahan VM existing secara diam-diam.
+
+- [x] Verifikasi kembali kebijakan OEM Oracle dan jalur Contact Sales resmi.
+  - Acceptance: tidak menganggap Community gratis sebagai bukti izin bundel
+    proprietary; tidak menebak alamat email/biaya/lisensi.
+  - Verification: halaman Oracle OEM/Contact Sales aktual, menuju Oracle SSO.
+- [x] Siapkan draft pengajuan teknis dan kriteria bukti izin pada PLAN.
+  - Acceptance: rancangan nyata dan pertanyaan konfirmasi, tanpa menyatakan
+    perjanjian terbit atau mengganti lisensi/engine.
+  - Verification: review terhadap PLAN/source baseline; belum dikirim.
+- [ ] Pemilik melengkapi identitas, email, wilayah/volume dan meninjau draft.
+- [ ] Kirim melalui jalur resmi sesudah persetujuan; catat referensi kasus.
+- [ ] Terima bukti tertulis dengan cakupan sesuai bundel dan penuhi syaratnya.
+  - Acceptance: hanya bukti/perjanjian yang sesuai menutup BLOCKED_LICENSE;
+    pembelian/penandatanganan tetap keputusan pemilik.
+  - Verification: tinjauan dokumen privat, ringkasan nonrahasia pada work item.
+- [x] Periksa kesiapan lingkungan Windows secara read-only.
+  - Acceptance: tidak install/start/stop hypervisor atau menyentuh VM pemilik.
+  - Verification: CIM/registry/config metadata; VirtualBox 7.2.14 terpasang,
+    Authenticode Valid/Oracle, dua VM terdaftar. Tidak ada VM dijalankan.
+- [ ] Konfirmasi VM khusus/ISO Windows 11/PC uji serta izin penggunaannya.
+- [ ] Buktikan baseline bersih dan jalankan preflight native di Windows uji.
+  - Acceptance: tidak ada data toko/dependency developer; OS/lisensi/snapshot
+    dan checksum tercatat. VM existing tidak dianggap bersih dari namanya.
+  - Verification: bukti runtime pada guest; metadata konfigurasi tidak cukup.
+- [ ] Setelah installer lengkap tersedia, uji install/offline/reboot/LAN/recovery.
+  - Acceptance: prerequisite implementasi Increment 2-4 benar-benar siap;
+    preflight saja tidak menutup penerimaan installer.
+  - Verification: skenario Increment 5 pada OS disposable.
+
+Status sekarang: pengajuan Oracle **BELUM DIKIRIM**, izin **BELUM TERBIT**,
+Windows bersih **BELUM DIUJI**. Data pemohon dan lingkungan uji ditanyakan ke
+user; tidak mengisi identitas atau mengubah OS berdasarkan tebakan.
+
 ## Increment 0: Dokumentasi Perencanaan
 
 - [x] Susun README, PRD, plan dan tasks sesuai template project.

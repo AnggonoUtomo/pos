@@ -53,6 +53,100 @@ service wrapper pihak ketiga, atau driver printer semua merek.
    VM/tooling berarti QA pending, bukan PASS. Build tool yang belum tersedia
    tidak otomatis dipasang global hanya karena dotnet.exe ditemukan.
 
+## Penutupan Izin Oracle Dan Lingkungan Windows
+
+User meminta menuntaskan kedua gate pada 22 November 2026. Ini memberi scope
+untuk menyiapkan pengajuan resmi dan memeriksa lingkungan uji, bukan kewenangan
+menerbitkan izin Oracle, menandatangani kontrak, membeli lisensi, atau
+mengaktifkan/mengubah VM existing tanpa konfirmasi pemilik.
+
+### Pengajuan Oracle
+
+Sumber resmi: [kebijakan OEM/ISV](https://www.mysql.com/about/legal/licensing/oem/)
+dan [Contact Sales](https://www.mysql.com/about/contact/), diperiksa kembali
+22 November 2026. Halaman kontak mengarahkan pengajuan online melalui Oracle
+SSO. Akun Oracle, unduhan Community, atau notice GPL saja tidak dicatat sebagai
+bukti hak bundel aplikasi tertutup. Kebutuhan kontrak untuk rancangan spesifik
+harus dikonfirmasi Oracle atau penasihat lisensi; tidak disimpulkan dari nama
+package ataupun boilerplate MIT aplikasi.
+
+Data yang perlu dikonfirmasi pemilik sebelum pengiriman: nama pemilik/badan
+usaha, email kontak, negara/wilayah distribusi, perkiraan jumlah instalasi,
+serta apakah sudah ada perjanjian Oracle terkait. Jangan meminta password,
+merekam login SSO, atau memasukkan kontrak/data kontak pribadi ke Git.
+
+Draft permintaan (belum dikirim):
+
+> Kami mengembangkan POS Modular ERP-Lite, aplikasi proprietary untuk klien
+> toko. Kami merencanakan installer Windows x64 offline berisi aplikasi
+> Laravel/PHP, Apache dan MySQL Community Server 8.4 LTS beserta mysql/mysqldump.
+> Server MySQL tidak dimodifikasi, berjalan sebagai proses/service privat di
+> PC utama toko, hanya mendengarkan loopback. PHP mengaksesnya melalui PDO
+> MySQL; aplikasi tidak menautkan server MySQL ke executable desktop.
+> PC/tablet lain mengakses aplikasi web melalui LAN, bukan database langsung.
+> Setiap klien memperoleh database baru tanpa data/akun toko developer.
+> Aplikasi kami tidak akan dilisensikan di bawah GPL. Mohon konfirmasi tertulis
+> skema izin redistribusi yang berlaku untuk bundel ini, apakah Community
+> dapat dipakai sesuai rancangan tersebut atau diperlukan perjanjian OEM/ISV,
+> beserta syarat, cakupan versi/komponen/wilayah, notice/source obligation,
+> hak update dan penawaran biaya jika relevan. Belum ada komitmen pembelian.
+> Identitas pemohon, wilayah dan estimasi instalasi dilengkapi pemilik sebelum
+> pengajuan. Mohon jelaskan pula bila ada opsi tanpa biaya yang sah dengan
+> tetap mempertahankan aplikasi proprietary dan installer offline tersebut.
+
+Pemilik meninjau isi/identitas dan menyetujui pengiriman dahulu. Tanggapan
+Oracle dicatat sebagai referensi kasus dan ringkasan nonrahasia; dokumen
+perjanjian/penawaran disimpan privat oleh pemilik. Gate hanya dapat ditutup
+setelah cakupan izin sesuai paket nyata dan syaratnya dipenuhi, termasuk
+pembayaran/perjanjian bila diwajibkan dan disetujui pemilik. Jika tidak sesuai,
+minta keputusan produk terpisah; jangan mengganti database atau lisensi POS.
+
+### Lingkungan Uji Yang Diperiksa
+
+Pemeriksaan lokal read-only menemukan Windows 10 Enterprise x64 build 19045,
+RAM sekitar 7,9 GB dan ruang kosong C sekitar 109,3 GB. VirtualBox 7.2.14
+sudah terpasang di Program Files dengan Authenticode Valid/Oracle. Binary
+tidak berada di PATH, sehingga pemeriksaan PATH saja semula tidak menemukannya.
+Ini bukan alasan memasang hypervisor baru.
+
+Registry VirtualBox default memiliki dua VM: `WS-RTR2-01` bertipe Windows11_64
+dan `DFIR-RTR2-01` bertipe Ubuntu_64. Hanya metadata konfigurasi dibaca; tidak
+ada VM dijalankan, diubah, di-clone atau dihapus. Nama/tipe OS bukan bukti
+Windows sudah terpasang, berlisensi atau bersih. Persetujuan penggunaan VM,
+snapshot asal bersih/ISO sah dan kemampuan boot belum diketahui.
+HypervisorPresent terdeteksi, tetapi firmware virtualization/SLAT dilaporkan
+false oleh CIM; kapabilitas nested VM tidak disimpulkan dari hasil ini.
+
+Pemilik memilih VM khusus/ISO Windows 11 yang sah atau PC uji terpisah. Opsi
+ISO resmi tersedia di [Windows 11 Enterprise Evaluation](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-11-enterprise);
+registrasi/persetujuan lisensi evaluasi dilakukan pemilik, bukan aktivasi
+produksi atau penggantian Windows PC toko. Tidak mengunduh ISO dari mirror
+acak atau menggunakan bypass TPM/Secure Boot/aktivasi.
+
+Urutan uji setelah media/VM dan izin penggunaan dikonfirmasi:
+
+1. Gunakan VM khusus dari install/snapshot bersih; validasi OS/edisi/arsitektur,
+   lifecycle, status evaluasi/lisensi dan tidak ada Laragon/tool developer/POS.
+2. Isolasi dari database toko dan jaringan produksi. Input hanya artefak
+   build yang hash-nya cocok; tidak share repository, env, backup, sertifikat
+   privat, credential atau disk VM existing. Jangan mengubah adapter VM lab.
+3. Ambil snapshot bersih milik QA. Catat ID VM/snapshot, versi OS dan checksum
+   artefak. Jangan me-restore snapshot atau uninstall pada VM kerja pemilik.
+4. Sekarang hanya EXE preflight yang tersedia: uji launch native, verifier,
+   penolakan konflik/prasyarat dan absence of mutation. Ini bukan install QA.
+5. Setelah Increment 2-4 siap dan gate distribusi tuntas, uji installer penuh
+   offline: runtime privat -> owner -> login -> alur fixture -> backup/restore
+   -> close/reboot -> repair/update/uninstall. Internet mati saat pengujian
+   offline; uji LAN terpisah pada jaringan uji dengan trust TLS sah.
+6. Simpan hasil dan bukti aktual. Preflight atau compiler PASS tidak boleh
+   menaikkan INSTALL_VERIFIED, LAN_VERIFIED, STORE_READY atau PHYSICAL status.
+
+Windows Sandbox bukan pengganti otomatis VM Windows 11/reboot/LAN. Dukungan
+dan persistensi restart berbeda menurut versi; gunakan
+[dokumentasi Microsoft](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/)
+jika opsi itu dipilih. Tidak mengaktifkan fitur Windows, service atau restart
+host dari pekerjaan penutupan gate ini.
+
 ## Data Dan Payload
 
 ```text
