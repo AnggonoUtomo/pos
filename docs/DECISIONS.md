@@ -38,3 +38,11 @@ Print default OFF; perangkat fisik tetap memerlukan UAT.
 setup QZ sekali, discovery hanya saat workspace Hardware dibuka oleh user
 berizin dan tes kesiapan scanner keyboard tanpa QZ. Menggantikan bagian
 pemasangan/koneksi manual ADR-020, bukan physical gate atau transaksi.
+
+## Usulan Belum Aktif
+
+[ADR-022](decisions/ADR-022-INSTALLER-WINDOWS-STANDALONE-WEBVIEW2.md) berstatus
+Proposed: installer offline Windows x64, desktop WebView2, runtime terisolasi,
+data persisten, dan opsi service oleh admin deployment. Kebutuhan inti telah
+dikonfirmasi user; PLAN teknis/pengecualian aturan OS belum diterima. Tidak
+mengubah keputusan aktif atau mengizinkan deployment pada komputer sekarang.
