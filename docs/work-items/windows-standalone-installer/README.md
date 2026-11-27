@@ -8,6 +8,11 @@ preflight dikerjakan; bukan izin deployment pada PC toko. Revisi user
 tidak dibundel. Pengajuan Oracle dihentikan sebelum dikirim. Implementasi
 installer lengkap dan QA Windows bersih tetap belum selesai.
 
+Dilanjutkan 27 November 2026: inti env/storage/cache standalone, CLI pemilik
+pertama dan path backup/tool manual telah diimplementasikan pada source.
+Tidak diaktifkan pada instalasi toko. Panduan admin:
+[setup Windows](../../user-guide/INSTALLER-WINDOWS.md).
+
 ## Owner Dan Lokasi
 
 - Lintas deployment, Platform/Identity, dan Platform/OperationalSettings.
@@ -83,7 +88,7 @@ mengaktifkan physical print atau menutup pending UAT lama.
 | --- | --- | --- |
 | 0 | Passed | Dokumen perencanaan, bukan implementasi |
 | 1 | Partial | Payload aplikasi dan preflight privat lulus; vendor bundled/QA OS pending; MySQL eksternal manual |
-| 2 | Planned | Setup database, owner pertama, login dan backup |
+| 2 | Partial | Inti runtime terisolasi, CLI owner dan backup teruji pada fixture; wizard/native install dan validasi koneksi/hak minimum masih pending |
 | 3 | Planned | WebView2, LAN/HTTPS, service dan scheduler opsional |
 | 4 | Planned | Repair/update/uninstall dan pemulihan kegagalan |
 | 5 | Planned | Satu gate paket akhir pada Windows bersih dan handoff |

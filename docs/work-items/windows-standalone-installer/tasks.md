@@ -137,28 +137,62 @@ Pecahan kerja pada increment ini (tidak menandai paket lengkap lulus):
 
 ## Increment 2: Setup Baru, Akun Pertama Dan Backup
 
+Paket lanjutan 23 November: inti bootstrap/runtime dan CLI pemilik pertama.
+Gate vendor/installer native/Windows dari Increment 1 tetap pending.
+Dilanjutkan setelah interupsi pada 27 November 2026.
+
+- [x] Scope paket dan target Platform/Identity diumumkan sebelum coding.
+- [x] Arsitektur, folder canonical, Identity dan OperationalSettings ditinjau.
+- [x] RED test pemisahan path dan privasi error; negative tests prasyarat/owner.
+  - Verification: root path awal masih workspace, prefix cache Windows dan
+    detail DomainException terdeteksi; dikoreksi lalu test terfokus lulus.
+- [x] Implementasi runtime eksternal dan lokasi backup/tool manual tanpa aktivasi.
+- [x] Implementasi CLI/action/port/adapter owner dengan lock dan audit atomic.
+- [x] Uji login owner, rerun, data existing, validation, rollback dan error privat.
+- [x] Uji native MySQL dua setup bersamaan, retry dan backup/restore disposable.
+  - Verification: MySQL 8.0.30 lokal, 1 test/17 assertions. Kedua proses terbukti
+    LOCK WAIT pada role sama; exit 0/1, satu akun/pivot/audit, retry mempertahankan
+    fingerprint akun, dump dan restore identik. Database QA dibuang; sisa
+    pos_owner_qa_* = 0. Tidak membuktikan kandidat MySQL 8.4/Windows bersih.
+- [x] Uji terfokus bootstrap/backup/Identity dan regresi auth terkait.
+  - Verification: satu gate PHP penuh 1.042 test, 8.323 assertions, 1 skip
+    opt-in MySQL yang sudah dijalankan terpisah dan lulus; tidak mengulangnya.
+- [x] Perbarui panduan/status berdasarkan bukti lalu commit scoped.
+  - Verification: panduan admin/module dan status parsial selaras; lint/syntax,
+    diff dan 22 tautan lokal pada enam dokumen lulus. Commit memakai path exact
+    agar file LSP staged/untracked milik user tetap tidak ikut.
+
 - [ ] Implementasikan env/storage/cache/backup khusus standalone.
   - Acceptance: mode OFF identik baseline; backup fallback/output kompatibel;
     media publik tersedia tetapi private/backup/key tidak dapat diakses web.
   - Verification: StandaloneRuntimeTest, BackupPosTest, path dengan spasi.
+  - Hasil parsial: path dan backup teruji; mapping media/negative HTTP pada
+    webserver standalone belum tersedia sehingga acceptance penuh tetap terbuka.
 - [ ] Validasi MySQL manual dan DB khusus kosong, katalog permission/role produksi.
   - Acceptance: loopback/akun khusus/hak minimum dan mysql/mysqldump tersedia;
     tidak memasang/mengubah service/datadir MySQL; tanpa migrate:fresh,
     seed demo/lifecycle, reset key/password atau memakai DB toko existing.
   - Verification: daftar data awal dan fingerprint DB disposable.
+  - Hasil parsial: guard pristine dan lock owner teruji; wizard pemeriksaan
+    koneksi/versi/engine/hak minimum dan provisioning katalog belum diimplementasi.
 - [ ] Buat wizard lokal dan bootstrap owner CLI milik Identity.
   - Acceptance: password bukan argumen/log, hash/validation/audit atomic,
     satu super-system pertama, tanpa route setup/registrasi publik.
   - Verification: InitialOwnerTest (race, rerun, DB berisi akun/data,
     password invalid, audit/transaction gagal, interupsi setelah commit).
+  - Hasil parsial: CLI/action/port/adapter dan audit selesai; wizard native belum.
 - [ ] Uji login dan backup/restore pada instalasi baru.
   - Acceptance: tidak ada akun baku; mysql/mysqldump tersedia; user web tidak
     diberi global CREATE/DROP. Profil toko belum diisi tetap pending operator.
   - Verification: login terisolasi dan restore fingerprint disposable;
     cek recovery meliputi config/key/media, bukan SQL saja.
+  - Hasil parsial: login melalui HTTP test dan SQL restore disposable PASS;
+    wizard/install baru, akun web minimum serta recovery key/media belum diuji.
 - [ ] Catat hasil dan commit scoped.
   - Acceptance: tanpa perubahan transaksi/identifier/grant akun toko lama.
   - Verification: focused tests di atas dengan ENV/cache QA terpisah.
+  - Save point inti setup selesai; acceptance Increment 2 penuh tetap terbuka
+    sesuai item wizard/validasi/recovery yang masih pending di atas.
 
 ## Increment 3: Desktop, Background Dan LAN
 
@@ -304,8 +338,46 @@ driver. Jangan memakai cleanup semua sertifikat untuk mengatasi kejadian ini.
   interupsi. Tidak ada VM QA terdaftar atau boot; share global tidak diubah.
   Kedua disk parsial tetap privat dan bukan VM QA yang siap dipakai.
 
-Save point mencakup hanya tooling, ignore build dan dokumentasi terkait;
-work item keseluruhan belum selesai dan belum dipush.
+Save point Increment 1 mencakup tooling, ignore build dan dokumentasi terkait.
+Commit sampai revisi MySQL manual telah dipush atas instruksi user; paket inti
+setup berikutnya dibuat sebagai save point lokal. Work item keseluruhan belum selesai.
+
+## Hasil Inti Setup Standalone, 27 November 2026
+
+| Pemeriksaan | Hasil | Batas |
+| --- | --- | --- |
+| Runtime/owner/backup negative tests | PASS | Mode OFF, cache Windows, input privat, validasi, rollback audit, login dan retry tercakup dalam gate PHP |
+| Native MySQL khusus setup | PASS | 1 test, 17 assertions, 48,692 detik; MySQL 8.0.30 lokal dan client existing, bukan runtime bundled atau kandidat 8.4 |
+| Konkurensi owner | PASS | Dua proses terbukti LOCK WAIT; tepat satu exit sukses dan satu ditolak; satu user/pivot/audit |
+| Backup/restore fixture | PASS | Dump pada data root terisolasi, restore disposable identik dan fingerprint akun tidak berubah; cleanup QA selesai |
+| `php vendor/bin/phpunit` | PASS | 1.042 test, 8.323 assertions, 1 skip native opt-in yang sudah lulus terpisah; 148,426 detik |
+| Pint, PHP syntax, diff dan link | PASS | File exact scope; 22 tautan relatif pada enam dokumen valid |
+| DevTools/build frontend | SKIPPED | Tidak ada perubahan halaman/asset web; HTTP login test bukan klaim QA browser/WebView2 |
+| Migration/status produksi | SKIPPED | Tidak ada migration baru atau aktivasi DB toko; migration fixture saja |
+| Native wizard/Windows bersih/LAN/hardware | PENDING | Gate sebelumnya tidak ditutup oleh hasil PHP atau MySQL lokal |
+
+Temuan saat implementasi: cache absolut Windows memerlukan prefix canonical
+Laravel; selector standalone disimpan sebelum Dotenv/config-cache dimuat;
+error CLI disanitasi termasuk DomainException. Pada MySQL, inspeksi metadata
+harus memakai schema koneksi saat ini, bukan seluruh schema server. Perbaikan
+tersebut termasuk pada source dan diuji sebelum save point.
+
+Percobaan migration seluruh modul melampaui timeout 40/180 detik pada host.
+Fixture native kemudian dibatasi ke schema akun/akses/audit/pengaturan yang
+relevan, tanpa mengubah konfigurasi MySQL global atau mengklaim seluruh migration
+MySQL lulus. Full schema tetap tercakup SQLite pada regresi PHP; gate migration
+MySQL seluruh aplikasi/Windows bersih menunggu kandidat installer lengkap.
+
+Tidak memasang dependency, service, task, sertifikat, driver atau firewall;
+tidak mengubah .env/cache produksi, akun toko, role/grant toko, transaksi,
+Old-docs atau VM. Data native QA hanya pada database bernama acak terverifikasi
+pos_owner_qa_* dan restore disposable, lalu dihapus oleh cleanup milik test.
+Tidak menjalankan demo seeder pada deployment; bootstrap pemilik memang tanpa demo.
+
+Laporan privat beserta hash source dan ringkasan gate:
+`storage/app/private/windows-installer/verification/standalone-core-20261127-922ec82364934f659a1d6ed3515c5308.json`.
+Source ditandai dirty saat verifikasi; commit save point dibuat setelah gate,
+tanpa memasukkan laporan atau data fixture ke Git.
 
 Jangan menambah scope tanpa revisi PLAN/persetujuan atau menutup checklist
 implementasi sebelum coding dan pemeriksaan terkait benar-benar selesai.

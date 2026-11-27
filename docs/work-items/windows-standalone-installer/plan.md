@@ -378,6 +378,43 @@ module Hardware atau driver OS tanpa perluasan izin.
 
 ## Increment Dan QA
 
+### Paket Lanjutan: Inti Setup Standalone Dan Pemilik Pertama
+
+Dilanjutkan atas instruksi user 23 November 2026. Kerjakan bagian Increment 2
+yang tidak memerlukan pemasangan runtime/service pada PC toko: bootstrap
+env/storage/cache eksternal, lokasi backup dan mysql/mysqldump manual, serta
+command lokal `identity:initialize-owner`. Vendor offline/installer native dan
+QA Windows Increment 1 tetap terbuka; paket ini tidak menutupnya secara semu.
+Pekerjaan dilanjutkan setelah interupsi pada 27 November 2026, tanpa aktivasi
+runtime, migration atau akun baru pada database toko.
+
+Mode standalone hanya aktif dari environment proses `POS_STANDALONE=1`,
+`POS_DATA_ROOT` absolut di luar direktori aplikasi dan `POS_RELEASE_ID` satu
+segmen aman. Struktur config/storage/cache disiapkan installer/admin, bukan
+dibuat diam-diam oleh HTTP. Env privat harus ada; cache bootstrap/config/route
+dipaksa ke data root per rilis. Mode OFF mempertahankan path existing.
+
+Bootstrap pemilik mensyaratkan role super-system guard web yang telah disiapkan
+seeder produksi. Action -> port -> adapter, transaction dan lock role yang sama
+menserialkan dua setup. Semua tabel operasional harus kosong; pengecualian hanya
+metadata migrasi/katalog akses, cache, audit pembuatan role produksi, dan singleton
+OperationalSettings persis default migration. Tidak memakai model privat modul
+lain, tidak menyetel grant/password existing atau menjalankan seeder demo.
+
+CLI menerima prompt password tersembunyi atau JSON stdin terbatas 8 KiB; tidak
+ada argumen password/route setup. Validasi dan audit atomic, error disanitasi;
+rerun menolak tanpa mengubah akun yang telah dibuat. Koneksi/versi/hak MySQL,
+wizard native dan restore aktual tetap harus diverifikasi terpisah, bukan
+disimpulkan dari SQLite atau test action.
+
+Exact file list mengikuti allowlist di atas: config/standalone.php,
+bootstrap/app.php, BackupPos.php, CreateInitialOwner.php,
+InitialOwnerRepository.php, DatabaseInitialOwnerRepository.php,
+InitializeOwnerCommand.php, Identity/ServiceProvider.php, InitialOwnerTest.php,
+StandaloneRuntimeTest.php, BackupPosTest.php, docs Identity/OperationalSettings,
+work item ini dan docs/user-guide/INSTALLER-WINDOWS.md. Tidak ada dependency baru,
+migration, perubahan UI/route bisnis atau aktivasi produksi.
+
 | No | Hasil utuh | Verifikasi |
 | --- | --- | --- |
 | 0 | PLAN/PRD/checklist/ADR Proposed | diff/link/review scope; tanpa runtime QA |

@@ -29,6 +29,8 @@ setelah akun closed kemudian dihapus; tidak memakai model privat POS.
 - Contracts: `Application/Contracts/AccessRepository` adalah outbound port
   internal Identity, bukan contract mutation untuk module lain. Belum ada
   contract lintas module yang dipublikasikan.
+- `Application/Contracts/InitialOwnerRepository` adalah port internal setup
+  owner; tidak dipublikasikan untuk mutation akun dari module lain.
 - DTOs: belum ada DTOs publik.
 - Events: belum ada event publik lintas module.
 - Routes: route module berada di
@@ -115,6 +117,28 @@ identity.manage. Permission create tanpa manage boleh membuat akun tanpa role.
   [work item UI akses](work-items/access-management/README.md).
 - Manajemen akun terbaru:
   [work item pengguna](work-items/user-management/README.md).
+
+## Setup Pemilik Standalone
+
+`identity:initialize-owner` adalah inbound console khusus instalasi baru,
+bukan registrasi publik atau fitur tambah akun toko existing. Hanya aktif
+ketika selector environment proses standalone dan config hasil bootstrap
+keduanya aktif. CLI memakai prompt password tersembunyi atau JSON stdin
+terbatas 8 KiB; output tidak menampilkan profil, credential atau error mentah.
+
+CreateInitialOwner menggunakan port internal InitialOwnerRepository yang
+dibinding pada ServiceProvider. Transaction/lock role `super-system` guard web,
+penolakan database berisi akun/data, hash password, assignment dan audit atomic
+mencegah setup ulang mereset akun. Identifier existing tetap integer.
+Audit `identity.initial_owner_created` hanya menyimpan source/role dan ID,
+tanpa nama/email/password. Tidak ada demo seeder atau grant akun toko dijalankan.
+
+Adapter melakukan inspeksi baca-saja tabel instalasi untuk menolak master,
+transaksi, audit lama dan pengaturan yang sudah berubah; tidak memanggil model
+privat atau melakukan mutation modul lain. Pengecualian singleton
+OperationalSettings terbatas persis default migration, bukan pengaturan toko.
+Panduan admin: [setup Windows](../../../user-guide/INSTALLER-WINDOWS.md).
+Status paket/QA: [work item installer](../../../work-items/windows-standalone-installer/tasks.md).
 
 ## Verifikasi Utama
 

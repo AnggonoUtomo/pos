@@ -4,7 +4,10 @@ namespace App\Modules\Platform\Identity;
 
 use App\Models\User;
 use App\Modules\Platform\Identity\Application\Contracts\AccessRepository;
+use App\Modules\Platform\Identity\Application\Contracts\InitialOwnerRepository;
+use App\Modules\Platform\Identity\Infrastructure\Persistence\Repositories\DatabaseInitialOwnerRepository;
 use App\Modules\Platform\Identity\Infrastructure\Persistence\Repositories\SpatieAccessRepository;
+use App\Modules\Platform\Identity\Presentation\Console\Commands\InitializeOwnerCommand;
 use App\Modules\Platform\Identity\Presentation\Console\Commands\MigrateLegacySuperRoleCommand;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -14,6 +17,7 @@ class ServiceProvider extends BaseServiceProvider
     public function register(): void
     {
         $this->app->bind(AccessRepository::class, SpatieAccessRepository::class);
+        $this->app->bind(InitialOwnerRepository::class, DatabaseInitialOwnerRepository::class);
     }
 
     public function boot(): void
@@ -21,7 +25,7 @@ class ServiceProvider extends BaseServiceProvider
         Gate::before(fn (User $user, string $ability): ?bool => $user->hasRole('super-system', 'web') ? true : null);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([MigrateLegacySuperRoleCommand::class]);
+            $this->commands([MigrateLegacySuperRoleCommand::class, InitializeOwnerCommand::class]);
         }
 
         if (is_file(__DIR__.'/Routes/web.php')) {

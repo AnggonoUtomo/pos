@@ -29,4 +29,18 @@ class BackupPosTest extends TestCase
             $lock->release();
         }
     }
+
+    public function test_standalone_missing_manual_tool_is_rejected_before_reading_credentials(): void
+    {
+        config(['standalone.enabled' => true, 'standalone.mysqldump_binary' => 'relative-tool',
+            'standalone.backup_path' => sys_get_temp_dir().'/pos-uncreated-'.bin2hex(random_bytes(8))]);
+        $connection = Mockery::mock(Connection::class);
+        $connection->shouldReceive('getDriverName')->once()->andReturn('mysql');
+        $connection->shouldNotReceive('getConfig');
+        DB::shouldReceive('connection')->once()->andReturn($connection);
+        DB::shouldReceive('purge')->once()->with('pos_restore_verify');
+        $this->artisan('pos:backup')->expectsOutputToContain('Backup/verifikasi gagal.')->assertExitCode(1);
+        $this->assertDirectoryDoesNotExist(config('standalone.backup_path'));
+        $this->assertTrue(Cache::lock('pos:database-backup', 900)->get());
+    }
 }

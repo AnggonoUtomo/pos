@@ -34,10 +34,12 @@ class BackupPos extends Command
         $file = null;
         $stage = 'initialization';
         try {
+            $dumpBinary = $this->binary('mysqldump');
+            $mysqlBinary = $this->option('verify') ? $this->binary('mysql') : null;
             $config = $connection->getConfig();
             unset($config['name']);
             $name = $connection->getDatabaseName();
-            $directory = base_path('backups');
+            $directory = config('standalone.backup_path', base_path('backups'));
             if (! is_dir($directory) && ! mkdir($directory, 0700, true) && ! is_dir($directory)) {
                 throw new \RuntimeException('Directory backup tidak tersedia.');
             }
@@ -45,7 +47,7 @@ class BackupPos extends Command
             $stage = 'source-fingerprint';
             $before = $this->option('verify') ? $this->fingerprint($connection->getName()) : null;
             $credentials = ['--host='.($config['host'] ?? '127.0.0.1'), '--port='.($config['port'] ?? 3306), '--user='.($config['username'] ?? '')];
-            $process = new Process(['mysqldump', ...$credentials, '--single-transaction', '--quick', '--skip-lock-tables', '--hex-blob',
+            $process = new Process([$dumpBinary, ...$credentials, '--single-transaction', '--quick', '--skip-lock-tables', '--hex-blob',
                 '--no-tablespaces', '--set-gtid-purged=OFF', '--default-character-set=utf8mb4', '--result-file='.$file, $name],
                 env: ['MYSQL_PWD' => $config['password'] ?? ''], timeout: 300);
             $stage = 'dump';
@@ -66,7 +68,7 @@ class BackupPos extends Command
                 $created = true;
                 $input = fopen($file, 'rb');
                 try {
-                    $restore = new Process(['mysql', ...$credentials, '--default-character-set=utf8mb4', '--binary-mode', $target],
+                    $restore = new Process([$mysqlBinary, ...$credentials, '--default-character-set=utf8mb4', '--binary-mode', $target],
                         env: ['MYSQL_PWD' => $config['password'] ?? ''], input: $input, timeout: 300);
                     $stage = 'restore';
                     $restore->run();
@@ -103,6 +105,20 @@ class BackupPos extends Command
                 $connection->statement('DROP DATABASE `'.$target.'`');
             }
         }
+    }
+
+    private function binary(string $name): string
+    {
+        if (! config('standalone.enabled')) {
+            return $name;
+        }
+        $path = config('standalone.'.$name.'_binary');
+        if (! is_string($path) || ! preg_match('~^(?:[A-Za-z]:[\\\\/]|/)~', $path)
+            || ! is_file($path) || is_link($path)) {
+            throw new \RuntimeException('Alat backup MySQL manual belum dikonfigurasi.');
+        }
+
+        return $path;
     }
 
     private function fingerprint(string $connection): string

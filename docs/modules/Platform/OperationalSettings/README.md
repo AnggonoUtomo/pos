@@ -39,6 +39,12 @@ Demo seeder dipertimbangkan: default aman saja, tidak membuat dump/jadwal aktif,
 tidak mengubah grant dan tidak menimpa setting existing. Routes, migration dan
 seeder tetap di module. Rencana: [work item](work-items/initial-settings/tasks.md).
 
+Pada mode standalone yang dipilih deployment, command backup yang sama memakai
+`<POS_DATA_ROOT>/backups` serta path absolut mysql/mysqldump manual. Mode existing
+tetap memakai `base_path('backups')` dan pencarian tool existing. Format output
+basename/status untuk adapter dan UI tidak berubah; tidak ada opsi secret atau
+konfigurasi database dari halaman ini. Detail: [setup Windows](../../../user-guide/INSTALLER-WINDOWS.md).
+
 ## Preferensi Tabel Global
 
 Tab vertikal Umum/Cetak/Backup menjaga opsi existing. Umum menambahkan
